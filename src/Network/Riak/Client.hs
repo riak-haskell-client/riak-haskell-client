@@ -1,0 +1,3 @@
+module Network.Riak.Client
+    (
+     )
