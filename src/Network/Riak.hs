@@ -10,13 +10,19 @@ module Network.Riak
     , makeClientID
     , ping
     , get
+    , Network.Riak.put
     ) where
 
 import qualified Data.ByteString.Char8 as B
+import Control.Applicative
 import Data.Binary hiding (get)
 import Data.Binary.Put
+import Control.Monad
 import Network.Socket.ByteString.Lazy as L
 import Network.Socket as Socket
+import Network.Riakclient.RpbContent
+import Network.Riakclient.RpbPutReq
+import Network.Riakclient.RpbPutResp
 import qualified Data.ByteString.Lazy.Char8 as L
 import Numeric (showHex)
 import System.Random
@@ -26,6 +32,7 @@ import Network.Riakclient.RpbGetResp
 import Network.Riakclient.RpbSetClientIdReq
 import Network.Riak.Message
 import Network.Riak.Types as T
+import Network.Riak.Types.Internal
 import Text.ProtocolBuffers
 import Data.IORef
 
@@ -68,19 +75,32 @@ ping conn@Connection{..} = do
   _ <- recvResponse conn
   return ()
 
-get :: Connection -> T.Bucket -> T.Key -> Maybe Int -> IO (Maybe RpbGetResp)
+get :: Connection -> T.Bucket -> T.Key -> Maybe R
+    -> IO (Maybe (Seq Content, Maybe VClock))
 get conn@Connection{..} bucket key r = do
-  let req = RpbGetReq { bucket = bucket, key = key, r = fromIntegral `fmap` r }
+  let req = RpbGetReq { bucket = bucket, key = key, r = fromQuorum <$> r }
   sendRequest conn req
   resp <- recvResponse conn
   case resp of
     Left msg | msg == Code.getResp -> return Nothing
-    Right (GetResponse r) -> return (Just r)
-    _             -> fail $  "get: invalid response" ++ show r
+    Right (GetResponse RpbGetResp{..}) -> return . Just $ (content, VClock <$> vclock)
+    bad             -> fail $  "get: invalid response " ++ show bad
+
+put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
+    -> Content -> Maybe W -> Maybe DW -> Bool
+    -> IO (Seq Content, Maybe VClock)
+put conn@Connection{..} bucket key vclock content w dw returnBody = do
+  let req = RpbPutReq bucket key (fromVClock <$> vclock) content (fromQuorum <$> w) (fromQuorum <$> dw) (Just returnBody)
+  sendRequest conn req
+  resp <- recvResponse_ conn
+  case resp of
+    PutResponse RpbPutResp{..} -> return (content, VClock <$> vclock)
+    bad ->  fail $ "put: invalid response " ++ show bad
 
 setClientID :: Connection -> ClientID -> IO ()
 setClientID conn id = do
   let req = RpbSetClientIdReq { client_id = id }
   sendRequest conn req
-  _ <- recvResponse conn
-  return ()
+  resp <- recvResponse_ conn
+  unless (resp == SetClientIDResponse) .
+    fail $ "setClientID: invalid response " ++ show resp

@@ -21,6 +21,7 @@ import Network.Riak.Message.Code
 import Text.ProtocolBuffers as PB
 import Text.ProtocolBuffers.Get
 import Network.Riakclient.RpbGetResp
+import Network.Riakclient.RpbPutResp
 import Network.Socket.ByteString.Lazy as L
 
 
@@ -28,18 +29,20 @@ data Response = ErrorResponse
               | PingResponse
               | SetClientIDResponse
               | GetResponse RpbGetResp
+              | PutResponse RpbPutResp
                 deriving (Eq, Show)
 
 putPingReq :: Put
 putPingReq = putWord32be 1 >> putCode pingReq
 
-putRequest :: (ReflectDescriptor req, Coded req) => req -> Put
+putRequest :: (Coded req, ReflectDescriptor req, Wire req) => req -> Put
 putRequest req = do
   putWord32be (fromIntegral (1 + messageSize req))
   putCode (messageCode req)
   messagePutM req
 
-sendRequest :: (ReflectDescriptor req, Coded req) => Connection -> req -> IO ()
+sendRequest :: (Coded req, ReflectDescriptor req, Wire req) =>
+               Connection -> req -> IO ()
 sendRequest Connection{..} req = L.sendAll connSock . runPut . putRequest $ req
 
 getterMap :: Map.IntMap (Get Response)
@@ -47,6 +50,7 @@ getterMap = Map.fromList [
               errorResp -:> return ErrorResponse
             , pingResp -:> return PingResponse
             , getResp -:> (GetResponse `fmap` messageGetM)
+            , putResp -:> (PutResponse `fmap` messageGetM)
             , setClientIdResp -:> return SetClientIDResponse
             ]
   where a -:> b = (messageNumber a, b)

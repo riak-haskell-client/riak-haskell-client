@@ -37,6 +37,7 @@ import Data.Word (Word8)
 import Data.Binary.Put
 import Network.Riakclient.RpbSetClientIdReq
 import Network.Riakclient.RpbGetReq
+import Network.Riakclient.RpbPutReq
 import Text.ProtocolBuffers
 import Text.ProtocolBuffers.Get
 
@@ -47,8 +48,12 @@ messageNumber :: MessageCode -> Int
 messageNumber (M m) = fromIntegral m
 {-# INLINE messageNumber #-}
 
-class (Wire msg) => Coded msg where
+class Coded msg where
     messageCode :: msg -> MessageCode
+
+instance Coded MessageCode where
+    messageCode m = m
+    {-# INLINE messageCode #-}
 
 instance Coded RpbSetClientIdReq where
     messageCode _ = setClientIdReq
@@ -56,6 +61,10 @@ instance Coded RpbSetClientIdReq where
 
 instance Coded RpbGetReq where
     messageCode _ = getReq
+    {-# INLINE messageCode #-}
+
+instance Coded RpbPutReq where
+    messageCode _ = putReq
     {-# INLINE messageCode #-}
 
 putCode :: MessageCode -> Put
