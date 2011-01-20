@@ -14,6 +14,7 @@ module Network.Riak
     , getServerInfo
     , get
     , Network.Riak.put
+    , delete
     ) where
 
 import qualified Data.ByteString.Char8 as B
@@ -26,6 +27,7 @@ import Network.Socket as Socket
 import Network.Riakclient.RpbContent
 import Network.Riakclient.RpbPutReq
 import Network.Riakclient.RpbPutResp
+import Network.Riakclient.RpbDelReq
 import Network.Riakclient.RpbGetServerInfoResp
 import Network.Riakextra.RpbPingReq
 import Network.Riakextra.RpbGetClientIdReq
@@ -113,3 +115,8 @@ put conn@Connection{..} bucket key vclock content w dw returnBody = do
                      (fromQuorum <$> w) (fromQuorum <$> dw) (Just returnBody)
   RpbPutResp{..} <- recvResponse conn
   return (content, VClock <$> vclock)
+
+delete :: Connection -> T.Bucket -> T.Key -> Maybe RW -> IO ()
+delete conn bucket key rw = do
+  sendRequest conn $ RpbDelReq bucket key (fromQuorum <$> rw)
+  recvResponse_ conn DelResp

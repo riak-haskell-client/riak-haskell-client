@@ -20,7 +20,9 @@ import Data.IORef
 
 recvWith :: (L.ByteString -> IO L.ByteString) -> Connection -> Int64
          -> IO L.ByteString
-recvWith onError Connection{..} n0 = do
+recvWith onError Connection{..} n0
+    | n0 <= 0 = return L.empty
+    | otherwise = do
   bs <- readIORef connBuffer
   let (h,t) = L.splitAt n0 bs
       len = L.length h
