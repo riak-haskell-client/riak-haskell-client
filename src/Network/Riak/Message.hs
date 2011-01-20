@@ -1,15 +1,16 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ExistentialQuantification, RecordWildCards #-}
 
 module Network.Riak.Message
     (
-      Response(..)
-    , getResponse
+      getResponse
     , putPingReq
     , recvResponse_
     , recvResponse
+    , recvMaybeResponse
     , sendRequest
     ) where
 
+import Control.Monad
 import Data.Binary hiding (Get)
 import Data.Binary.Put
 import Data.ByteString.Lazy as L
@@ -17,59 +18,64 @@ import Data.IntMap as Map
 import Network.Socket
 import Network.Riak.Socket
 import Network.Riak.Types
-import Network.Riak.Message.Code
+import Network.Riak.Types.Internal
+import Network.Riak.Message.Tag
 import Text.ProtocolBuffers as PB
 import Text.ProtocolBuffers.Get
 import Network.Riakclient.RpbGetResp
 import Network.Riakclient.RpbPutResp
+import Network.Riakclient.RpbGetClientIdResp
 import Network.Socket.ByteString.Lazy as L
 
-
-data Response = ErrorResponse
-              | PingResponse
-              | SetClientIDResponse
-              | GetResponse RpbGetResp
-              | PutResponse RpbPutResp
-                deriving (Eq, Show)
-
 putPingReq :: Put
-putPingReq = putWord32be 1 >> putCode pingReq
+putPingReq = putWord32be 1 >> putTag PingReq
 
-putRequest :: (Coded req, ReflectDescriptor req, Wire req) => req -> Put
+putRequest :: (Request req) => req -> Put
 putRequest req = do
   putWord32be (fromIntegral (1 + messageSize req))
-  putCode (messageCode req)
+  putTag (messageTag req)
   messagePutM req
 
-sendRequest :: (Coded req, ReflectDescriptor req, Wire req) =>
-               Connection -> req -> IO ()
+sendRequest :: (Request req) => Connection -> req -> IO ()
 sendRequest Connection{..} req = L.sendAll connSock . runPut . putRequest $ req
 
-getterMap :: Map.IntMap (Get Response)
-getterMap = Map.fromList [
-              errorResp -:> return ErrorResponse
-            , pingResp -:> return PingResponse
-            , getResp -:> (GetResponse `fmap` messageGetM)
-            , putResp -:> (PutResponse `fmap` messageGetM)
-            , setClientIdResp -:> return SetClientIDResponse
-            ]
-  where a -:> b = (messageNumber a, b)
+getResponse :: Response a => MessageTag -> Get (Either String a)
+getResponse expected = do
+  tag <- getTag
+  if tag == expected
+    then Right `fmap` messageGetM
+    else return . Left $ "received unexpected response: expected " ++
+                         show expected ++ ", received " ++ show tag
 
-getResponse :: Get Response
-getResponse = do
-  code <- getCode
-  Map.findWithDefault (fail $ "invalid response: " ++ show code)
-         (messageNumber code) getterMap
+recvResponse :: Response a => Connection -> IO a
+recvResponse conn = go undefined where
+  go :: Response b => b -> IO b
+  go dummy = do
+    len <- fromIntegral `fmap` recvGet conn getWord32be
+    r <- recvGetN conn len (getResponse (messageTag dummy))
+    case r of
+      Left err -> fail err
+      Right ret -> return ret
 
-recvResponse_ :: Connection -> IO Response
-recvResponse_ conn = do
+recvResponse_ :: Connection -> MessageTag -> IO ()
+recvResponse_ conn expected = do
   len <- fromIntegral `fmap` recvGet conn getWord32be
-  recvGetN conn len getResponse
+  tag <- recvGet conn getTag
+  when (tag /= expected) .
+    fail $ "received unexpected response: expected " ++
+           show expected ++ ", received " ++ show tag
+  recvExactly conn (len-1) >> return ()
 
-recvResponse :: Connection -> IO (Either MessageCode Response)
-recvResponse conn = do
-  len <- fromIntegral `fmap` recvGet conn getWord32be
-  print len
-  if len == 1
-    then Left `fmap` recvGet conn getCode
-    else Right `fmap` recvGetN conn len getResponse
+recvMaybeResponse :: Response a => Connection -> IO (Maybe a)
+recvMaybeResponse conn =  go undefined where
+  go :: Response b => b -> IO (Maybe b)
+  go dummy = do
+    len <- fromIntegral `fmap` recvGet conn getWord32be
+    print len
+    if len == 1
+      then return Nothing
+      else do
+        r <- recvGetN conn len (getResponse (messageTag dummy))
+        case r of
+          Left err -> fail err
+          Right ret -> return (Just ret)

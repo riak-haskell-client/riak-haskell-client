@@ -2,8 +2,7 @@
 
 module Network.Riak.Socket
     (
-      recvExactly_
-    , recvExactly
+      recvExactly
     , recvGet
     , recvGetN
     ) where
@@ -41,9 +40,6 @@ recvWith onError Connection{..} n0 = do
       if len == 0
         then onError (L.fromChunks (reverse acc))
         else go (bs:acc) (n' - fromIntegral len)
-
-recvExactly_ :: Connection -> Int64 -> IO L.ByteString
-recvExactly_ = recvWith return
 
 recvExactly :: Connection -> Int64 -> IO L.ByteString
 recvExactly = recvWith (const (fail "short read from network"))

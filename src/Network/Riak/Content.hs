@@ -2,13 +2,15 @@
 
 module Network.Riak.Content
     (
-      unspecified
+      RpbContent(..)
+    , Content
+    , unspecified
     , binary
     ) where
 
 import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.Sequence as Seq
-import Network.Riakclient.RpbContent
+import Network.Riakclient.RpbContent as Rpb
 import Network.Riak.Types
 
 unspecified :: Content

@@ -26,7 +26,7 @@ library
     Network.Riak.Types
 
   other-modules:       
-    Network.Riak.Message.Code
+    Network.Riak.Message.Tag
     Network.Riak.Types.Internal
     Network.Riak.Message
     Network.Riak.Socket
@@ -52,6 +52,12 @@ library
     Network.Riakclient.RpbPutResp
     Network.Riakclient.RpbSetBucketReq
     Network.Riakclient.RpbSetClientIdReq
+    Network.Riakextra
+    Network.Riakextra.RpbPingReq
+    Network.Riakextra.RpbPingResp
+    Network.Riakextra.RpbGetClientIdReq
+    Network.Riakextra.RpbSetClientIdResp
+    Network.Riakextra.RpbGetServerInfoReq
   
   build-depends:       
     base == 4.*,

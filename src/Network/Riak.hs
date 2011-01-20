@@ -9,6 +9,9 @@ module Network.Riak
     , defaultClient
     , makeClientID
     , ping
+    , getClientID
+    , setClientID
+    , getServerInfo
     , get
     , Network.Riak.put
     ) where
@@ -23,13 +26,17 @@ import Network.Socket as Socket
 import Network.Riakclient.RpbContent
 import Network.Riakclient.RpbPutReq
 import Network.Riakclient.RpbPutResp
+import Network.Riakclient.RpbGetServerInfoResp
+import Network.Riakextra.RpbPingReq
+import Network.Riakextra.RpbGetClientIdReq
+import Network.Riakextra.RpbGetServerInfoReq
 import qualified Data.ByteString.Lazy.Char8 as L
 import Numeric (showHex)
 import System.Random
-import qualified Network.Riak.Message.Code as Code
 import Network.Riakclient.RpbGetReq as GetReq
 import Network.Riakclient.RpbGetResp
 import Network.Riakclient.RpbSetClientIdReq
+import Network.Riakclient.RpbGetClientIdResp as GetClientIdResp
 import Network.Riak.Message
 import Network.Riak.Types as T
 import Network.Riak.Types.Internal
@@ -38,11 +45,11 @@ import Data.IORef
 
 defaultClient :: Client
 defaultClient = Client {
-                  riakHost = "127.0.0.1"
-                , riakPort = "8087"
-                , riakPrefix = "riak"
-                , riakMapReducePrefix = "mapred"
-                , riakClientID = L.empty
+                  host = "127.0.0.1"
+                , port = "8087"
+                , prefix = "riak"
+                , mapReducePrefix = "mapred"
+                , clientID = L.empty
                 }
 
 makeClientID :: IO ClientID
@@ -52,55 +59,57 @@ makeClientID = do
 
 addClientID :: Client -> IO Client
 addClientID client
-  | L.null (riakClientID client) = do
+  | L.null (clientID client) = do
     i <- makeClientID
-    return client { riakClientID = i }
+    return client { clientID = i }
   | otherwise = return client
 
 connect :: Client -> IO Connection
 connect cli0 = do
   client@Client{..} <- addClientID cli0
   let hints = defaultHints
-  (ai:_) <- getAddrInfo (Just hints) (Just riakHost) (Just riakPort)
+  (ai:_) <- getAddrInfo (Just hints) (Just host) (Just port)
   sock <- socket (addrFamily ai) (addrSocketType ai) (addrProtocol ai)
   Socket.connect sock (addrAddress ai)
   buf <- newIORef L.empty
   let conn = Connection sock client buf
-  setClientID conn riakClientID
+  setClientID conn clientID
   return conn
 
 ping :: Connection -> IO ()
 ping conn@Connection{..} = do
-  L.sendAll connSock $ runPut putPingReq
-  _ <- recvResponse conn
-  return ()
+  sendRequest conn RpbPingReq
+  recvResponse_ conn PingResp
+
+getClientID :: Connection -> ClientID -> IO ClientID
+getClientID conn id = do
+  sendRequest conn RpbGetClientIdReq
+  GetClientIdResp.client_id <$> recvResponse conn
+
+setClientID :: Connection -> ClientID -> IO ()
+setClientID conn id = do
+  sendRequest conn $ RpbSetClientIdReq id
+  recvResponse_ conn SetClientIdResp
+
+getServerInfo :: Connection -> IO ServerInfo
+getServerInfo conn = do
+  sendRequest conn RpbGetServerInfoReq
+  recvResponse conn
 
 get :: Connection -> T.Bucket -> T.Key -> Maybe R
     -> IO (Maybe (Seq Content, Maybe VClock))
 get conn@Connection{..} bucket key r = do
-  let req = RpbGetReq { bucket = bucket, key = key, r = fromQuorum <$> r }
-  sendRequest conn req
-  resp <- recvResponse conn
-  case resp of
-    Left msg | msg == Code.getResp -> return Nothing
-    Right (GetResponse RpbGetResp{..}) -> return . Just $ (content, VClock <$> vclock)
-    bad             -> fail $  "get: invalid response " ++ show bad
+  sendRequest conn RpbGetReq { bucket = bucket
+                             , key = key
+                             , r = fromQuorum <$> r }
+  maybe Nothing cast <$> recvMaybeResponse conn
+ where cast RpbGetResp{..} = Just (content, VClock <$> vclock)
 
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> Maybe W -> Maybe DW -> Bool
     -> IO (Seq Content, Maybe VClock)
 put conn@Connection{..} bucket key vclock content w dw returnBody = do
-  let req = RpbPutReq bucket key (fromVClock <$> vclock) content (fromQuorum <$> w) (fromQuorum <$> dw) (Just returnBody)
-  sendRequest conn req
-  resp <- recvResponse_ conn
-  case resp of
-    PutResponse RpbPutResp{..} -> return (content, VClock <$> vclock)
-    bad ->  fail $ "put: invalid response " ++ show bad
-
-setClientID :: Connection -> ClientID -> IO ()
-setClientID conn id = do
-  let req = RpbSetClientIdReq { client_id = id }
-  sendRequest conn req
-  resp <- recvResponse_ conn
-  unless (resp == SetClientIDResponse) .
-    fail $ "setClientID: invalid response " ++ show resp
+  sendRequest conn $ RpbPutReq bucket key (fromVClock <$> vclock) content
+                     (fromQuorum <$> w) (fromQuorum <$> dw) (Just returnBody)
+  RpbPutResp{..} <- recvResponse conn
+  return (content, VClock <$> vclock)

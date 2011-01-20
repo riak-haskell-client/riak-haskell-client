@@ -1,3 +1,0 @@
-module Network.Riak.Client
-    (
-     )
