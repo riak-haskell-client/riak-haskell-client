@@ -20,9 +20,9 @@ if [[ -z "$hprotoc" ]]; then
 fi
 
 sed -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
-    -e 's/MapRedR/MapReduceR/g' \
+    -e 's/MapRedR/MapReduceR/g' -e 's/DelR/DeleteR/' -e 's/ClientId/ClientID/' \
     src/riakclient.proto src/riakextra.proto > src/Protocol.proto
 
-(cd src && hprotoc -p Network/Riak Protocol.proto)
+(cd src && hprotoc -p Network.Riak Protocol.proto)
 
 rm src/Protocol.proto

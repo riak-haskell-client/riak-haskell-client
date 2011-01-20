@@ -1,27 +1,27 @@
-module Network.Riakextra.RpbPingReq (RpbPingReq(..)) where
+module Network.Riak.Protocol.PingRequest (PingRequest(..)) where
 import Prelude ((+))
 import qualified Prelude as P'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data RpbPingReq = RpbPingReq{}
-                deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data PingRequest = PingRequest{}
+                 deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
  
-instance P'.Mergeable RpbPingReq where
-  mergeEmpty = RpbPingReq
-  mergeAppend (RpbPingReq) (RpbPingReq) = RpbPingReq
+instance P'.Mergeable PingRequest where
+  mergeEmpty = PingRequest
+  mergeAppend (PingRequest) (PingRequest) = PingRequest
  
-instance P'.Default RpbPingReq where
-  defaultValue = RpbPingReq
+instance P'.Default PingRequest where
+  defaultValue = PingRequest
  
-instance P'.Wire RpbPingReq where
-  wireSize ft' self'@(RpbPingReq)
+instance P'.Wire PingRequest where
+  wireSize ft' self'@(PingRequest)
    = case ft' of
        10 -> calc'Size
        11 -> P'.prependMessageSize calc'Size
        _ -> P'.wireSizeErr ft' self'
     where
         calc'Size = 0
-  wirePut ft' self'@(RpbPingReq)
+  wirePut ft' self'@(PingRequest)
    = case ft' of
        10 -> put'Fields
        11 -> do
@@ -42,13 +42,13 @@ instance P'.Wire RpbPingReq where
          = case wire'Tag of
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
-instance P'.MessageAPI msg' (msg' -> RpbPingReq) RpbPingReq where
+instance P'.MessageAPI msg' (msg' -> PingRequest) PingRequest where
   getVal m' f' = f' m'
  
-instance P'.GPB RpbPingReq
+instance P'.GPB PingRequest
  
-instance P'.ReflectDescriptor RpbPingReq where
+instance P'.ReflectDescriptor PingRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [])
   reflectDescriptorInfo _
    = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Riakextra.RpbPingReq\", haskellPrefix = [MName \"Network\"], parentModule = [MName \"Riakextra\"], baseName = MName \"RpbPingReq\"}, descFilePath = [\"Network\",\"Riakextra\",\"RpbPingReq.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.PingRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"PingRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"PingRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"

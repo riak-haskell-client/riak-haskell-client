@@ -1,27 +1,27 @@
-module Network.Riakclient.RpbListBucketsResp (RpbListBucketsResp(..)) where
+module Network.Riak.Protocol.ListBucketsResponse (ListBucketsResponse(..)) where
 import Prelude ((+))
 import qualified Prelude as P'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data RpbListBucketsResp = RpbListBucketsResp{buckets :: P'.Seq P'.ByteString}
-                        deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data ListBucketsResponse = ListBucketsResponse{buckets :: P'.Seq P'.ByteString}
+                         deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
  
-instance P'.Mergeable RpbListBucketsResp where
-  mergeEmpty = RpbListBucketsResp P'.mergeEmpty
-  mergeAppend (RpbListBucketsResp x'1) (RpbListBucketsResp y'1) = RpbListBucketsResp (P'.mergeAppend x'1 y'1)
+instance P'.Mergeable ListBucketsResponse where
+  mergeEmpty = ListBucketsResponse P'.mergeEmpty
+  mergeAppend (ListBucketsResponse x'1) (ListBucketsResponse y'1) = ListBucketsResponse (P'.mergeAppend x'1 y'1)
  
-instance P'.Default RpbListBucketsResp where
-  defaultValue = RpbListBucketsResp P'.defaultValue
+instance P'.Default ListBucketsResponse where
+  defaultValue = ListBucketsResponse P'.defaultValue
  
-instance P'.Wire RpbListBucketsResp where
-  wireSize ft' self'@(RpbListBucketsResp x'1)
+instance P'.Wire ListBucketsResponse where
+  wireSize ft' self'@(ListBucketsResponse x'1)
    = case ft' of
        10 -> calc'Size
        11 -> P'.prependMessageSize calc'Size
        _ -> P'.wireSizeErr ft' self'
     where
         calc'Size = (P'.wireSizeRep 1 12 x'1)
-  wirePut ft' self'@(RpbListBucketsResp x'1)
+  wirePut ft' self'@(ListBucketsResponse x'1)
    = case ft' of
        10 -> put'Fields
        11 -> do
@@ -43,13 +43,13 @@ instance P'.Wire RpbListBucketsResp where
              10 -> P'.fmap (\ new'Field -> old'Self{buckets = P'.append (buckets old'Self) new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
-instance P'.MessageAPI msg' (msg' -> RpbListBucketsResp) RpbListBucketsResp where
+instance P'.MessageAPI msg' (msg' -> ListBucketsResponse) ListBucketsResponse where
   getVal m' f' = f' m'
  
-instance P'.GPB RpbListBucketsResp
+instance P'.GPB ListBucketsResponse
  
-instance P'.ReflectDescriptor RpbListBucketsResp where
+instance P'.ReflectDescriptor ListBucketsResponse where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [10])
   reflectDescriptorInfo _
    = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Riakclient.RpbListBucketsResp\", haskellPrefix = [MName \"Network\"], parentModule = [MName \"Riakclient\"], baseName = MName \"RpbListBucketsResp\"}, descFilePath = [\"Network\",\"Riakclient\",\"RpbListBucketsResp.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Riakclient.RpbListBucketsResp.buckets\", haskellPrefix' = [MName \"Network\"], parentModule' = [MName \"Riakclient\",MName \"RpbListBucketsResp\"], baseName' = FName \"buckets\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListBucketsResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListBucketsResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListBucketsResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsResponse.buckets\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsResponse\"], baseName' = FName \"buckets\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"

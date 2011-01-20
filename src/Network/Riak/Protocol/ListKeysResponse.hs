@@ -1,28 +1,28 @@
-module Network.Riakclient.RpbListKeysResp (RpbListKeysResp(..)) where
+module Network.Riak.Protocol.ListKeysResponse (ListKeysResponse(..)) where
 import Prelude ((+))
 import qualified Prelude as P'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data RpbListKeysResp = RpbListKeysResp{keys :: P'.Seq P'.ByteString, done :: P'.Maybe P'.Bool}
-                     deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data ListKeysResponse = ListKeysResponse{keys :: P'.Seq P'.ByteString, done :: P'.Maybe P'.Bool}
+                      deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
  
-instance P'.Mergeable RpbListKeysResp where
-  mergeEmpty = RpbListKeysResp P'.mergeEmpty P'.mergeEmpty
-  mergeAppend (RpbListKeysResp x'1 x'2) (RpbListKeysResp y'1 y'2)
-   = RpbListKeysResp (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)
+instance P'.Mergeable ListKeysResponse where
+  mergeEmpty = ListKeysResponse P'.mergeEmpty P'.mergeEmpty
+  mergeAppend (ListKeysResponse x'1 x'2) (ListKeysResponse y'1 y'2)
+   = ListKeysResponse (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)
  
-instance P'.Default RpbListKeysResp where
-  defaultValue = RpbListKeysResp P'.defaultValue P'.defaultValue
+instance P'.Default ListKeysResponse where
+  defaultValue = ListKeysResponse P'.defaultValue P'.defaultValue
  
-instance P'.Wire RpbListKeysResp where
-  wireSize ft' self'@(RpbListKeysResp x'1 x'2)
+instance P'.Wire ListKeysResponse where
+  wireSize ft' self'@(ListKeysResponse x'1 x'2)
    = case ft' of
        10 -> calc'Size
        11 -> P'.prependMessageSize calc'Size
        _ -> P'.wireSizeErr ft' self'
     where
         calc'Size = (P'.wireSizeRep 1 12 x'1 + P'.wireSizeOpt 1 8 x'2)
-  wirePut ft' self'@(RpbListKeysResp x'1 x'2)
+  wirePut ft' self'@(ListKeysResponse x'1 x'2)
    = case ft' of
        10 -> put'Fields
        11 -> do
@@ -46,13 +46,13 @@ instance P'.Wire RpbListKeysResp where
              16 -> P'.fmap (\ new'Field -> old'Self{done = P'.Just new'Field}) (P'.wireGet 8)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
-instance P'.MessageAPI msg' (msg' -> RpbListKeysResp) RpbListKeysResp where
+instance P'.MessageAPI msg' (msg' -> ListKeysResponse) ListKeysResponse where
   getVal m' f' = f' m'
  
-instance P'.GPB RpbListKeysResp
+instance P'.GPB ListKeysResponse
  
-instance P'.ReflectDescriptor RpbListKeysResp where
+instance P'.ReflectDescriptor ListKeysResponse where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [10, 16])
   reflectDescriptorInfo _
    = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Riakclient.RpbListKeysResp\", haskellPrefix = [MName \"Network\"], parentModule = [MName \"Riakclient\"], baseName = MName \"RpbListKeysResp\"}, descFilePath = [\"Network\",\"Riakclient\",\"RpbListKeysResp.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Riakclient.RpbListKeysResp.keys\", haskellPrefix' = [MName \"Network\"], parentModule' = [MName \"Riakclient\",MName \"RpbListKeysResp\"], baseName' = FName \"keys\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Riakclient.RpbListKeysResp.done\", haskellPrefix' = [MName \"Network\"], parentModule' = [MName \"Riakclient\",MName \"RpbListKeysResp\"], baseName' = FName \"done\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListKeysResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListKeysResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListKeysResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListKeysResponse.keys\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListKeysResponse\"], baseName' = FName \"keys\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListKeysResponse.done\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListKeysResponse\"], baseName' = FName \"done\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"

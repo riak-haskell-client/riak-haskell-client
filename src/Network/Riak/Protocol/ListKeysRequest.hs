@@ -1,27 +1,27 @@
-module Network.Riakclient.RpbListKeysReq (RpbListKeysReq(..)) where
+module Network.Riak.Protocol.ListKeysRequest (ListKeysRequest(..)) where
 import Prelude ((+))
 import qualified Prelude as P'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data RpbListKeysReq = RpbListKeysReq{bucket :: P'.ByteString}
-                    deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data ListKeysRequest = ListKeysRequest{bucket :: P'.ByteString}
+                     deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
  
-instance P'.Mergeable RpbListKeysReq where
-  mergeEmpty = RpbListKeysReq P'.mergeEmpty
-  mergeAppend (RpbListKeysReq x'1) (RpbListKeysReq y'1) = RpbListKeysReq (P'.mergeAppend x'1 y'1)
+instance P'.Mergeable ListKeysRequest where
+  mergeEmpty = ListKeysRequest P'.mergeEmpty
+  mergeAppend (ListKeysRequest x'1) (ListKeysRequest y'1) = ListKeysRequest (P'.mergeAppend x'1 y'1)
  
-instance P'.Default RpbListKeysReq where
-  defaultValue = RpbListKeysReq P'.defaultValue
+instance P'.Default ListKeysRequest where
+  defaultValue = ListKeysRequest P'.defaultValue
  
-instance P'.Wire RpbListKeysReq where
-  wireSize ft' self'@(RpbListKeysReq x'1)
+instance P'.Wire ListKeysRequest where
+  wireSize ft' self'@(ListKeysRequest x'1)
    = case ft' of
        10 -> calc'Size
        11 -> P'.prependMessageSize calc'Size
        _ -> P'.wireSizeErr ft' self'
     where
         calc'Size = (P'.wireSizeReq 1 12 x'1)
-  wirePut ft' self'@(RpbListKeysReq x'1)
+  wirePut ft' self'@(ListKeysRequest x'1)
    = case ft' of
        10 -> put'Fields
        11 -> do
@@ -43,13 +43,13 @@ instance P'.Wire RpbListKeysReq where
              10 -> P'.fmap (\ new'Field -> old'Self{bucket = new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
-instance P'.MessageAPI msg' (msg' -> RpbListKeysReq) RpbListKeysReq where
+instance P'.MessageAPI msg' (msg' -> ListKeysRequest) ListKeysRequest where
   getVal m' f' = f' m'
  
-instance P'.GPB RpbListKeysReq
+instance P'.GPB ListKeysRequest
  
-instance P'.ReflectDescriptor RpbListKeysReq where
+instance P'.ReflectDescriptor ListKeysRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList [10]) (P'.fromDistinctAscList [10])
   reflectDescriptorInfo _
    = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Riakclient.RpbListKeysReq\", haskellPrefix = [MName \"Network\"], parentModule = [MName \"Riakclient\"], baseName = MName \"RpbListKeysReq\"}, descFilePath = [\"Network\",\"Riakclient\",\"RpbListKeysReq.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Riakclient.RpbListKeysReq.bucket\", haskellPrefix' = [MName \"Network\"], parentModule' = [MName \"Riakclient\",MName \"RpbListKeysReq\"], baseName' = FName \"bucket\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListKeysRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListKeysRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListKeysRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListKeysRequest.bucket\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListKeysRequest\"], baseName' = FName \"bucket\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"

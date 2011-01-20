@@ -1,27 +1,27 @@
-module Network.Riakextra.RpbGetServerInfoReq (RpbGetServerInfoReq(..)) where
+module Network.Riak.Protocol.GetServerInfoRequest (GetServerInfoRequest(..)) where
 import Prelude ((+))
 import qualified Prelude as P'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data RpbGetServerInfoReq = RpbGetServerInfoReq{}
-                         deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data GetServerInfoRequest = GetServerInfoRequest{}
+                          deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
  
-instance P'.Mergeable RpbGetServerInfoReq where
-  mergeEmpty = RpbGetServerInfoReq
-  mergeAppend (RpbGetServerInfoReq) (RpbGetServerInfoReq) = RpbGetServerInfoReq
+instance P'.Mergeable GetServerInfoRequest where
+  mergeEmpty = GetServerInfoRequest
+  mergeAppend (GetServerInfoRequest) (GetServerInfoRequest) = GetServerInfoRequest
  
-instance P'.Default RpbGetServerInfoReq where
-  defaultValue = RpbGetServerInfoReq
+instance P'.Default GetServerInfoRequest where
+  defaultValue = GetServerInfoRequest
  
-instance P'.Wire RpbGetServerInfoReq where
-  wireSize ft' self'@(RpbGetServerInfoReq)
+instance P'.Wire GetServerInfoRequest where
+  wireSize ft' self'@(GetServerInfoRequest)
    = case ft' of
        10 -> calc'Size
        11 -> P'.prependMessageSize calc'Size
        _ -> P'.wireSizeErr ft' self'
     where
         calc'Size = 0
-  wirePut ft' self'@(RpbGetServerInfoReq)
+  wirePut ft' self'@(GetServerInfoRequest)
    = case ft' of
        10 -> put'Fields
        11 -> do
@@ -42,13 +42,13 @@ instance P'.Wire RpbGetServerInfoReq where
          = case wire'Tag of
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
-instance P'.MessageAPI msg' (msg' -> RpbGetServerInfoReq) RpbGetServerInfoReq where
+instance P'.MessageAPI msg' (msg' -> GetServerInfoRequest) GetServerInfoRequest where
   getVal m' f' = f' m'
  
-instance P'.GPB RpbGetServerInfoReq
+instance P'.GPB GetServerInfoRequest
  
-instance P'.ReflectDescriptor RpbGetServerInfoReq where
+instance P'.ReflectDescriptor GetServerInfoRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [])
   reflectDescriptorInfo _
    = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Riakextra.RpbGetServerInfoReq\", haskellPrefix = [MName \"Network\"], parentModule = [MName \"Riakextra\"], baseName = MName \"RpbGetServerInfoReq\"}, descFilePath = [\"Network\",\"Riakextra\",\"RpbGetServerInfoReq.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetServerInfoRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetServerInfoRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetServerInfoRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
