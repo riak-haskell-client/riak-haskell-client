@@ -10,157 +10,157 @@ import Data.Typeable
 import Control.Monad (liftM)
 import Data.Word (Word8)
 import Data.Binary.Put
-import Network.Riakclient.RpbSetClientIdReq
-import Network.Riakextra.RpbPingResp
-import Network.Riakclient.RpbGetReq
-import Network.Riakclient.RpbGetResp
-import Network.Riakclient.RpbPutReq
-import Network.Riakclient.RpbPutResp
-import Network.Riakclient.RpbDelReq
-import Network.Riakclient.RpbListKeysResp
-import Network.Riakclient.RpbGetClientIdResp
-import Network.Riakclient.RpbGetServerInfoResp
-import Network.Riakextra.RpbSetClientIdResp
-import Network.Riakextra.RpbGetServerInfoReq
-import Network.Riakclient.RpbListKeysReq
-import Network.Riakclient.RpbGetBucketReq
-import Network.Riakclient.RpbGetBucketResp
-import Network.Riakclient.RpbSetBucketReq
-import Network.Riakclient.RpbListBucketsResp
-import Network.Riakclient.RpbMapRedReq
-import Network.Riakclient.RpbMapRedResp
-import Network.Riakextra.RpbPingReq
-import Network.Riakextra.RpbGetClientIdReq
-import Network.Riakextra.RpbListBucketsReq
+import Network.Riak.Protocol.SetClientIDRequest
+import Network.Riak.Protocol.PingResponse
+import Network.Riak.Protocol.GetRequest
+import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.PutRequest
+import Network.Riak.Protocol.PutResponse
+import Network.Riak.Protocol.DeleteRequest
+import Network.Riak.Protocol.ListKeysResponse
+import Network.Riak.Protocol.GetClientIDResponse
+import Network.Riak.Protocol.ServerInfo
+import Network.Riak.Protocol.SetClientIDResponse
+import Network.Riak.Protocol.GetServerInfoRequest
+import Network.Riak.Protocol.ListKeysRequest
+import Network.Riak.Protocol.GetBucketRequest
+import Network.Riak.Protocol.GetBucketResponse
+import Network.Riak.Protocol.SetBucketRequest
+import Network.Riak.Protocol.ListBucketsResponse
+import Network.Riak.Protocol.MapReduceRequest
+import Network.Riak.Protocol.MapReduce
+import Network.Riak.Protocol.PingRequest
+import Network.Riak.Protocol.GetClientIDRequest
+import Network.Riak.Protocol.ListBucketsRequest
 import Text.ProtocolBuffers
 import Text.ProtocolBuffers.Get
 import Network.Riak.Types.Internal as Types
 
-instance Tagged RpbPingReq where
-    messageTag _ = PingReq
+instance Tagged PingRequest where
+    messageTag _ = Types.PingRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbPingReq
+instance Request PingRequest
 
-instance Tagged RpbPingResp where
-    messageTag _ = PingResp
+instance Tagged PingResponse where
+    messageTag _ = Types.PingResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbPingResp
+instance Response PingResponse
 
-instance Tagged RpbGetClientIdReq where
-    messageTag _ = GetClientIdReq
+instance Tagged GetClientIDRequest where
+    messageTag _ = Types.GetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbGetClientIdReq
+instance Request GetClientIDRequest
 
-instance Tagged RpbGetClientIdResp where
-    messageTag _ = GetClientIdResp
+instance Tagged GetClientIDResponse where
+    messageTag _ = Types.GetClientIDResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbGetClientIdResp
+instance Response GetClientIDResponse
 
-instance Tagged RpbSetClientIdReq where
-    messageTag _ = SetClientIdReq
+instance Tagged SetClientIDRequest where
+    messageTag _ = Types.SetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbSetClientIdReq
+instance Request SetClientIDRequest
 
-instance Tagged RpbGetServerInfoReq where
-    messageTag _ = GetServerInfoReq
+instance Tagged GetServerInfoRequest where
+    messageTag _ = Types.GetServerInfoRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbGetServerInfoReq
+instance Request GetServerInfoRequest
 
-instance Tagged RpbGetServerInfoResp where
-    messageTag _ = GetServerInfoResp
+instance Tagged ServerInfo where
+    messageTag _ = Types.GetServerInfoResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbGetServerInfoResp
+instance Response ServerInfo
 
-instance Tagged RpbGetReq where
-    messageTag _ = GetReq
+instance Tagged GetRequest where
+    messageTag _ = Types.GetRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbGetReq
+instance Request GetRequest
 
-instance Tagged RpbGetResp where
-    messageTag _ = GetResp
+instance Tagged GetResponse where
+    messageTag _ = Types.GetResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbGetResp
+instance Response GetResponse
 
-instance Tagged RpbPutReq where
-    messageTag _ = PutReq
+instance Tagged PutRequest where
+    messageTag _ = Types.PutRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbPutReq
+instance Request PutRequest
 
-instance Tagged RpbPutResp where
-    messageTag _ = PutResp
+instance Tagged PutResponse where
+    messageTag _ = Types.PutResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbPutResp
+instance Response PutResponse
 
-instance Tagged RpbDelReq where
-    messageTag _ = DelReq
+instance Tagged DeleteRequest where
+    messageTag _ = Types.DeleteRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbDelReq
+instance Request DeleteRequest
 
-instance Tagged RpbListBucketsReq where
-    messageTag _ = ListBucketsReq
+instance Tagged ListBucketsRequest where
+    messageTag _ = Types.ListBucketsRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbListBucketsReq
+instance Request ListBucketsRequest
 
-instance Tagged RpbListBucketsResp where
-    messageTag _ = ListBucketsResp
+instance Tagged ListBucketsResponse where
+    messageTag _ = Types.ListBucketsResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbListBucketsResp
+instance Response ListBucketsResponse
 
-instance Tagged RpbListKeysReq where
-    messageTag _ = ListKeysReq
+instance Tagged ListKeysRequest where
+    messageTag _ = Types.ListKeysRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbListKeysReq
+instance Request ListKeysRequest
 
-instance Tagged RpbListKeysResp where
-    messageTag _ = ListKeysResp
+instance Tagged ListKeysResponse where
+    messageTag _ = Types.ListKeysResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbListKeysResp
+instance Response ListKeysResponse
 
-instance Tagged RpbGetBucketReq where
-    messageTag _ = GetBucketReq
+instance Tagged GetBucketRequest where
+    messageTag _ = Types.GetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbGetBucketReq
+instance Request GetBucketRequest
 
-instance Tagged RpbGetBucketResp where
-    messageTag _ = GetBucketResp
+instance Tagged GetBucketResponse where
+    messageTag _ = Types.GetBucketResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbGetBucketResp
+instance Response GetBucketResponse
 
-instance Tagged RpbSetBucketReq where
-    messageTag _ = SetBucketReq
+instance Tagged SetBucketRequest where
+    messageTag _ = Types.SetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbSetBucketReq
+instance Request SetBucketRequest
 
-instance Tagged RpbMapRedReq where
-    messageTag _ = MapRedReq
+instance Tagged MapReduceRequest where
+    messageTag _ = Types.MapReduceRequest
     {-# INLINE messageTag #-}
 
-instance Request RpbMapRedReq
+instance Request MapReduceRequest
 
-instance Tagged RpbMapRedResp where
-    messageTag _ = MapRedResp
+instance Tagged MapReduce where
+    messageTag _ = Types.MapReduceResponse
     {-# INLINE messageTag #-}
 
-instance Response RpbMapRedResp
+instance Response MapReduce
 
 putTag :: MessageTag -> Put
 putTag = putWord8 . fromIntegral . fromEnum

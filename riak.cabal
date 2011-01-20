@@ -30,35 +30,34 @@ library
     Network.Riak.Types.Internal
     Network.Riak.Message
     Network.Riak.Socket
-    Network.Riakclient
-    Network.Riakclient.RpbBucketProps
-    Network.Riakclient.RpbContent
-    Network.Riakclient.RpbDelReq
-    Network.Riakclient.RpbErrorResp
-    Network.Riakclient.RpbGetBucketReq
-    Network.Riakclient.RpbGetBucketResp
-    Network.Riakclient.RpbGetClientIdResp
-    Network.Riakclient.RpbGetReq
-    Network.Riakclient.RpbGetResp
-    Network.Riakclient.RpbGetServerInfoResp
-    Network.Riakclient.RpbLink
-    Network.Riakclient.RpbListBucketsResp
-    Network.Riakclient.RpbListKeysReq
-    Network.Riakclient.RpbListKeysResp
-    Network.Riakclient.RpbMapRedReq
-    Network.Riakclient.RpbMapRedResp
-    Network.Riakclient.RpbPair
-    Network.Riakclient.RpbPutReq
-    Network.Riakclient.RpbPutResp
-    Network.Riakclient.RpbSetBucketReq
-    Network.Riakclient.RpbSetClientIdReq
-    Network.Riakextra
-    Network.Riakextra.RpbPingReq
-    Network.Riakextra.RpbPingResp
-    Network.Riakextra.RpbGetClientIdReq
-    Network.Riakextra.RpbSetClientIdResp
-    Network.Riakextra.RpbGetServerInfoReq
-    Network.Riakextra.RpbListBucketsReq
+    Network.Riak.Protocol
+    Network.Riak.Protocol.BucketProps
+    Network.Riak.Protocol.Content
+    Network.Riak.Protocol.DeleteRequest
+    Network.Riak.Protocol.ErrorResponse
+    Network.Riak.Protocol.GetBucketRequest
+    Network.Riak.Protocol.GetBucketResponse
+    Network.Riak.Protocol.GetClientIDResponse
+    Network.Riak.Protocol.GetRequest
+    Network.Riak.Protocol.GetResponse
+    Network.Riak.Protocol.ServerInfo
+    Network.Riak.Protocol.Link
+    Network.Riak.Protocol.ListBucketsResponse
+    Network.Riak.Protocol.ListKeysRequest
+    Network.Riak.Protocol.ListKeysResponse
+    Network.Riak.Protocol.MapReduceRequest
+    Network.Riak.Protocol.MapReduce
+    Network.Riak.Protocol.Pair
+    Network.Riak.Protocol.PutRequest
+    Network.Riak.Protocol.PutResponse
+    Network.Riak.Protocol.SetBucketRequest
+    Network.Riak.Protocol.SetClientIDRequest
+    Network.Riak.Protocol.PingRequest
+    Network.Riak.Protocol.PingResponse
+    Network.Riak.Protocol.GetClientIDRequest
+    Network.Riak.Protocol.SetClientIDResponse
+    Network.Riak.Protocol.GetServerInfoRequest
+    Network.Riak.Protocol.ListBucketsRequest
   
   build-depends:       
     base == 4.*,

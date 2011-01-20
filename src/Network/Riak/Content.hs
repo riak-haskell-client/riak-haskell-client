@@ -2,19 +2,17 @@
 
 module Network.Riak.Content
     (
-      RpbContent(..)
-    , Content
-    , unspecified
+      unspecified
     , binary
     ) where
 
 import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.Sequence as Seq
-import Network.Riakclient.RpbContent as Rpb
+import Network.Riak.Protocol.Content as Rpb
 import Network.Riak.Types
 
 unspecified :: Content
-unspecified = RpbContent { value = L.empty
+unspecified = Content { value = L.empty
                          , content_type = Nothing
                          , charset = Nothing
                          , content_encoding = Nothing

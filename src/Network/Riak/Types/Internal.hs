@@ -10,8 +10,7 @@ module Network.Riak.Types.Internal
     , R(..)
     , W(..)
     , DW(..)
-    , fromQuorum
-    , toQuorum
+    , Quorum(..)
     ) where
 
 import qualified Data.ByteString.Lazy as L
@@ -19,31 +18,31 @@ import Data.Digest.Pure.MD5 (md5)
 import Data.Word
 import Text.ProtocolBuffers
 
-data MessageTag = ErrorResp
-                | PingReq
-                | PingResp
-                | GetClientIdReq
-                | GetClientIdResp
-                | SetClientIdReq
-                | SetClientIdResp
-                | GetServerInfoReq
-                | GetServerInfoResp
-                | GetReq
-                | GetResp
-                | PutReq
-                | PutResp
-                | DelReq
-                | DelResp
-                | ListBucketsReq
-                | ListBucketsResp
-                | ListKeysReq
-                | ListKeysResp
-                | GetBucketReq
-                | GetBucketResp
-                | SetBucketReq
-                | SetBucketResp
-                | MapRedReq
-                | MapRedResp
+data MessageTag = ErrorResponse
+                | PingRequest
+                | PingResponse
+                | GetClientIDRequest
+                | GetClientIDResponse
+                | SetClientIDRequest
+                | SetClientIDResponse
+                | GetServerInfoRequest
+                | GetServerInfoResponse
+                | GetRequest
+                | GetResponse
+                | PutRequest
+                | PutResponse
+                | DeleteRequest
+                | DeleteResponse
+                | ListBucketsRequest
+                | ListBucketsResponse
+                | ListKeysRequest
+                | ListKeysResponse
+                | GetBucketRequest
+                | GetBucketResponse
+                | SetBucketRequest
+                | SetBucketResponse
+                | MapReduceRequest
+                | MapReduceResponse
                   deriving (Eq, Show, Enum)
 
 class Tagged msg where

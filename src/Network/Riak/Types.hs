@@ -2,10 +2,6 @@ module Network.Riak.Types
     (
       ClientID
     , Client(..)
-    , Content
-    , ServerInfo
-    , BucketProps
-    , MapReduce
     , Job(..)
     , Connection(..)
     , Bucket
@@ -22,10 +18,10 @@ import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import Data.IORef (IORef)
 import Network.Socket
-import Network.Riakclient.RpbContent
-import Network.Riakclient.RpbGetServerInfoResp
-import Network.Riakclient.RpbBucketProps
-import Network.Riakclient.RpbMapRedResp
+import Network.Riak.Protocol.Content
+import Network.Riak.Protocol.ServerInfo
+import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.MapReduce
 import Network.Riak.Types.Internal
     
 type ClientID = L.ByteString
@@ -51,14 +47,6 @@ instance Show Connection where
 type Bucket = L.ByteString
 
 type Key = L.ByteString
-
-type Content = RpbContent
-
-type ServerInfo = RpbGetServerInfoResp
-
-type BucketProps = RpbBucketProps
-  
-type MapReduce = RpbMapRedResp
 
 data Job = JSON L.ByteString
          | Erlang L.ByteString

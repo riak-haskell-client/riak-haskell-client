@@ -29,33 +29,35 @@ import Data.Binary.Put
 import Control.Monad
 import Network.Socket.ByteString.Lazy as L
 import Network.Socket as Socket
-import Network.Riakclient.RpbContent
-import Network.Riakclient.RpbPutReq
-import Network.Riakclient.RpbPutResp
-import Network.Riakclient.RpbDelReq
-import Network.Riakclient.RpbGetServerInfoResp
-import Network.Riakclient.RpbListBucketsResp
-import Network.Riakclient.RpbListKeysReq
-import Network.Riakclient.RpbSetBucketReq
-import Network.Riakclient.RpbListKeysResp
-import Network.Riakextra.RpbPingReq
-import Network.Riakextra.RpbGetClientIdReq
-import Network.Riakextra.RpbGetServerInfoReq
-import Network.Riakextra.RpbListBucketsReq
+import Network.Riak.Protocol.Content
+import Network.Riak.Protocol.PutRequest
+import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.PutResponse
+import Network.Riak.Protocol.DeleteRequest
+import Network.Riak.Protocol.ServerInfo
+import Network.Riak.Protocol.ListBucketsResponse
+import Network.Riak.Protocol.ListKeysRequest
+import Network.Riak.Protocol.SetBucketRequest
+import Network.Riak.Protocol.ListKeysResponse
+import Network.Riak.Protocol.PingRequest
+import Network.Riak.Protocol.GetClientIDRequest
+import Network.Riak.Protocol.GetServerInfoRequest
+import Network.Riak.Protocol.ListBucketsRequest
 import qualified Data.ByteString.Lazy.Char8 as L
 import Numeric (showHex)
 import System.Random
-import Network.Riakclient.RpbGetReq as GetReq
-import Network.Riakclient.RpbGetResp
-import Network.Riakclient.RpbGetBucketReq
-import Network.Riakclient.RpbMapRedReq
-import Network.Riakclient.RpbMapRedResp
-import Network.Riakclient.RpbGetBucketResp as GetBucketResp
-import Network.Riakclient.RpbSetClientIdReq
-import Network.Riakclient.RpbGetClientIdResp as GetClientIdResp
+import Network.Riak.Protocol.GetRequest as GetRequest
+import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.GetBucketRequest
+import Network.Riak.Protocol.MapReduceRequest
+import Network.Riak.Protocol.MapReduce
+import Network.Riak.Protocol.GetBucketResponse as GetBucketResponse
+import Network.Riak.Protocol.SetClientIDRequest
+import Network.Riak.Protocol.GetClientIDResponse as GetClientIDResponse
 import Network.Riak.Message
 import Network.Riak.Types as T
-import Network.Riak.Types.Internal
+import qualified Network.Riak.Types.Internal as T
+import Network.Riak.Types.Internal (VClock(..), Quorum(..))
 import Text.ProtocolBuffers
 import Data.IORef
 
@@ -94,71 +96,71 @@ connect cli0 = do
 
 ping :: Connection -> IO ()
 ping conn@Connection{..} = do
-  sendRequest conn RpbPingReq
-  recvResponse_ conn PingResp
+  sendRequest conn PingRequest
+  recvResponse_ conn T.PingResponse
 
 getClientID :: Connection -> ClientID -> IO ClientID
 getClientID conn id = do
-  sendRequest conn RpbGetClientIdReq
-  GetClientIdResp.client_id <$> recvResponse conn
+  sendRequest conn GetClientIDRequest
+  GetClientIDResponse.client_id <$> recvResponse conn
 
 setClientID :: Connection -> ClientID -> IO ()
 setClientID conn id = do
-  sendRequest conn $ RpbSetClientIdReq id
-  recvResponse_ conn SetClientIdResp
+  sendRequest conn $ SetClientIDRequest id
+  recvResponse_ conn T.SetClientIDResponse
 
 getServerInfo :: Connection -> IO ServerInfo
 getServerInfo conn = do
-  sendRequest conn RpbGetServerInfoReq
+  sendRequest conn GetServerInfoRequest
   recvResponse conn
 
 get :: Connection -> T.Bucket -> T.Key -> Maybe R
     -> IO (Maybe (Seq Content, Maybe VClock))
 get conn@Connection{..} bucket key r = do
-  sendRequest conn RpbGetReq { bucket = bucket
-                             , key = key
-                             , r = fromQuorum <$> r }
+  sendRequest conn GetRequest { bucket = bucket
+                              , key = key
+                              , r = fromQuorum <$> r }
   maybe Nothing cast <$> recvMaybeResponse conn
- where cast RpbGetResp{..} = Just (content, VClock <$> vclock)
+ where cast GetResponse{..} = Just (content, VClock <$> vclock)
 
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> Maybe W -> Maybe DW -> Bool
     -> IO (Seq Content, Maybe VClock)
 put conn@Connection{..} bucket key vclock content w dw returnBody = do
-  sendRequest conn $ RpbPutReq bucket key (fromVClock <$> vclock) content
+  sendRequest conn $ PutRequest bucket key (fromVClock <$> vclock) content
                      (fromQuorum <$> w) (fromQuorum <$> dw) (Just returnBody)
-  RpbPutResp{..} <- recvResponse conn
+  PutResponse{..} <- recvResponse conn
   return (content, VClock <$> vclock)
 
 delete :: Connection -> T.Bucket -> T.Key -> Maybe RW -> IO ()
 delete conn bucket key rw = do
-  sendRequest conn $ RpbDelReq bucket key (fromQuorum <$> rw)
-  recvResponse_ conn DelResp
+  sendRequest conn $ DeleteRequest bucket key (fromQuorum <$> rw)
+  recvResponse_ conn T.DeleteResponse
 
 listBuckets :: Connection -> IO (Seq T.Bucket)
 listBuckets conn = do
-  sendRequest conn $ RpbListBucketsReq
+  sendRequest conn $ ListBucketsRequest
   buckets <$> recvResponse conn
 
 listKeys :: Connection -> T.Bucket -> IO (Seq T.Key, Maybe Bool)
 listKeys conn bucket = do
-  sendRequest conn $ RpbListKeysReq bucket
-  RpbListKeysResp{..} <- recvResponse conn
+  sendRequest conn $ ListKeysRequest bucket
+  ListKeysResponse{..} <- recvResponse conn
   return (keys, done)
 
 getBucket :: Connection -> T.Bucket -> IO BucketProps
 getBucket conn bucket = do
-  sendRequest conn $ RpbGetBucketReq bucket
-  GetBucketResp.props <$> recvResponse conn
+  sendRequest conn $ GetBucketRequest bucket
+  GetBucketResponse.props <$> recvResponse conn
 
 setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
 setBucket conn bucket props = do
-  sendRequest conn $ RpbSetBucketReq bucket props
-  recvResponse_ conn SetBucketResp
+  sendRequest conn $ SetBucketRequest bucket props
+  recvResponse_ conn T.SetBucketResponse
 
 mapReduce :: Connection -> Job -> IO MapReduce
 mapReduce conn job = do
   sendRequest conn $ case job of
-                       JSON bs -> RpbMapRedReq bs "application/json"
-                       Erlang bs -> RpbMapRedReq bs "application/x-erlang-binary"
+                       JSON bs -> MapReduceRequest bs "application/json"
+                       Erlang bs -> MapReduceRequest bs "application/x-erlang-binary"
   recvResponse conn

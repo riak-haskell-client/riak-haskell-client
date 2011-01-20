@@ -3,7 +3,7 @@
 module Network.Riak.Message
     (
       getResponse
-    , putPingReq
+    , putPingRequest
     , recvResponse_
     , recvResponse
     , recvMaybeResponse
@@ -22,13 +22,13 @@ import Network.Riak.Types.Internal
 import Network.Riak.Message.Tag
 import Text.ProtocolBuffers as PB
 import Text.ProtocolBuffers.Get
-import Network.Riakclient.RpbGetResp
-import Network.Riakclient.RpbPutResp
-import Network.Riakclient.RpbGetClientIdResp
+import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.PutResponse
+import Network.Riak.Protocol.GetClientIDResponse
 import Network.Socket.ByteString.Lazy as L
 
-putPingReq :: Put
-putPingReq = putWord32be 1 >> putTag PingReq
+putPingRequest :: Put
+putPingRequest = putWord32be 1 >> putTag PingRequest
 
 putRequest :: (Request req) => req -> Put
 putRequest req = do
