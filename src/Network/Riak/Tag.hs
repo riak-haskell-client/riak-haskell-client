@@ -1,4 +1,4 @@
-module Network.Riak.Message.Tag
+module Network.Riak.Tag
     (
       Tagged(..)
     , MessageTag
@@ -6,35 +6,31 @@ module Network.Riak.Message.Tag
     , getTag
     ) where
 
-import Data.Typeable
-import Control.Monad (liftM)
-import Data.Word (Word8)
-import Data.Binary.Put
-import Network.Riak.Protocol.SetClientIDRequest
-import Network.Riak.Protocol.PingResponse
-import Network.Riak.Protocol.GetRequest
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.PutRequest
-import Network.Riak.Protocol.PutResponse
+import Data.Binary.Put (Put, putWord8)
 import Network.Riak.Protocol.DeleteRequest
-import Network.Riak.Protocol.ListKeysResponse
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.ServerInfo
-import Network.Riak.Protocol.SetClientIDResponse
-import Network.Riak.Protocol.GetServerInfoRequest
-import Network.Riak.Protocol.ListKeysRequest
 import Network.Riak.Protocol.GetBucketRequest
 import Network.Riak.Protocol.GetBucketResponse
-import Network.Riak.Protocol.SetBucketRequest
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.MapReduce
-import Network.Riak.Protocol.PingRequest
 import Network.Riak.Protocol.GetClientIDRequest
+import Network.Riak.Protocol.GetClientIDResponse
+import Network.Riak.Protocol.GetRequest
+import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.GetServerInfoRequest
 import Network.Riak.Protocol.ListBucketsRequest
-import Text.ProtocolBuffers
-import Text.ProtocolBuffers.Get
+import Network.Riak.Protocol.ListBucketsResponse
+import Network.Riak.Protocol.ListKeysRequest
+import Network.Riak.Protocol.ListKeysResponse
+import Network.Riak.Protocol.MapReduce
+import Network.Riak.Protocol.MapReduceRequest
+import Network.Riak.Protocol.PingRequest
+import Network.Riak.Protocol.PingResponse
+import Network.Riak.Protocol.PutRequest
+import Network.Riak.Protocol.PutResponse
+import Network.Riak.Protocol.ServerInfo
+import Network.Riak.Protocol.SetBucketRequest
+import Network.Riak.Protocol.SetClientIDRequest
+import Network.Riak.Protocol.SetClientIDResponse
 import Network.Riak.Types.Internal as Types
+import Text.ProtocolBuffers.Get (Get, getWord8)
 
 instance Tagged PingRequest where
     messageTag _ = Types.PingRequest
@@ -65,6 +61,12 @@ instance Tagged SetClientIDRequest where
     {-# INLINE messageTag #-}
 
 instance Request SetClientIDRequest
+
+instance Tagged SetClientIDResponse where
+    messageTag _ = Types.SetClientIDResponse
+    {-# INLINE messageTag #-}
+
+instance Request SetClientIDResponse
 
 instance Tagged GetServerInfoRequest where
     messageTag _ = Types.GetServerInfoRequest

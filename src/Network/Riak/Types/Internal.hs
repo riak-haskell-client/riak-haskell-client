@@ -1,22 +1,64 @@
 module Network.Riak.Types.Internal
     (
-      MessageTag(..)
-    , Tagged(..)
-    , Request(..)
-    , Response(..)
+    -- * Client management
+      ClientID
+    , Client(..)
+    -- * Connection management
+    , Connection(..)
+    -- * Data types
+    , Bucket
+    , Key
     , VClock(..)
-    , Q(..)
-    , RW(..)
-    , R(..)
-    , W(..)
-    , DW(..)
+    , Job(..)
+    -- * Quorum management
     , Quorum(..)
+    , DW
+    , R
+    , RW
+    , W
+    , fromQuorum
+    , toQuorum
+    -- * Message identification
+    , Request
+    , Response
+    , MessageTag(..)
+    , Tagged(..)
     ) where
 
-import qualified Data.ByteString.Lazy as L
+import Data.ByteString.Lazy (ByteString)
 import Data.Digest.Pure.MD5 (md5)
-import Data.Word
-import Text.ProtocolBuffers
+import Data.IORef (IORef)
+import Data.Word (Word32)
+import Network.Socket (HostName, ServiceName, Socket)
+import Text.ProtocolBuffers (ReflectDescriptor, Wire)
+    
+type ClientID = ByteString
+
+data Client = Client {
+      host :: HostName
+    , port :: ServiceName
+    , prefix :: ByteString
+    , mapReducePrefix :: ByteString
+    , clientID :: ClientID
+    } deriving (Eq, Show)
+
+data Connection = Connection {
+      connSock :: Socket
+    , connClient :: Client
+    , connBuffer :: IORef ByteString
+    } deriving (Eq)
+
+instance Show Connection where
+    show conn = show "Connection " ++ host c ++ ":" ++ port c
+        where c = connClient conn
+
+type Bucket = ByteString
+
+type Key = ByteString
+
+data Job = JSON ByteString
+         | Erlang ByteString
+           deriving (Eq, Show)
 
 data MessageTag = ErrorResponse
                 | PingRequest
@@ -62,73 +104,34 @@ instance (Tagged a, Tagged b) => Tagged (Either a b) where
     {-# INLINE messageTag #-}
 
 newtype VClock = VClock {
-      fromVClock :: L.ByteString
+      fromVClock :: ByteString
     } deriving (Eq)
 
 instance Show VClock where
     show (VClock s) = "VClock " ++ show (md5 s)
 
-data Q = Default
-       | All
-       | Quorum
-       | One
-         deriving (Eq, Enum, Show)
+data Quorum = Default
+            | All
+            | Quorum
+            | One
+              deriving (Eq, Enum, Show)
 
-newtype RW = RW Q deriving (Eq, Show)
-newtype R  = R Q deriving (Eq, Show)
-newtype W  = W Q deriving (Eq, Show)
-newtype DW = DW Q deriving (Eq, Show)
+type RW = Quorum
+type R  = Quorum
+type W  = Quorum
+type DW = Quorum
 
-fromQ :: Q -> Word32
-fromQ Default = 4294967291
-fromQ All     = 4294967292
-fromQ Quorum  = 4294967293
-fromQ One     = 4294967294
-{-# INLINE fromQ #-}
+fromQuorum :: Quorum -> Word32
+fromQuorum Default = 4294967291
+fromQuorum All     = 4294967292
+fromQuorum Quorum  = 4294967293
+fromQuorum One     = 4294967294
+{-# INLINE fromQuorum #-}
 
-toQ :: Word32 -> Maybe Q
-toQ 4294967291 = Just Default
-toQ 4294967292 = Just All
-toQ 4294967293 = Just Quorum
-toQ 4294967294 = Just One
-toQ _          = Nothing
-{-# INLINE toQ #-}
-
-class Quorum q where
-    fromQuorum :: q -> Word32
-    toQuorum :: Word32 -> Maybe q
-
-instance Quorum Q where
-    fromQuorum = fromQ
-    {-# INLINE fromQuorum #-}
-
-    toQuorum = toQ
-    {-# INLINE toQuorum #-}
-
-instance Quorum R where
-    fromQuorum (R q) = fromQ q
-    {-# INLINE fromQuorum #-}
-
-    toQuorum = fmap R . toQ
-    {-# INLINE toQuorum #-}
-
-instance Quorum W where
-    fromQuorum (W q) = fromQ q
-    {-# INLINE fromQuorum #-}
-
-    toQuorum = fmap W . toQ
-    {-# INLINE toQuorum #-}
-
-instance Quorum RW where
-    fromQuorum (RW q) = fromQ q
-    {-# INLINE fromQuorum #-}
-
-    toQuorum = fmap RW . toQ
-    {-# INLINE toQuorum #-}
-
-instance Quorum DW where
-    fromQuorum (DW q) = fromQ q
-    {-# INLINE fromQuorum #-}
-
-    toQuorum = fmap DW . toQ
-    {-# INLINE toQuorum #-}
+toQuorum :: Word32 -> Maybe Quorum
+toQuorum 4294967291 = Just Default
+toQuorum 4294967292 = Just All
+toQuorum 4294967293 = Just Quorum
+toQuorum 4294967294 = Just One
+toQuorum _          = Nothing
+{-# INLINE toQuorum #-}
