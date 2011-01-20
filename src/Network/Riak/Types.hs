@@ -4,6 +4,9 @@ module Network.Riak.Types
     , Client(..)
     , Content
     , ServerInfo
+    , BucketProps
+    , MapReduce
+    , Job(..)
     , Connection(..)
     , Bucket
     , Key
@@ -21,6 +24,8 @@ import Data.IORef (IORef)
 import Network.Socket
 import Network.Riakclient.RpbContent
 import Network.Riakclient.RpbGetServerInfoResp
+import Network.Riakclient.RpbBucketProps
+import Network.Riakclient.RpbMapRedResp
 import Network.Riak.Types.Internal
     
 type ClientID = L.ByteString
@@ -50,3 +55,11 @@ type Key = L.ByteString
 type Content = RpbContent
 
 type ServerInfo = RpbGetServerInfoResp
+
+type BucketProps = RpbBucketProps
+  
+type MapReduce = RpbMapRedResp
+
+data Job = JSON L.ByteString
+         | Erlang L.ByteString
+           deriving (Eq, Show)

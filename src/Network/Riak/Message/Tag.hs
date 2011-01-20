@@ -28,6 +28,7 @@ import Network.Riakclient.RpbGetBucketResp
 import Network.Riakclient.RpbSetBucketReq
 import Network.Riakclient.RpbListBucketsResp
 import Network.Riakclient.RpbMapRedReq
+import Network.Riakclient.RpbMapRedResp
 import Network.Riakextra.RpbPingReq
 import Network.Riakextra.RpbGetClientIdReq
 import Network.Riakextra.RpbListBucketsReq
@@ -154,6 +155,12 @@ instance Tagged RpbMapRedReq where
     {-# INLINE messageTag #-}
 
 instance Request RpbMapRedReq
+
+instance Tagged RpbMapRedResp where
+    messageTag _ = MapRedResp
+    {-# INLINE messageTag #-}
+
+instance Response RpbMapRedResp
 
 putTag :: MessageTag -> Put
 putTag = putWord8 . fromIntegral . fromEnum

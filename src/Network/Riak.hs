@@ -17,6 +17,9 @@ module Network.Riak
     , delete
     , listBuckets
     , listKeys
+    , getBucket
+    , setBucket
+    , mapReduce
     ) where
 
 import qualified Data.ByteString.Char8 as B
@@ -33,6 +36,7 @@ import Network.Riakclient.RpbDelReq
 import Network.Riakclient.RpbGetServerInfoResp
 import Network.Riakclient.RpbListBucketsResp
 import Network.Riakclient.RpbListKeysReq
+import Network.Riakclient.RpbSetBucketReq
 import Network.Riakclient.RpbListKeysResp
 import Network.Riakextra.RpbPingReq
 import Network.Riakextra.RpbGetClientIdReq
@@ -43,6 +47,10 @@ import Numeric (showHex)
 import System.Random
 import Network.Riakclient.RpbGetReq as GetReq
 import Network.Riakclient.RpbGetResp
+import Network.Riakclient.RpbGetBucketReq
+import Network.Riakclient.RpbMapRedReq
+import Network.Riakclient.RpbMapRedResp
+import Network.Riakclient.RpbGetBucketResp as GetBucketResp
 import Network.Riakclient.RpbSetClientIdReq
 import Network.Riakclient.RpbGetClientIdResp as GetClientIdResp
 import Network.Riak.Message
@@ -137,3 +145,20 @@ listKeys conn bucket = do
   sendRequest conn $ RpbListKeysReq bucket
   RpbListKeysResp{..} <- recvResponse conn
   return (keys, done)
+
+getBucket :: Connection -> T.Bucket -> IO BucketProps
+getBucket conn bucket = do
+  sendRequest conn $ RpbGetBucketReq bucket
+  GetBucketResp.props <$> recvResponse conn
+
+setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
+setBucket conn bucket props = do
+  sendRequest conn $ RpbSetBucketReq bucket props
+  recvResponse_ conn SetBucketResp
+
+mapReduce :: Connection -> Job -> IO MapReduce
+mapReduce conn job = do
+  sendRequest conn $ case job of
+                       JSON bs -> RpbMapRedReq bs "application/json"
+                       Erlang bs -> RpbMapRedReq bs "application/x-erlang-binary"
+  recvResponse conn
