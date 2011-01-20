@@ -17,16 +17,20 @@ import Network.Riakclient.RpbGetResp
 import Network.Riakclient.RpbPutReq
 import Network.Riakclient.RpbPutResp
 import Network.Riakclient.RpbDelReq
+import Network.Riakclient.RpbListKeysResp
 import Network.Riakclient.RpbGetClientIdResp
 import Network.Riakclient.RpbGetServerInfoResp
 import Network.Riakextra.RpbSetClientIdResp
 import Network.Riakextra.RpbGetServerInfoReq
 import Network.Riakclient.RpbListKeysReq
 import Network.Riakclient.RpbGetBucketReq
+import Network.Riakclient.RpbGetBucketResp
 import Network.Riakclient.RpbSetBucketReq
+import Network.Riakclient.RpbListBucketsResp
 import Network.Riakclient.RpbMapRedReq
 import Network.Riakextra.RpbPingReq
 import Network.Riakextra.RpbGetClientIdReq
+import Network.Riakextra.RpbListBucketsReq
 import Text.ProtocolBuffers
 import Text.ProtocolBuffers.Get
 import Network.Riak.Types.Internal as Types
@@ -103,17 +107,41 @@ instance Tagged RpbDelReq where
 
 instance Request RpbDelReq
 
+instance Tagged RpbListBucketsReq where
+    messageTag _ = ListBucketsReq
+    {-# INLINE messageTag #-}
+
+instance Request RpbListBucketsReq
+
+instance Tagged RpbListBucketsResp where
+    messageTag _ = ListBucketsResp
+    {-# INLINE messageTag #-}
+
+instance Response RpbListBucketsResp
+
 instance Tagged RpbListKeysReq where
     messageTag _ = ListKeysReq
     {-# INLINE messageTag #-}
 
 instance Request RpbListKeysReq
 
+instance Tagged RpbListKeysResp where
+    messageTag _ = ListKeysResp
+    {-# INLINE messageTag #-}
+
+instance Response RpbListKeysResp
+
 instance Tagged RpbGetBucketReq where
     messageTag _ = GetBucketReq
     {-# INLINE messageTag #-}
 
 instance Request RpbGetBucketReq
+
+instance Tagged RpbGetBucketResp where
+    messageTag _ = GetBucketResp
+    {-# INLINE messageTag #-}
+
+instance Response RpbGetBucketResp
 
 instance Tagged RpbSetBucketReq where
     messageTag _ = SetBucketReq

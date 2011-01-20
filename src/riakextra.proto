@@ -3,3 +3,4 @@ message RpbPingResp { }
 message RpbGetClientIdReq { }
 message RpbSetClientIdResp { }
 message RpbGetServerInfoReq { }
+message RpbListBucketsReq { }

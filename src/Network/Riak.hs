@@ -15,6 +15,8 @@ module Network.Riak
     , get
     , Network.Riak.put
     , delete
+    , listBuckets
+    , listKeys
     ) where
 
 import qualified Data.ByteString.Char8 as B
@@ -29,9 +31,13 @@ import Network.Riakclient.RpbPutReq
 import Network.Riakclient.RpbPutResp
 import Network.Riakclient.RpbDelReq
 import Network.Riakclient.RpbGetServerInfoResp
+import Network.Riakclient.RpbListBucketsResp
+import Network.Riakclient.RpbListKeysReq
+import Network.Riakclient.RpbListKeysResp
 import Network.Riakextra.RpbPingReq
 import Network.Riakextra.RpbGetClientIdReq
 import Network.Riakextra.RpbGetServerInfoReq
+import Network.Riakextra.RpbListBucketsReq
 import qualified Data.ByteString.Lazy.Char8 as L
 import Numeric (showHex)
 import System.Random
@@ -120,3 +126,14 @@ delete :: Connection -> T.Bucket -> T.Key -> Maybe RW -> IO ()
 delete conn bucket key rw = do
   sendRequest conn $ RpbDelReq bucket key (fromQuorum <$> rw)
   recvResponse_ conn DelResp
+
+listBuckets :: Connection -> IO (Seq T.Bucket)
+listBuckets conn = do
+  sendRequest conn $ RpbListBucketsReq
+  buckets <$> recvResponse conn
+
+listKeys :: Connection -> T.Bucket -> IO (Seq T.Key, Maybe Bool)
+listKeys conn bucket = do
+  sendRequest conn $ RpbListKeysReq bucket
+  RpbListKeysResp{..} <- recvResponse conn
+  return (keys, done)

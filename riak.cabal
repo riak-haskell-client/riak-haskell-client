@@ -58,6 +58,7 @@ library
     Network.Riakextra.RpbGetClientIdReq
     Network.Riakextra.RpbSetClientIdResp
     Network.Riakextra.RpbGetServerInfoReq
+    Network.Riakextra.RpbListBucketsReq
   
   build-depends:       
     base == 4.*,
