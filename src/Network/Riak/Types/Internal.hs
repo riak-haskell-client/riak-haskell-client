@@ -8,6 +8,7 @@ module Network.Riak.Types.Internal
     -- * Data types
     , Bucket
     , Key
+    , Tag
     , VClock(..)
     , Job(..)
     -- * Quorum management
@@ -19,7 +20,7 @@ module Network.Riak.Types.Internal
     , fromQuorum
     , toQuorum
     -- * Message identification
-    , Request
+    , Request(..)
     , Response
     , MessageTag(..)
     , Tagged(..)
@@ -55,6 +56,8 @@ instance Show Connection where
 type Bucket = ByteString
 
 type Key = ByteString
+
+type Tag = ByteString
 
 data Job = JSON ByteString
          | Erlang ByteString
@@ -94,7 +97,8 @@ instance Tagged MessageTag where
     messageTag m = m
     {-# INLINE messageTag #-}
 
-class (Tagged msg, ReflectDescriptor msg, Wire msg) => Request msg
+class (Tagged msg, ReflectDescriptor msg, Wire msg) => Request msg where
+    expectedResponse :: msg -> MessageTag
 
 class (Tagged msg, ReflectDescriptor msg, Wire msg) => Response msg
 

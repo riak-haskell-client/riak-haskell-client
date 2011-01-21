@@ -1,8 +1,6 @@
 module Network.Riak.Tag
     (
-      Tagged(..)
-    , MessageTag
-    , putTag
+      putTag
     , getTag
     ) where
 
@@ -36,7 +34,9 @@ instance Tagged PingRequest where
     messageTag _ = Types.PingRequest
     {-# INLINE messageTag #-}
 
-instance Request PingRequest
+instance Request PingRequest where
+    expectedResponse _ = Types.PingResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged PingResponse where
     messageTag _ = Types.PingResponse
@@ -48,7 +48,9 @@ instance Tagged GetClientIDRequest where
     messageTag _ = Types.GetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request GetClientIDRequest
+instance Request GetClientIDRequest where
+    expectedResponse _ = Types.GetClientIDResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged GetClientIDResponse where
     messageTag _ = Types.GetClientIDResponse
@@ -60,19 +62,25 @@ instance Tagged SetClientIDRequest where
     messageTag _ = Types.SetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request SetClientIDRequest
+instance Request SetClientIDRequest where
+    expectedResponse _ = Types.SetClientIDResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged SetClientIDResponse where
     messageTag _ = Types.SetClientIDResponse
     {-# INLINE messageTag #-}
 
-instance Request SetClientIDResponse
+instance Request SetClientIDResponse where
+    expectedResponse _ = Types.SetClientIDResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged GetServerInfoRequest where
     messageTag _ = Types.GetServerInfoRequest
     {-# INLINE messageTag #-}
 
-instance Request GetServerInfoRequest
+instance Request GetServerInfoRequest where
+    expectedResponse _ = Types.GetServerInfoResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged ServerInfo where
     messageTag _ = Types.GetServerInfoResponse
@@ -84,7 +92,9 @@ instance Tagged GetRequest where
     messageTag _ = Types.GetRequest
     {-# INLINE messageTag #-}
 
-instance Request GetRequest
+instance Request GetRequest where
+    expectedResponse _ = Types.GetResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged GetResponse where
     messageTag _ = Types.GetResponse
@@ -96,7 +106,9 @@ instance Tagged PutRequest where
     messageTag _ = Types.PutRequest
     {-# INLINE messageTag #-}
 
-instance Request PutRequest
+instance Request PutRequest where
+    expectedResponse _ = Types.PutResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged PutResponse where
     messageTag _ = Types.PutResponse
@@ -108,13 +120,17 @@ instance Tagged DeleteRequest where
     messageTag _ = Types.DeleteRequest
     {-# INLINE messageTag #-}
 
-instance Request DeleteRequest
+instance Request DeleteRequest where
+    expectedResponse _ = Types.DeleteResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged ListBucketsRequest where
     messageTag _ = Types.ListBucketsRequest
     {-# INLINE messageTag #-}
 
-instance Request ListBucketsRequest
+instance Request ListBucketsRequest where
+    expectedResponse _ = Types.ListBucketsResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged ListBucketsResponse where
     messageTag _ = Types.ListBucketsResponse
@@ -126,7 +142,9 @@ instance Tagged ListKeysRequest where
     messageTag _ = Types.ListKeysRequest
     {-# INLINE messageTag #-}
 
-instance Request ListKeysRequest
+instance Request ListKeysRequest where
+    expectedResponse _ = Types.ListKeysResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged ListKeysResponse where
     messageTag _ = Types.ListKeysResponse
@@ -138,7 +156,9 @@ instance Tagged GetBucketRequest where
     messageTag _ = Types.GetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request GetBucketRequest
+instance Request GetBucketRequest where
+    expectedResponse _ = Types.GetBucketResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged GetBucketResponse where
     messageTag _ = Types.GetBucketResponse
@@ -150,13 +170,17 @@ instance Tagged SetBucketRequest where
     messageTag _ = Types.SetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request SetBucketRequest
+instance Request SetBucketRequest where
+    expectedResponse _ = Types.SetBucketResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged MapReduceRequest where
     messageTag _ = Types.MapReduceRequest
     {-# INLINE messageTag #-}
 
-instance Request MapReduceRequest
+instance Request MapReduceRequest where
+    expectedResponse _ = Types.MapReduceResponse
+    {-# INLINE expectedResponse #-}
 
 instance Tagged MapReduce where
     messageTag _ = Types.MapReduceResponse

@@ -8,6 +8,7 @@ module Network.Riak.Types
     -- * Data types
     , Bucket
     , Key
+    , Tag
     , VClock(..)
     , Job(..)
     -- * Quorum management
