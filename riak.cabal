@@ -30,6 +30,7 @@ library
     Network.Riak.Content
     Network.Riak.Pipeline
     Network.Riak.Request
+    Network.Riak.Response
     Network.Riak.Simple
     Network.Riak.Types
     Network.Riak.Protocol.ServerInfo
@@ -54,9 +55,7 @@ library
     Network.Riak.Protocol.SetBucketRequest
     Network.Riak.Protocol.SetClientIDRequest
     Network.Riak.Protocol.PingRequest
-    Network.Riak.Protocol.PingResponse
     Network.Riak.Protocol.GetClientIDRequest
-    Network.Riak.Protocol.SetClientIDResponse
     Network.Riak.Protocol.GetServerInfoRequest
     Network.Riak.Protocol.ListBucketsRequest
 
@@ -67,6 +66,7 @@ library
     Network.Riak.Protocol
   
   build-depends:       
+    aeson,
     base == 4.*,
     binary,
     bytestring,

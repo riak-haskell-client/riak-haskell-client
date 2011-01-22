@@ -15,6 +15,9 @@ module Network.Riak.Connection.Internal
     , recvResponse
     , recvMaybeResponse
     , recvResponse_
+    , exchange
+    , exchangeMaybe
+    , exchange_
     -- ** Composing and parsing requests and responses
     , putRequest
     , getResponse
@@ -30,8 +33,7 @@ import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
 import Network.Riak.Protocol.SetClientIDRequest
 import Network.Riak.Tag (getTag, putTag)
-import Network.Riak.Types.Internal
-    (Client(..), ClientID, Connection(..), Request, Response, Tagged(..))
+import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import qualified Network.Socket.ByteString as B
 import qualified Network.Socket.ByteString.Lazy as L
@@ -116,7 +118,8 @@ recvWith onError Connection{..} n0
         else go (bs:acc) (n' - fromIntegral len)
 
 recvExactly :: Connection -> Int64 -> IO L.ByteString
-recvExactly = recvWith (const (fail "short read from network"))
+recvExactly = recvWith $ \_ ->
+              moduleError "recvExactly" "short read from network"
 
 recvGet :: Connection -> Get a -> IO a
 recvGet Connection{..} get = do
@@ -125,7 +128,7 @@ recvGet Connection{..} get = do
         if L.null bs
           then shutdown connSock ShutdownReceive >> return Nothing
           else return (Just bs)
-      step (Failed _ err)    = fail err
+      step (Failed _ err)    = moduleError "recvGet" err
       step (Finished bs _ r) = writeIORef connBuffer bs >> return r
       step (Partial k)       = (step . k) =<< refill
   mbs <- do
@@ -135,7 +138,7 @@ recvGet Connection{..} get = do
       else return (Just buf)
   case mbs of
     Just bs -> step $ runGet get bs
-    Nothing -> fail "socket closed"
+    Nothing -> moduleError "recvGet" "socket closed"
   
 recvGetN :: Connection -> Int64 -> Get a -> IO a
 recvGetN conn n get = do
@@ -147,9 +150,10 @@ recvGetN conn n get = do
     Finished bs' _ r -> finish bs' r
     Partial k    -> case k Nothing of
                       Finished bs' _ r -> finish bs' r
-                      Failed _ err -> fail err
-                      Partial _    -> fail "parser wants more input!?"
-    Failed _ err -> fail err
+                      Failed _ err -> moduleError "recvGetN" err
+                      Partial _    -> moduleError "recvGetN"
+                                      "parser wants more input!?"
+    Failed _ err -> moduleError "recvGetN" err
 
 putRequest :: (Request req) => req -> Put
 putRequest req = do
@@ -165,6 +169,21 @@ getResponse expected = do
     else return . Left $ "received unexpected response: expected " ++
                          show expected ++ ", received " ++ show tag
 
+exchange :: Exchange req resp => Connection -> req -> IO resp
+exchange conn@Connection{..} req = do
+  sendRequest conn req
+  recvResponse conn
+
+exchangeMaybe :: Exchange req resp => Connection -> req -> IO (Maybe resp)
+exchangeMaybe conn@Connection{..} req = do
+  sendRequest conn req
+  recvMaybeResponse conn
+
+exchange_ :: Request req => Connection -> req -> IO ()
+exchange_ conn req = do
+  sendRequest conn req
+  recvResponse_ conn (expectedResponse req)
+
 sendRequest :: (Request req) => Connection -> req -> IO ()
 sendRequest Connection{..} = L.sendAll connSock . runPut . putRequest
 
@@ -175,7 +194,7 @@ recvResponse conn = go undefined where
     len <- fromIntegral `fmap` recvGet conn getWord32be
     r <- recvGetN conn len (getResponse (messageTag dummy))
     case r of
-      Left err -> fail err
+      Left err  -> moduleError "recvResponse" err
       Right ret -> return ret
 
 recvResponse_ :: Connection -> T.MessageTag -> IO ()
@@ -183,8 +202,8 @@ recvResponse_ conn expected = do
   len <- fromIntegral `fmap` recvGet conn getWord32be
   tag <- recvGet conn getTag
   when (tag /= expected) .
-    fail $ "received unexpected response: expected " ++
-           show expected ++ ", received " ++ show tag
+    moduleError "recvResponse_" $ "received unexpected response: expected " ++
+                                  show expected ++ ", received " ++ show tag
   recvExactly conn (len-1) >> return ()
 
 recvMaybeResponse :: (Response a) => Connection -> IO (Maybe a)
@@ -198,5 +217,8 @@ recvMaybeResponse conn =  go undefined where
       else do
         r <- recvGetN conn len (getResponse (messageTag dummy))
         case r of
-          Left err -> fail err
+          Left err  -> moduleError "recvMaybeResponse" err
           Right ret -> return (Just ret)
+
+moduleError :: String -> String -> a
+moduleError = riakError "Network.Riak.Connection.Internal"

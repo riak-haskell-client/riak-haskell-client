@@ -1,3 +1,6 @@
+{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
+    RecordWildCards #-}
+
 module Network.Riak.Types.Internal
     (
     -- * Client management
@@ -5,6 +8,9 @@ module Network.Riak.Types.Internal
     , Client(..)
     -- * Connection management
     , Connection(..)
+    -- * Errors
+    , RiakException(..)
+    , riakError
     -- * Data types
     , Bucket
     , Key
@@ -22,10 +28,13 @@ module Network.Riak.Types.Internal
     -- * Message identification
     , Request(..)
     , Response
+    , Exchange
     , MessageTag(..)
     , Tagged(..)
     ) where
 
+import Control.Exception
+import Data.Typeable (Typeable)
 import Data.ByteString.Lazy (ByteString)
 import Data.Digest.Pure.MD5 (md5)
 import Data.IORef (IORef)
@@ -48,6 +57,24 @@ data Connection = Connection {
     , connClient :: Client
     , connBuffer :: IORef ByteString
     } deriving (Eq)
+
+data RiakException = RiakException {
+      excModule :: String
+    , excFunction :: String
+    , excMessage :: String
+    } deriving (Typeable)
+
+showRiakException :: RiakException -> String
+showRiakException RiakException{..} =
+    "Riak error (" ++ excModule ++ "." ++ excFunction ++ "): " ++ excMessage
+
+instance Show RiakException where
+    show = showRiakException
+
+instance Exception RiakException 
+
+riakError :: String -> String -> String -> a
+riakError modu func msg = throw (RiakException modu func msg)
 
 instance Show Connection where
     show conn = show "Connection " ++ host c ++ ":" ++ port c
@@ -101,6 +128,9 @@ class (Tagged msg, ReflectDescriptor msg, Wire msg) => Request msg where
     expectedResponse :: msg -> MessageTag
 
 class (Tagged msg, ReflectDescriptor msg, Wire msg) => Response msg
+
+class (Request req, Response resp) => Exchange req resp
+    | req -> resp, resp -> req
 
 instance (Tagged a, Tagged b) => Tagged (Either a b) where
     messageTag (Left l)  = messageTag l

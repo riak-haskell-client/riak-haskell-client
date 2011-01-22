@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 module Network.Riak.Tag
     (
       putTag
@@ -20,13 +22,11 @@ import Network.Riak.Protocol.ListKeysResponse
 import Network.Riak.Protocol.MapReduce
 import Network.Riak.Protocol.MapReduceRequest
 import Network.Riak.Protocol.PingRequest
-import Network.Riak.Protocol.PingResponse
 import Network.Riak.Protocol.PutRequest
 import Network.Riak.Protocol.PutResponse
 import Network.Riak.Protocol.ServerInfo
 import Network.Riak.Protocol.SetBucketRequest
 import Network.Riak.Protocol.SetClientIDRequest
-import Network.Riak.Protocol.SetClientIDResponse
 import Network.Riak.Types.Internal as Types
 import Text.ProtocolBuffers.Get (Get, getWord8)
 
@@ -37,12 +37,6 @@ instance Tagged PingRequest where
 instance Request PingRequest where
     expectedResponse _ = Types.PingResponse
     {-# INLINE expectedResponse #-}
-
-instance Tagged PingResponse where
-    messageTag _ = Types.PingResponse
-    {-# INLINE messageTag #-}
-
-instance Response PingResponse
 
 instance Tagged GetClientIDRequest where
     messageTag _ = Types.GetClientIDRequest
@@ -58,19 +52,13 @@ instance Tagged GetClientIDResponse where
 
 instance Response GetClientIDResponse
 
+instance Exchange GetClientIDRequest GetClientIDResponse
+
 instance Tagged SetClientIDRequest where
     messageTag _ = Types.SetClientIDRequest
     {-# INLINE messageTag #-}
 
 instance Request SetClientIDRequest where
-    expectedResponse _ = Types.SetClientIDResponse
-    {-# INLINE expectedResponse #-}
-
-instance Tagged SetClientIDResponse where
-    messageTag _ = Types.SetClientIDResponse
-    {-# INLINE messageTag #-}
-
-instance Request SetClientIDResponse where
     expectedResponse _ = Types.SetClientIDResponse
     {-# INLINE expectedResponse #-}
 
@@ -88,6 +76,8 @@ instance Tagged ServerInfo where
 
 instance Response ServerInfo
 
+instance Exchange GetServerInfoRequest ServerInfo
+
 instance Tagged GetRequest where
     messageTag _ = Types.GetRequest
     {-# INLINE messageTag #-}
@@ -102,6 +92,8 @@ instance Tagged GetResponse where
 
 instance Response GetResponse
 
+instance Exchange GetRequest GetResponse
+
 instance Tagged PutRequest where
     messageTag _ = Types.PutRequest
     {-# INLINE messageTag #-}
@@ -115,6 +107,8 @@ instance Tagged PutResponse where
     {-# INLINE messageTag #-}
 
 instance Response PutResponse
+
+instance Exchange PutRequest PutResponse
 
 instance Tagged DeleteRequest where
     messageTag _ = Types.DeleteRequest
@@ -137,6 +131,8 @@ instance Tagged ListBucketsResponse where
     {-# INLINE messageTag #-}
 
 instance Response ListBucketsResponse
+
+instance Exchange ListBucketsRequest ListBucketsResponse
 
 instance Tagged ListKeysRequest where
     messageTag _ = Types.ListKeysRequest
@@ -166,6 +162,8 @@ instance Tagged GetBucketResponse where
 
 instance Response GetBucketResponse
 
+instance Exchange GetBucketRequest GetBucketResponse
+
 instance Tagged SetBucketRequest where
     messageTag _ = Types.SetBucketRequest
     {-# INLINE messageTag #-}
@@ -188,6 +186,8 @@ instance Tagged MapReduce where
 
 instance Response MapReduce
 
+instance Exchange MapReduceRequest MapReduce
+
 putTag :: MessageTag -> Put
 putTag = putWord8 . fromIntegral . fromEnum
 {-# INLINE putTag #-}
@@ -196,6 +196,9 @@ getTag :: Get MessageTag
 getTag = do
   n <- getWord8
   if n > 24
-    then fail $ "invalid riak message code: " ++ show n
+    then moduleError "getTag" $ "invalid riak message code: " ++ show n
     else return .  toEnum . fromIntegral $ n
 {-# INLINE getTag #-}
+
+moduleError :: String -> String -> a
+moduleError = riakError "Network.Riak.Tag"

@@ -3,6 +3,7 @@
 module Network.Riak.Pipeline
     (
       pipeline
+    , pipelineMaybe
     , pipeline_
     ) where
 
@@ -14,14 +15,21 @@ import qualified Network.Socket.ByteString.Lazy as L
 import Control.Concurrent.Chan
 import Control.Concurrent
 
-pipeline :: (Request req, Response resp) => Connection -> [req] -> IO [resp]
-pipeline conn@Connection{..} reqs = do
+pipe :: (Request req) => (Connection -> IO resp) -> Connection -> [req]
+     -> IO [resp]
+pipe recv conn@Connection{..} reqs = do
   ch <- newChan
   let numReqs = length reqs
   _ <- forkIO . replicateM_ numReqs $
-       writeChan ch =<< recvResponse conn
+       writeChan ch =<< recv conn
   L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
+
+pipeline :: (Exchange req resp) => Connection -> [req] -> IO [resp]
+pipeline = pipe recvResponse
+
+pipelineMaybe :: (Exchange req resp) => Connection -> [req] -> IO [Maybe resp]
+pipelineMaybe = pipe recvMaybeResponse
 
 pipeline_ :: (Request req) => Connection -> [req] -> IO ()
 pipeline_ conn@Connection{..} reqs = do

@@ -13,7 +13,7 @@ module Network.Riak.Simple
     , delete
     -- * Metadata
     , listBuckets
-    , listKeys
+    , foldKeys
     , getBucket
     , setBucket
     -- * Map/reduce
@@ -21,79 +21,61 @@ module Network.Riak.Simple
     ) where
 
 import Control.Applicative ((<$>))
-import Data.Sequence (Seq)
+import qualified Data.Foldable as F
+import qualified Data.Sequence as Seq
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.BucketProps
 import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetBucketResponse as GetBucketResponse
-import Network.Riak.Protocol.GetClientIDResponse as GetClientIDResponse
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.ListBucketsResponse
 import Network.Riak.Protocol.ListKeysResponse
 import Network.Riak.Protocol.MapReduce
-import Network.Riak.Protocol.PutResponse
 import Network.Riak.Protocol.ServerInfo
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.Types.Internal as T
 import qualified Network.Riak.Request as Req
+import qualified Network.Riak.Response as Resp
 
 ping :: Connection -> IO ()
-ping conn@Connection{..} = do
-  sendRequest conn Req.ping
-  recvResponse_ conn T.PingResponse
+ping conn = exchange_ conn Req.ping
 
 getClientID :: Connection -> IO ClientID
-getClientID conn = do
-  sendRequest conn Req.getClientID
-  GetClientIDResponse.client_id <$> recvResponse conn
+getClientID conn = Resp.getClientID <$> exchange conn Req.getClientID
 
 getServerInfo :: Connection -> IO ServerInfo
-getServerInfo conn = do
-  sendRequest conn Req.getServerInfo
-  recvResponse conn
+getServerInfo conn = exchange conn Req.getServerInfo
 
 get :: Connection -> T.Bucket -> T.Key -> Maybe R
-    -> IO (Maybe (Seq Content, Maybe VClock))
-get conn@Connection{..} bucket key r = do
-  sendRequest conn $ Req.get bucket key r
-  maybe Nothing cast <$> recvMaybeResponse conn
- where cast GetResponse{..} = Just (content, VClock <$> vclock)
+    -> IO (Seq.Seq Content, Maybe VClock)
+get conn bucket key r =
+  Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
 
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> Maybe W -> Maybe DW -> Bool
-    -> IO (Seq Content, Maybe VClock)
-put conn@Connection{..} bucket key mvclock cont mw mdw returnBody = do
-  sendRequest conn $ Req.put bucket key mvclock cont mw mdw returnBody
-  PutResponse{..} <- recvResponse conn
-  return (content, VClock <$> vclock)
+    -> IO (Seq.Seq Content, Maybe VClock)
+put conn bucket key mvclock cont mw mdw returnBody =
+  Resp.put <$> exchange conn (Req.put bucket key mvclock cont mw mdw returnBody)
 
 delete :: Connection -> T.Bucket -> T.Key -> Maybe RW -> IO ()
-delete conn bucket key rw = do
-  sendRequest conn $ Req.delete bucket key rw
-  recvResponse_ conn T.DeleteResponse
+delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 
-listBuckets :: Connection -> IO (Seq T.Bucket)
-listBuckets conn = do
-  sendRequest conn Req.listBuckets
-  buckets <$> recvResponse conn
+listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
+listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
 
-listKeys :: Connection -> T.Bucket -> IO (Seq T.Key, Maybe Bool)
-listKeys conn bucket = do
+foldKeys :: Connection -> T.Bucket -> (a -> Key -> IO a) -> a -> IO a
+foldKeys conn bucket f z0 = do
   sendRequest conn $ Req.listKeys bucket
-  ListKeysResponse{..} <- recvResponse conn
-  return (keys, done)
+  let loop z = do
+        ListKeysResponse{..} <- recvResponse conn
+        z1 <- F.foldlM f z keys
+        if maybe False id done
+          then return z1
+          else loop z1
+  loop z0
 
 getBucket :: Connection -> T.Bucket -> IO BucketProps
-getBucket conn bucket = do
-  sendRequest conn $ Req.getBucket bucket
-  GetBucketResponse.props <$> recvResponse conn
+getBucket conn bucket = Resp.getBucket <$> exchange conn (Req.getBucket bucket)
 
 setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
-setBucket conn bucket props = do
-  sendRequest conn $ Req.setBucket bucket props
-  recvResponse_ conn T.SetBucketResponse
+setBucket conn bucket props = exchange_ conn $ Req.setBucket bucket props
 
 mapReduce :: Connection -> Job -> IO MapReduce
-mapReduce conn job = do
-  sendRequest conn $ Req.mapReduce job
-  recvResponse conn
+mapReduce conn = exchange conn . Req.mapReduce

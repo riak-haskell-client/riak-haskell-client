@@ -17,7 +17,7 @@ module Network.Riak
     , delete
     -- * Metadata
     , listBuckets
-    , listKeys
+    , foldKeys
     , getBucket
     , setBucket
     -- * Map/reduce

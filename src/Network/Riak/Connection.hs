@@ -8,10 +8,9 @@ module Network.Riak.Connection
     , makeClientID
     -- * Requests and responses
     -- ** Sending and receiving
-    , sendRequest
-    , recvResponse
-    , recvMaybeResponse
-    , recvResponse_
+    , exchange
+    , exchangeMaybe
+    , exchange_
     -- ** Composing and parsing
     , putRequest
     , getResponse

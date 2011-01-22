@@ -5,6 +5,8 @@ module Network.Riak.Types
     , Client(..)
     -- * Connection management
     , Connection(connClient)
+    -- * Errors
+    , RiakException(excModule, excFunction, excMessage)
     -- * Data types
     , Bucket
     , Key
