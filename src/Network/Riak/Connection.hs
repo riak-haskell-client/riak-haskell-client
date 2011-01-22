@@ -11,9 +11,10 @@ module Network.Riak.Connection
     , exchange
     , exchangeMaybe
     , exchange_
-    -- ** Composing and parsing
-    , putRequest
-    , getResponse
+    -- ** Pipelining many requests
+    , pipeline
+    , pipelineMaybe
+    , pipeline_
     ) where
 
 import Network.Riak.Connection.Internal

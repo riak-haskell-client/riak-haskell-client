@@ -28,7 +28,6 @@ library
     Network.Riak
     Network.Riak.Connection
     Network.Riak.Content
-    Network.Riak.Pipeline
     Network.Riak.Request
     Network.Riak.Response
     Network.Riak.Simple
