@@ -58,21 +58,21 @@ getServerInfo :: GetServerInfoRequest
 getServerInfo = GetServerInfoRequest
 {-# INLINE getServerInfo #-}
 
-get :: Bucket -> Key -> Maybe R -> Get.GetRequest
+get :: Bucket -> Key -> R -> Get.GetRequest
 get bucket key r = Get.GetRequest { Get.bucket = bucket
                                   , Get.key = key
-                                  , Get.r = fromQuorum <$> r }
+                                  , Get.r = fromQuorum r }
 {-# INLINE get #-}
 
-put :: Bucket -> Key -> Maybe VClock -> Content -> Maybe W -> Maybe DW
-    -> Bool -> Put.PutRequest
+put :: Bucket -> Key -> Maybe VClock -> Content -> W -> DW -> Bool
+    -> Put.PutRequest
 put bucket key mvclock cont mw mdw returnBody =
     Put.PutRequest bucket key (fromVClock <$> mvclock) cont
-                   (fromQuorum <$> mw) (fromQuorum <$> mdw) (Just returnBody)
+                   (fromQuorum mw) (fromQuorum mdw) (Just returnBody)
 {-# INLINE put #-}
 
-delete :: Bucket -> Key -> Maybe RW -> Del.DeleteRequest
-delete bucket key rw = Del.DeleteRequest bucket key (fromQuorum <$> rw)
+delete :: Bucket -> Key -> RW -> Del.DeleteRequest
+delete bucket key rw = Del.DeleteRequest bucket key (fromQuorum rw)
 {-# INLINE delete #-}
 
 listBuckets :: ListBucketsRequest

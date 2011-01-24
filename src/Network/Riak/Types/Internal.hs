@@ -145,27 +145,27 @@ instance Show VClock where
     show (VClock s) = "VClock " ++ show (md5 s)
 
 data Quorum = Default
-            | All
-            | Quorum
             | One
-              deriving (Eq, Enum, Show)
+            | Quorum
+            | All
+              deriving (Bounded, Eq, Enum, Ord, Show)
 
 type RW = Quorum
 type R  = Quorum
 type W  = Quorum
 type DW = Quorum
 
-fromQuorum :: Quorum -> Word32
-fromQuorum Default = 4294967291
-fromQuorum All     = 4294967292
-fromQuorum Quorum  = 4294967293
-fromQuorum One     = 4294967294
+fromQuorum :: Quorum -> Maybe Word32
+fromQuorum Default = Just 4294967291
+fromQuorum One     = Just 4294967294
+fromQuorum Quorum  = Just 4294967293
+fromQuorum All     = Just 4294967292
 {-# INLINE fromQuorum #-}
 
 toQuorum :: Word32 -> Maybe Quorum
-toQuorum 4294967291 = Just Default
-toQuorum 4294967292 = Just All
-toQuorum 4294967293 = Just Quorum
 toQuorum 4294967294 = Just One
-toQuorum _          = Nothing
+toQuorum 4294967293 = Just Quorum
+toQuorum 4294967292 = Just All
+toQuorum 4294967291 = Just Default
+toQuorum v          = error $ "invalid quorum value " ++ show v
 {-# INLINE toQuorum #-}

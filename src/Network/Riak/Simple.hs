@@ -10,6 +10,7 @@ module Network.Riak.Simple
     -- * Data management
     , get
     , put
+    , put_
     , delete
     -- * Metadata
     , listBuckets
@@ -43,18 +44,24 @@ getClientID conn = Resp.getClientID <$> exchange conn Req.getClientID
 getServerInfo :: Connection -> IO ServerInfo
 getServerInfo conn = exchange conn Req.getServerInfo
 
-get :: Connection -> T.Bucket -> T.Key -> Maybe R
+get :: Connection -> T.Bucket -> T.Key -> R
     -> IO (Seq.Seq Content, Maybe VClock)
 get conn bucket key r =
   Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
 
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
-    -> Content -> Maybe W -> Maybe DW -> Bool
+    -> Content -> W -> DW
     -> IO (Seq.Seq Content, Maybe VClock)
-put conn bucket key mvclock cont mw mdw returnBody =
-  Resp.put <$> exchange conn (Req.put bucket key mvclock cont mw mdw returnBody)
+put conn bucket key mvclock cont w dw =
+  Resp.put <$> exchange conn (Req.put bucket key mvclock cont w dw True)
 
-delete :: Connection -> T.Bucket -> T.Key -> Maybe RW -> IO ()
+put_ :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
+     -> Content -> W -> DW
+     -> IO ()
+put_ conn bucket key mvclock cont w dw =
+  exchange_ conn (Req.put bucket key mvclock cont w dw False)
+
+delete :: Connection -> T.Bucket -> T.Key -> RW -> IO ()
 delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 
 listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
