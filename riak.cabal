@@ -17,6 +17,10 @@ extra-source-files:
   README.md src/riakclient.proto
 cabal-version:       >=1.8
 
+flag debug
+  description: allow debug logging
+  default: True
+
 flag developer
   description: operate in developer mode
   default: False
@@ -28,6 +32,7 @@ library
     Network.Riak
     Network.Riak.Connection
     Network.Riak.Content
+    Network.Riak.Debug
     Network.Riak.Request
     Network.Riak.Response
     Network.Riak.Simple
@@ -75,6 +80,9 @@ library
     protocol-buffers-descriptor >= 1.8.1,
     pureMD5,
     random
+
+  if flag(debug)
+    cpp-options: -DASSERTS -DDEBUG
 
   if flag(developer)
     ghc-options: -Werror

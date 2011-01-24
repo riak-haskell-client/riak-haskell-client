@@ -39,6 +39,7 @@ import Control.Monad (forM_, replicateM, replicateM_, unless, when)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
+import Network.Riak.Debug (debug)
 import Network.Riak.Protocol.SetClientIDRequest
 import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
@@ -90,6 +91,8 @@ connect cli0 = do
                 addrFlags = [AI_ADDRCONFIG]
               , addrSocketType = Stream
               }
+  debug "connect" $ "server " ++ host ++ ":" ++ port ++ ", client ID " ++
+                    L.unpack clientID
   ais <- getAddrInfo (Just hints) (Just host) (Just port)
   let ai = case ais of
              (a:_) -> a
@@ -105,6 +108,8 @@ connect cli0 = do
 
 disconnect :: Connection -> IO ()
 disconnect Connection{..} = onIOException "disconnect" $ do
+  debug "disconnect" $ "server " ++ host connClient ++ ":" ++ port connClient ++
+                       ", client ID " ++ L.unpack (clientID connClient)
   sClose connSock
   writeIORef connBuffer L.empty
 
@@ -186,20 +191,26 @@ getResponse expected = do
                          show expected ++ ", received " ++ show tag
 
 exchange :: Exchange req resp => Connection -> req -> IO resp
-exchange conn@Connection{..} req =
-  onIOException ("exchange[" ++ show (messageTag req) ++ "]") $ do
+exchange conn@Connection{..} req = do
+  let tag = show (messageTag req)
+  debug "exchange" $ "sending " ++ tag
+  onIOException ("exchange " ++ tag) $ do
     sendRequest conn req
     recvResponse conn
 
 exchangeMaybe :: Exchange req resp => Connection -> req -> IO (Maybe resp)
-exchangeMaybe conn@Connection{..} req =
-  onIOException ("exchangeMaybe[" ++ show (messageTag req) ++ "]") $ do
+exchangeMaybe conn@Connection{..} req = do
+  let tag = show (messageTag req)
+  debug "exchangeMaybe" $ "sending " ++ tag
+  onIOException ("exchangeMaybe " ++ tag) $ do
     sendRequest conn req
     recvMaybeResponse conn
 
 exchange_ :: Request req => Connection -> req -> IO ()
-exchange_ conn req =
-  onIOException ("exchange_[" ++ show (messageTag req) ++ "]") $ do
+exchange_ conn req = do
+  let tag = show (messageTag req)
+  debug "exchange_" $ "sending " ++ tag
+  onIOException ("exchange_ " ++ tag) $ do
     sendRequest conn req
     recvResponse_ conn (expectedResponse req)
 
@@ -245,7 +256,9 @@ pipe receive conn@Connection{..} reqs = do
   ch <- newChan
   let numReqs = length reqs
   _ <- forkIO . replicateM_ numReqs $ writeChan ch =<< receive conn
-  onIOException ("pipe[" ++ show (messageTag (head reqs)) ++ "]") .
+  let tag = show (messageTag (head reqs))
+  debug "pipe" $ "sending " ++ show numReqs ++ " " ++ tag
+  onIOException ("pipe " ++ tag) .
     L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
 
@@ -266,7 +279,10 @@ pipeline_ conn@Connection{..} reqs = do
 
 onIOException :: String -> IO a -> IO a
 onIOException func act =
-    act `catch` \(e::IOException) -> moduleError func (show e)
+    act `catch` \(e::IOException) -> do
+      let s = show e
+      debug func $ "caught IO exception: " ++ s
+      moduleError func s
 
 moduleError :: String -> String -> a
 moduleError = riakError "Network.Riak.Connection.Internal"
