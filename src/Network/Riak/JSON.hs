@@ -2,8 +2,9 @@
 
 module Network.Riak.JSON
     (
-      JSON(plain)
+      JSON
     , json
+    , plain
     , get
     , getMany
     , put
@@ -14,16 +15,18 @@ module Network.Riak.JSON
 
 import Control.Applicative ((<$>))
 import Control.Arrow (first)
-import Data.Monoid (Dual(..), First(..), Last(..), Monoid)
+import Data.Monoid (Monoid)
 import Data.Typeable (Typeable)
 import Network.Riak.Types.Internal
 import Data.Aeson.Types (FromJSON(..), ToJSON(..))
 import qualified Network.Riak.Value as V
 
 newtype JSON a = J {
-      plain :: a
+      plain :: a -- ^ Unwrap a 'JSON'-wrapped value.
     } deriving (Eq, Ord, Show, Read, Bounded, Typeable, Monoid)
 
+-- | Wrap up a value so that it will be encoded and decoded as JSON
+-- when converted to/from 'Content'.
 json :: (FromJSON a, ToJSON a) => a -> JSON a
 json = J
 {-# INLINE json #-}
@@ -31,30 +34,6 @@ json = J
 instance Functor JSON where
     fmap f (J a) = J (f a)
     {-# INLINE fmap #-}
-
-instance ToJSON a => ToJSON (Dual a) where
-    toJSON = toJSON . getDual
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (Dual a) where
-    fromJSON = fmap Dual . fromJSON
-    {-# INLINE fromJSON #-}
-
-instance ToJSON a => ToJSON (First a) where
-    toJSON = toJSON . getFirst
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (First a) where
-    fromJSON = fmap First . fromJSON
-    {-# INLINE fromJSON #-}
-
-instance ToJSON a => ToJSON (Last a) where
-    toJSON = toJSON . getLast
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (Last a) where
-    fromJSON = fmap Last . fromJSON
-    {-# INLINE fromJSON #-}
 
 instance (FromJSON a, ToJSON a) => V.IsContent (JSON a) where
     fromContent c = J `fmap` (V.fromContent c >>= fromJSON)

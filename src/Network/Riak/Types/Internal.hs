@@ -43,22 +43,29 @@ import Data.Word (Word32)
 import Network.Socket (HostName, ServiceName, Socket)
 import Text.ProtocolBuffers (ReflectDescriptor, Wire)
     
+-- | A client identifier.  This is used by the Riak cluster when
+-- logging vector clock changes, and should be unique for each client.
 type ClientID = ByteString
 
 data Client = Client {
       host :: HostName
+    -- ^ Name of the server to connect to.
     , port :: ServiceName
-    , prefix :: ByteString
-    , mapReducePrefix :: ByteString
+    -- ^ Port number to connect to (default is 8087).
     , clientID :: ClientID
+    -- ^ Client identifier.
     } deriving (Eq, Show, Typeable)
 
+-- | A connection to a Riak server.
 data Connection = Connection {
       connSock :: Socket
     , connClient :: Client
+    -- ^ The configuration we connected with.
     , connBuffer :: IORef ByteString
+    -- ^ Received data that has not yet been consumed.
     } deriving (Eq)
 
+-- | The main Riak exception type.
 data RiakException = NetException {
       excModule :: String
     , excFunction :: String
@@ -94,16 +101,26 @@ instance Show Connection where
     show conn = show "Connection " ++ host c ++ ":" ++ port c
         where c = connClient conn
 
+-- | A Bucket is a container and keyspace for data stored in Riak,
+-- with a set of common properties for its contents (the number of
+-- replicas, for instance).
 type Bucket = ByteString
 
+-- | Keys are unique object identifiers in Riak and are scoped within
+-- buckets.
 type Key = ByteString
 
+-- | An application-specific identifier for a link.  See
+-- <http://wiki.basho.com/Links.html> for details.
 type Tag = ByteString
 
+-- | A specification of a MapReduce
+-- job. <http://wiki.basho.com/MapReduce.html>.
 data Job = JSON ByteString
          | Erlang ByteString
            deriving (Eq, Show, Typeable)
 
+-- | An identifier for an inbound or outbound message.
 data MessageTag = ErrorResponse
                 | PingRequest
                 | PingResponse
@@ -131,6 +148,7 @@ data MessageTag = ErrorResponse
                 | MapReduceResponse
                   deriving (Eq, Show, Enum, Typeable)
 
+-- | All messages are tagged.
 class Tagged msg where
     messageTag :: msg -> MessageTag
 
@@ -138,9 +156,11 @@ instance Tagged MessageTag where
     messageTag m = m
     {-# INLINE messageTag #-}
 
-class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Request msg where
-    expectedResponse :: msg -> MessageTag
+-- | A message representing a request from client to server.
+class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Request msg
+    where expectedResponse :: msg -> MessageTag
 
+-- | A message representing a response from server to client.
 class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Response msg
 
 class (Request req, Response resp) => Exchange req resp
@@ -151,22 +171,40 @@ instance (Tagged a, Tagged b) => Tagged (Either a b) where
     messageTag (Right r) = messageTag r
     {-# INLINE messageTag #-}
 
+-- | A wrapper that keeps Riak vector clocks opaque.
 newtype VClock = VClock {
       fromVClock :: ByteString
+    -- ^ Unwrap the 'ByteString'.  (This is really only useful for
+    -- printing the raw vclock string.)
     } deriving (Eq, Typeable)
 
 instance Show VClock where
     show (VClock s) = "VClock " ++ show (md5 s)
 
-data Quorum = Default
-            | One
-            | Quorum
-            | All
+-- | A read/write quorum.  The quantity of replicas that must respond
+-- to a read or write request before it is considered successful. This
+-- is defined as a bucket property or as one of the relevant
+-- parameters to a single request ('R','W','DW','RW').
+data Quorum = Default   -- ^ Use the default settings for the bucket.
+            | One       -- ^ Success after one server has responded.
+            | Quorum    -- ^ Success after a quorum of servers have responded.
+            | All       -- ^ Success after all servers have responded.
               deriving (Bounded, Eq, Enum, Ord, Show, Typeable)
 
+-- | Read/write quorum.  How many replicas need to collaborate when
+-- deleting a value.
 type RW = Quorum
+
+-- | Read quorum.  How many replicas need to agree when retrieving a
+-- value.
 type R  = Quorum
+
+-- | Write quorum.  How many replicas to write to before returning a
+-- successful response.
 type W  = Quorum
+
+-- | Durable write quorum.  How many replicas to commit to durable
+-- storage before returning a successful response.
 type DW = Quorum
 
 fromQuorum :: Quorum -> Maybe Word32
