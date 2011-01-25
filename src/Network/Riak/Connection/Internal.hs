@@ -193,21 +193,21 @@ getResponse expected = do
 
 exchange :: Exchange req resp => Connection -> req -> IO resp
 exchange conn@Connection{..} req = do
-  debug "exchange" $ "sending " ++ showM req
+  debug "exchange" $ ">>> " ++ showM req
   onIOException ("exchange " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvResponse conn
 
 exchangeMaybe :: Exchange req resp => Connection -> req -> IO (Maybe resp)
 exchangeMaybe conn@Connection{..} req = do
-  debug "exchangeMaybe" $ "sending " ++ showM req
+  debug "exchangeMaybe" $ ">>> " ++ showM req
   onIOException ("exchangeMaybe " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvMaybeResponse conn
 
 exchange_ :: Request req => Connection -> req -> IO ()
 exchange_ conn req = do
-  debug "exchange_" $ "sending " ++ showM req
+  debug "exchange_" $ ">>> " ++ showM req
   onIOException ("exchange_ " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvResponse_ conn (expectedResponse req)
@@ -247,7 +247,7 @@ debugRecv :: (a -> String) -> IO a -> IO a
 #ifdef DEBUG
 debugRecv f act = do
   r <- act
-  debug "recv" $ "received " ++ f r
+  debug "recv" $ "<<< " ++ f r
   return r
 #else
 debugRecv _ act = act
@@ -262,8 +262,8 @@ pipe receive conn@Connection{..} reqs = do
   _ <- forkIO . replicateM_ numReqs $ writeChan ch =<< receive conn
   let tag = show (messageTag (head reqs))
   if Debug.level > 1
-    then forM_ reqs $ \req -> debug "pipe" $ "sending " ++ showM req
-    else debug "pipe" $ "sending " ++ show numReqs ++ " " ++ tag
+    then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
+    else debug "pipe" $ ">>> " ++ show numReqs ++ "x " ++ tag
   onIOException ("pipe " ++ tag) .
     L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
@@ -281,8 +281,8 @@ pipeline_ conn@Connection{..} reqs = do
          forM_ reqs (recvResponse_ conn . expectedResponse)
          putMVar done ()
   if Debug.level > 1
-    then forM_ reqs $ \req -> debug "pipe" $ "sending " ++ showM req
-    else debug "pipe" $ "sending " ++ show (length reqs) ++ " " ++
+    then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
+    else debug "pipe" $ ">>> " ++ show (length reqs) ++ "x " ++
                         show (messageTag (head reqs))
   L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   takeMVar done

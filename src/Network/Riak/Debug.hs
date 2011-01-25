@@ -51,7 +51,7 @@ debug func str
     | level == 0 = return ()
     | otherwise  = do
   h <- readIORef handle
-  hPutStrLn h $ func ++ ": " ++ str
+  hPutStrLn h $ str ++ " [" ++ func ++ "]"
 #else
 debug _ _ = return ()
 {-# INLINE debug #-}
