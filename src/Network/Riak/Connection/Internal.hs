@@ -24,13 +24,6 @@ module Network.Riak.Connection.Internal
     , recvResponse
     , recvMaybeResponse
     , recvResponse_
-    -- ** Composing and parsing requests and responses
-    , putRequest
-    , getResponse
-    -- * ByteString receive operations
-    , recvExactly
-    , recvGet
-    , recvGetN
     ) where
 
 import Control.Concurrent
