@@ -108,8 +108,8 @@ getResp :: (IsContent c) => Maybe GetResponse -> IO (Maybe ([c], VClock))
 getResp resp =
   case resp of
     Just (GetResponse content (Just s)) -> do
-      c <- convert content
-      return $ Just (c, VClock s)
+           c <- convert content
+           return $ Just (c, VClock s)
     _   -> return Nothing
 
 convert :: IsContent v => Seq.Seq Content -> IO [v]

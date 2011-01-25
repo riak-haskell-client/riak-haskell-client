@@ -276,8 +276,8 @@ debugRecv _ act = act
 {-# INLINE debugRecv #-}
 #endif
 
-pipe :: (Request req, Show resp) => (Connection -> IO resp) -> Connection -> [req]
-     -> IO [resp]
+pipe :: (Request req, Show resp) =>
+        (Connection -> IO resp) -> Connection -> [req] -> IO [resp]
 pipe receive conn@Connection{..} reqs = do
   ch <- newChan
   let numReqs = length reqs
