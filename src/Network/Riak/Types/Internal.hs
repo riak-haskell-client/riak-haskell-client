@@ -34,11 +34,11 @@ module Network.Riak.Types.Internal
     , Tagged(..)
     ) where
 
-import Control.Exception
-import Data.Typeable (Typeable)
+import Control.Exception (Exception, throw)
 import Data.ByteString.Lazy (ByteString)
 import Data.Digest.Pure.MD5 (md5)
 import Data.IORef (IORef)
+import Data.Typeable (Typeable)
 import Data.Word (Word32)
 import Network.Socket (HostName, ServiceName, Socket)
 import Text.ProtocolBuffers (ReflectDescriptor, Wire)
@@ -51,7 +51,7 @@ data Client = Client {
     , prefix :: ByteString
     , mapReducePrefix :: ByteString
     , clientID :: ClientID
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, Typeable)
 
 data Connection = Connection {
       connSock :: Socket
@@ -67,7 +67,7 @@ data RiakException = NetException {
       excModule :: String
     , excFunction :: String
     , excMessage :: String
-    } deriving (Typeable)
+    } deriving (Eq, Typeable)
 
 showRiakException :: RiakException -> String
 showRiakException exc@NetException{..} =
@@ -102,7 +102,7 @@ type Tag = ByteString
 
 data Job = JSON ByteString
          | Erlang ByteString
-           deriving (Eq, Show)
+           deriving (Eq, Show, Typeable)
 
 data MessageTag = ErrorResponse
                 | PingRequest
@@ -129,7 +129,7 @@ data MessageTag = ErrorResponse
                 | SetBucketResponse
                 | MapReduceRequest
                 | MapReduceResponse
-                  deriving (Eq, Show, Enum)
+                  deriving (Eq, Show, Enum, Typeable)
 
 class Tagged msg where
     messageTag :: msg -> MessageTag
@@ -153,7 +153,7 @@ instance (Tagged a, Tagged b) => Tagged (Either a b) where
 
 newtype VClock = VClock {
       fromVClock :: ByteString
-    } deriving (Eq)
+    } deriving (Eq, Typeable)
 
 instance Show VClock where
     show (VClock s) = "VClock " ++ show (md5 s)
@@ -162,7 +162,7 @@ data Quorum = Default
             | One
             | Quorum
             | All
-              deriving (Bounded, Eq, Enum, Ord, Show)
+              deriving (Bounded, Eq, Enum, Ord, Show, Typeable)
 
 type RW = Quorum
 type R  = Quorum

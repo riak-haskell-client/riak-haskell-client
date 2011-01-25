@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE DeriveDataTypeable, OverloadedStrings, RecordWildCards #-}
 
 module Network.Riak.Value
     (
@@ -14,6 +14,7 @@ module Network.Riak.Value
     ) where
 
 import Data.Attoparsec.Lazy (maybeResult, parse)
+import Data.Typeable (Typeable)
 import Data.Foldable (toList)
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.Content (Content(..))
@@ -56,7 +57,7 @@ instance IsContent Aeson.Value where
 
 newtype JSON a = J {
       plain :: a
-    } deriving (Eq, Ord, Show, Read, Bounded)
+    } deriving (Eq, Ord, Show, Read, Bounded, Typeable)
 
 json :: (Aeson.FromJSON a, Aeson.ToJSON a) => a -> JSON a
 json = J
