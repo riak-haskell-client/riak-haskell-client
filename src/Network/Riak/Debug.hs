@@ -2,28 +2,33 @@
 
 module Network.Riak.Debug
     (
-      enabled
+      level
     , debug
     , setHandle
+    , showM
     ) where
 
 import Control.Exception hiding (handle)
-import Data.IORef
-import System.Environment
-import System.IO
-import System.IO.Unsafe
+import Data.IORef (IORef, newIORef, readIORef, writeIORef)
+import Network.Riak.Types.Internal
+import System.Environment (getEnv)
+import System.IO (Handle, hPutStrLn, stderr)
+import System.IO.Unsafe (unsafePerformIO)
 
-enabled :: Bool
+level :: Int
 #ifdef DEBUG
-enabled = unsafePerformIO $ do
+level = unsafePerformIO $ do
           es <- try $ getEnv "RIAK_DEBUG"
           case es of
-            Left (_::SomeException) -> return False
-            Right s -> return (s == "1" || s == "on")
-{-# NOINLINE enabled #-}
+            Left (_::SomeException)   -> return 0
+            Right "on" -> return 1
+            Right s    -> case reads s of
+                            ((n,_):_) -> return n
+                            _         -> return 1
+{-# NOINLINE level #-}
 #else
-enabled = False
-{-# INLINE enabled #-}
+level = 0
+{-# INLINE level #-}
 #endif
 
 #ifdef DEBUG
@@ -43,11 +48,15 @@ setHandle _ = return ()
 debug :: String -> String -> IO ()
 #ifdef DEBUG
 debug func str
-    | not enabled = return ()
-    | otherwise = do
+    | level == 0 = return ()
+    | otherwise  = do
   h <- readIORef handle
   hPutStrLn h $ func ++ ": " ++ str
 #else
 debug _ _ = return ()
-{-# INLINE debug
+{-# INLINE debug #-}
 #endif
+
+showM :: (Show a, Tagged a) => a -> String
+showM m | level > 1 = show m
+        | otherwise = show (messageTag m)

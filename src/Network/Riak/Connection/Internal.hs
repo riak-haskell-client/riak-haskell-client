@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards, ScopedTypeVariables #-}
+{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables #-}
 
 module Network.Riak.Connection.Internal
     (
@@ -32,7 +32,7 @@ import Control.Monad (forM_, replicateM, replicateM_, unless)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
-import Network.Riak.Debug (debug)
+import Network.Riak.Debug as Debug
 import Network.Riak.Protocol.ErrorResponse
 import Network.Riak.Protocol.SetClientIDRequest
 import Network.Riak.Tag (getTag, putTag)
@@ -193,25 +193,22 @@ getResponse expected = do
 
 exchange :: Exchange req resp => Connection -> req -> IO resp
 exchange conn@Connection{..} req = do
-  let tag = show (messageTag req)
-  debug "exchange" $ "sending " ++ tag
-  onIOException ("exchange " ++ tag) $ do
+  debug "exchange" $ "sending " ++ showM req
+  onIOException ("exchange " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvResponse conn
 
 exchangeMaybe :: Exchange req resp => Connection -> req -> IO (Maybe resp)
 exchangeMaybe conn@Connection{..} req = do
-  let tag = show (messageTag req)
-  debug "exchangeMaybe" $ "sending " ++ tag
-  onIOException ("exchangeMaybe " ++ tag) $ do
+  debug "exchangeMaybe" $ "sending " ++ showM req
+  onIOException ("exchangeMaybe " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvMaybeResponse conn
 
 exchange_ :: Request req => Connection -> req -> IO ()
 exchange_ conn req = do
-  let tag = show (messageTag req)
-  debug "exchange_" $ "sending " ++ tag
-  onIOException ("exchange_ " ++ tag) $ do
+  debug "exchange_" $ "sending " ++ showM req
+  onIOException ("exchange_ " ++ show (messageTag req)) $ do
     sendRequest conn req
     recvResponse_ conn (expectedResponse req)
 
@@ -219,14 +216,14 @@ sendRequest :: (Request req) => Connection -> req -> IO ()
 sendRequest Connection{..} = L.sendAll connSock . runPut . putRequest
 
 recvResponse :: (Response a) => Connection -> IO a
-recvResponse conn = go undefined where
+recvResponse conn = debugRecv showM $ go undefined where
   go :: Response b => b -> IO b
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
     recvGetN conn len (getResponse (messageTag dummy))
 
 recvResponse_ :: Connection -> T.MessageTag -> IO ()
-recvResponse_ conn expected = do
+recvResponse_ conn expected = debugRecv show $ do
   len <- fromIntegral `fmap` recvGet conn getWord32be
   tag <- recvGet conn getTag
   case undefined of
@@ -237,7 +234,8 @@ recvResponse_ conn expected = do
                    show expected ++ ", received " ++ show tag
 
 recvMaybeResponse :: (Response a) => Connection -> IO (Maybe a)
-recvMaybeResponse conn =  go undefined where
+recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
+                         go undefined where
   go :: Response b => b -> IO (Maybe b)
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
@@ -245,14 +243,27 @@ recvMaybeResponse conn =  go undefined where
       then return Nothing
       else Just `fmap` recvGetN conn len (getResponse (messageTag dummy))
 
-pipe :: (Request req) => (Connection -> IO resp) -> Connection -> [req]
+debugRecv :: (a -> String) -> IO a -> IO a
+#ifdef DEBUG
+debugRecv f act = do
+  r <- act
+  debug "recv" $ "received " ++ f r
+  return r
+#else
+debugRecv _ act = act
+{-# INLINE debugRecv #-}
+#endif
+
+pipe :: (Request req, Show resp) => (Connection -> IO resp) -> Connection -> [req]
      -> IO [resp]
 pipe receive conn@Connection{..} reqs = do
   ch <- newChan
   let numReqs = length reqs
   _ <- forkIO . replicateM_ numReqs $ writeChan ch =<< receive conn
   let tag = show (messageTag (head reqs))
-  debug "pipe" $ "sending " ++ show numReqs ++ " " ++ tag
+  if Debug.level > 1
+    then forM_ reqs $ \req -> debug "pipe" $ "sending " ++ showM req
+    else debug "pipe" $ "sending " ++ show numReqs ++ " " ++ tag
   onIOException ("pipe " ++ tag) .
     L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
@@ -269,6 +280,10 @@ pipeline_ conn@Connection{..} reqs = do
   _ <- forkIO $ do
          forM_ reqs (recvResponse_ conn . expectedResponse)
          putMVar done ()
+  if Debug.level > 1
+    then forM_ reqs $ \req -> debug "pipe" $ "sending " ++ showM req
+    else debug "pipe" $ "sending " ++ show (length reqs) ++ " " ++
+                        show (messageTag (head reqs))
   L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   takeMVar done
 

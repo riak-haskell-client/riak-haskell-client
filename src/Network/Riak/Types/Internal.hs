@@ -138,10 +138,10 @@ instance Tagged MessageTag where
     messageTag m = m
     {-# INLINE messageTag #-}
 
-class (Tagged msg, ReflectDescriptor msg, Wire msg) => Request msg where
+class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Request msg where
     expectedResponse :: msg -> MessageTag
 
-class (Tagged msg, ReflectDescriptor msg, Wire msg) => Response msg
+class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Response msg
 
 class (Request req, Response resp) => Exchange req resp
     | req -> resp, resp -> req

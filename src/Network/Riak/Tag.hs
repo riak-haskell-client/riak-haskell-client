@@ -8,6 +8,7 @@ module Network.Riak.Tag
 
 import Data.Binary.Put (Put, putWord8)
 import Network.Riak.Protocol.DeleteRequest
+import Network.Riak.Protocol.ErrorResponse
 import Network.Riak.Protocol.GetBucketRequest
 import Network.Riak.Protocol.GetBucketResponse
 import Network.Riak.Protocol.GetClientIDRequest
@@ -29,6 +30,12 @@ import Network.Riak.Protocol.SetBucketRequest
 import Network.Riak.Protocol.SetClientIDRequest
 import Network.Riak.Types.Internal as Types
 import Text.ProtocolBuffers.Get (Get, getWord8)
+
+instance Tagged ErrorResponse where
+    messageTag _ = Types.ErrorResponse
+    {-# INLINE messageTag #-}
+
+instance Response ErrorResponse
 
 instance Tagged PingRequest where
     messageTag _ = Types.PingRequest
