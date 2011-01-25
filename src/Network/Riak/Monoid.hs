@@ -1,9 +1,21 @@
+-- |
+-- Module:      Network.Riak.Monoid
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Storage and retrieval of monoidal data with automatic conflict resolution.
+
 module Network.Riak.Monoid
     (
       get
     , getMany
     , put
+    , put_
     , putMany
+    , putMany_
     ) where
 
 import Control.Arrow (first, second)
@@ -36,6 +48,14 @@ put doPut conn bucket key mvclock0 val0 w dw = do
           _   -> go (mconcat xs) (Just vclock)
   go val0 mvclock0
 
+put_ :: Monoid c => (Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+                                -> IO ([c], VClock))
+     -> Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+     -> IO ()
+put_ doPut conn bucket key mvclock0 val0 w dw =
+    put doPut conn bucket key mvclock0 val0 w dw >> return ()
+{-# INLINE put_ #-}
+
 putMany :: (Monoid c) =>
            (Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
                        -> IO [([c], VClock)])
@@ -52,3 +72,12 @@ putMany doPut conn bucket puts0 w dw = go [] . zip [(0::Int)..] $ puts0 where
   asPut (i,(c,v)) = (i,(keys M.! i, Just v, mconcat c))
   keys = M.fromAscList (zip [(0::Int)..] (map fst3 puts0))
   fst3 (a,_,_) = a
+
+putMany_ :: (Monoid c) =>
+           (Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+                       -> IO [([c], VClock)])
+        -> Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+        -> IO ()
+putMany_ doPut conn bucket puts0 w dw =
+    putMany doPut conn bucket puts0 w dw >> return ()
+{-# INLINE putMany_ #-}

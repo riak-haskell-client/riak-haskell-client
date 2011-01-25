@@ -22,7 +22,9 @@ module Network.Riak.Value.Monoid
     , get
     , getMany
     , put
+    , put_
     , putMany
+    , putMany_
     ) where
 
 import Data.Monoid (Monoid(..))
@@ -60,6 +62,19 @@ put :: (Monoid c, V.IsContent c) =>
 put = M.put V.put 
 {-# INLINE put #-}
 
+-- | Store a single value, automatically resolving any vector clock
+-- conflicts that arise.  A single invocation of this function may
+-- involve several roundtrips to the server to resolve conflicts.
+--
+-- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- the winner will be stored; this will be repeated until no conflict
+-- occurs.
+put_ :: (Monoid c, V.IsContent c) =>
+        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+     -> IO ()
+put_ = M.put_ V.put 
+{-# INLINE put_ #-}
+
 -- | Store multiple values, resolving any vector clock conflicts that
 -- arise.  A single invocation of this function may involve several
 -- roundtrips to the server to resolve conflicts.
@@ -75,3 +90,16 @@ putMany :: (Monoid c, V.IsContent c) =>
         -> IO [(c, VClock)]
 putMany = M.putMany V.putMany
 {-# INLINE putMany #-}
+
+-- | Store multiple values, resolving any vector clock conflicts that
+-- arise.  A single invocation of this function may involve several
+-- roundtrips to the server to resolve conflicts.
+--
+-- If any conflicts arise, a winner will be chosen in each case using
+-- 'mconcat', and the winners will be stored; this will be repeated
+-- until no conflicts occur.
+putMany_ :: (Monoid c, V.IsContent c) =>
+           Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+        -> IO ()
+putMany_ = M.putMany_ V.putMany
+{-# INLINE putMany_ #-}
