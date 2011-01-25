@@ -12,28 +12,29 @@ module Network.Riak.Response
     , getBucket
     ) where
 
-import Control.Applicative ((<$>))
-import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Data.Sequence as Seq
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.PutResponse
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.GetBucketResponse
 import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.Content
+import Network.Riak.Protocol.GetBucketResponse
+import Network.Riak.Protocol.GetClientIDResponse
+import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.ListBucketsResponse
+import Network.Riak.Protocol.PutResponse
+import Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Data.ByteString.Lazy as L
+import qualified Data.Sequence as Seq
 
 getClientID :: GetClientIDResponse -> ClientID
 getClientID = client_id
 {-# INLINE getClientID #-}
 
-get :: Maybe GetResponse -> (Seq.Seq Content, Maybe VClock)
-get (Just GetResponse{..}) = (content, VClock <$> vclock)
-get _                      = (Seq.empty, Nothing)
+get :: Maybe GetResponse -> Maybe (Seq.Seq Content, VClock)
+get (Just (GetResponse content (Just vclock)))
+      = Just (content, VClock vclock)
+get _ = Nothing
 {-# INLINE get #-}
 
-put :: PutResponse -> (Seq.Seq Content, Maybe VClock)
-put PutResponse{..} = (content, VClock <$> vclock)
+put :: PutResponse -> (Seq.Seq Content, VClock)
+put PutResponse{..} = (content, VClock (maybe L.empty id vclock))
 {-# INLINE put #-}
 
 listBuckets :: ListBucketsResponse -> (Seq.Seq Bucket)
