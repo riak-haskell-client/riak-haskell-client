@@ -19,9 +19,9 @@ get :: (Monoid c, V.IsContent c) =>
        Connection -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
 get conn bucket key r = fmap (first mconcat) `fmap` V.get conn bucket key r
 
-getMany :: (Monoid c, V.IsContent c) => Connection -> [(Bucket, Key)] -> R
+getMany :: (Monoid c, V.IsContent c) => Connection -> Bucket -> [Key] -> R
         -> IO [Maybe (c, VClock)]
-getMany conn bks r = map (fmap (first mconcat)) `fmap` V.getMany conn bks r
+getMany conn b ks r = map (fmap (first mconcat)) `fmap` V.getMany conn b ks r
 
 put :: (Monoid c, V.IsContent c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
