@@ -91,12 +91,10 @@ library
 
   if flag(developer)
     ghc-options: -Werror
+    ghc-prof-options: -auto-all
     cpp-options: -DASSERTS
 
   ghc-options: -Wall -fno-warn-orphans
-
-  -- gather extensive profiling data for now
-  ghc-prof-options: -auto-all
 
 source-repository head
   type:     git
