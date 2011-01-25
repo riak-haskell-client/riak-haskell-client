@@ -242,13 +242,7 @@ recvResponse conn = debugRecv showM $ go undefined where
 recvResponse_ :: Connection -> T.MessageTag -> IO ()
 recvResponse_ conn expected = debugRecv show $ do
   len <- fromIntegral `fmap` recvGet conn getWord32be
-  tag <- recvGet conn getTag
-  case undefined of
-   _| tag == expected -> recvExactly conn (len-1) >> return ()
-    | tag == T.ErrorResponse -> throwError `fmap` recvGetN conn len messageGetM
-    | otherwise -> moduleError "recvResponse_" $
-                   "received unexpected response: expected " ++
-                   show expected ++ ", received " ++ show tag
+  recvCorrectTag "recvResponse_" conn expected (len-1) ()
 
 recvMaybeResponse :: (Response a) => Connection -> IO (Maybe a)
 recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
@@ -256,9 +250,20 @@ recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
   go :: Response b => b -> IO (Maybe b)
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
+    let tag = messageTag dummy
     if len == 1
-      then return Nothing
-      else Just `fmap` recvGetN conn len (getResponse (messageTag dummy))
+      then recvCorrectTag "recvMaybeResponse" conn tag 1 Nothing
+      else Just `fmap` recvGetN conn len (getResponse tag)
+
+recvCorrectTag :: String -> Connection -> T.MessageTag -> Int64 -> a -> IO a
+recvCorrectTag func conn expected len v = do
+  tag <- recvGet conn getTag
+  case undefined of
+   _| tag == expected -> recvExactly conn (len-1) >> return v
+    | tag == T.ErrorResponse -> throwError `fmap` recvGetN conn len messageGetM
+    | otherwise -> moduleError func $
+                   "received unexpected response: expected " ++
+                   show expected ++ ", received " ++ show tag
 
 debugRecv :: (a -> String) -> IO a -> IO a
 #ifdef DEBUG
