@@ -1,5 +1,17 @@
 {-# LANGUAGE CPP, ScopedTypeVariables #-}
 
+-- |
+-- Module:      Network.Riak.Debug
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Support for debug logging.  The code in this package only works if
+-- the package was built with the @-fdebug@ flag.  Otherwise, they are
+-- all no-ops.
+
 module Network.Riak.Debug
     (
       level
@@ -15,6 +27,8 @@ import System.Environment (getEnv)
 import System.IO (Handle, hPutStrLn, stderr)
 import System.IO.Unsafe (unsafePerformIO)
 
+-- | The current debugging level.  This is established once by reading
+-- the @RIAK_DEBUG@ environment variable.
 level :: Int
 #ifdef DEBUG
 level = unsafePerformIO $ do
@@ -37,6 +51,7 @@ handle = unsafePerformIO $ newIORef stderr
 {-# NOINLINE handle #-}
 #endif
 
+-- | Set the 'Handle' to log to ('stderr' is the default).
 setHandle :: Handle -> IO ()
 #ifdef DEBUG
 setHandle = writeIORef handle
@@ -57,6 +72,8 @@ debug _ _ = return ()
 {-# INLINE debug #-}
 #endif
 
+-- | Show a 'Tagged' value.  Show the entire value if the debug level
+-- is above 1, just the tag otherwise.
 showM :: (Show a, Tagged a) => a -> String
 showM m | level > 1 = show m
         | otherwise = show (messageTag m)

@@ -1,3 +1,13 @@
+-- |
+-- Module:      Network.Riak.Connection
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Low-level network connection management.
+
 module Network.Riak.Connection
     (
     -- * Connection management

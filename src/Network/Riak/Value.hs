@@ -1,5 +1,19 @@
 {-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
+-- |
+-- Module:      Network.Riak.Value
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- This module allows storage and retrieval of data using the
+-- 'IsContent' typeclass.  This provides access to more of Riak's
+-- storage features than JSON, e.g. links.
+--
+-- The functions in this module do not perform any conflict resolution.
+
 module Network.Riak.Value
     (
       IsContent(..)

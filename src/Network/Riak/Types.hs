@@ -1,3 +1,13 @@
+-- |
+-- Module:      Network.Riak.Types
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Basic types.
+
 module Network.Riak.Types
     (
     -- * Client management

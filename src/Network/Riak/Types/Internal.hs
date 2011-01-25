@@ -1,6 +1,16 @@
 {-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
     RecordWildCards #-}
 
+-- |
+-- Module:      Network.Riak.Types.Internal
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Basic types.
+
 module Network.Riak.Types.Internal
     (
     -- * Client management
@@ -148,9 +158,9 @@ data MessageTag = ErrorResponse
                 | MapReduceResponse
                   deriving (Eq, Show, Enum, Typeable)
 
--- | All messages are tagged.
+-- | Messages are tagged.
 class Tagged msg where
-    messageTag :: msg -> MessageTag
+    messageTag :: msg -> MessageTag -- ^ Retrieve a message's tag.
 
 instance Tagged MessageTag where
     messageTag m = m
@@ -185,9 +195,9 @@ instance Show VClock where
 -- to a read or write request before it is considered successful. This
 -- is defined as a bucket property or as one of the relevant
 -- parameters to a single request ('R','W','DW','RW').
-data Quorum = Default   -- ^ Use the default settings for the bucket.
+data Quorum = Default   -- ^ Use the default quorum settings for the bucket.
             | One       -- ^ Success after one server has responded.
-            | Quorum    -- ^ Success after a quorum of servers have responded.
+            | Quorum    -- ^ Success after a quorum of servers has responded.
             | All       -- ^ Success after all servers have responded.
               deriving (Bounded, Eq, Enum, Ord, Show, Typeable)
 

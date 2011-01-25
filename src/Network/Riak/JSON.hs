@@ -1,5 +1,17 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving #-}
 
+-- |
+-- Module:      Network.Riak.JSON
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- This module allows storage and retrieval of JSON-encoded data.
+--
+-- The functions in this module do not perform any conflict resolution.
+
 module Network.Riak.JSON
     (
       JSON

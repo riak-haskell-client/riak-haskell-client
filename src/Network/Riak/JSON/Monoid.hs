@@ -1,3 +1,19 @@
+-- |
+-- Module:      Network.Riak.JSON.Monoid
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- This module allows storage and retrieval of JSON-encoded data.
+--
+-- Functions automatically resolve conflicts using 'Monoid' instances.
+-- For instance, if a 'get' returns three siblings, a winner will be
+-- chosen using 'mconcat'.  If a 'put' results in a conflict, a winner
+-- will be chosen using 'mconcat', and the winner will be 'put'; this
+-- will be repeated until no conflict occurs.
+
 module Network.Riak.JSON.Monoid
     (
       get
@@ -44,22 +60,38 @@ get = M.get J.get
 {-# INLINE get #-}
 
 -- | Retrieve multiple values.  If conflicting values are returned for
--- a value, the 'Monoid' is used to choose a winner.
+-- a key, the 'Monoid' is used to choose a winner.
 getMany :: (FromJSON c, ToJSON c, Monoid c)
            => Connection -> Bucket -> [Key] -> R -> IO [Maybe (c, VClock)]
 getMany = M.getMany J.getMany
 {-# INLINE getMany #-}
 
--- | Store a single value.  This function does not return until any
--- vector clock conflicts are resolved.
+-- | Store a single value, automatically resolving any vector clock
+-- conflicts that arise.  A single invocation of this function may
+-- involve several roundtrips to the server to resolve conflicts.
+--
+-- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- the winner will be stored; this will be repeated until no conflict
+-- occurs.
+--
+-- The final value to be stored at the end of any conflict resolution
+-- is returned.
 put :: (FromJSON c, ToJSON c, Monoid c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
 put = M.put J.put
 {-# INLINE put #-}
 
--- | Store multiple values.  This function does not return until any
--- vector clock conflicts are resolved.
+-- | Store multiple values, resolving any vector clock conflicts that
+-- arise.  A single invocation of this function may involve several
+-- roundtrips to the server to resolve conflicts.
+--
+-- If any conflicts arise, a winner will be chosen in each case using
+-- 'mconcat', and the winners will be stored; this will be repeated
+-- until no conflicts occur.
+--
+-- For each original value to be stored, the final value that was
+-- stored at the end of any conflict resolution is returned.
 putMany :: (FromJSON c, ToJSON c, Monoid c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]

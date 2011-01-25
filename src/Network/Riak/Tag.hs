@@ -1,5 +1,15 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 
+-- |
+-- Module:      Network.Riak.Content
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- im in ur msg system taggin ur msg types
+
 module Network.Riak.Tag
     (
       putTag

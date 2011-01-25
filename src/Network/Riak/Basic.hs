@@ -1,5 +1,19 @@
 {-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
+-- |
+-- Module:      Network.Riak.Basic
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Basic support for the Riak decentralized data store.
+--
+-- When storing and retrieving data, the functions in this module do
+-- not perform any encoding or decoding of data, nor do they resolve
+-- conflicts.
+
 module Network.Riak.Basic
     (
     -- * Client configuration and identification
@@ -43,37 +57,54 @@ import qualified Network.Riak.Request as Req
 import qualified Network.Riak.Response as Resp
 import qualified Network.Riak.Types.Internal as T
 
+-- | Check to see if the connection to the server is alive.
 ping :: Connection -> IO ()
 ping conn = exchange_ conn Req.ping
 
+-- | Find out from the server what client ID this connection is using.
 getClientID :: Connection -> IO ClientID
 getClientID conn = Resp.getClientID <$> exchange conn Req.getClientID
 
+-- | Retrieve information about the server.
 getServerInfo :: Connection -> IO ServerInfo
 getServerInfo conn = exchange conn Req.getServerInfo
 
+-- | Retrieve up a value.  This may return multiple conflicting
+-- siblings.  Choosing among them is your responsibility.
 get :: Connection -> T.Bucket -> T.Key -> R
     -> IO (Maybe (Seq.Seq Content, VClock))
 get conn bucket key r = Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
 
+-- | Store a single value.  This may return multiple conflicting
+-- siblings.  Choosing among them, and storing a new value, is your
+-- responsibility.
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> W -> DW
     -> IO (Seq.Seq Content, VClock)
 put conn bucket key mvclock cont w dw =
   Resp.put <$> exchange conn (Req.put bucket key mvclock cont w dw True)
 
+-- | Store a single value, without the possibility of conflict
+-- resolution.
 put_ :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
      -> Content -> W -> DW
      -> IO ()
 put_ conn bucket key mvclock cont w dw =
   exchange_ conn (Req.put bucket key mvclock cont w dw False)
 
+-- | Delete a value.
 delete :: Connection -> T.Bucket -> T.Key -> RW -> IO ()
 delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 
+-- List the buckets in the cluster.
+--
+-- /Note/: this operation is expensive.  Do not use it in production.
 listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
 listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
 
+-- Fold over the buckets in the cluster.
+--
+-- /Note/: this operation is expensive.  Do not use it in production.
 foldKeys :: Connection -> T.Bucket -> (a -> Key -> IO a) -> a -> IO a
 foldKeys conn bucket f z0 = do
   sendRequest conn $ Req.listKeys bucket
@@ -85,11 +116,14 @@ foldKeys conn bucket f z0 = do
           else loop z1
   loop z0
 
+-- | Retrieve the properties of a bucket.
 getBucket :: Connection -> T.Bucket -> IO BucketProps
 getBucket conn bucket = Resp.getBucket <$> exchange conn (Req.getBucket bucket)
 
+-- | Store new properties for a bucket.
 setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
 setBucket conn bucket props = exchange_ conn $ Req.setBucket bucket props
 
+-- | Launch a 'MapReduce' job.
 mapReduce :: Connection -> Job -> IO MapReduce
 mapReduce conn = exchange conn . Req.mapReduce

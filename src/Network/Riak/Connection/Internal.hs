@@ -1,5 +1,15 @@
 {-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables #-}
 
+-- |
+-- Module:      Network.Riak.Connection.Internal
+-- Copyright:   (c) 2011 MailRank, Inc.
+-- License:     Apache
+-- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Stability:   experimental
+-- Portability: portable
+--
+-- Low-level network connection management.
+
 module Network.Riak.Connection.Internal
     (
     -- * Connection management
@@ -48,6 +58,8 @@ import qualified Network.Riak.Types.Internal as T
 import qualified Network.Socket.ByteString as B
 import qualified Network.Socket.ByteString.Lazy as L
 
+-- | Default client configuration.  Talks to localhost, port 8087,
+-- with a randomly chosen client ID.
 defaultClient :: Client
 defaultClient = Client {
                   host = "127.0.0.1"
@@ -76,6 +88,7 @@ addClientID client
     return client { clientID = i }
   | otherwise = return client
 
+-- | Connect to a server.
 connect :: Client -> IO Connection
 connect cli0 = do
   client@Client{..} <- addClientID cli0
@@ -98,6 +111,7 @@ connect cli0 = do
     setClientID conn clientID
     return conn
 
+-- | Disconnect from a server.
 disconnect :: Connection -> IO ()
 disconnect Connection{..} = onIOException "disconnect" $ do
   debug "disconnect" $ "server " ++ host connClient ++ ":" ++ port connClient ++
@@ -189,6 +203,7 @@ getResponse expected = do
         moduleError "getResponse" $ "received unexpected response: expected " ++
                                     show expected ++ ", received " ++ show tag
 
+-- | Send a request to the server, and receive its response.
 exchange :: Exchange req resp => Connection -> req -> IO resp
 exchange conn@Connection{..} req = do
   debug "exchange" $ ">>> " ++ showM req
@@ -196,6 +211,8 @@ exchange conn@Connection{..} req = do
     sendRequest conn req
     recvResponse conn
 
+-- | Send a request to the server, and receive its response (which may
+-- be empty).
 exchangeMaybe :: Exchange req resp => Connection -> req -> IO (Maybe resp)
 exchangeMaybe conn@Connection{..} req = do
   debug "exchangeMaybe" $ ">>> " ++ showM req
@@ -203,6 +220,8 @@ exchangeMaybe conn@Connection{..} req = do
     sendRequest conn req
     recvMaybeResponse conn
 
+-- | Send a request to the server, and receive its response, but do
+-- not decode it.
 exchange_ :: Request req => Connection -> req -> IO ()
 exchange_ conn req = do
   debug "exchange_" $ ">>> " ++ showM req
@@ -266,12 +285,24 @@ pipe receive conn@Connection{..} reqs = do
     L.sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
 
+-- | Send a series of requests to the server, back to back, and
+-- receive a response for each request sent.  The sending and
+-- receiving will be overlapped if possible, to improve concurrency
+-- and reduce latency.
 pipeline :: (Exchange req resp) => Connection -> [req] -> IO [resp]
 pipeline = pipe recvResponse
 
+-- | Send a series of requests to the server, back to back, and
+-- receive a response for each request sent (the responses may be
+-- empty).  The sending and receiving will be overlapped if possible,
+-- to improve concurrency and reduce latency.
 pipelineMaybe :: (Exchange req resp) => Connection -> [req] -> IO [Maybe resp]
 pipelineMaybe = pipe recvMaybeResponse
 
+-- | Send a series of requests to the server, back to back, and
+-- receive (but do not decode) a response for each request sent.  The
+-- sending and receiving will be overlapped if possible, to improve
+-- concurrency and reduce latency.
 pipeline_ :: (Request req) => Connection -> [req] -> IO ()
 pipeline_ conn@Connection{..} reqs = do
   done <- newEmptyMVar
