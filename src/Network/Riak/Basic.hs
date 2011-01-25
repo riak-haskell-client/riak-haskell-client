@@ -1,13 +1,21 @@
 {-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
-module Network.Riak.Simple
+module Network.Riak.Basic
     (
+    -- * Client configuration and identification
+      ClientID
+    , Client(..)
+    , defaultClient
     -- * Connection management
-      ping
+    , Connection(..)
+    , connect
+    , disconnect
+    , ping
     , getClientID
     , setClientID
     , getServerInfo
     -- * Data management
+    , Quorum(..)
     , get
     , put
     , put_
@@ -22,8 +30,6 @@ module Network.Riak.Simple
     ) where
 
 import Control.Applicative ((<$>))
-import qualified Data.Foldable as F
-import qualified Data.Sequence as Seq
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.BucketProps
 import Network.Riak.Protocol.Content
@@ -31,9 +37,11 @@ import Network.Riak.Protocol.ListKeysResponse
 import Network.Riak.Protocol.MapReduce
 import Network.Riak.Protocol.ServerInfo
 import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Network.Riak.Types.Internal as T
+import qualified Data.Foldable as F
+import qualified Data.Sequence as Seq
 import qualified Network.Riak.Request as Req
 import qualified Network.Riak.Response as Resp
+import qualified Network.Riak.Types.Internal as T
 
 ping :: Connection -> IO ()
 ping conn = exchange_ conn Req.ping
@@ -45,13 +53,12 @@ getServerInfo :: Connection -> IO ServerInfo
 getServerInfo conn = exchange conn Req.getServerInfo
 
 get :: Connection -> T.Bucket -> T.Key -> R
-    -> IO (Seq.Seq Content, Maybe VClock)
-get conn bucket key r =
-  Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
+    -> IO (Maybe (Seq.Seq Content, VClock))
+get conn bucket key r = Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
 
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> W -> DW
-    -> IO (Seq.Seq Content, Maybe VClock)
+    -> IO (Seq.Seq Content, VClock)
 put conn bucket key mvclock cont w dw =
   Resp.put <$> exchange conn (Req.put bucket key mvclock cont w dw True)
 

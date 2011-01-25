@@ -12,8 +12,10 @@ module Network.Riak
     , ping
     , getServerInfo
     -- * Data management
+    , Quorum(..)
     , get
     , put
+    , put_
     , delete
     -- * Metadata
     , listBuckets
@@ -26,4 +28,4 @@ module Network.Riak
 
 import Network.Riak.Connection
 import Network.Riak.Types
-import Network.Riak.Simple
+import Network.Riak.Basic

@@ -35,7 +35,7 @@ library
     Network.Riak.Debug
     Network.Riak.Request
     Network.Riak.Response
-    Network.Riak.Simple
+    Network.Riak.Basic
     Network.Riak.Types
     Network.Riak.Protocol.ServerInfo
     Network.Riak.Protocol.BucketProps
