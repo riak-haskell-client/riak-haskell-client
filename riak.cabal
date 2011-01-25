@@ -68,6 +68,7 @@ library
     Network.Riak.Protocol.ListBucketsRequest
 
   other-modules:       
+    Network.Riak.Monoid
     Network.Riak.Connection.Internal
     Network.Riak.Tag
     Network.Riak.Types.Internal

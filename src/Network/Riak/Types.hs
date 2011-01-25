@@ -22,6 +22,7 @@ module Network.Riak.Types
     -- * Message identification
     , Request
     , Response
+    , Exchange
     , MessageTag(..)
     , Tagged(..)
     ) where
