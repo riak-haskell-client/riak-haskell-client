@@ -1,10 +1,8 @@
-{-# LANGUAGE DeriveDataTypeable, OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
 module Network.Riak.Value
     (
       IsContent(..)
-    , JSON(plain)
-    , json
     , get
     , getMany
     , put
@@ -14,7 +12,6 @@ module Network.Riak.Value
     ) where
 
 import Data.Attoparsec.Lazy (maybeResult, parse)
-import Data.Typeable (Typeable)
 import Data.Foldable (toList)
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.Content (Content(..))
@@ -54,19 +51,6 @@ instance IsContent Aeson.Value where
 
     toContent = C.json
     {-# INLINE toContent #-}
-
-newtype JSON a = J {
-      plain :: a
-    } deriving (Eq, Ord, Show, Read, Bounded, Typeable)
-
-json :: (Aeson.FromJSON a, Aeson.ToJSON a) => a -> JSON a
-json = J
-{-# INLINE json #-}
-
-instance (Aeson.FromJSON a, Aeson.ToJSON a) => IsContent (JSON a) where
-    fromContent c = J `fmap` (fromContent c >>= Aeson.fromJSON)
-
-    toContent (J a) = toContent (Aeson.toJSON a)
 
 put :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)

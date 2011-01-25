@@ -33,12 +33,14 @@ library
     Network.Riak.Connection
     Network.Riak.Content
     Network.Riak.Debug
-    Network.Riak.Monoid
     Network.Riak.Request
     Network.Riak.Response
     Network.Riak.Basic
     Network.Riak.Types
+    Network.Riak.JSON
+    Network.Riak.JSON.Monoid
     Network.Riak.Value
+    Network.Riak.Value.Monoid
     Network.Riak.Protocol.ServerInfo
     Network.Riak.Protocol.BucketProps
     Network.Riak.Protocol.Content

@@ -1,10 +1,8 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Network.Riak.Monoid
+module Network.Riak.Value.Monoid
     (
       V.IsContent(..)
-    , V.JSON(plain)
-    , V.json
     , get
     , getMany
     , put
@@ -18,10 +16,12 @@ import qualified Network.Riak.Value as V
 get :: (Monoid c, V.IsContent c) =>
        Connection -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
 get conn bucket key r = fmap (first mconcat) `fmap` V.get conn bucket key r
+{-# INLINE get #-}
 
 getMany :: (Monoid c, V.IsContent c) => Connection -> Bucket -> [Key] -> R
         -> IO [Maybe (c, VClock)]
 getMany conn b ks r = map (fmap (first mconcat)) `fmap` V.getMany conn b ks r
+{-# INLINE getMany #-}
 
 put :: (Monoid c, V.IsContent c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
