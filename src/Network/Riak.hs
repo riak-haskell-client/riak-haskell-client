@@ -14,8 +14,9 @@ module Network.Riak
     -- * Data management
     , Quorum(..)
     , get
+    , getMany
     , put
-    , put_
+    , putMany
     , delete
     -- * Metadata
     , listBuckets
@@ -28,4 +29,5 @@ module Network.Riak
 
 import Network.Riak.Connection
 import Network.Riak.Types
-import Network.Riak.Basic
+import Network.Riak.Basic hiding (get, put, put_)
+import Network.Riak.JSON.Monoid (get, getMany, put, putMany)
