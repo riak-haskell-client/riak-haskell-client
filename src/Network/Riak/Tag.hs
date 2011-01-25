@@ -201,4 +201,4 @@ getTag = do
 {-# INLINE getTag #-}
 
 moduleError :: String -> String -> a
-moduleError = riakError "Network.Riak.Tag"
+moduleError = netError "Network.Riak.Tag"

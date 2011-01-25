@@ -9,8 +9,9 @@ module Network.Riak.Types.Internal
     -- * Connection management
     , Connection(..)
     -- * Errors
-    , RiakException(..)
-    , riakError
+    , RiakException(excModule, excFunction, excMessage)
+    , netError
+    , typeError
     -- * Data types
     , Bucket
     , Key
@@ -58,23 +59,36 @@ data Connection = Connection {
     , connBuffer :: IORef ByteString
     } deriving (Eq)
 
-data RiakException = RiakException {
+data RiakException = NetException {
+      excModule :: String
+    , excFunction :: String
+    , excMessage :: String
+    } | TypeException {
       excModule :: String
     , excFunction :: String
     , excMessage :: String
     } deriving (Typeable)
 
 showRiakException :: RiakException -> String
-showRiakException RiakException{..} =
-    "Riak error (" ++ excModule ++ "." ++ excFunction ++ "): " ++ excMessage
+showRiakException exc@NetException{..} =
+    "Riak network error " ++ formatRiakException exc
+showRiakException exc@TypeException{..} =
+    "Riak type error " ++ formatRiakException exc
+
+formatRiakException :: RiakException -> String
+formatRiakException exc =
+    "(" ++ excModule exc ++ "." ++ excFunction exc ++ "): " ++ excMessage exc
 
 instance Show RiakException where
     show = showRiakException
 
 instance Exception RiakException 
 
-riakError :: String -> String -> String -> a
-riakError modu func msg = throw (RiakException modu func msg)
+netError :: String -> String -> String -> a
+netError modu func msg = throw (NetException modu func msg)
+
+typeError :: String -> String -> String -> a
+typeError modu func msg = throw (TypeException modu func msg)
 
 instance Show Connection where
     show conn = show "Connection " ++ host c ++ ":" ++ port c

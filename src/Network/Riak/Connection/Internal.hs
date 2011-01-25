@@ -27,12 +27,13 @@ module Network.Riak.Connection.Internal
     ) where
 
 import Control.Concurrent
-import Control.Exception (IOException)
-import Control.Monad (forM_, replicateM, replicateM_, unless, when)
+import Control.Exception (Exception, IOException, throw)
+import Control.Monad (forM_, replicateM, replicateM_, unless)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
 import Network.Riak.Debug (debug)
+import Network.Riak.Protocol.ErrorResponse
 import Network.Riak.Protocol.SetClientIDRequest
 import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
@@ -175,13 +176,20 @@ putRequest req = do
   putTag (messageTag req)
   messagePutM req
 
-getResponse :: (Response a) => T.MessageTag -> Get (Either String a)
+instance Exception ErrorResponse
+
+throwError :: ErrorResponse -> a
+throwError = throw
+
+getResponse :: (Response a) => T.MessageTag -> Get a
 getResponse expected = do
   tag <- getTag
-  if tag == expected
-    then Right `fmap` messageGetM
-    else return . Left $ "received unexpected response: expected " ++
-                         show expected ++ ", received " ++ show tag
+  case undefined of
+   _| tag == expected        -> messageGetM
+    | tag == T.ErrorResponse -> throwError `fmap` messageGetM
+    | otherwise ->
+        moduleError "getResponse" $ "received unexpected response: expected " ++
+                                    show expected ++ ", received " ++ show tag
 
 exchange :: Exchange req resp => Connection -> req -> IO resp
 exchange conn@Connection{..} req = do
@@ -215,33 +223,27 @@ recvResponse conn = go undefined where
   go :: Response b => b -> IO b
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
-    r <- recvGetN conn len (getResponse (messageTag dummy))
-    case r of
-      Left err  -> moduleError "recvResponse" err
-      Right ret -> return ret
+    recvGetN conn len (getResponse (messageTag dummy))
 
 recvResponse_ :: Connection -> T.MessageTag -> IO ()
 recvResponse_ conn expected = do
   len <- fromIntegral `fmap` recvGet conn getWord32be
   tag <- recvGet conn getTag
-  when (tag /= expected) .
-    moduleError "recvResponse_" $ "received unexpected response: expected " ++
-                                  show expected ++ ", received " ++ show tag
-  recvExactly conn (len-1) >> return ()
+  case undefined of
+   _| tag == expected -> recvExactly conn (len-1) >> return ()
+    | tag == T.ErrorResponse -> throwError `fmap` recvGetN conn len messageGetM
+    | otherwise -> moduleError "recvResponse_" $
+                   "received unexpected response: expected " ++
+                   show expected ++ ", received " ++ show tag
 
 recvMaybeResponse :: (Response a) => Connection -> IO (Maybe a)
 recvMaybeResponse conn =  go undefined where
   go :: Response b => b -> IO (Maybe b)
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
-    print len
     if len == 1
       then return Nothing
-      else do
-        r <- recvGetN conn len (getResponse (messageTag dummy))
-        case r of
-          Left err  -> moduleError "recvMaybeResponse" err
-          Right ret -> return (Just ret)
+      else Just `fmap` recvGetN conn len (getResponse (messageTag dummy))
 
 pipe :: (Request req) => (Connection -> IO resp) -> Connection -> [req]
      -> IO [resp]
@@ -278,4 +280,4 @@ onIOException func act =
       moduleError func s
 
 moduleError :: String -> String -> a
-moduleError = riakError "Network.Riak.Connection.Internal"
+moduleError = netError "Network.Riak.Connection.Internal"
