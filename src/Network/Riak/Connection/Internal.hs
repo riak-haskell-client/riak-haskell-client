@@ -42,6 +42,7 @@ import Control.Monad (forM_, replicateM, replicateM_, unless)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
+import Network.Riak.Connection.NoPush (setNoPush)
 import Network.Riak.Debug as Debug
 import Network.Riak.Protocol.ErrorResponse
 import Network.Riak.Protocol.SetClientIDRequest
@@ -229,8 +230,14 @@ exchange_ conn req = do
     sendRequest conn req
     recvResponse_ conn (expectedResponse req)
 
+sendAll :: Socket -> L.ByteString -> IO ()
+sendAll sock bs = do
+  setNoPush sock True
+  L.sendAll sock bs
+  setNoPush sock False
+
 sendRequest :: (Request req) => Connection -> req -> IO ()
-sendRequest Connection{..} = L.sendAll connSock . runPut . putRequest
+sendRequest Connection{..} = sendAll connSock . runPut . putRequest
 
 recvResponse :: (Response a) => Connection -> IO a
 recvResponse conn = debugRecv showM $ go undefined where
@@ -287,7 +294,7 @@ pipe receive conn@Connection{..} reqs = do
     then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
     else debug "pipe" $ ">>> " ++ show numReqs ++ "x " ++ tag
   onIOException ("pipe " ++ tag) .
-    L.sendAll connSock . runPut . mapM_ putRequest $ reqs
+    sendAll connSock . runPut . mapM_ putRequest $ reqs
   replicateM numReqs $ readChan ch
 
 -- | Send a series of requests to the server, back to back, and
@@ -318,7 +325,7 @@ pipeline_ conn@Connection{..} reqs = do
     then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
     else debug "pipe" $ ">>> " ++ show (length reqs) ++ "x " ++
                         show (messageTag (head reqs))
-  L.sendAll connSock . runPut . mapM_ putRequest $ reqs
+  sendAll connSock . runPut . mapM_ putRequest $ reqs
   takeMVar done
 
 onIOException :: String -> IO a -> IO a

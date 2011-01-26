@@ -93,6 +93,7 @@ library
     Network.Riak.Monoid
     Network.Riak.Protocol.Link
     Network.Riak.Connection.Internal
+    Network.Riak.Connection.NoPush
     Network.Riak.Protocol.Content
     Network.Riak.Tag
     Network.Riak.Types.Internal
