@@ -65,7 +65,7 @@ putMany doPut conn bucket puts0 w dw = go [] . zip [(0::Int)..] $ puts0 where
   go acc [] = return . map snd . sortBy (compare `on` fst) $ acc
   go acc puts = do
     rs <- doPut conn bucket (map snd puts) w dw
-    let (ok, conflicts) = partition isConflict $ zip (map fst puts) rs
+    let (conflicts, ok) = partition isConflict $ zip (map fst puts) rs
         isConflict (_,(_:_:_,_)) = True
         isConflict  _            = False
     go (map (second (first mconcat)) ok++acc) (map asPut conflicts)
