@@ -25,34 +25,10 @@ module Network.Riak.JSON.Monoid
     ) where
 
 import Data.Aeson.Types (FromJSON(..), ToJSON(..))
-import Data.Monoid (Dual(..), First(..), Last(..), Monoid)
+import Data.Monoid (Monoid)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.JSON as J
 import qualified Network.Riak.Monoid as M
-
-instance ToJSON a => ToJSON (Dual a) where
-    toJSON = toJSON . getDual
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (Dual a) where
-    fromJSON = fmap Dual . fromJSON
-    {-# INLINE fromJSON #-}
-
-instance ToJSON a => ToJSON (First a) where
-    toJSON = toJSON . getFirst
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (First a) where
-    fromJSON = fmap First . fromJSON
-    {-# INLINE fromJSON #-}
-
-instance ToJSON a => ToJSON (Last a) where
-    toJSON = toJSON . getLast
-    {-# INLINE toJSON #-}
-
-instance FromJSON a => FromJSON (Last a) where
-    fromJSON = fmap Last . fromJSON
-    {-# INLINE fromJSON #-}
 
 -- | Retrieve a single value.  If conflicting values are returned, the
 -- 'Monoid' is used to choose a winner.
