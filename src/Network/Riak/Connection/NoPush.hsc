@@ -25,7 +25,10 @@ import Network.Socket (Socket(..))
 
 noPush :: CInt
 #if defined(TCP_NOPUSH)
-noPush = #const TCP_NOPUSH
+-- TCP_NOPUSH is utterly fucked on OS X 10.6.  It introduces a delay
+-- of about 4.5 seconds per outbound packet train. What. The. Fuck.
+noPush = 0
+--noPush = #const TCP_NOPUSH
 #elif defined(TCP_CORK)
 noPush = #const TCP_CORK
 #else
