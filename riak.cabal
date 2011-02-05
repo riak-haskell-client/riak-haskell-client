@@ -1,5 +1,5 @@
 name:                riak
-version:             0.1.0.1
+version:             0.2.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -104,7 +104,7 @@ library
     Network.Riak.Protocol
   
   build-depends:       
-    aeson == 0.1.*,
+    aeson == 0.2.*,
     attoparsec >= 0.8.4.0,
     base == 4.*,
     binary,

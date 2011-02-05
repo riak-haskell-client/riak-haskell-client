@@ -27,10 +27,10 @@ module Network.Riak.JSON
 
 import Control.Applicative ((<$>))
 import Control.Arrow (first)
+import Data.Aeson.Types (FromJSON(..), ToJSON(..))
 import Data.Monoid (Monoid)
 import Data.Typeable (Typeable)
 import Network.Riak.Types.Internal
-import Data.Aeson.Types (FromJSON(..), ToJSON(..))
 import qualified Network.Riak.Value as V
 
 newtype JSON a = J {
@@ -48,8 +48,8 @@ instance Functor JSON where
     {-# INLINE fmap #-}
 
 instance (FromJSON a, ToJSON a) => V.IsContent (JSON a) where
-    fromContent c = J `fmap` (V.fromContent c >>= fromJSON)
-    {-# INLINE fromContent #-}
+    parseContent c = J `fmap` (V.parseContent c >>= parseJSON)
+    {-# INLINE parseContent #-}
 
     toContent (J a) = V.toContent (toJSON a)
     {-# INLINE toContent #-}

@@ -17,6 +17,7 @@
 module Network.Riak.Value
     (
       IsContent(..)
+    , fromContent
     , get
     , getMany
     , put
@@ -25,7 +26,8 @@ module Network.Riak.Value
     , putMany_
     ) where
 
-import Data.Attoparsec.Lazy (maybeResult, parse)
+import Control.Applicative
+import qualified Data.Attoparsec.Lazy as A
 import Data.Foldable (toList)
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.Content (Content(..))
@@ -38,31 +40,38 @@ import qualified Data.ByteString.Lazy as L
 import qualified Data.Sequence as Seq
 import qualified Network.Riak.Content as C
 import qualified Network.Riak.Request as Req
+import Data.Aeson.Types (Parser, Result(..), parse)
+
+fromContent :: IsContent c => Content -> Maybe c
+fromContent c = case parse parseContent c of
+                  Success a -> Just a
+                  Error _   -> Nothing
 
 class IsContent c where
-    fromContent :: Content -> Maybe c
+    parseContent :: Content -> Parser c
     toContent :: c -> Content
 
 instance IsContent Content where
-    fromContent = Just
-    {-# INLINE fromContent #-}
+    parseContent = return
+    {-# INLINE parseContent #-}
 
     toContent v = v
     {-# INLINE toContent #-}
 
 instance IsContent () where
-    fromContent c | c == C.empty = Just ()
-                  | otherwise    = Nothing
-    {-# INLINE fromContent #-}
+    parseContent c | c == C.empty = pure ()
+                   | otherwise    = empty
+    {-# INLINE parseContent #-}
 
     toContent _ = C.empty
     {-# INLINE toContent #-}
 
 instance IsContent Aeson.Value where
-    fromContent c | content_type c == Just "application/json" =
-                      maybeResult (parse Aeson.json (value c))
-                  | otherwise = Nothing
-
+    parseContent c | content_type c == Just "application/json" =
+                      case A.parse Aeson.json (value c) of
+                        A.Done _ a     -> return a
+                        A.Fail _ _ err -> fail err
+                   | otherwise = fail "non-JSON document"
     toContent = C.json
     {-# INLINE toContent #-}
 
