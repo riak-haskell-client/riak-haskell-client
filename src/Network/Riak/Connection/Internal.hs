@@ -124,9 +124,8 @@ recvBufferSize :: Integral a => a
 recvBufferSize = 16384
 {-# INLINE recvBufferSize #-}
 
-recvWith :: (L.ByteString -> IO L.ByteString) -> Connection -> Int64
-         -> IO L.ByteString
-recvWith onError Connection{..} n0
+recvExactly :: Connection -> Int64 -> IO L.ByteString
+recvExactly Connection{..} n0
     | n0 <= 0 = return L.empty
     | otherwise = do
   bs <- readIORef connBuffer
@@ -151,12 +150,8 @@ recvWith onError Connection{..} n0
         bs <- B.recv connSock (fromIntegral n')
         let len = B.length bs
         if len == 0
-          then onError (L.fromChunks (reverse acc))
+          then moduleError "recvExactly" "short read from network"
           else go (bs:acc) (n - fromIntegral len)
-
-recvExactly :: Connection -> Int64 -> IO L.ByteString
-recvExactly = recvWith $ \_ ->
-              moduleError "recvExactly" "short read from network"
 
 recvGet :: Connection -> Get a -> IO a
 recvGet Connection{..} get = do
