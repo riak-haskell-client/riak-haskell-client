@@ -59,6 +59,7 @@ library
   exposed-modules:     
     Network.Riak
     Network.Riak.Connection
+    Network.Riak.Connection.Pool
     Network.Riak.Content
     Network.Riak.Debug
     Network.Riak.Request
@@ -110,11 +111,15 @@ library
     binary,
     bytestring,
     containers,
+    hashable,
     network >= 2.3,
     protocol-buffers >= 1.8.0,
     protocol-buffers-descriptor >= 1.8.1,
     pureMD5,
-    random
+    random,
+    stm,
+    time,
+    vector >= 0.7
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
