@@ -38,9 +38,9 @@ module Network.Riak.Connection.Internal
 
 import Control.Concurrent
 import Control.Exception (Exception, IOException, throw)
-import Control.Monad (forM_, replicateM, replicateM_, unless)
+import Control.Monad (forM_, replicateM, replicateM_)
 import Data.Binary.Put (Put, putWord32be, runPut)
-import Data.IORef (modifyIORef, newIORef, readIORef, writeIORef)
+import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
 import Network.Riak.Connection.NoPush (setNoPush)
 import Network.Riak.Debug as Debug
@@ -120,6 +120,10 @@ disconnect Connection{..} = onIOException "disconnect" $ do
   sClose connSock
   writeIORef connBuffer L.empty
 
+recvBufferSize :: Integral a => a
+recvBufferSize = 16384
+{-# INLINE recvBufferSize #-}
+
 recvWith :: (L.ByteString -> IO L.ByteString) -> Connection -> Int64
          -> IO L.ByteString
 recvWith onError Connection{..} n0
@@ -130,20 +134,25 @@ recvWith onError Connection{..} n0
       len = L.length h
   if len == n0
     then writeIORef connBuffer t >> return h
-    else if len == 0
-         then go [] n0
-         else go (reverse (L.toChunks t)) (n0-len)
+    else go (reverse (L.toChunks h)) (n0-len)
   where
     maxInt = fromIntegral (maxBound :: Int)
+    go (s:acc) n
+      | n < 0 = do
+        let (h,t) = B.splitAt (B.length s - fromIntegral n) s
+        writeIORef connBuffer $! L.fromChunks [t]
+        return $ L.fromChunks (reverse (h:acc))
     go acc n
-        | n <= 0 = return (L.fromChunks (reverse acc))
-        | otherwise = do
-      let n' = min n maxInt
-      bs <- B.recv connSock (fromIntegral n')
-      let len = B.length bs
-      if len == 0
-        then onError (L.fromChunks (reverse acc))
-        else go (bs:acc) (n' - fromIntegral len)
+      | n == 0 = do
+        writeIORef connBuffer L.empty
+        return $ L.fromChunks (reverse acc)
+      | otherwise = do
+        let n' = max recvBufferSize $ min n maxInt
+        bs <- B.recv connSock (fromIntegral n')
+        let len = B.length bs
+        if len == 0
+          then onError (L.fromChunks (reverse acc))
+          else go (bs:acc) (n - fromIntegral len)
 
 recvExactly :: Connection -> Int64 -> IO L.ByteString
 recvExactly = recvWith $ \_ ->
@@ -152,7 +161,7 @@ recvExactly = recvWith $ \_ ->
 recvGet :: Connection -> Get a -> IO a
 recvGet Connection{..} get = do
   let refill = do
-        bs <- L.recv connSock 16384
+        bs <- L.recv connSock recvBufferSize
         if L.null bs
           then shutdown connSock ShutdownReceive >> return Nothing
           else return (Just bs)
@@ -171,13 +180,10 @@ recvGet Connection{..} get = do
 recvGetN :: Connection -> Int64 -> Get a -> IO a
 recvGetN conn n get = do
   bs <- recvExactly conn n
-  let finish bs' r = do
-        unless (L.null bs') $ modifyIORef (connBuffer conn) (`L.append` bs')
-        return r
   case runGet get bs of
-    Finished bs' _ r -> finish bs' r
+    Finished _ _ r -> return r
     Partial k    -> case k Nothing of
-                      Finished bs' _ r -> finish bs' r
+                      Finished _ _ r -> return r
                       Failed _ err -> moduleError "recvGetN" err
                       Partial _    -> moduleError "recvGetN"
                                       "parser wants more input!?"
