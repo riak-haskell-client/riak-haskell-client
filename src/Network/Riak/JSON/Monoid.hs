@@ -54,7 +54,7 @@ getMany = M.getMany J.getMany
 --
 -- The final value to be stored at the end of any conflict resolution
 -- is returned.
-put :: (FromJSON c, ToJSON c, Monoid c) =>
+put :: (Eq c, FromJSON c, ToJSON c, Monoid c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
 put = M.put J.put
@@ -67,9 +67,9 @@ put = M.put J.put
 -- If a conflict arises, a winner will be chosen using 'mconcat', and
 -- the winner will be stored; this will be repeated until no conflict
 -- occurs.
-put_ :: (FromJSON c, ToJSON c, Monoid c) =>
-       Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
-    -> IO ()
+put_ :: (Eq c, FromJSON c, ToJSON c, Monoid c) =>
+        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+     -> IO ()
 put_ = M.put_ J.put
 {-# INLINE put_ #-}
 
@@ -83,7 +83,7 @@ put_ = M.put_ J.put
 --
 -- For each original value to be stored, the final value that was
 -- stored at the end of any conflict resolution is returned.
-putMany :: (FromJSON c, ToJSON c, Monoid c) =>
+putMany :: (Eq c, FromJSON c, ToJSON c, Monoid c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]
 putMany = M.putMany J.putMany
@@ -96,7 +96,7 @@ putMany = M.putMany J.putMany
 -- If any conflicts arise, a winner will be chosen in each case using
 -- 'mconcat', and the winners will be stored; this will be repeated
 -- until no conflicts occur.
-putMany_ :: (FromJSON c, ToJSON c, Monoid c) =>
+putMany_ :: (Eq c, FromJSON c, ToJSON c, Monoid c) =>
             Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
          -> IO ()
 putMany_ = M.putMany_ J.putMany

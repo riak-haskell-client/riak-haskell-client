@@ -56,7 +56,7 @@ getMany = M.getMany V.getMany
 --
 -- The final value to be stored at the end of any conflict resolution
 -- is returned.
-put :: (Monoid c, V.IsContent c) =>
+put :: (Eq c, Monoid c, V.IsContent c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
 put = M.put V.put 
@@ -69,7 +69,7 @@ put = M.put V.put
 -- If a conflict arises, a winner will be chosen using 'mconcat', and
 -- the winner will be stored; this will be repeated until no conflict
 -- occurs.
-put_ :: (Monoid c, V.IsContent c) =>
+put_ :: (Eq c, Monoid c, V.IsContent c) =>
         Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
      -> IO ()
 put_ = M.put_ V.put 
@@ -85,7 +85,7 @@ put_ = M.put_ V.put
 --
 -- For each original value to be stored, the final value that was
 -- stored at the end of any conflict resolution is returned.
-putMany :: (Monoid c, V.IsContent c) =>
+putMany :: (Eq c, Monoid c, V.IsContent c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]
 putMany = M.putMany V.putMany
@@ -98,8 +98,7 @@ putMany = M.putMany V.putMany
 -- If any conflicts arise, a winner will be chosen in each case using
 -- 'mconcat', and the winners will be stored; this will be repeated
 -- until no conflicts occur.
-putMany_ :: (Monoid c, V.IsContent c) =>
-           Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
-        -> IO ()
+putMany_ :: (Eq c, Monoid c, V.IsContent c) =>
+            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW -> IO ()
 putMany_ = M.putMany_ V.putMany
 {-# INLINE putMany_ #-}
