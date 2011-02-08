@@ -138,7 +138,7 @@ recvExactly Connection{..} n0
     maxInt = fromIntegral (maxBound :: Int)
     go (s:acc) n
       | n < 0 = do
-        let (h,t) = B.splitAt (B.length s - fromIntegral n) s
+        let (h,t) = B.splitAt (B.length s + fromIntegral n) s
         writeIORef connBuffer $! L.fromChunks [t]
         return $ L.fromChunks (reverse (h:acc))
     go acc n
