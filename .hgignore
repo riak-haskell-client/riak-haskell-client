@@ -1,4 +1,5 @@
 ^dist$
+^src/Network/Riak/Connection/NoPush.hs$
 ^tests/benchmarks/.*\.txt$
 ^tests/(?:\.hpc|bm|qc|qc-hpc|stdio-hpc|text/test)$
 \.(?:aux|eventlog|h[ip]|imports|log|[oa]|orig|prof|ps|rej|swp)$

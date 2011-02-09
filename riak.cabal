@@ -62,6 +62,7 @@ library
     Network.Riak.Connection.Pool
     Network.Riak.Content
     Network.Riak.Debug
+    Network.Riak.Escape
     Network.Riak.Request
     Network.Riak.Response
     Network.Riak.Basic
