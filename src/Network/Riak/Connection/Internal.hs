@@ -120,6 +120,10 @@ disconnect Connection{..} = onIOException "disconnect" $ do
   sClose connSock
   writeIORef connBuffer L.empty
 
+-- | We use a larger receive buffer than we usually need, and
+-- generally ask to receive more data than we know we'll need, in the
+-- hope that we'll be able to buffer some of it and avoid future recv
+-- system calls.
 recvBufferSize :: Integral a => a
 recvBufferSize = 16384
 {-# INLINE recvBufferSize #-}
