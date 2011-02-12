@@ -113,7 +113,7 @@ library
     blaze-builder,
     bytestring,
     containers,
-    hashable,
+    hashable >= 1.0.1.2,
     network >= 2.3,
     protocol-buffers >= 1.8.0,
     protocol-buffers-descriptor >= 1.8.1,
