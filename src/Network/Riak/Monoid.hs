@@ -19,10 +19,12 @@ module Network.Riak.Monoid
     ) where
 
 import Control.Arrow (first)
+import Control.Monad (unless)
 import Data.Function (on)
 import Data.Either (partitionEithers)
 import Data.List (sortBy)
 import Data.Monoid (Monoid(..))
+import Network.Riak.Debug (debug)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 
 get :: (Monoid c) =>
@@ -47,7 +49,8 @@ put doPut conn bucket key mvclock0 val0 w dw = do
         case xs of
           []             -> return (val, vclock) -- not observed in the wild
           [v] | v == val -> return (val, vclock)
-          ys             -> go (mconcat (val:ys)) (Just vclock)
+          ys             -> do debug "put" "conflict" 
+                               go (mconcat (val:ys)) (Just vclock)
   go val0 mvclock0
 
 put_ :: (Eq c, Monoid c) =>
@@ -69,6 +72,8 @@ putMany doPut conn bucket puts0 w dw = go [] . zip [(0::Int)..] $ puts0 where
   go acc puts = do
     rs <- doPut conn bucket (map snd puts) w dw
     let (conflicts, ok) = partitionEithers $ zipWith mush puts rs
+    unless (null conflicts) $
+      debug "putMany" $ show (length conflicts) ++ " conflicts"
     go (ok++acc) conflicts
   mush (i,(k,_,c)) (cs,v) =
       case cs of
