@@ -27,9 +27,9 @@ module Network.Riak.Value.Resolvable
     , putMany_
     ) where
 
-import Network.Riak.Resolvable (Resolvable)
+import Network.Riak.Resolvable.Internal (Resolvable)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Network.Riak.Resolvable as R
+import qualified Network.Riak.Resolvable.Internal as R
 import qualified Network.Riak.Value as V
 
 -- | Retrieve a single value.  If conflicting values are returned, the

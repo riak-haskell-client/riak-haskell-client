@@ -25,10 +25,10 @@ module Network.Riak.JSON.Resolvable
     ) where
 
 import Data.Aeson.Types (FromJSON(..), ToJSON(..))
-import Network.Riak.Resolvable (Resolvable)
+import Network.Riak.Resolvable.Internal (Resolvable)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.JSON as J
-import qualified Network.Riak.Resolvable as R
+import qualified Network.Riak.Resolvable.Internal as R
 
 -- | Retrieve a single value.  If conflicting values are returned, the
 -- 'Resolvable' is used to choose a winner.

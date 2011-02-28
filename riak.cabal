@@ -58,17 +58,18 @@ library
 
   exposed-modules:     
     Network.Riak
+    Network.Riak.Basic
     Network.Riak.Connection
     Network.Riak.Connection.Pool
     Network.Riak.Content
     Network.Riak.Debug
     Network.Riak.Escape
-    Network.Riak.Request
-    Network.Riak.Response
-    Network.Riak.Basic
-    Network.Riak.Types
     Network.Riak.JSON
     Network.Riak.JSON.Resolvable
+    Network.Riak.Request
+    Network.Riak.Resolvable
+    Network.Riak.Response
+    Network.Riak.Types
     Network.Riak.Value
     Network.Riak.Value.Resolvable
     Network.Riak.Protocol.ServerInfo
@@ -96,14 +97,14 @@ library
     Network.Riak.Protocol.ListBucketsRequest
 
   other-modules:       
-    Network.Riak.Resolvable
-    Network.Riak.Protocol.Link
     Network.Riak.Connection.Internal
     Network.Riak.Connection.NoPush
+    Network.Riak.Protocol
     Network.Riak.Protocol.Content
+    Network.Riak.Protocol.Link
+    Network.Riak.Resolvable.Internal
     Network.Riak.Tag
     Network.Riak.Types.Internal
-    Network.Riak.Protocol
   
   build-depends:       
     aeson == 0.2.*,
