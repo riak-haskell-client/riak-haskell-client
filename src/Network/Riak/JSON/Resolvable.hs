@@ -1,25 +1,22 @@
 -- |
--- Module:      Network.Riak.Value.Monoid
+-- Module:      Network.Riak.JSON.Resolvable
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
 -- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
 -- Stability:   experimental
 -- Portability: portable
 --
--- This module allows storage and retrieval of data encoded using the
--- 'V.IsContent' typeclass.  This provides access to more of Riak's
--- storage features than JSON, e.g. links.
+-- This module allows storage and retrieval of JSON-encoded data.
 --
--- Functions automatically resolve conflicts using 'Monoid' instances.
+-- Functions automatically resolve conflicts using 'Resolvable' instances.
 -- For instance, if a 'get' returns three siblings, a winner will be
 -- chosen using 'mconcat'.  If a 'put' results in a conflict, a winner
 -- will be chosen using 'mconcat', and the winner will be 'put'; this
 -- will be repeated until no conflict occurs.
 
-module Network.Riak.Value.Monoid
+module Network.Riak.JSON.Resolvable
     (
-      V.IsContent(..)
-    , get
+      get
     , getMany
     , put
     , put_
@@ -27,23 +24,24 @@ module Network.Riak.Value.Monoid
     , putMany_
     ) where
 
-import Data.Monoid (Monoid(..))
+import Data.Aeson.Types (FromJSON(..), ToJSON(..))
+import Network.Riak.Resolvable (Resolvable)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Network.Riak.Monoid as M
-import qualified Network.Riak.Value as V
+import qualified Network.Riak.JSON as J
+import qualified Network.Riak.Resolvable as R
 
 -- | Retrieve a single value.  If conflicting values are returned, the
--- 'Monoid' is used to choose a winner.
-get :: (Monoid c, V.IsContent c) =>
+-- 'Resolvable' is used to choose a winner.
+get :: (FromJSON c, ToJSON c, Resolvable c) =>
        Connection -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
-get = M.get V.get
+get = R.get J.get
 {-# INLINE get #-}
 
 -- | Retrieve multiple values.  If conflicting values are returned for
--- a key, the 'Monoid' is used to choose a winner.
-getMany :: (Monoid c, V.IsContent c) => Connection -> Bucket -> [Key] -> R
-        -> IO [Maybe (c, VClock)]
-getMany = M.getMany V.getMany
+-- a key, the 'Resolvable' is used to choose a winner.
+getMany :: (FromJSON c, ToJSON c, Resolvable c)
+           => Connection -> Bucket -> [Key] -> R -> IO [Maybe (c, VClock)]
+getMany = R.getMany J.getMany
 {-# INLINE getMany #-}
 
 -- | Store a single value, automatically resolving any vector clock
@@ -56,10 +54,10 @@ getMany = M.getMany V.getMany
 --
 -- The final value to be stored at the end of any conflict resolution
 -- is returned.
-put :: (Eq c, Monoid c, V.IsContent c) =>
+put :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
-put = M.put V.put 
+put = R.put J.put
 {-# INLINE put #-}
 
 -- | Store a single value, automatically resolving any vector clock
@@ -69,10 +67,10 @@ put = M.put V.put
 -- If a conflict arises, a winner will be chosen using 'mconcat', and
 -- the winner will be stored; this will be repeated until no conflict
 -- occurs.
-put_ :: (Eq c, Monoid c, V.IsContent c) =>
+put_ :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
         Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
      -> IO ()
-put_ = M.put_ V.put 
+put_ = R.put_ J.put
 {-# INLINE put_ #-}
 
 -- | Store multiple values, resolving any vector clock conflicts that
@@ -85,10 +83,10 @@ put_ = M.put_ V.put
 --
 -- For each original value to be stored, the final value that was
 -- stored at the end of any conflict resolution is returned.
-putMany :: (Eq c, Monoid c, V.IsContent c) =>
+putMany :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]
-putMany = M.putMany V.putMany
+putMany = R.putMany J.putMany
 {-# INLINE putMany #-}
 
 -- | Store multiple values, resolving any vector clock conflicts that
@@ -98,7 +96,8 @@ putMany = M.putMany V.putMany
 -- If any conflicts arise, a winner will be chosen in each case using
 -- 'mconcat', and the winners will be stored; this will be repeated
 -- until no conflicts occur.
-putMany_ :: (Eq c, Monoid c, V.IsContent c) =>
-            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW -> IO ()
-putMany_ = M.putMany_ V.putMany
+putMany_ :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
+            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+         -> IO ()
+putMany_ = R.putMany_ J.putMany
 {-# INLINE putMany_ #-}

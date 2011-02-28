@@ -17,7 +17,7 @@ description:
   .
   [Network.Riak.JSON] JSON for storage, manual conflict resolution.
   .
-  [Network.Riak.Value.Monoid] More complex (but still automatic)
+  [Network.Riak.Value.Resolvable] More complex (but still automatic)
   storage, automatic conflict resolution.
   .
   [Network.Riak.Value] More complex (but still automatic) storage,
@@ -68,9 +68,9 @@ library
     Network.Riak.Basic
     Network.Riak.Types
     Network.Riak.JSON
-    Network.Riak.JSON.Monoid
+    Network.Riak.JSON.Resolvable
     Network.Riak.Value
-    Network.Riak.Value.Monoid
+    Network.Riak.Value.Resolvable
     Network.Riak.Protocol.ServerInfo
     Network.Riak.Protocol.BucketProps
     Network.Riak.Protocol.DeleteRequest
@@ -96,7 +96,7 @@ library
     Network.Riak.Protocol.ListBucketsRequest
 
   other-modules:       
-    Network.Riak.Monoid
+    Network.Riak.Resolvable
     Network.Riak.Protocol.Link
     Network.Riak.Connection.Internal
     Network.Riak.Connection.NoPush

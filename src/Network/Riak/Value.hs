@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, OverloadedStrings, RecordWildCards, StandaloneDeriving #-}
 
 -- |
 -- Module:      Network.Riak.Value
@@ -27,20 +27,21 @@ module Network.Riak.Value
     ) where
 
 import Control.Applicative
-import qualified Data.Attoparsec.Lazy as A
+import Data.Aeson.Types (Parser, Result(..), parse)
 import Data.Foldable (toList)
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.Content (Content(..))
 import Network.Riak.Protocol.GetResponse (GetResponse(..))
 import Network.Riak.Protocol.PutResponse (PutResponse(..))
+import Network.Riak.Resolvable (ResolvableMonoid(..))
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Data.Aeson.Parser as Aeson
 import qualified Data.Aeson.Types as Aeson
+import qualified Data.Attoparsec.Lazy as A
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Sequence as Seq
 import qualified Network.Riak.Content as C
 import qualified Network.Riak.Request as Req
-import Data.Aeson.Types (Parser, Result(..), parse)
 
 fromContent :: IsContent c => Content -> Maybe c
 fromContent c = case parse parseContent c of
@@ -74,6 +75,8 @@ instance IsContent Aeson.Value where
                    | otherwise = fail "non-JSON document"
     toContent = C.json
     {-# INLINE toContent #-}
+
+deriving instance (IsContent a) => IsContent (ResolvableMonoid a)
 
 put :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)

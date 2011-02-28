@@ -18,13 +18,13 @@
 -- use one of the following modules (ranked from easiest to most
 -- tricky to use):
 --
--- [Network.Riak.JSON.Monoid] JSON for storage, automatic conflict
+-- [Network.Riak.JSON.Resolvable] JSON for storage, automatic conflict
 -- resolution.  (This module actually re-exports its definitions.)
 -- This is the easiest module to work with.
 --
 -- [Network.Riak.JSON] JSON for storage, manual conflict resolution.
 --
--- [Network.Riak.Value.Monoid] More complex (but still automatic)
+-- [Network.Riak.Value.Resolvable] More complex (but still automatic)
 -- storage, automatic conflict resolution.
 --
 -- [Network.Riak.Value] More complex (but still automatic) storage,
@@ -67,4 +67,4 @@ module Network.Riak
 import Network.Riak.Connection
 import Network.Riak.Types
 import Network.Riak.Basic hiding (get, put, put_)
-import Network.Riak.JSON.Monoid (get, getMany, put, putMany)
+import Network.Riak.JSON.Resolvable (get, getMany, put, putMany)

@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
+{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses, 
     RecordWildCards #-}
 
 -- |
