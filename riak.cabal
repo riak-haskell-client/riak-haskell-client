@@ -1,5 +1,5 @@
 name:                riak
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -72,36 +72,10 @@ library
     Network.Riak.Types
     Network.Riak.Value
     Network.Riak.Value.Resolvable
-    Network.Riak.Protocol.ServerInfo
-    Network.Riak.Protocol.BucketProps
-    Network.Riak.Protocol.DeleteRequest
-    Network.Riak.Protocol.ErrorResponse
-    Network.Riak.Protocol.GetBucketRequest
-    Network.Riak.Protocol.GetBucketResponse
-    Network.Riak.Protocol.GetClientIDResponse
-    Network.Riak.Protocol.GetRequest
-    Network.Riak.Protocol.GetResponse
-    Network.Riak.Protocol.ListBucketsResponse
-    Network.Riak.Protocol.ListKeysRequest
-    Network.Riak.Protocol.ListKeysResponse
-    Network.Riak.Protocol.MapReduceRequest
-    Network.Riak.Protocol.MapReduce
-    Network.Riak.Protocol.Pair
-    Network.Riak.Protocol.PutRequest
-    Network.Riak.Protocol.PutResponse
-    Network.Riak.Protocol.SetBucketRequest
-    Network.Riak.Protocol.SetClientIDRequest
-    Network.Riak.Protocol.PingRequest
-    Network.Riak.Protocol.GetClientIDRequest
-    Network.Riak.Protocol.GetServerInfoRequest
-    Network.Riak.Protocol.ListBucketsRequest
 
   other-modules:       
     Network.Riak.Connection.Internal
     Network.Riak.Connection.NoPush
-    Network.Riak.Protocol
-    Network.Riak.Protocol.Content
-    Network.Riak.Protocol.Link
     Network.Riak.Resolvable.Internal
     Network.Riak.Tag
     Network.Riak.Types.Internal
@@ -117,9 +91,9 @@ library
     hashable >= 1.0.1.2,
     network >= 2.3,
     protocol-buffers >= 1.8.0,
-    protocol-buffers-descriptor >= 1.8.1,
     pureMD5,
     random,
+    riak-protobuf >= 0.14.0.0,
     stm,
     time,
     vector >= 0.7
