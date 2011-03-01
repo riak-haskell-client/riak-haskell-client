@@ -106,7 +106,7 @@ library
     ghc-prof-options: -auto-all
     cpp-options: -DASSERTS -DDEBUG
 
-  ghc-options: -Wall -fno-warn-orphans
+  ghc-options: -Wall
 
 source-repository head
   type:     git
