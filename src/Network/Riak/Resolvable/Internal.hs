@@ -61,6 +61,12 @@ instance (Monoid a) => Resolvable (ResolvableMonoid a) where
     resolve = mappend
     {-# INLINE resolve #-}
 
+instance (Resolvable a) => Resolvable (Maybe a) where
+    resolve (Just a)   (Just b) = Just (resolve a b)
+    resolve a@(Just _) _        = a
+    resolve _          b        = b
+    {-# INLINE resolve #-}
+
 get :: (Resolvable a) =>
        (Connection -> Bucket -> Key -> R -> IO (Maybe ([a], VClock)))
        -> (Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
