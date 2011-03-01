@@ -39,9 +39,6 @@ category:            Network
 build-type:          Simple
 extra-source-files:
   README.markdown
-  proto.sh
-  src/riakclient.proto
-  src/riakextra.proto
 
 cabal-version:       >=1.8
 
