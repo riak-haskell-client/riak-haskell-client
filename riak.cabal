@@ -78,7 +78,7 @@ library
     Network.Riak.Types.Internal
   
   build-depends:       
-    aeson == 0.2.*,
+    aeson >= 0.2.0.0,
     attoparsec >= 0.8.5.0,
     base == 4.*,
     binary,
