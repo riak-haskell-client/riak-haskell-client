@@ -21,7 +21,7 @@ module Network.Riak.Debug
     ) where
 
 import Control.Exception hiding (handle)
-import Data.IORef (IORef, newIORef, readIORef, writeIORef)
+import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, withMVar)
 import Network.Riak.Types.Internal
 import System.Environment (getEnv)
 import System.IO (Handle, hPutStrLn, stderr)
@@ -46,15 +46,15 @@ level = 0
 #endif
 
 #ifdef DEBUG
-handle :: IORef Handle
-handle = unsafePerformIO $ newIORef stderr
+handle :: MVar Handle
+handle = unsafePerformIO $ newMVar stderr
 {-# NOINLINE handle #-}
 #endif
 
 -- | Set the 'Handle' to log to ('stderr' is the default).
 setHandle :: Handle -> IO ()
 #ifdef DEBUG
-setHandle = writeIORef handle
+setHandle = modifyMVar_ handle . const . return
 #else
 setHandle _ = return ()
 {-# INLINE setHandle #-}
@@ -64,9 +64,8 @@ debug :: String -> String -> IO ()
 #ifdef DEBUG
 debug func str
     | level == 0 = return ()
-    | otherwise  = do
-  h <- readIORef handle
-  hPutStrLn h $ str ++ " [" ++ func ++ "]"
+    | otherwise  =
+  withMVar handle $ \h -> hPutStrLn h $ str ++ " [" ++ func ++ "]"
 #else
 debug _ _ = return ()
 {-# INLINE debug #-}
