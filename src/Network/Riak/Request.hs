@@ -31,20 +31,20 @@ module Network.Riak.Request
     ) where
 
 import Control.Applicative ((<$>))
-import Network.Riak.Protocol.PingRequest
-import qualified Network.Riak.Protocol.DeleteRequest as Del
+import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetClientIDRequest
 import Network.Riak.Protocol.GetServerInfoRequest
 import Network.Riak.Protocol.ListBucketsRequest
+import Network.Riak.Protocol.MapReduceRequest
+import Network.Riak.Protocol.PingRequest
+import Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Network.Riak.Protocol.DeleteRequest as Del
+import qualified Network.Riak.Protocol.GetBucketRequest as GetBucket
+import qualified Network.Riak.Protocol.GetRequest as Get
 import qualified Network.Riak.Protocol.ListKeysRequest as Keys
 import qualified Network.Riak.Protocol.PutRequest as Put
-import Network.Riak.Protocol.Content
-import qualified Network.Riak.Protocol.GetRequest as Get
-import qualified Network.Riak.Protocol.GetBucketRequest as GetBucket
 import qualified Network.Riak.Protocol.SetBucketRequest as SetBucket
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.BucketProps
-import Network.Riak.Types.Internal hiding (MessageTag(..))
 
 ping :: PingRequest
 ping = PingRequest

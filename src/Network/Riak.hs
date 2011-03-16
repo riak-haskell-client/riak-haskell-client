@@ -64,7 +64,5 @@ module Network.Riak
     , mapReduce
     ) where
 
-import Network.Riak.Connection
-import Network.Riak.Types
 import Network.Riak.Basic hiding (get, put, put_)
 import Network.Riak.JSON.Resolvable (get, getMany, put, putMany)

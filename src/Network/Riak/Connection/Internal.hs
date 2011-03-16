@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
 -- Module:      Network.Riak.Connection.Internal
@@ -36,7 +37,9 @@ module Network.Riak.Connection.Internal
     , recvResponse_
     ) where
 
-import Control.Concurrent
+import Control.Concurrent (forkIO)
+import Control.Concurrent.Chan (newChan, readChan, writeChan)
+import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
 import Control.Exception (Exception, IOException, throw)
 import Control.Monad (forM_, replicateM, replicateM_)
 import Data.Binary.Put (Put, putWord32be, runPut)

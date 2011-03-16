@@ -20,8 +20,8 @@ module Network.Riak.Debug
     , showM
     ) where
 
-import Control.Exception hiding (handle)
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, withMVar)
+import Control.Exception hiding (handle)
 import Network.Riak.Types.Internal
 import System.Environment (getEnv)
 import System.IO (Handle, hPutStrLn, stderr)
