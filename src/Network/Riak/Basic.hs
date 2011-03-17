@@ -44,7 +44,9 @@ module Network.Riak.Basic
     ) where
 
 import Control.Applicative ((<$>))
+import Data.Maybe (fromMaybe)
 import Network.Riak.Connection.Internal
+import Network.Riak.Escape (unescape)
 import Network.Riak.Protocol.BucketProps
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.ListKeysResponse
@@ -102,16 +104,17 @@ delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
 listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
 
--- Fold over the buckets in the cluster.
+-- Fold over the keys in a bucket.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
 foldKeys :: Connection -> T.Bucket -> (a -> Key -> IO a) -> a -> IO a
 foldKeys conn bucket f z0 = do
   sendRequest conn $ Req.listKeys bucket
-  let loop z = do
+  let g z = f z . unescape
+      loop z = do
         ListKeysResponse{..} <- recvResponse conn
-        z1 <- F.foldlM f z keys
-        if maybe False id done
+        z1 <- F.foldlM g z keys
+        if fromMaybe False done
           then return z1
           else loop z1
   loop z0

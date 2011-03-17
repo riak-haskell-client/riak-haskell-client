@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances, OverloadedStrings #-}
 
 -- |
 -- Module:      Network.Riak.Connection
@@ -18,36 +18,97 @@
 
 module Network.Riak.Escape
     (
-      escape
+      Escape(..)
     , unescape
     ) where
 
-import Blaze.ByteString.Builder (fromByteString, toByteString)
+import Blaze.ByteString.Builder (Builder, fromByteString, toByteString, toLazyByteString)
 import Blaze.ByteString.Builder.Word (fromWord8)
 import Control.Applicative ((<$>))
 import Data.Attoparsec as A
+import Data.Attoparsec.Lazy as AL
 import Data.Bits ((.|.), (.&.), shiftL, shiftR)
 import Data.ByteString (ByteString)
 import Data.Monoid (mappend, mempty)
+import Data.Text (Text)
+import Data.Word (Word8)
+import Network.Riak.Functions (mapEither)
 import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Unsafe as B
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
+import qualified Data.Text.Lazy as TL
+import qualified Data.Text.Lazy.Encoding as TL
 
--- | URL-escape a string.
-escape :: ByteString -> ByteString
-escape = toByteString . B.foldl step mempty
+-- | The class of string-like types that can be URL-escaped and
+-- unescaped.
+class Escape e where
+    -- | URL-escape a string.
+    escape :: e -> L.ByteString
+    -- | URL-unescape a string.
+    unescape' :: L.ByteString -> Either String e
+
+-- | URL-unescape a string that is presumed to be properly escaped.
+-- If the string is invalid, an error will be thrown that cannot be
+-- caught from pure code.
+unescape :: Escape e => L.ByteString -> e
+unescape bs = case unescape' bs of
+                Left err -> error $ "Network.Riak.Escape.unescape: " ++ err
+                Right v  -> v
+{-# INLINE unescape #-}
+
+instance Escape ByteString where
+    escape = toLazyByteString . B.foldl escapeWord8 mempty
+    {-# INLINE escape #-}
+    unescape' = AL.eitherResult . AL.parse (toByteString <$> unescapeBS)
+    {-# INLINE unescape' #-}
+
+instance Escape L.ByteString where
+    escape = toLazyByteString . L.foldl escapeWord8 mempty
+    {-# INLINE escape #-}
+    unescape' = AL.eitherResult . AL.parse (toLazyByteString <$> unescapeBS)
+    {-# INLINE unescape' #-}
+
+instance Escape Text where
+    escape = escape . T.encodeUtf8
+    {-# INLINE escape #-}
+    unescape' lbs = case AL.parse (toByteString <$> unescapeBS) lbs of
+                     AL.Done _ bs    -> mapEither show id $ T.decodeUtf8' bs
+                     AL.Fail _ _ err -> Left err
+    {-# INLINE unescape' #-}
+
+instance Escape TL.Text where
+    escape = escape . TL.encodeUtf8
+    {-# INLINE escape #-}
+    unescape' lbs = case AL.parse (toLazyByteString <$> unescapeBS) lbs of
+                     AL.Done _ bs    -> mapEither show id $ TL.decodeUtf8' bs
+                     AL.Fail _ _ err -> Left err
+    {-# INLINE unescape' #-}
+
+instance Escape [Char] where
+    escape = escape . T.encodeUtf8 . T.pack
+    {-# INLINE escape #-}
+    unescape' = mapEither id T.unpack . unescape'
+    {-# INLINE unescape' #-}
+
+-- | URL-escape a byte from a bytestring.
+escapeWord8 :: Builder -> Word8 -> Builder
+escapeWord8 acc 32 = acc `mappend` fromWord8 43
+escapeWord8 acc i
+    | literal i = acc `mappend` fromWord8 i
+    | otherwise = acc `mappend` hex i
   where
-    step acc 32 = acc `mappend` fromWord8 43
-    step acc w | literal w = acc `mappend` fromWord8 w
-               | otherwise = acc `mappend` hex w
     literal w = w >= 97 && w <= 122 || w >= 65 && w <= 90 ||
                 w >= 48 && w <= 57 || w `B.elem` "$-.!*'(),"
     hex w = fromWord8 37 `mappend` d (w `shiftR` 4) `mappend` d (w .&. 0xf)
     d n | n < 10    = fromWord8 (n + 48)
         | otherwise = fromWord8 (n + 87)
+{-# INLINE escapeWord8 #-}
 
--- | URL-unescape a string.
-unescapeP :: Parser ByteString
-unescapeP = toByteString <$> go mempty
+-- | URL-unescape' a bytestring.
+unescapeBS :: Parser Builder
+unescapeBS = go mempty
   where
     go acc  = do
       s <- A.takeWhile $ \w -> w /= 37 && w /= 43
@@ -71,7 +132,3 @@ unescapeP = toByteString <$> go mempty
       if done
         then return (acc `mappend` fromByteString s)
         else rest
-
--- | URL-unescape a string.
-unescape :: ByteString -> Either String ByteString
-unescape s0 = eitherResult $ parse unescapeP s0 `feed` B.empty

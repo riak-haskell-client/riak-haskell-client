@@ -34,6 +34,7 @@ import Network.Riak.Protocol.Content (Content(..))
 import Network.Riak.Protocol.GetResponse (GetResponse(..))
 import Network.Riak.Protocol.PutResponse (PutResponse(..))
 import Network.Riak.Resolvable (ResolvableMonoid(..))
+import Network.Riak.Response (unescapeLinks)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Data.Aeson.Parser as Aeson
 import qualified Data.Aeson.Types as Aeson
@@ -126,9 +127,10 @@ getResp resp =
 
 convert :: IsContent v => Seq.Seq Content -> IO [v]
 convert = go [] [] . toList
-    where go cs vs (x:xs) = case fromContent x of
+    where go cs vs (x:xs) = case fromContent y of
                               Just v -> go cs (v:vs) xs
-                              _      -> go (x:cs) vs xs
+                              _      -> go (y:cs) vs xs
+              where y = unescapeLinks x
           go [] vs _      = return (reverse vs)
           go cs _  _      = typeError "Network.Riak.Value" "convert" $
                             show (length cs) ++ " values failed conversion: " ++
