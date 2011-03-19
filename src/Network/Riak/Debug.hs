@@ -16,12 +16,14 @@ module Network.Riak.Debug
     (
       level
     , debug
+    , debugValues
     , setHandle
     , showM
     ) where
 
 import Control.Concurrent.MVar (MVar, modifyMVar_, newMVar, withMVar)
 import Control.Exception hiding (handle)
+import Control.Monad (forM_, when)
 import Network.Riak.Types.Internal
 import System.Environment (getEnv)
 import System.IO (Handle, hPutStrLn, stderr)
@@ -60,7 +62,10 @@ setHandle _ = return ()
 {-# INLINE setHandle #-}
 #endif
 
-debug :: String -> String -> IO ()
+-- | Print a debug message, if debugging is enabled.
+debug :: String                 -- ^ Function name.
+      -> String                 -- ^ Debug message.
+      -> IO ()
 #ifdef DEBUG
 debug func str
     | level == 0 = return ()
@@ -69,6 +74,28 @@ debug func str
 #else
 debug _ _ = return ()
 {-# INLINE debug #-}
+#endif
+
+-- | Print a debug message, and information about some values.  If the
+-- debug level is greater than 1, print the values themselves.
+debugValues :: (Show a) =>
+               String
+            -> String
+            -> [a]
+            -> IO ()
+debugValues func str values
+#ifdef DEBUG
+    | level == 0 = return ()
+    | otherwise = 
+  withMVar handle $ \h -> do
+    hPutStrLn h $ str ++ ": " ++ show (length values) ++
+                  " values [" ++ func ++ "]"
+    when (level > 1) .
+      forM_ (zip [(0::Int)..] values) $ \(i,v) ->
+        hPutStrLn h $ "  [" ++ show i ++ "] " ++ show v
+#else
+debugValues _ _ _ = return ()
+{-# INLINE debugValues #-}
 #endif
 
 -- | Show a 'Tagged' value.  Show the entire value if the debug level
