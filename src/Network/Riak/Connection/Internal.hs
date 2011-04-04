@@ -293,6 +293,7 @@ debugRecv _ act = act
 
 pipe :: (Request req, Show resp) =>
         (Connection -> IO resp) -> Connection -> [req] -> IO [resp]
+pipe _ _ [] = return []
 pipe receive conn@Connection{..} reqs = do
   ch <- newChan
   let numReqs = length reqs
@@ -324,6 +325,7 @@ pipelineMaybe = pipe recvMaybeResponse
 -- sending and receiving will be overlapped if possible, to improve
 -- concurrency and reduce latency.
 pipeline_ :: (Request req) => Connection -> [req] -> IO ()
+pipeline_ _ [] = return ()
 pipeline_ conn@Connection{..} reqs = do
   done <- newEmptyMVar
   _ <- forkIO $ do
