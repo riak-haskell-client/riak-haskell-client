@@ -79,8 +79,8 @@ library
     Network.Riak.Types.Internal
   
   build-depends:       
-    aeson >= 0.2.0.0,
-    attoparsec >= 0.8.5.0,
+    aeson >= 0.3.2.4,
+    attoparsec >= 0.8.5.3,
     base == 4.*,
     binary,
     blaze-builder,
