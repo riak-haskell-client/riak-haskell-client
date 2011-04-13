@@ -12,6 +12,8 @@ module Network.Riak.Resolvable
     (
       Resolvable(..)
     , ResolvableMonoid(..)
+    , ResolutionFailure(..)
     ) where
 
-import Network.Riak.Resolvable.Internal (Resolvable(..), ResolvableMonoid(..))
+import Network.Riak.Resolvable.Internal
+    (ResolutionFailure(..), Resolvable(..), ResolvableMonoid(..))

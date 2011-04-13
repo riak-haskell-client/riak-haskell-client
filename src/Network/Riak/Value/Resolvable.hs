@@ -10,15 +10,18 @@
 -- 'V.IsContent' typeclass.  This provides access to more of Riak's
 -- storage features than JSON, e.g. links.
 --
--- Functions automatically resolve conflicts using 'Resolvable' instances.
--- For instance, if a 'get' returns three siblings, a winner will be
--- chosen using 'mconcat'.  If a 'put' results in a conflict, a winner
--- will be chosen using 'mconcat', and the winner will be 'put'; this
--- will be repeated until no conflict occurs.
+-- Functions automatically resolve conflicts using 'Resolvable'
+-- instances.  For instance, if a 'get' returns three siblings, a
+-- winner will be chosen using 'resolve'.  If a 'put' results in a
+-- conflict, a winner will be chosen using 'resolve', and the winner
+-- will be 'put'; this will be repeated until either no conflict
+-- occurs or the process has been repeated too many times.
 
 module Network.Riak.Value.Resolvable
     (
       V.IsContent(..)
+    , Resolvable(..)
+    , ResolutionFailure(..)
     , get
     , getMany
     , put
@@ -27,7 +30,7 @@ module Network.Riak.Value.Resolvable
     , putMany_
     ) where
 
-import Network.Riak.Resolvable.Internal (Resolvable)
+import Network.Riak.Resolvable.Internal (ResolutionFailure(..), Resolvable(..))
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.Resolvable.Internal as R
 import qualified Network.Riak.Value as V
@@ -50,12 +53,14 @@ getMany = R.getMany V.getMany
 -- conflicts that arise.  A single invocation of this function may
 -- involve several roundtrips to the server to resolve conflicts.
 --
--- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- If a conflict arises, a winner will be chosen using 'resolve', and
 -- the winner will be stored; this will be repeated until no conflict
--- occurs.
+-- occurs or a (fairly large) number of retries has been attempted
+-- without success.
 --
--- The final value to be stored at the end of any conflict resolution
--- is returned.
+-- If this function gives up due to apparently being stuck in a
+-- conflict resolution loop, it will throw a 'ResolutionFailure'
+-- exception.
 put :: (Eq a, Resolvable a, V.IsContent a) =>
        Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
@@ -66,9 +71,14 @@ put = R.put V.put
 -- conflicts that arise.  A single invocation of this function may
 -- involve several roundtrips to the server to resolve conflicts.
 --
--- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- If a conflict arises, a winner will be chosen using 'resolve', and
 -- the winner will be stored; this will be repeated until no conflict
--- occurs.
+-- occurs or a (fairly large) number of retries has been attempted
+-- without success.
+--
+-- If this function gives up due to apparently being stuck in a
+-- conflict resolution loop, it will throw a 'ResolutionFailure'
+-- exception.
 put_ :: (Eq a, Resolvable a, V.IsContent a) =>
         Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
      -> IO ()
@@ -80,11 +90,15 @@ put_ = R.put_ V.put
 -- roundtrips to the server to resolve conflicts.
 --
 -- If any conflicts arise, a winner will be chosen in each case using
--- 'mconcat', and the winners will be stored; this will be repeated
--- until no conflicts occur.
+-- 'resolve', and the winners will be stored; this will be repeated
+-- until either no conflicts occur or a (fairly large) number of
+-- retries has been attempted without success.
 --
 -- For each original value to be stored, the final value that was
 -- stored at the end of any conflict resolution is returned.
+--
+-- If this function gives up due to apparently being stuck in a loop,
+-- it will throw a 'ResolutionFailure' exception.
 putMany :: (Eq a, Resolvable a, V.IsContent a) =>
            Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
         -> IO [(a, VClock)]
@@ -96,8 +110,12 @@ putMany = R.putMany V.putMany
 -- roundtrips to the server to resolve conflicts.
 --
 -- If any conflicts arise, a winner will be chosen in each case using
--- 'mconcat', and the winners will be stored; this will be repeated
--- until no conflicts occur.
+-- 'resolve', and the winners will be stored; this will be repeated
+-- until either no conflicts occur or a (fairly large) number of
+-- retries has been attempted without success.
+--
+-- If this function gives up due to apparently being stuck in a loop,
+-- it will throw a 'ResolutionFailure' exception.
 putMany_ :: (Eq a, Resolvable a, V.IsContent a) =>
             Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
 putMany_ = R.putMany_ V.putMany

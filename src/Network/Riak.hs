@@ -50,6 +50,7 @@ module Network.Riak
     , getServerInfo
     -- * Data management
     , Quorum(..)
+    , Resolvable(..)
     , get
     , getMany
     , put
@@ -66,3 +67,4 @@ module Network.Riak
 
 import Network.Riak.Basic hiding (get, put, put_)
 import Network.Riak.JSON.Resolvable (get, getMany, put, putMany)
+import Network.Riak.Resolvable (Resolvable(..))

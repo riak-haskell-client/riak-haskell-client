@@ -8,15 +8,18 @@
 --
 -- This module allows storage and retrieval of JSON-encoded data.
 --
--- Functions automatically resolve conflicts using 'Resolvable' instances.
--- For instance, if a 'get' returns three siblings, a winner will be
--- chosen using 'mconcat'.  If a 'put' results in a conflict, a winner
--- will be chosen using 'mconcat', and the winner will be 'put'; this
--- will be repeated until no conflict occurs.
+-- Functions automatically resolve conflicts using 'Resolvable'
+-- instances.  For instance, if a 'get' returns three siblings, a
+-- winner will be chosen using 'resolve'.  If a 'put' results in a
+-- conflict, a winner will be chosen using 'resolve', and the winner
+-- will be 'put'; this will be repeated until either no conflict
+-- occurs or the process has been repeated too many times.
 
 module Network.Riak.JSON.Resolvable
     (
-      get
+      Resolvable(..)
+    , ResolutionFailure(..)
+    , get
     , getMany
     , put
     , put_
@@ -25,20 +28,20 @@ module Network.Riak.JSON.Resolvable
     ) where
 
 import Data.Aeson.Types (FromJSON(..), ToJSON(..))
-import Network.Riak.Resolvable.Internal (Resolvable)
+import Network.Riak.Resolvable.Internal (ResolutionFailure(..), Resolvable(..))
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.JSON as J
 import qualified Network.Riak.Resolvable.Internal as R
 
--- | Retrieve a single value.  If conflicting values are returned, the
--- 'Resolvable' is used to choose a winner.
+-- | Retrieve a single value.  If conflicting values are returned,
+-- 'resolve' is used to choose a winner.
 get :: (FromJSON c, ToJSON c, Resolvable c) =>
        Connection -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
 get = R.get J.get
 {-# INLINE get #-}
 
 -- | Retrieve multiple values.  If conflicting values are returned for
--- a key, the 'Resolvable' is used to choose a winner.
+-- a key, 'resolve' is used to choose a winner.
 getMany :: (FromJSON c, ToJSON c, Resolvable c)
            => Connection -> Bucket -> [Key] -> R -> IO [Maybe (c, VClock)]
 getMany = R.getMany J.getMany
@@ -48,12 +51,14 @@ getMany = R.getMany J.getMany
 -- conflicts that arise.  A single invocation of this function may
 -- involve several roundtrips to the server to resolve conflicts.
 --
--- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- If a conflict arises, a winner will be chosen using 'resolve', and
 -- the winner will be stored; this will be repeated until no conflict
--- occurs.
+-- occurs or a (fairly large) number of retries has been attempted
+-- without success.
 --
--- The final value to be stored at the end of any conflict resolution
--- is returned.
+-- If this function gives up due to apparently being stuck in a
+-- conflict resolution loop, it will throw a 'ResolutionFailure'
+-- exception.
 put :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
@@ -64,9 +69,14 @@ put = R.put J.put
 -- conflicts that arise.  A single invocation of this function may
 -- involve several roundtrips to the server to resolve conflicts.
 --
--- If a conflict arises, a winner will be chosen using 'mconcat', and
+-- If a conflict arises, a winner will be chosen using 'resolve', and
 -- the winner will be stored; this will be repeated until no conflict
--- occurs.
+-- occurs or a (fairly large) number of retries has been attempted
+-- without success.
+--
+-- If this function gives up due to apparently being stuck in a
+-- conflict resolution loop, it will throw a 'ResolutionFailure'
+-- exception.
 put_ :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
         Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
      -> IO ()
@@ -78,11 +88,15 @@ put_ = R.put_ J.put
 -- roundtrips to the server to resolve conflicts.
 --
 -- If any conflicts arise, a winner will be chosen in each case using
--- 'mconcat', and the winners will be stored; this will be repeated
--- until no conflicts occur.
+-- 'resolve', and the winners will be stored; this will be repeated
+-- until either no conflicts occur or a (fairly large) number of
+-- retries has been attempted without success.
 --
 -- For each original value to be stored, the final value that was
 -- stored at the end of any conflict resolution is returned.
+--
+-- If this function gives up due to apparently being stuck in a loop,
+-- it will throw a 'ResolutionFailure' exception.
 putMany :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]
@@ -94,8 +108,12 @@ putMany = R.putMany J.putMany
 -- roundtrips to the server to resolve conflicts.
 --
 -- If any conflicts arise, a winner will be chosen in each case using
--- 'mconcat', and the winners will be stored; this will be repeated
--- until no conflicts occur.
+-- 'resolve', and the winners will be stored; this will be repeated
+-- until either no conflicts occur or a (fairly large) number of
+-- retries has been attempted without success.
+--
+-- If this function gives up due to apparently being stuck in a loop,
+-- it will throw a 'ResolutionFailure' exception.
 putMany_ :: (Eq c, FromJSON c, ToJSON c, Resolvable c) =>
             Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
          -> IO ()
