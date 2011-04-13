@@ -22,6 +22,7 @@ module Network.Riak.Types.Internal
     , RiakException(excModule, excFunction, excMessage)
     , netError
     , typeError
+    , unexError
     -- * Data types
     , Bucket
     , Key
@@ -84,13 +85,19 @@ data RiakException = NetException {
       excModule :: String
     , excFunction :: String
     , excMessage :: String
-    } deriving (Eq, Typeable)
+    } | UnexpectedResponse {
+      excModule :: String
+    , excFunction :: String
+    , excMessage :: String
+    }deriving (Eq, Typeable)
 
 showRiakException :: RiakException -> String
 showRiakException exc@NetException{..} =
     "Riak network error " ++ formatRiakException exc
 showRiakException exc@TypeException{..} =
     "Riak type error " ++ formatRiakException exc
+showRiakException exc@UnexpectedResponse{..} =
+    "Riak server sent unexpected response " ++ formatRiakException exc
 
 formatRiakException :: RiakException -> String
 formatRiakException exc =
@@ -106,6 +113,9 @@ netError modu func msg = throw (NetException modu func msg)
 
 typeError :: String -> String -> String -> a
 typeError modu func msg = throw (TypeException modu func msg)
+
+unexError :: String -> String -> String -> a
+unexError modu func msg = throw (UnexpectedResponse modu func msg)
 
 instance Show Connection where
     show conn = show "Connection " ++ host c ++ ":" ++ port c
