@@ -53,14 +53,8 @@ data ResolutionFailure = RetriesExceeded
     -- (64). This makes it extremely unlikely that this exception will
     -- be thrown during normal application operation.  Instead, this
     -- exception is most likely to be thrown as a result of a bug in
-    -- your application code.
-    --
-    -- An example of such a bug could arise if your 'Eq' instance for
-    -- a type was faulty, such that '==' gave false negatives.  Such a
-    -- situation can occur if you are storing a structure containing
-    -- 'Double' values where some are @NaN@ (the value used to
-    -- represent the expression @0\/0@), because two @NaN@ values are
-    -- /not/ considered equal.
+    -- your application code, for example if your 'resolve' function
+    -- is misbehaving.
                          deriving (Eq, Show, Typeable)
 
 instance Exception ResolutionFailure
@@ -80,7 +74,7 @@ instance Exception ResolutionFailure
 -- If several conflicting siblings are found, 'resolve' will be
 -- applied over all of them using a fold, to yield a single
 -- \"winner\".
-class (Eq a, Show a) => Resolvable a where
+class (Show a) => Resolvable a where
     -- | Resolve a conflict between two values.
     resolve :: a -> a -> a
 
