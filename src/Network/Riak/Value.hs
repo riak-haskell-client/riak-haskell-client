@@ -1,4 +1,5 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, OverloadedStrings, RecordWildCards, StandaloneDeriving #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, OverloadedStrings, RecordWildCards,
+    StandaloneDeriving #-}
 
 -- |
 -- Module:      Network.Riak.Value
@@ -79,12 +80,28 @@ instance IsContent Aeson.Value where
 
 deriving instance (IsContent a) => IsContent (ResolvableMonoid a)
 
+-- | Store a single value.  This may return multiple conflicting
+-- siblings.  Choosing among them, and storing a new value, is your
+-- responsibility.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored.
 put :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)
 put conn bucket key mvclock val w dw =
   putResp =<< exchange conn
               (Req.put bucket key mvclock (toContent val) w dw True)
 
+-- | Store many values.  This may return multiple conflicting siblings
+-- for each value stored.  Choosing among them, and storing a new
+-- value in each case, is your responsibility.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored.
 putMany :: (IsContent c) => Connection -> Bucket -> [(Key, Maybe VClock, c)]
         -> W -> DW -> IO [([c], VClock)]
 putMany conn b puts w dw =
@@ -98,16 +115,32 @@ putResp PutResponse{..} = do
       c <- convert content
       return (c, VClock s)
 
+-- | Store a single value, without the possibility of conflict
+-- resolution.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored, and you will not be notified.
 put_ :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ()
 put_ conn bucket key mvclock val w dw =
   exchange_ conn (Req.put bucket key mvclock (toContent val) w dw False)
 
+-- | Store many values, without the possibility of conflict
+-- resolution.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored, and you will not be notified.
 putMany_ :: (IsContent c) => Connection -> Bucket -> [(Key, Maybe VClock, c)]
          -> W -> DW -> IO ()
 putMany_ conn b puts w dw =
   pipeline_ conn . map (\(k,v,c) -> Req.put b k v (toContent c) w dw False) $ puts
 
+-- | Retrieve a value.  This may return multiple conflicting siblings.
+-- Choosing among them is your responsibility.
 get :: (IsContent c) => Connection -> Bucket -> Key -> R
     -> IO (Maybe ([c], VClock))
 get conn bucket key r = getResp =<< exchangeMaybe conn (Req.get bucket key r)

@@ -71,8 +71,8 @@ getClientID conn = Resp.getClientID <$> exchange conn Req.getClientID
 getServerInfo :: Connection -> IO ServerInfo
 getServerInfo conn = exchange conn Req.getServerInfo
 
--- | Retrieve up a value.  This may return multiple conflicting
--- siblings.  Choosing among them is your responsibility.
+-- | Retrieve a value.  This may return multiple conflicting siblings.
+-- Choosing among them is your responsibility.
 get :: Connection -> T.Bucket -> T.Key -> R
     -> IO (Maybe (Seq.Seq Content, VClock))
 get conn bucket key r = Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
@@ -80,6 +80,11 @@ get conn bucket key r = Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
 -- responsibility.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored.
 put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> W -> DW
     -> IO (Seq.Seq Content, VClock)
@@ -88,6 +93,11 @@ put conn bucket key mvclock cont w dw =
 
 -- | Store a single value, without the possibility of conflict
 -- resolution.
+--
+-- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
+-- that the given bucket+key combination does not already exist.  If
+-- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
+-- will not be stored, and you will not be notified.
 put_ :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
      -> Content -> W -> DW
      -> IO ()
