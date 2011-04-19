@@ -53,9 +53,12 @@ module Network.Riak
     , Resolvable(..)
     , get
     , getMany
+    , modify
+    , modify_
+    , delete
+    -- ** Low-level modification functions
     , put
     , putMany
-    , delete
     -- * Metadata
     , listBuckets
     , foldKeys
@@ -66,5 +69,5 @@ module Network.Riak
     ) where
 
 import Network.Riak.Basic hiding (get, put, put_)
-import Network.Riak.JSON.Resolvable (get, getMany, put, putMany)
+import Network.Riak.JSON.Resolvable (get, getMany, modify, modify_, put, putMany)
 import Network.Riak.Resolvable (Resolvable(..))

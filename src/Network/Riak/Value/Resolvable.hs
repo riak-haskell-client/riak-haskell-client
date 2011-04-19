@@ -24,6 +24,9 @@ module Network.Riak.Value.Resolvable
     , ResolutionFailure(..)
     , get
     , getMany
+    , modify
+    , modify_
+    -- * Low-level modification functions
     , put
     , put_
     , putMany
@@ -48,6 +51,45 @@ getMany :: (Resolvable a, V.IsContent a) => Connection -> Bucket -> [Key] -> R
         -> IO [Maybe (a, VClock)]
 getMany = R.getMany V.getMany
 {-# INLINE getMany #-}
+
+-- | Modify a single value.  The value, if any, is retrieved using
+-- 'get'; conflict resolution is performed if necessary.  The
+-- modification function is called on the resulting value, and its
+-- result is stored using 'put', which may again perform conflict
+-- resolution.
+--
+-- The result of this function is whatever was returned by 'put',
+-- along with the auxiliary value returned by the modification
+-- function.
+--
+-- If the 'put' phase of this function gives up due to apparently
+-- being stuck in a conflict resolution loop, it will throw a
+-- 'ResolutionFailure' exception.
+modify :: (Resolvable a, V.IsContent a) =>
+          Connection -> Bucket -> Key -> R -> W -> DW
+       -> (Maybe a -> IO (a,b))
+       -- ^ Modification function.  Called with 'Just' the value if
+       -- the key is present, 'Nothing' otherwise.
+       -> IO (a,b)
+modify = R.modify V.get V.put
+{-# INLINE modify #-}
+
+-- | Modify a single value.  The value, if any, is retrieved using
+-- 'get'; conflict resolution is performed if necessary.  The
+-- modification function is called on the resulting value, and its
+-- result is stored using 'put', which may again perform conflict
+-- resolution.
+--
+-- The result of this function is whatever was returned by 'put'.
+--
+-- If the 'put' phase of this function gives up due to apparently
+-- being stuck in a conflict resolution loop, it will throw a
+-- 'ResolutionFailure' exception.
+modify_ :: (Resolvable a, V.IsContent a) =>
+           Connection -> Bucket -> Key -> R -> W -> DW
+        -> (Maybe a -> IO a) -> IO a
+modify_ = R.modify_ V.get V.put
+{-# INLINE modify_ #-}
 
 -- | Store a single value, automatically resolving any vector clock
 -- conflicts that arise.  A single invocation of this function may

@@ -21,12 +21,15 @@ module Network.Riak.Resolvable.Internal
     , ResolutionFailure(..)
     , get
     , getMany
+    , modify
+    , modify_
     , put
     , put_
     , putMany
     , putMany_
     ) where
 
+import Control.Applicative ((<$>))
 import Control.Arrow (first)
 import Control.Exception (Exception, throwIO)
 import Control.Monad (unless)
@@ -35,6 +38,7 @@ import Data.Data (Data)
 import Data.Either (partitionEithers)
 import Data.Function (on)
 import Data.List (foldl', sortBy)
+import Data.Maybe (isJust)
 import Data.Monoid (Monoid(mappend))
 import Data.Typeable (Typeable)
 import Network.Riak.Debug (debugValues)
@@ -95,9 +99,10 @@ instance (Resolvable a) => Resolvable (Maybe a) where
     resolve _          b        = b
     {-# INLINE resolve #-}
 
-get :: (Resolvable a) =>
-       (Connection -> Bucket -> Key -> R -> IO (Maybe ([a], VClock)))
-       -> (Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
+type Get a = Connection -> Bucket -> Key -> R -> IO (Maybe ([a], VClock))
+
+get :: (Resolvable a) => Get a
+    -> (Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
 get doGet conn bucket key r =
     fmap (first resolveMany) `fmap` doGet conn bucket key r
 {-# INLINE get #-}
@@ -109,18 +114,28 @@ getMany doGet conn b ks r =
     map (fmap (first resolveMany)) `fmap` doGet conn b ks r
 {-# INLINE getMany #-}
 
-put :: (Resolvable a) =>
-       (Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
-                   -> IO ([a], VClock))
+-- If Riak receives a put request with no vclock, and the given
+-- bucket+key already exists, it will treat the missing vclock as
+-- stale, ignore the put request, and send back whatever values it
+-- currently knows about.  The same problem will arise if we send a
+-- vclock that really is stale, but that's much less likely to occur.
+-- We handle the missing-vclock case in the single-body-response case
+-- of both put and putMany below, but we do not (can not?) handle the
+-- stale-vclock case.
+
+type Put a = Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+           -> IO ([a], VClock)
+
+put :: (Resolvable a) => Put a
     -> Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
 put doPut conn bucket key mvclock0 val0 w dw = do
-  let go !i val mvclock1
+  let go !i val mvclock
          | i == maxRetries = throwIO RetriesExceeded
          | otherwise       = do
-        (xs, vclock) <- doPut conn bucket key mvclock1 val w dw
+        (xs, vclock) <- doPut conn bucket key mvclock val w dw
         case xs of
-          [_]   -> return (val, vclock)
+          [x] | i > 0 || isJust mvclock -> return (x, vclock)
           (_:_) -> do debugValues "put" "conflict" xs
                       go (i+1) (resolveMany' val xs) (Just vclock)
           []    -> unexError "Network.Riak.Resolvable" "put"
@@ -142,6 +157,25 @@ put_ doPut conn bucket key mvclock0 val0 w dw =
     put doPut conn bucket key mvclock0 val0 w dw >> return ()
 {-# INLINE put_ #-}
 
+modify :: (Resolvable a) => Get a -> Put a
+       -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> IO (a,b))
+       -> IO (a,b)
+modify doGet doPut conn bucket key r w dw act = do
+  a0 <- get doGet conn bucket key r
+  (a,b) <- act (fst <$> a0)
+  (a',_) <- put doPut conn bucket key (snd <$> a0) a w dw
+  return (a',b)
+{-# INLINE modify #-}
+
+modify_ :: (Resolvable a) => Get a -> Put a
+        -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> IO a)
+        -> IO a
+modify_ doGet doPut conn bucket key r w dw act = do
+  a0 <- get doGet conn bucket key r
+  a <- act (fst <$> a0)
+  fst <$> put doPut conn bucket key (snd <$> a0) a w dw
+{-# INLINE modify_ #-}
+
 putMany :: (Resolvable a) =>
            (Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
                        -> IO [([a], VClock)])
@@ -158,9 +192,9 @@ putMany doPut conn bucket puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
     unless (null conflicts) $
       debugValues "putMany" "conflicts" conflicts
     go (i+1) (ok++acc) conflicts
-  mush (i,(k,_,c)) (cs,v) =
+  mush (i,(k,mv,c)) (cs,v) =
       case cs of
-        [_]   -> Right (i,(c,v))
+        [x] | i > 0 || isJust mv -> Right (i,(x,v))
         (_:_) -> Left (i,(k,Just v, resolveMany' c cs))
         []    -> unexError "Network.Riak.Resolvable" "put"
                  "received empty response from server"
