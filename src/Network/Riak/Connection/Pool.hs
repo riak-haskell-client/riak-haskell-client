@@ -179,7 +179,7 @@ reaper idleTime pools = forever $ do
 --
 -- It probably goes without saying that you should never call
 -- 'disconnect' on a connection, as doing so will cause a subsequent
--- user, expecting the connection to be valid, to throw an exception.
+-- user (who expects the connection to be valid) to throw an exception.
 withConnection :: Pool -> (Connection -> IO a) -> IO a
 withConnection Pool{..} act = do
   i <- ((`mod` numStripes) . hash) <$> myThreadId
