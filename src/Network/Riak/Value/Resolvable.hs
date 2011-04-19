@@ -103,7 +103,7 @@ modify_ = R.modify_ V.get V.put
 -- If this function gives up due to apparently being stuck in a
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
-put :: (Eq a, Resolvable a, V.IsContent a) =>
+put :: (Resolvable a, V.IsContent a) =>
        Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
 put = R.put V.put 
@@ -121,7 +121,7 @@ put = R.put V.put
 -- If this function gives up due to apparently being stuck in a
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
-put_ :: (Eq a, Resolvable a, V.IsContent a) =>
+put_ :: (Resolvable a, V.IsContent a) =>
         Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
      -> IO ()
 put_ = R.put_ V.put 
@@ -141,7 +141,7 @@ put_ = R.put_ V.put
 --
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
-putMany :: (Eq a, Resolvable a, V.IsContent a) =>
+putMany :: (Resolvable a, V.IsContent a) =>
            Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
         -> IO [(a, VClock)]
 putMany = R.putMany V.putMany
@@ -158,7 +158,7 @@ putMany = R.putMany V.putMany
 --
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
-putMany_ :: (Eq a, Resolvable a, V.IsContent a) =>
+putMany_ :: (Resolvable a, V.IsContent a) =>
             Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
 putMany_ = R.putMany_ V.putMany
 {-# INLINE putMany_ #-}
