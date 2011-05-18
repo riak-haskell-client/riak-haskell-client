@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards, DoAndIfThenElse #-}
+{-# LANGUAGE BangPatterns, OverloadedStrings, RecordWildCards #-}
 
 -- |
 -- Module:      Network.Riak.Basic
@@ -41,7 +41,6 @@ module Network.Riak.Basic
     , setBucket
     -- * Map/reduce
     , mapReduce
-    , foldMapReduce
     ) where
 
 import Control.Applicative ((<$>))
@@ -51,7 +50,7 @@ import Network.Riak.Escape (unescape)
 import Network.Riak.Protocol.BucketProps
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.ListKeysResponse
-import Network.Riak.Protocol.MapReduce
+import Network.Riak.Protocol.MapReduce as MapReduce
 import Network.Riak.Protocol.ServerInfo
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Data.Foldable as F
@@ -138,18 +137,14 @@ getBucket conn bucket = Resp.getBucket <$> exchange conn (Req.getBucket bucket)
 setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
 setBucket conn bucket props = exchange_ conn $ Req.setBucket bucket props
 
--- | Launch a 'MapReduce' job.
-mapReduce :: Connection -> Job -> IO MapReduce
-mapReduce conn = exchange conn . Req.mapReduce
-
-foldMapReduce :: Connection -> Job -> (MapReduce -> a -> a) -> a -> IO a
-foldMapReduce conn job f start = do
-  mr <- mapReduce conn job
-  loop mr start
-    where loop mr s = do
-            let nextA = f mr s
-            if (maybe False id (Network.Riak.Protocol.MapReduce.done mr)) then
-              return nextA
-            else 
-              (recvResponse conn >>= \r -> loop r nextA)
+-- | Run a 'MapReduce' job.  Its result is consumed via a strict left
+-- fold.
+mapReduce :: Connection -> Job -> (a -> MapReduce -> a) -> a -> IO a
+mapReduce conn job f z0 = loop z0 =<< (exchange conn . Req.mapReduce $ job)
+  where
+    loop z mr = do
+      let !z' = f z mr
+      if fromMaybe False . MapReduce.done $ mr
+        then return z'
+        else loop z' =<< recvResponse conn
         
