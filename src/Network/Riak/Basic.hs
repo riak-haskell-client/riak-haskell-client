@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards, DoAndIfThenElse #-}
 
 -- |
 -- Module:      Network.Riak.Basic
@@ -41,6 +41,7 @@ module Network.Riak.Basic
     , setBucket
     -- * Map/reduce
     , mapReduce
+    , foldMapReduce
     ) where
 
 import Control.Applicative ((<$>))
@@ -140,3 +141,15 @@ setBucket conn bucket props = exchange_ conn $ Req.setBucket bucket props
 -- | Launch a 'MapReduce' job.
 mapReduce :: Connection -> Job -> IO MapReduce
 mapReduce conn = exchange conn . Req.mapReduce
+
+foldMapReduce :: Connection -> Job -> (MapReduce -> a -> a) -> a -> IO a
+foldMapReduce conn job f start = do
+  mr <- mapReduce conn job
+  loop mr start
+    where loop mr s = do
+            let nextA = f mr s
+            if (maybe False id (Network.Riak.Protocol.MapReduce.done mr)) then
+              return nextA
+            else 
+              (recvResponse conn >>= \r -> loop r nextA)
+        
