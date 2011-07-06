@@ -1,21 +1,15 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# OPTIONS_GHC -fno-warn-unused-imports #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
 module Network.Riak.Protocol.ListBucketsResponse (ListBucketsResponse(..)) where
-import Prelude ((+))
-import qualified Prelude as P'
+import Prelude ((+), (/))
+import qualified Prelude as Prelude'
+import qualified Data.Typeable as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data ListBucketsResponse = ListBucketsResponse{buckets :: P'.Seq P'.ByteString}
-                         deriving (P'.Show, P'.Eq, P'.Ord, P'.Typeable)
+data ListBucketsResponse = ListBucketsResponse{buckets :: !(P'.Seq P'.ByteString)}
+                         deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
  
 instance P'.Mergeable ListBucketsResponse where
-  mergeEmpty = ListBucketsResponse P'.mergeEmpty
   mergeAppend (ListBucketsResponse x'1) (ListBucketsResponse y'1) = ListBucketsResponse (P'.mergeAppend x'1 y'1)
  
 instance P'.Default ListBucketsResponse where
@@ -48,7 +42,7 @@ instance P'.Wire ListBucketsResponse where
     where
         update'Self wire'Tag old'Self
          = case wire'Tag of
-             10 -> P'.fmap (\ new'Field -> old'Self{buckets = P'.append (buckets old'Self) new'Field}) (P'.wireGet 12)
+             10 -> Prelude'.fmap (\ !new'Field -> old'Self{buckets = P'.append (buckets old'Self) new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
  
 instance P'.MessageAPI msg' (msg' -> ListBucketsResponse) ListBucketsResponse where
@@ -59,5 +53,5 @@ instance P'.GPB ListBucketsResponse
 instance P'.ReflectDescriptor ListBucketsResponse where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [10])
   reflectDescriptorInfo _
-   = P'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListBucketsResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListBucketsResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListBucketsResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsResponse.buckets\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsResponse\"], baseName' = FName \"buckets\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False}"
+   = Prelude'.read
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListBucketsResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListBucketsResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListBucketsResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsResponse.buckets\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsResponse\"], baseName' = FName \"buckets\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"

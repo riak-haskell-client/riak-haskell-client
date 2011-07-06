@@ -1,5 +1,5 @@
 name:                riak
-version:             0.5.0.0
+version:             0.6.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -88,10 +88,10 @@ library
     containers,
     network >= 2.3,
     resource-pool >= 0.1.0.2,
-    protocol-buffers >= 1.8.0,
+    protocol-buffers >= 2.0.5,
     pureMD5,
     random,
-    riak-protobuf >= 0.14.0.0,
+    riak-protobuf >= 0.15.0.0,
     text >= 0.11.0.6,
     time
 

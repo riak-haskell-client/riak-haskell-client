@@ -7,7 +7,7 @@ if [[ -z "$root" ]]; then
     exit 1
 fi
 
-cd "$root"
+cd "$root/protobuf"
 
 hprotoc="$(which hprotoc)"
 
@@ -23,18 +23,15 @@ sed -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
     -e 's/MapRedR/MapReduceR/g' -e 's/DelR/DeleteR/' -e 's/ClientId/ClientID/' \
     -e 's/GetServerInfoResponse/ServerInfo/g' \
     -e 's/MapReduceResponse/MapReduce/g' \
-    protobuf/riakclient.proto protobuf/riakextra.proto > protobuf/Protocol.proto
+    src/riakclient.proto src/riakextra.proto > src/Protocol.proto
 
-(cd protobuf && hprotoc -p Network.Riak Protocol.proto)
-for i in $(find protobuf/Network/Riak/Protocol -name '*.hs';
-           echo protobuf/Network/Riak/Protocol.hs); do
+(cd src && hprotoc -p Network.Riak Protocol.proto)
+for i in $(find src/Network/Riak/Protocol -name '*.hs';
+           echo src/Network/Riak/Protocol.hs); do
     cp /dev/null $i.$$
-    echo '{-# LANGUAGE DeriveDataTypeable #-}' >> $i.$$
-    echo '{-# LANGUAGE FlexibleInstances #-}' >> $i.$$
-    echo '{-# LANGUAGE MultiParamTypeClasses #-}' >> $i.$$
     echo '{-# OPTIONS_GHC -fno-warn-unused-imports #-}' >> $i.$$
     cat $i >> $i.$$
     mv $i.$$ $i
 done
 
-rm protobuf/Protocol.proto
+rm src/Protocol.proto
