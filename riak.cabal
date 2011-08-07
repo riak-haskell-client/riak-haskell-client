@@ -1,5 +1,5 @@
 name:                riak
-version:             0.6.0.0
+version:             0.6.0.1
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data

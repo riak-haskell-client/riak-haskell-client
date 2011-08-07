@@ -100,7 +100,7 @@ escapeWord8 acc i
     | otherwise = acc `mappend` hex i
   where
     literal w = w >= 97 && w <= 122 || w >= 65 && w <= 90 ||
-                w >= 48 && w <= 57 || w `B.elem` "$-.!*'(),"
+                w >= 48 && w <= 57 || w `B.elem` "$-.!*'(),_"
     hex w = fromWord8 37 `mappend` d (w `shiftR` 4) `mappend` d (w .&. 0xf)
     d n | n < 10    = fromWord8 (n + 48)
         | otherwise = fromWord8 (n + 87)
