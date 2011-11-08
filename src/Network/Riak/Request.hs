@@ -81,7 +81,14 @@ getServerInfo = GetServerInfoRequest
 get :: Bucket -> Key -> R -> Get.GetRequest
 get bucket key r = Get.GetRequest { Get.bucket = escape bucket
                                   , Get.key = escape key
-                                  , Get.r = fromQuorum r }
+                                  , Get.r = fromQuorum r
+                                  , Get.pr = Nothing
+                                  , Get.basic_quorum = Nothing
+                                  , Get.notfound_ok = Nothing
+                                  , Get.if_modified = Nothing
+                                  , Get.head        = Nothing
+                                  , Get.deletedvclock = Nothing
+                                  }
 {-# INLINE get #-}
 
 -- | Create a put request.  The bucket and key names are URL-escaped.
@@ -90,8 +97,9 @@ get bucket key r = Get.GetRequest { Get.bucket = escape bucket
 put :: Bucket -> Key -> Maybe VClock -> Content -> W -> DW -> Bool
     -> Put.PutRequest
 put bucket key mvclock cont mw mdw returnBody =
-    Put.PutRequest (escape bucket) (escape key) (fromVClock <$> mvclock) cont
-                   (fromQuorum mw) (fromQuorum mdw) (Just returnBody)
+    Put.PutRequest (escape bucket) (Just $ escape key) (fromVClock <$> mvclock)
+                   cont (fromQuorum mw) (fromQuorum mdw) (Just returnBody)
+                   Nothing Nothing Nothing Nothing
 {-# INLINE put #-}
 
 -- | Create a link.  The bucket and key names are URL-escaped.
@@ -102,7 +110,8 @@ link bucket key = Link.Link (Just (escape bucket)) (Just (escape key)) . Just
 -- | Create a delete request.  The bucket and key names are URL-escaped.
 delete :: Bucket -> Key -> RW -> Del.DeleteRequest
 delete bucket key rw = Del.DeleteRequest (escape bucket) (escape key)
-                                         (fromQuorum rw)
+                                         (fromQuorum rw) Nothing Nothing Nothing
+                                         Nothing Nothing Nothing
 {-# INLINE delete #-}
 
 -- | Create a list-buckets request.

@@ -46,6 +46,7 @@ empty = Content { value = L.empty
                 , last_mod = Nothing
                 , last_mod_usecs = Nothing
                 , usermeta = Seq.empty
+                , indexes  = Seq.empty
                 }
 
 -- | Content encoded as @application/octet-stream@.

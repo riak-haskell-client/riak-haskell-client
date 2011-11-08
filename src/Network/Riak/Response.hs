@@ -38,6 +38,7 @@ import Network.Riak.Protocol.Link
 import Network.Riak.Protocol.ListBucketsResponse
 import Network.Riak.Protocol.PutResponse
 import Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Network.Riak.Protocol.Link as Link
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Sequence as Seq
 
@@ -48,7 +49,7 @@ getClientID = client_id
 -- | Construct a get response.  Bucket and key names in links are
 -- URL-unescaped.
 get :: Maybe GetResponse -> Maybe (Seq.Seq Content, VClock)
-get (Just (GetResponse content (Just vclock)))
+get (Just (GetResponse content (Just vclock) _))
       = Just (unescapeLinks <$> content, VClock vclock)
 get _ = Nothing
 {-# INLINE get #-}
@@ -73,4 +74,5 @@ getBucket = props
 -- 'Content' value.
 unescapeLinks :: Content -> Content
 unescapeLinks c = c { links = go <$> links c }
-  where go l = l { bucket = unescape <$> bucket l, key = unescape <$> key l }
+  where go l = l { bucket = unescape <$> bucket l
+                 , Link.key = unescape <$> Link.key l }

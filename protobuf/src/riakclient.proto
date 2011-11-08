@@ -26,7 +26,7 @@
 ** Lowest Common Denominator Protocol Buffers Client
 **   - no ENUM (protobuffs_erlang does not support)
 **
-** Protocol 
+** Protocol
 **
 **   The protocol encodes requests and responses as protocol buffer messages.
 **   Each request message results in one or more response messages.
@@ -49,7 +49,7 @@
 **
 **   The client should be prepared to handle messages without any pbmsg
 **   (i.e. length==1) for requests like ping or a put without return_body set.
-**   
+**
 **   RpbGetClientIdReq -> RpbGetClientIdResp
 **   RpbSetClientIdReq -> RpbSetClientIdResp
 **   RpbGetServerInfoReq -> RpbGetServerInfoResp
@@ -72,11 +72,11 @@
 **  6 - RpbSetClientIdResp
 **  7 - RpbGetServerInfoReq
 **  8 - RpbGetServerInfoResp
-**  9 - RpbGetReq 
+**  9 - RpbGetReq
 ** 10 - RpbGetResp
-** 11 - RpbPutReq 
+** 11 - RpbPutReq
 ** 12 - RpbPutResp - 0 length
-** 13 - RpbDelReq 
+** 13 - RpbDelReq
 ** 14 - RpbDelResp
 ** 15 - RpbListBucketsReq
 ** 16 - RpbListBucketsResp
@@ -120,12 +120,19 @@ message RpbGetReq {
     required bytes bucket = 1;
     required bytes key = 2;
     optional uint32 r = 3;
+    optional uint32 pr = 4;
+    optional bool basic_quorum = 5;
+    optional bool notfound_ok = 6;
+    optional bytes if_modified = 7;     // fail if the supplied vclock does not match
+    optional bool head = 8;             // return everything but the value
+    optional bool deletedvclock = 9;    // return the tombstone's vclock, if applicable
 }
 
 // Get Response - if the record was not found there will be no content/vclock
 message RpbGetResp {
     repeated RpbContent content = 1;
     optional bytes vclock = 2;        // the opaque vector clock for the object
+    optional bool unchanged = 3;
 }
 
 
@@ -133,18 +140,23 @@ message RpbGetResp {
 //               the key will be returned.
 message RpbPutReq {
     required bytes bucket = 1;
-    required bytes key = 2;
+    optional bytes key = 2;
     optional bytes vclock = 3;
     required RpbContent content = 4;
     optional uint32 w = 5;
     optional uint32 dw = 6;
     optional bool return_body = 7;
+    optional uint32 pw = 8;
+    optional bool if_not_modified = 9;
+    optional bool if_none_match = 10;
+    optional bool return_head = 11;
 }
 
-// Put response - same as get response
+// Put response - same as get response with optional key if one was generated
 message RpbPutResp {
     repeated RpbContent content = 1;
     optional bytes vclock = 2;        // the opaque vector clock for the object
+    optional bytes key = 3;           // the key generated, if any
 }
 
 
@@ -153,6 +165,12 @@ message RpbDelReq {
     required bytes bucket = 1;
     required bytes key = 2;
     optional uint32 rw = 3;
+    optional bytes vclock = 4;
+    optional uint32 r = 5;
+    optional uint32 w = 6;
+    optional uint32 pr = 7;
+    optional uint32 pw = 8;
+    optional uint32 dw = 9;
 }
 
 // Delete response - not defined, will return a RpbDelResp on success or RpbErrorResp on failure
@@ -184,7 +202,7 @@ message RpbGetBucketReq {
 
 // Get bucket properties response
 message RpbGetBucketResp {
-    required RpbBucketProps props = 1;    
+    required RpbBucketProps props = 1;
 }
 
 // Set bucket properties request
@@ -217,13 +235,14 @@ message RpbMapRedResp {
 message RpbContent {
     required bytes value = 1;
     optional bytes content_type = 2;     // the media type/format
-    optional bytes charset = 3;          
-    optional bytes content_encoding = 4; 
+    optional bytes charset = 3;
+    optional bytes content_encoding = 4;
     optional bytes vtag = 5;
     repeated RpbLink links = 6;          // links to other resources
     optional uint32 last_mod = 7;
     optional uint32 last_mod_usecs = 8;
     repeated RpbPair usermeta = 9;       // user metadata stored with the object
+    repeated RpbPair indexes = 10;       // user metadata stored with the object
 }
 
 // Key/value pair - used for user metadata

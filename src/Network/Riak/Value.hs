@@ -153,7 +153,7 @@ getMany conn b ks r =
 getResp :: (IsContent c) => Maybe GetResponse -> IO (Maybe ([c], VClock))
 getResp resp =
   case resp of
-    Just (GetResponse content (Just s)) -> do
+    Just (GetResponse content (Just s) _) -> do
            c <- convert content
            return $ Just (c, VClock s)
     _   -> return Nothing

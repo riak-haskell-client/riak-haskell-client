@@ -1,5 +1,5 @@
 name:                riak-protobuf
-version:             0.15.0.0
+version:             0.16.0.0
 synopsis:            Haskell types for the Riak protocol buffer API
 description:
   A set of Haskell types for interacting with the protocol buffer
