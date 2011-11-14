@@ -28,11 +28,11 @@ description:
   and decode data yourself, and handle all conflict resolution
   yourself.
 
-homepage:            http://github.com/mailrank/riak-haskell-client
+homepage:            http://github.com/bos/riak-haskell-client
 license:             OtherLicense
 license-file:        LICENSE
-author:              Bryan O'Sullivan <bos@mailrank.com>
-maintainer:          Bryan O'Sullivan <bos@mailrank.com>
+author:              Bryan O'Sullivan <bos@serpentine.com>
+maintainer:          Bryan O'Sullivan <bos@serpentine.com>
 copyright:           Copyright 2011 MailRank, Inc.
                      Portions copyright 2007-2010 Basho Technologies, Inc.
 category:            Network
@@ -107,4 +107,4 @@ library
 
 source-repository head
   type:     git
-  location: http://github.com/mailrank/riak-haskell-client
+  location: http://github.com/bos/riak-haskell-client
