@@ -3,7 +3,7 @@
 -- Module:      Network.Riak.Resolvable.Internal
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Bryan O'Sullivan <bos@mailrank.com>
+-- Maintainer:  Bryan O'Sullivan <bos@serpentine.com>
 -- Stability:   experimental
 -- Portability: portable
 --
