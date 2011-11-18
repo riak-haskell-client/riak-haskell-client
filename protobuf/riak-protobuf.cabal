@@ -61,11 +61,6 @@ library
     protocol-buffers >= 2.0.5,
     protocol-buffers-descriptor >= 2.0.5
 
-  if impl(ghc >= 7.2)
-    build-depends:
-      protocol-buffers == 2.0.5,
-      protocol-buffers-descriptor == 2.0.5
-
   ghc-options: -Wall -fno-warn-orphans
 
 source-repository head
