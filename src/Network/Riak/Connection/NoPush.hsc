@@ -17,7 +17,7 @@ module Network.Riak.Connection.NoPush (setNoPush) where
 #include <netinet/in.h>
 
 import Foreign.C.Error (throwErrnoIfMinus1_)
-import Foreign.C.Types (CInt)
+import Foreign.C.Types (CInt(..))
 import Foreign.Marshal.Utils (with)
 import Foreign.Ptr (Ptr)
 import Foreign.Storable (sizeOf)
