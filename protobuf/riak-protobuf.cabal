@@ -56,6 +56,7 @@ library
     Network.Riak.Protocol
 
   build-depends:       
+    array >= 0.4,
     base == 4.*,
     parsec >= 3,
     protocol-buffers >= 2.0.5,
