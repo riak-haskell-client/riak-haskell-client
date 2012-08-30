@@ -56,6 +56,7 @@ import Numeric (showHex)
 import System.Random (randomIO)
 import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
 import Text.ProtocolBuffers.Get (Get, Result(..), getWord32be, runGet)
+import qualified Control.Exception as E
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Network.Riak.Types.Internal as T
@@ -340,7 +341,7 @@ pipeline_ conn@Connection{..} reqs = do
 
 onIOException :: String -> IO a -> IO a
 onIOException func act =
-    act `catch` \(e::IOException) -> do
+    act `E.catch` \(e::IOException) -> do
       let s = show e
       debug func $ "caught IO exception: " ++ s
       moduleError func s
