@@ -12,9 +12,9 @@ We are happy to receive bug reports, fixes, documentation enhancements,
 and other improvements.
 
 Please report bugs via the
-[github issue tracker](http://github.com/bos/riak-haskell-client/issues).
+[github issue tracker](http://github.com/janrain/riak-haskell-client/issues).
 
-Master [git repository](http://github.com/bos/riak-haskell-client):
+Master [git repository](http://github.com/janrain/riak-haskell-client):
 
 * `git clone git://github.com/bos/riak-haskell-client.git`
 
@@ -27,5 +27,7 @@ There's also a [Mercurial mirror](http://bitbucket.org/bos/riak-haskell-client):
 Authors
 -------
 
-This library is written and maintained by Bryan O'Sullivan,
+This library was written by Bryan O'Sullivan,
 <bos@serpentine.com>.
+It is maintained by Nathan Hunter,
+<nhunter@janrain.com>
