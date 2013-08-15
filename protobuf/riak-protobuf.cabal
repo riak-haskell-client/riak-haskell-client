@@ -27,7 +27,15 @@ library
 
   exposed-modules:
     Network.Riak.Protocol.BucketProps
+    Network.Riak.Protocol.BucketProps.ReplMode
+    Network.Riak.Protocol.CSBucketRequest
+    Network.Riak.Protocol.CSBucketResponse
+    Network.Riak.Protocol.CommitHook
     Network.Riak.Protocol.Content
+    Network.Riak.Protocol.CounterGetRequest
+    Network.Riak.Protocol.CounterGetResponse
+    Network.Riak.Protocol.CounterUpdateRequest
+    Network.Riak.Protocol.CounterUpdateResponse
     Network.Riak.Protocol.DeleteRequest
     Network.Riak.Protocol.ErrorResponse
     Network.Riak.Protocol.GetBucketRequest
@@ -37,6 +45,10 @@ library
     Network.Riak.Protocol.GetRequest
     Network.Riak.Protocol.GetResponse
     Network.Riak.Protocol.GetServerInfoRequest
+    Network.Riak.Protocol.IndexObject
+    Network.Riak.Protocol.IndexRequest
+    Network.Riak.Protocol.IndexRequest.IndexQueryType
+    Network.Riak.Protocol.IndexResponse
     Network.Riak.Protocol.Link
     Network.Riak.Protocol.ListBucketsRequest
     Network.Riak.Protocol.ListBucketsResponse
@@ -44,10 +56,15 @@ library
     Network.Riak.Protocol.ListKeysResponse
     Network.Riak.Protocol.MapReduce
     Network.Riak.Protocol.MapReduceRequest
+    Network.Riak.Protocol.ModFun
     Network.Riak.Protocol.Pair
     Network.Riak.Protocol.PingRequest
     Network.Riak.Protocol.PutRequest
     Network.Riak.Protocol.PutResponse
+    Network.Riak.Protocol.ResetBucketRequest
+    Network.Riak.Protocol.SearchDoc
+    Network.Riak.Protocol.SearchQueryRequest
+    Network.Riak.Protocol.SearchQueryResponse
     Network.Riak.Protocol.ServerInfo
     Network.Riak.Protocol.SetBucketRequest
     Network.Riak.Protocol.SetClientIDRequest

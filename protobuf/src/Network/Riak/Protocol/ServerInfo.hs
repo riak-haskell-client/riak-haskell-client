@@ -4,10 +4,11 @@ module Network.Riak.Protocol.ServerInfo (ServerInfo(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data ServerInfo = ServerInfo{node :: !(P'.Maybe P'.ByteString), server_version :: !(P'.Maybe P'.ByteString)}
-                deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable ServerInfo where
   mergeAppend (ServerInfo x'1 x'2) (ServerInfo y'1 y'2) = ServerInfo (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)

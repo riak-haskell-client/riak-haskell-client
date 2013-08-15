@@ -4,10 +4,11 @@ module Network.Riak.Protocol.MapReduceRequest (MapReduceRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data MapReduceRequest = MapReduceRequest{request :: !P'.ByteString, content_type :: !P'.ByteString}
-                      deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                      deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable MapReduceRequest where
   mergeAppend (MapReduceRequest x'1 x'2) (MapReduceRequest y'1 y'2)

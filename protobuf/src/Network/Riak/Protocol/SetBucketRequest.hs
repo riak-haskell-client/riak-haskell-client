@@ -4,11 +4,12 @@ module Network.Riak.Protocol.SetBucketRequest (SetBucketRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
 import qualified Network.Riak.Protocol.BucketProps as Protocol (BucketProps)
  
 data SetBucketRequest = SetBucketRequest{bucket :: !P'.ByteString, props :: !Protocol.BucketProps}
-                      deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                      deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable SetBucketRequest where
   mergeAppend (SetBucketRequest x'1 x'2) (SetBucketRequest y'1 y'2)

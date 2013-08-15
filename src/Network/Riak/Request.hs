@@ -88,6 +88,9 @@ get bucket key r = Get.GetRequest { Get.bucket = escape bucket
                                   , Get.if_modified = Nothing
                                   , Get.head        = Nothing
                                   , Get.deletedvclock = Nothing
+                                  , Get.timeout = Nothing
+                                  , Get.sloppy_quorum = Nothing
+                                  , Get.n_val = Nothing
                                   }
 {-# INLINE get #-}
 
@@ -99,7 +102,7 @@ put :: Bucket -> Key -> Maybe VClock -> Content -> W -> DW -> Bool
 put bucket key mvclock cont mw mdw returnBody =
     Put.PutRequest (escape bucket) (Just $ escape key) (fromVClock <$> mvclock)
                    cont (fromQuorum mw) (fromQuorum mdw) (Just returnBody)
-                   Nothing Nothing Nothing Nothing
+                   Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing
 {-# INLINE put #-}
 
 -- | Create a link.  The bucket and key names are URL-escaped.
@@ -111,17 +114,17 @@ link bucket key = Link.Link (Just (escape bucket)) (Just (escape key)) . Just
 delete :: Bucket -> Key -> RW -> Del.DeleteRequest
 delete bucket key rw = Del.DeleteRequest (escape bucket) (escape key)
                                          (fromQuorum rw) Nothing Nothing Nothing
-                                         Nothing Nothing Nothing
+                                         Nothing Nothing Nothing Nothing Nothing Nothing
 {-# INLINE delete #-}
 
 -- | Create a list-buckets request.
 listBuckets :: ListBucketsRequest
-listBuckets = ListBucketsRequest
+listBuckets = ListBucketsRequest Nothing Nothing
 {-# INLINE listBuckets #-}
 
 -- | Create a list-keys request.  The bucket name is URL-escaped.
 listKeys :: Bucket -> Keys.ListKeysRequest
-listKeys = Keys.ListKeysRequest . escape
+listKeys b = Keys.ListKeysRequest (escape b) Nothing
 {-# INLINE listKeys #-}
 
 -- | Create a get-bucket request.  The bucket name is URL-escaped.

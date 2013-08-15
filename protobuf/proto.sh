@@ -1,13 +1,13 @@
 #!/bin/bash
 
-root="$(hg root)"
+protobuf=$((readlink $0 || printf $0) | xargs dirname)
 
-if [[ -z "$root" ]]; then
+if [[ -z "$protobuf" ]]; then
     echo "error: don't know where we are!" 1>&2
     exit 1
 fi
 
-cd "$root/protobuf"
+cd "$protobuf"
 
 hprotoc="$(which hprotoc)"
 
@@ -23,7 +23,9 @@ sed -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
     -e 's/MapRedR/MapReduceR/g' -e 's/DelR/DeleteR/' -e 's/ClientId/ClientID/' \
     -e 's/GetServerInfoResponse/ServerInfo/g' \
     -e 's/MapReduceResponse/MapReduce/g' \
-    src/riakclient.proto src/riakextra.proto > src/Protocol.proto
+    -e '/java/Id' \
+    -e '/import "riak.proto"/d' \
+    src/riak.proto src/riak_kv.proto src/riak_search.proto src/riakextra.proto > src/Protocol.proto
 
 (cd src && hprotoc -p Network.Riak Protocol.proto)
 for i in $(find src/Network/Riak/Protocol -name '*.hs';

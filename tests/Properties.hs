@@ -9,7 +9,7 @@ import Network.Riak.Types (Bucket, Key, Quorum(..))
 import System.IO.Unsafe (unsafePerformIO)
 import Test.Framework (defaultMain, testGroup)
 import Test.Framework.Providers.QuickCheck2 (testProperty)
-import Test.QuickCheck (Arbitrary(..))
+import Test.QuickCheck (Arbitrary(..), (==>))
 import Test.QuickCheck.Monadic (assert, monadicIO, run)
 import qualified Data.ByteString.Lazy as L
 import qualified Network.Riak.Basic as B
@@ -28,13 +28,14 @@ pool :: Pool
 pool = unsafePerformIO $
        create defaultClient 1 1 1
 
-t_put_get b k v = monadicIO $ assert . uncurry (==) =<< run act
+t_put_get b k v = notempty b && notempty k ==> monadicIO $ assert . uncurry (==) =<< run act
  where
   act = withConnection pool $ \c -> do
           modifyIORef cruft ((b,k):)
           p <- Just <$> B.put c b k Nothing (binary v) Default Default
           r <- B.get c b k Default
           return (p,r)
+  notempty = not . L.null
 
 main = defaultMain tests `finally` cleanup
   where

@@ -4,12 +4,13 @@ module Network.Riak.Protocol.GetResponse (GetResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
 import qualified Network.Riak.Protocol.Content as Protocol (Content)
  
 data GetResponse = GetResponse{content :: !(P'.Seq Protocol.Content), vclock :: !(P'.Maybe P'.ByteString),
                                unchanged :: !(P'.Maybe P'.Bool)}
-                 deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                 deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable GetResponse where
   mergeAppend (GetResponse x'1 x'2 x'3) (GetResponse y'1 y'2 y'3)
