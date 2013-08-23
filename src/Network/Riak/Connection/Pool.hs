@@ -5,7 +5,7 @@
 -- Module:      Network.Riak.Connection.Pool
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Bryan O'Sullivan <bos@serpentine.com>
+-- Maintainer:  Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --

@@ -5,7 +5,7 @@
 -- Module:      Network.Riak.Connection.Internal
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Bryan O'Sullivan <bos@serpentine.com>
+-- Maintainer:  Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -53,6 +53,7 @@ import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import Numeric (showHex)
+import System.Mem.Weak (addFinalizer)
 import System.Random (randomIO)
 import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
 import Text.ProtocolBuffers.Get (Get, Result(..), getWord32be, runGet)
@@ -113,6 +114,7 @@ connect cli0 = do
     Socket.connect sock (addrAddress ai)
     buf <- newIORef L.empty
     let conn = Connection sock client buf
+    addFinalizer conn $ sClose sock  -- Data.Pool doesn't guarantee our disconnect gets called...
     setClientID conn clientID
     return conn
 
@@ -179,7 +181,7 @@ recvGet Connection{..} get = do
   case mbs of
     Just bs -> step $ runGet get bs
     Nothing -> moduleError "recvGet" "socket closed"
-  
+
 recvGetN :: Connection -> Int64 -> Get a -> IO a
 recvGetN conn n get = do
   bs <- recvExactly conn n
