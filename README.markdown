@@ -6,16 +6,18 @@ This library is a fast Haskell client for the
 It uses Riak's [protobuf API](http://wiki.basho.com/PBC-API.html) for
 optimal performance.
 
-This project was originally the work of Bryan O'Sullivan (<bos@serpentine.com>), and is now being maintained by the engineering team of [Janrain, Inc.](http://janrain.com/).
+This project was originally the work of Bryan O'Sullivan (<bos@serpentine.com>), and then [Janrain, Inc.](http://janrain.com/), it is now being maintained by Mark Hibberd (<mark@hibberd.id.au>).
+
 # Join in!
 
 We are happy to receive bug reports, fixes, documentation enhancements,
 and other improvements.
 
 Please report bugs via the
-[github issue tracker](http://github.com/janrain/riak-haskell-client/issues).
+[github issue tracker](http://github.com/markhibberd/riak-haskell- client/issues).
 
-Master [git repository](http://github.com/bos/riak-haskell-client):
+Master [git repository](http://github.com/markhibberd/riak-haskell-client):
 
-* `git clone git://github.com/bos/riak-haskell-client.git`
+* `git clone git://github.com/markhibberd/riak-haskell-client.git`
 
+Note the official repo is now <https://github.com/markhibberd/riak-haskell-client>.
