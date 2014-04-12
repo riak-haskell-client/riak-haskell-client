@@ -21,3 +21,9 @@ Master [git repository](http://github.com/markhibberd/riak-haskell-client):
 * `git clone git://github.com/markhibberd/riak-haskell-client.git`
 
 Note the official repo is now <https://github.com/markhibberd/riak-haskell-client>.
+
+
+# Build
+
+[![Build Status](https://travis-ci.org/markhibberd/riak-haskell-client.svg)](https://travis-ci.org/markhibberd/riak-haskell-client)
+
