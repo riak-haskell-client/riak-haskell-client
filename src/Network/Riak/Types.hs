@@ -2,7 +2,7 @@
 -- Module:      Network.Riak.Types
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --

@@ -4,7 +4,7 @@
 -- Module:      Network.Riak.Debug
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -86,7 +86,7 @@ debugValues :: (Show a) =>
 debugValues func str values
 #ifdef DEBUG
     | level == 0 = return ()
-    | otherwise = 
+    | otherwise =
   withMVar handle $ \h -> do
     hPutStrLn h $ str ++ ": " ++ show (length values) ++
                   " values [" ++ func ++ "]"

@@ -5,7 +5,7 @@
 -- Module:      Network.Riak.Connection.Pool
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -69,7 +69,7 @@ create :: Client
        -> Int
        -- ^ Maximum number of connections to keep open per stripe.
        -- The smallest acceptable value is 1.
-       -- 
+       --
        -- Requests for connections will block if this limit is reached
        -- on a single stripe, even if other stripes have idle
        -- connections available.
@@ -95,7 +95,7 @@ idleTime = Pool.idleTime . pool
 
 -- | Maximum number of connections to keep open per stripe.  The
 -- smallest acceptable value is 1.
--- 
+--
 -- Requests for connections will block if this limit is reached on a
 -- single stripe, even if other stripes have idle connections
 -- available.

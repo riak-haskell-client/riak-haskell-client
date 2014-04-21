@@ -2,7 +2,7 @@
 -- Module:      Network.Riak.Value.Resolvable
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -106,7 +106,7 @@ modify_ = R.modify_ V.get V.put
 put :: (Resolvable a, V.IsContent a) =>
        Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
-put = R.put V.put 
+put = R.put V.put
 {-# INLINE put #-}
 
 -- | Store a single value, automatically resolving any vector clock
@@ -124,7 +124,7 @@ put = R.put V.put
 put_ :: (Resolvable a, V.IsContent a) =>
         Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
      -> IO ()
-put_ = R.put_ V.put 
+put_ = R.put_ V.put
 {-# INLINE put_ #-}
 
 -- | Store multiple values, resolving any vector clock conflicts that

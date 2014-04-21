@@ -1,11 +1,11 @@
-{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses, 
+{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
     RecordWildCards #-}
 
 -- |
 -- Module:      Network.Riak.Types.Internal
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -53,7 +53,7 @@ import Data.Typeable (Typeable)
 import Data.Word (Word32)
 import Network.Socket (HostName, ServiceName, Socket)
 import Text.ProtocolBuffers (ReflectDescriptor, Wire)
-    
+
 -- | A client identifier.  This is used by the Riak cluster when
 -- logging vector clock changes, and should be unique for each client.
 type ClientID = ByteString
@@ -106,7 +106,7 @@ formatRiakException exc =
 instance Show RiakException where
     show = showRiakException
 
-instance Exception RiakException 
+instance Exception RiakException
 
 netError :: String -> String -> String -> a
 netError modu func msg = throw (NetException modu func msg)

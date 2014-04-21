@@ -4,7 +4,7 @@
 -- Module:      Network.Riak.Basic
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -147,4 +147,3 @@ mapReduce conn job f z0 = loop z0 =<< (exchange conn . Req.mapReduce $ job)
       if fromMaybe False . MapReduce.done $ mr
         then return z'
         else loop z' =<< recvResponse conn
-        
