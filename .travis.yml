@@ -41,6 +41,7 @@ before_install:
     fi
 
 install:
+  - cd protobuf && $CABAL install
   - $CABAL install --dependencies-only --enable-tests
   - $CABAL configure -flib-Werror --enable-tests $MODE
 
