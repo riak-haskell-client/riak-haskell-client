@@ -4,11 +4,12 @@ module Network.Riak.Protocol.GetBucketResponse (GetBucketResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
 import qualified Network.Riak.Protocol.BucketProps as Protocol (BucketProps)
  
 data GetBucketResponse = GetBucketResponse{props :: !Protocol.BucketProps}
-                       deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                       deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable GetBucketResponse where
   mergeAppend (GetBucketResponse x'1) (GetBucketResponse y'1) = GetBucketResponse (P'.mergeAppend x'1 y'1)

@@ -4,10 +4,11 @@ module Network.Riak.Protocol.Link (Link(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data Link = Link{bucket :: !(P'.Maybe P'.ByteString), key :: !(P'.Maybe P'.ByteString), tag :: !(P'.Maybe P'.ByteString)}
-          deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+          deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable Link where
   mergeAppend (Link x'1 x'2 x'3) (Link y'1 y'2 y'3)

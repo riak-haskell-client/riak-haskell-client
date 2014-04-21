@@ -4,10 +4,11 @@ module Network.Riak.Protocol.Pair (Pair(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data Pair = Pair{key :: !P'.ByteString, value :: !(P'.Maybe P'.ByteString)}
-          deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+          deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable Pair where
   mergeAppend (Pair x'1 x'2) (Pair y'1 y'2) = Pair (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)

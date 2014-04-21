@@ -4,10 +4,11 @@ module Network.Riak.Protocol.MapReduce (MapReduce(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data MapReduce = MapReduce{phase :: !(P'.Maybe P'.Word32), response :: !(P'.Maybe P'.ByteString), done :: !(P'.Maybe P'.Bool)}
-               deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+               deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable MapReduce where
   mergeAppend (MapReduce x'1 x'2 x'3) (MapReduce y'1 y'2 y'3)

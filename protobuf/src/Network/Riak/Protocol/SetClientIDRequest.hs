@@ -4,10 +4,11 @@ module Network.Riak.Protocol.SetClientIDRequest (SetClientIDRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
 data SetClientIDRequest = SetClientIDRequest{client_id :: !P'.ByteString}
-                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable)
+                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable SetClientIDRequest where
   mergeAppend (SetClientIDRequest x'1) (SetClientIDRequest y'1) = SetClientIDRequest (P'.mergeAppend x'1 y'1)
