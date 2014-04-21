@@ -9,22 +9,16 @@ We are happy to receive bug reports, fixes, documentation enhancements,
 and other improvements.
 
 Please report bugs via the
-[github issue tracker](http://github.com/janrain/riak-haskell-client/issues).
+[github issue tracker](http://github.com/markhibberd/riak-haskell-client/issues).
 
-Master [git repository](http://github.com/janrain/riak-haskell-client):
+Master [git repository](http://github.com/markhibberd/riak-haskell-client):
 
-* `git clone git://github.com/janrain/riak-haskell-client.git`
-
-There's also a [Mercurial mirror](http://bitbucket.org/bos/riak-haskell-client):
-
-* `hg clone http://bitbucket.org/bos/riak-haskell-client`
-
-(You can create and contribute changes using either git or Mercurial.)
+* `git clone git://github.com/markhibberd/riak-haskell-client.git`
 
 Authors
 -------
 
 This library was written by Bryan O'Sullivan,
-<bos@mailrank.com>.
-It is maintained be Nathan Hunter,
-<nhunter@janrain.com>.
+<bos@mailrank.com> and subsequently maintained by Nathan Hunter <nhunter@janrain.com>.
+
+This project is now being maintained by Mark Hibberd (<mark@hibberd.id.au>).
