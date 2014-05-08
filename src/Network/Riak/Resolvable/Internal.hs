@@ -131,7 +131,7 @@ put doPut conn bucket key mvclock0 val0 w dw = do
         case xs of
           [x] | i > 0 || isJust mvclock -> return (x, vclock)
           (_:_) -> do debugValues "put" "conflict" xs
-                      go (i+1) (resolveMany' val xs) (Just vclock)
+                      go (i+1) (resolveMany xs) (Just vclock)
           []    -> unexError "Network.Riak.Resolvable" "put"
                    "received empty response from server"
   go (0::Int) val0 mvclock0
@@ -189,7 +189,7 @@ putMany doPut conn bucket puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
   mush (i,(k,mv,c)) (cs,v) =
       case cs of
         [x] | i > 0 || isJust mv -> Right (i,(x,v))
-        (_:_) -> Left (i,(k,Just v, resolveMany' c cs))
+        (_:_) -> Left (i,(k,Just v, resolveMany cs))
         []    -> unexError "Network.Riak.Resolvable" "put"
                  "received empty response from server"
 {-# INLINE putMany #-}
