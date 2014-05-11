@@ -105,6 +105,20 @@ library
 
   ghc-options: -Wall
 
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Properties.hs
+  hs-source-dirs: tests
+  ghc-options: -Wall
+
+  build-depends:
+    riak,
+    base,
+    bytestring,
+    QuickCheck,
+    test-framework,
+    test-framework-quickcheck2
+
 source-repository head
   type:     git
   location: http://github.com/markhibberd/riak-haskell-client

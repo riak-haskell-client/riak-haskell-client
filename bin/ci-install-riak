@@ -6,9 +6,14 @@ TMP=$DIR/tmp
 (
     mkdir -p $TMP
     cd $TMP
+    curl -O https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
+    chmod a+x ./kerl
+     (for i in 1 2 3 4 5 ; do sleep 120; echo $(date); echo "Installing erlang..."; done) &
+    ./kerl build R15B01 r15b01
+    ./kerl install r15b01 $(pwd)/r15b01
+    . r15b01/activate
     curl -O http://s3.amazonaws.com/downloads.basho.com/riak/1.4/1.4.8/riak-1.4.8.tar.gz
     tar zxvf riak-1.4.8.tar.gz
     cd riak-1.4.8
-    echo '{app, hipe, [{incl_cond, exclude}]}' >> rebar.config
     make rel
 )
