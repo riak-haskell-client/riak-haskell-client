@@ -4,6 +4,7 @@ DIR=$(basename $0 | xargs dirname)
 TMP=$DIR/tmp
 
 (
+    mkdir -p $TMP
     cd $TMP
     curl -O http://s3.amazonaws.com/downloads.basho.com/riak/1.4/1.4.8/riak-1.4,8.tar.gz
     tar zxvf riak-1.4.8.tar.gz
