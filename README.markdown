@@ -14,7 +14,7 @@ We are happy to receive bug reports, fixes, documentation enhancements,
 and other improvements.
 
 Please report bugs via the
-[github issue tracker](http://github.com/markhibberd/riak-haskell- client/issues).
+[github issue tracker](http://github.com/markhibberd/riak-haskell-client/issues).
 
 Master [git repository](http://github.com/markhibberd/riak-haskell-client):
 
@@ -26,4 +26,3 @@ Note the official repo is now <https://github.com/markhibberd/riak-haskell-clien
 # Build
 
 [![Build Status](https://travis-ci.org/markhibberd/riak-haskell-client.svg)](https://travis-ci.org/markhibberd/riak-haskell-client)
-
