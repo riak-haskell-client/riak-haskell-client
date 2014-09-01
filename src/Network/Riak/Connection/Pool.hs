@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, NamedFieldPuns, RecordWildCards,
-    ScopedTypeVariables #-}
+    ScopedTypeVariables, FlexibleContexts #-}
 
 -- |
 -- Module:      Network.Riak.Connection.Pool
@@ -21,8 +21,10 @@ module Network.Riak.Connection.Pool
     , maxConnections
     , numStripes
     , withConnection
+    , withConnectionM
     ) where
 
+import Control.Monad.Trans.Control (MonadBaseControl)
 import Data.Time.Clock (NominalDiffTime)
 import Data.Typeable (Typeable)
 import Network.Riak (Client(clientID), Connection, connect, disconnect)
@@ -123,3 +125,27 @@ maxConnections = Pool.maxResources . pool
 -- user (who expects the connection to be valid) to throw an exception.
 withConnection :: Pool -> (Connection -> IO a) -> IO a
 withConnection = Pool.withResource . pool
+
+-- | Temporarily take a connection from a 'Pool', perform an action
+-- with it, and return it to the pool afterwards. This is a
+-- generalization of 'withConnection', which remains specialized to
+-- prevent breaking source compatibility with existing code.
+--
+-- * If the pool has a connection available, it is used
+--   immediately.
+--
+-- * Otherwise, if the maximum number of connections has not been
+--   reached, a new connection is created and used.
+--
+-- * If the maximum number of connections has been reached, this
+--   function blocks until a connection becomes available, then that
+--   connection is used.
+--
+-- If the action throws an exception of any type, the 'Connection' is
+-- destroyed, and not returned to the pool.
+--
+-- It probably goes without saying that you should never call
+-- 'disconnect' on a connection, as doing so will cause a subsequent
+-- user (who expects the connection to be valid) to throw an exception.
+withConnectionM :: MonadBaseControl IO m => Pool -> (Connection -> m a) -> m a
+withConnectionM = Pool.withResource . pool
