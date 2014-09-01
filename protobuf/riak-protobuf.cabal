@@ -1,5 +1,5 @@
 name:                riak-protobuf
-version:             0.17.0.0
+version:             0.18.0.0
 synopsis:            Haskell types for the Riak protocol buffer API
 description:
   A set of Haskell types for interacting with the protocol buffer
@@ -76,8 +76,8 @@ library
     array >= 0.4,
     base == 4.*,
     parsec >= 3,
-    protocol-buffers >= 2.0.5,
-    protocol-buffers-descriptor >= 2.0.5
+    protocol-buffers-fork == 2.0.*,
+    protocol-buffers-descriptor-fork == 2.0.*
 
   ghc-options: -Wall -fno-warn-orphans
 
