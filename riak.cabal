@@ -80,7 +80,7 @@ library
 
   build-depends:
     aeson >= 0.3.2.4,
-    attoparsec >= 0.8.5.3,
+    attoparsec >= 0.10,
     base == 4.*,
     binary,
     blaze-builder,
