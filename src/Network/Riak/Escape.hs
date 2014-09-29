@@ -25,7 +25,7 @@ module Network.Riak.Escape
 import Blaze.ByteString.Builder (Builder, fromByteString, toByteString, toLazyByteString)
 import Blaze.ByteString.Builder.Word (fromWord8)
 import Control.Applicative ((<$>))
-import Data.Attoparsec as A
+import Data.Attoparsec.ByteString as A
 import Data.Attoparsec.Lazy as AL
 import Data.Bits ((.|.), (.&.), shiftL, shiftR)
 import Data.ByteString (ByteString)
