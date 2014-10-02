@@ -118,7 +118,7 @@ unexError :: String -> String -> String -> a
 unexError modu func msg = throw (UnexpectedResponse modu func msg)
 
 instance Show Connection where
-    show conn = show "Connection " ++ host c ++ ":" ++ port c
+    show conn = concat ["Connection ", host c, ":", port c]
         where c = connClient conn
 
 -- | A Bucket is a container and keyspace for data stored in Riak,
