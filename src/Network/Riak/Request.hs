@@ -45,7 +45,7 @@ module Network.Riak.Request
     ) where
 
 import Control.Applicative ((<$>))
-import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.BucketProps hiding (r,rw)
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetClientIDRequest
 import Network.Riak.Protocol.GetServerInfoRequest
