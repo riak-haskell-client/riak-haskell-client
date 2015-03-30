@@ -186,7 +186,7 @@ putMany doPut conn bucket puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
     unless (null conflicts) $
       debugValues "putMany" "conflicts" conflicts
     go (i+1) (ok++acc) conflicts
-  mush (i,(k,mv,c)) (cs,v) =
+  mush (i,(k,mv,_)) (cs,v) =
       case cs of
         [x] | i > 0 || isJust mv -> Right (i,(x,v))
         (_:_) -> Left (i,(k,Just v, resolveMany cs))
