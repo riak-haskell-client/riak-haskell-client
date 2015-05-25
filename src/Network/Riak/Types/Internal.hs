@@ -29,7 +29,6 @@ module Network.Riak.Types.Internal
     , Index
     , IndexQuery(..)
     , IndexValue(..)
-    , ReturnTerms
     , Tag
     , VClock(..)
     , Job(..)
@@ -147,8 +146,6 @@ data IndexQuery = IndexQueryExactInt !Index !Int
 
 data IndexValue = IndexInt !Index !Int
                 | IndexBin !Index !ByteString
-
-type ReturnTerms = Bool
 
 -- | An application-specific identifier for a link.  See
 -- <http://wiki.basho.com/Links.html> for details.

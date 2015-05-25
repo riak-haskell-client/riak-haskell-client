@@ -49,8 +49,6 @@ t_put_get b k v =
             return (p,r)
     notempty = not . L.null
 
--- TODO: only enable with flag, since we can't assume riak is
--- configured to have 2i enabled
 t_indexed_put_get :: HU.Assertion
 t_indexed_put_get = withConnection pool $ \c -> do
     let b = "riak-haskell-client-test"
