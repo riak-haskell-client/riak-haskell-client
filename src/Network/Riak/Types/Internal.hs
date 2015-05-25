@@ -26,6 +26,10 @@ module Network.Riak.Types.Internal
     -- * Data types
     , Bucket
     , Key
+    , Index
+    , IndexQuery(..)
+    , IndexValue(..)
+    , ReturnTerms
     , Tag
     , VClock(..)
     , Job(..)
@@ -130,6 +134,22 @@ type Bucket = ByteString
 -- buckets.
 type Key = ByteString
 
+-- | Name of a secondary index
+type Index = ByteString
+
+-- | Index query. Can be exact or range, int or bin. Index name should
+-- not contain the "_bin" or "_int" part, since it's determined from
+-- data constructor.
+data IndexQuery = IndexQueryExactInt !Index !Int
+                | IndexQueryExactBin !Index !ByteString
+                | IndexQueryRangeInt !Index !Int !Int
+                | IndexQueryRangeBin !Index !ByteString !ByteString
+
+data IndexValue = IndexInt !Index !Int
+                | IndexBin !Index !ByteString
+
+type ReturnTerms = Bool
+
 -- | An application-specific identifier for a link.  See
 -- <http://wiki.basho.com/Links.html> for details.
 type Tag = ByteString
@@ -166,6 +186,8 @@ data MessageTag = ErrorResponse
                 | SetBucketResponse
                 | MapReduceRequest
                 | MapReduceResponse
+                | IndexRequest
+                | IndexResponse
                   deriving (Eq, Show, Enum, Typeable)
 
 -- | Messages are tagged.

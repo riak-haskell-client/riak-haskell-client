@@ -20,6 +20,7 @@ module Network.Riak.JSON
     , get
     , getMany
     , put
+    , putIndexed
     , put_
     , putMany
     , putMany_
@@ -77,6 +78,14 @@ put :: (FromJSON c, ToJSON c) =>
     -> W -> DW -> IO ([c], VClock)
 put conn bucket key mvclock val w dw =
     convert <$> V.put conn bucket key mvclock (json val) w dw
+
+-- | Store a single value indexed.
+putIndexed :: (FromJSON c, ToJSON c)
+           => Connection -> Bucket -> Key -> [IndexValue]
+           -> Maybe VClock -> c
+           -> W -> DW -> IO ([c], VClock)
+putIndexed conn bucket key ixs mvclock val w dw =
+    convert <$> V.putIndexed conn bucket key ixs mvclock (json val) w dw
 
 -- | Store a single value, without the possibility of conflict
 -- resolution.

@@ -21,7 +21,10 @@ module Network.Riak.Value
     , fromContent
     , get
     , getMany
+    , getByIndex
+    , addIndexes
     , put
+    , putIndexed
     , put_
     , putMany
     , putMany_
@@ -30,17 +33,21 @@ module Network.Riak.Value
 import Control.Applicative
 import Data.Aeson.Types (Parser, Result(..), parse)
 import Data.Foldable (toList)
+import Data.Monoid ((<>))
 import Network.Riak.Connection.Internal
 import Network.Riak.Protocol.Content (Content(..))
 import Network.Riak.Protocol.GetResponse (GetResponse(..))
+import Network.Riak.Protocol.IndexResponse (IndexResponse(..))
 import Network.Riak.Protocol.PutResponse (PutResponse(..))
 import Network.Riak.Resolvable (ResolvableMonoid(..))
 import Network.Riak.Response (unescapeLinks)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Network.Riak.Protocol.Pair as Pair
 import qualified Data.Aeson.Parser as Aeson
 import qualified Data.Aeson.Types as Aeson
 import qualified Data.Attoparsec.Lazy as A
 import qualified Data.ByteString.Lazy as L
+import qualified Data.ByteString.Lazy.Char8 as CL8
 import qualified Data.Sequence as Seq
 import qualified Network.Riak.Content as C
 import qualified Network.Riak.Request as Req
@@ -80,6 +87,15 @@ instance IsContent Aeson.Value where
 
 deriving instance (IsContent a) => IsContent (ResolvableMonoid a)
 
+-- | Add indexes to a content value for a further put request.
+addIndexes :: [IndexValue] -> Content -> Content
+addIndexes ix c =
+    c { C.indexes = Seq.fromList . map toPair $ ix }
+  where
+    toPair (IndexInt k v) = Pair.Pair (k <> "_int")
+                                      (Just . CL8.pack . show $ v)
+    toPair (IndexBin k v) = Pair.Pair (k <> "_bin") (Just v)
+
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
 -- responsibility.
@@ -93,6 +109,16 @@ put :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
 put conn bucket key mvclock val w dw =
   putResp =<< exchange conn
               (Req.put bucket key mvclock (toContent val) w dw True)
+
+-- | Store an indexed value.
+putIndexed :: (IsContent c) => Connection -> Bucket -> Key
+           -> [IndexValue]
+           -> Maybe VClock -> c
+           -> W -> DW -> IO ([c], VClock)
+putIndexed conn b k inds mvclock val w dw =
+    putResp =<< exchange conn
+                  (Req.put b k mvclock (addIndexes inds (toContent val))
+                      w dw True)
 
 -- | Store many values.  This may return multiple conflicting siblings
 -- for each value stored.  Choosing among them, and storing a new
@@ -145,6 +171,12 @@ get :: (IsContent c) => Connection -> Bucket -> Key -> R
     -> IO (Maybe ([c], VClock))
 get conn bucket key r = getResp =<< exchangeMaybe conn (Req.get bucket key r)
 
+-- | Retrieve list of keys matching some index query.
+getByIndex :: Connection -> Bucket -> IndexQuery
+           -> IO [Key]
+getByIndex conn b indq =
+    getByIndexResp =<< exchangeMaybe conn (Req.getByIndex b indq)
+
 getMany :: (IsContent c) => Connection -> Bucket -> [Key] -> R
         -> IO [Maybe ([c], VClock)]
 getMany conn b ks r =
@@ -157,6 +189,12 @@ getResp resp =
            c <- convert content
            return $ Just (c, VClock s)
     _   -> return Nothing
+
+getByIndexResp :: Maybe IndexResponse -> IO [Key]
+getByIndexResp resp =
+    case resp of
+      Just (IndexResponse keys _ _ _) -> return (toList keys)
+      Nothing -> return []
 
 convert :: IsContent v => Seq.Seq Content -> IO [v]
 convert = go [] [] . toList

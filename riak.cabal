@@ -50,6 +50,10 @@ flag developer
   description: operate in developer mode
   default: False
 
+flag test2i
+  description: test secondary indexes (requires default riak engine to have that support)
+  default: False
+
 library
   hs-source-dirs: src
 
@@ -112,14 +116,17 @@ test-suite test
   hs-source-dirs: tests
   ghc-options: -Wall
 
+  if flag(test2i)
+    cpp-options: -DTEST2I
+
   build-depends:
-    riak,
     base,
+    riak,
     bytestring,
+    containers,
+    HUnit,
     QuickCheck,
     test-framework,
-    test-framework-quickcheck2
-
-source-repository head
-  type:     git
-  location: http://github.com/markhibberd/riak-haskell-client
+    test-framework-hunit,
+    test-framework-quickcheck2,
+    text

@@ -53,11 +53,14 @@ module Network.Riak
     , Resolvable(..)
     , get
     , getMany
+    , getByIndex
+    , addIndexes
     , modify
     , modify_
     , delete
     -- ** Low-level modification functions
     , put
+    , putIndexed
     , putMany
     -- * Metadata
     , listBuckets
@@ -66,8 +69,13 @@ module Network.Riak
     , setBucket
     -- * Map/reduce
     , mapReduce
+    -- * Types
+    , IndexQuery(..)
+    , IndexValue(..)
     ) where
 
 import Network.Riak.Basic hiding (get, put, put_)
-import Network.Riak.JSON.Resolvable (get, getMany, modify, modify_, put, putMany)
+import Network.Riak.JSON.Resolvable (get, getMany, modify, modify_, put, putIndexed, putMany)
 import Network.Riak.Resolvable (Resolvable(..))
+import Network.Riak.Value (getByIndex, addIndexes)
+import Network.Riak.Types.Internal (IndexQuery(..), IndexValue(..))
