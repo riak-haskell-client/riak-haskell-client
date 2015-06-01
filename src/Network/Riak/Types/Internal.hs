@@ -143,9 +143,11 @@ data IndexQuery = IndexQueryExactInt !Index !Int
                 | IndexQueryExactBin !Index !ByteString
                 | IndexQueryRangeInt !Index !Int !Int
                 | IndexQueryRangeBin !Index !ByteString !ByteString
+    deriving (Show, Eq)
 
 data IndexValue = IndexInt !Index !Int
                 | IndexBin !Index !ByteString
+    deriving (Show, Eq)
 
 -- | An application-specific identifier for a link.  See
 -- <http://wiki.basho.com/Links.html> for details.
