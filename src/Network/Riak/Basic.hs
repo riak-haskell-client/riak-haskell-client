@@ -44,6 +44,7 @@ module Network.Riak.Basic
     ) where
 
 import Control.Applicative ((<$>))
+import Control.Monad.IO.Class
 import Data.Maybe (fromMaybe)
 import Network.Riak.Connection.Internal
 import Network.Riak.Escape (unescape)
@@ -117,12 +118,12 @@ listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
 -- Fold over the keys in a bucket.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
-foldKeys :: Connection -> T.Bucket -> (a -> Key -> IO a) -> a -> IO a
+foldKeys :: (MonadIO m) => Connection -> T.Bucket -> (a -> Key -> m a) -> a -> m a
 foldKeys conn bucket f z0 = do
-  sendRequest conn $ Req.listKeys bucket
+  liftIO $ sendRequest conn $ Req.listKeys bucket
   let g z = f z . unescape
       loop z = do
-        ListKeysResponse{..} <- recvResponse conn
+        ListKeysResponse{..} <- liftIO $ recvResponse conn
         z1 <- F.foldlM g z keys
         if fromMaybe False done
           then return z1

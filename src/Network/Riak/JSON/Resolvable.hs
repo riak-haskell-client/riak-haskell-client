@@ -31,6 +31,7 @@ module Network.Riak.JSON.Resolvable
     , putMany_
     ) where
 
+import Control.Monad.IO.Class
 import Data.Aeson.Types (FromJSON(..), ToJSON(..))
 import Network.Riak.Resolvable.Internal (ResolutionFailure(..), Resolvable(..))
 import Network.Riak.Types.Internal hiding (MessageTag(..))
@@ -84,9 +85,9 @@ modify = R.modify J.get J.put
 -- If the 'put' phase of this function gives up due to apparently
 -- being stuck in a conflict resolution loop, it will throw a
 -- 'ResolutionFailure' exception.
-modify_ :: (FromJSON a, ToJSON a, Resolvable a) =>
+modify_ :: (MonadIO m, FromJSON a, ToJSON a, Resolvable a) =>
            Connection -> Bucket -> Key -> R -> W -> DW
-        -> (Maybe a -> IO a) -> IO a
+        -> (Maybe a -> m a) -> m a
 modify_ = R.modify_ J.get J.put
 {-# INLINE modify_ #-}
 
