@@ -34,7 +34,9 @@
 -- This is the most demanding module to work with, as you must encode
 -- and decode data yourself, and handle all conflict resolution
 -- yourself.
-
+--
+-- A short getting started guide is available at <http://docs.basho.com/riak/latest/dev/taste-of-riak/haskell/>
+--
 module Network.Riak
     (
     -- * Client configuration and identification
