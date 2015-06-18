@@ -117,9 +117,6 @@ test-suite test
   hs-source-dirs: tests
   ghc-options: -Wall
 
-  if flag(test2i)
-    cpp-options: -DTEST2I
-
   build-depends:
     base,
     riak,
