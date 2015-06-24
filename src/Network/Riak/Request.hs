@@ -24,6 +24,8 @@ module Network.Riak.Request
     -- * Data management
     , Get.GetRequest
     , get
+    , getByIndex
+    , Index.IndexRequest
     , Put.PutRequest
     , put
     , Del.DeleteRequest
@@ -45,6 +47,8 @@ module Network.Riak.Request
     ) where
 
 import Control.Applicative ((<$>))
+import qualified Data.ByteString.Char8 as B8
+import Data.Monoid
 import Network.Riak.Protocol.BucketProps hiding (r,rw)
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetClientIDRequest
@@ -58,6 +62,8 @@ import qualified Network.Riak.Protocol.DeleteRequest as Del
 import qualified Network.Riak.Protocol.Link as Link
 import qualified Network.Riak.Protocol.GetBucketRequest as GetBucket
 import qualified Network.Riak.Protocol.GetRequest as Get
+import qualified Network.Riak.Protocol.IndexRequest as Index
+import qualified Network.Riak.Protocol.IndexRequest.IndexQueryType as IndexQueryType
 import qualified Network.Riak.Protocol.ListKeysRequest as Keys
 import qualified Network.Riak.Protocol.PutRequest as Put
 import qualified Network.Riak.Protocol.SetBucketRequest as SetBucket
@@ -93,6 +99,40 @@ get bucket key r = Get.GetRequest { Get.bucket = escape bucket
                                   , Get.n_val = Nothing
                                   }
 {-# INLINE get #-}
+
+-- | Create a secondary index request. Bucket, key and index names and
+-- values are URL-escaped.
+getByIndex :: Bucket -> IndexQuery
+           -> Index.IndexRequest
+getByIndex bucket q =
+    case q of
+      IndexQueryExactInt index key ->
+          req (index <> "_int") (showIntKey key)
+              IndexQueryType.Eq Nothing Nothing
+      IndexQueryExactBin index key ->
+          req (index <> "_bin") (showBsKey $ key)
+              IndexQueryType.Eq Nothing Nothing
+      IndexQueryRangeInt index from to ->
+          req (index <> "_int") Nothing
+              IndexQueryType.Range (showIntKey from) (showIntKey to)
+      IndexQueryRangeBin index from to ->
+          req (index <> "_bin") Nothing
+              IndexQueryType.Range (showBsKey from) (showBsKey to)
+  where
+    showIntKey = Just . escape . B8.pack . show
+    showBsKey = Just . escape
+    req i k qt rmin rmax =
+      Index.IndexRequest { Index.bucket = escape bucket
+                         , Index.index = escape i
+                         , Index.qtype = qt
+                         , Index.key = k
+                         , Index.range_min = rmin
+                         , Index.range_max = rmax
+                         , Index.return_terms = Nothing
+                         , Index.stream = Nothing
+                         , Index.max_results = Nothing
+                         , Index.continuation = Nothing
+                         , Index.timeout = Nothing }
 
 -- | Create a put request.  The bucket and key names are URL-escaped.
 -- Any 'Link' values inside the 'Content' are assumed to have been

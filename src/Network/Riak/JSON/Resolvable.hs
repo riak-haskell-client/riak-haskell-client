@@ -25,6 +25,7 @@ module Network.Riak.JSON.Resolvable
     , modify_
     -- * Low-level modification functions
     , put
+    , putIndexed
     , put_
     , putMany
     , putMany_
@@ -106,6 +107,17 @@ put :: (FromJSON c, ToJSON c, Resolvable c) =>
     -> IO (c, VClock)
 put = R.put J.put
 {-# INLINE put #-}
+
+-- | Store a single value indexed.
+putIndexed :: (FromJSON c, ToJSON c, Resolvable c)
+           => Connection -> Bucket -> Key -> [IndexValue]
+           -> Maybe VClock -> c -> W -> DW
+           -> IO (c, VClock)
+putIndexed c b k ixs vc cont w' dw' =
+    R.put (\conn bucket key mvclock val w dw ->
+               J.putIndexed conn bucket key ixs mvclock val w dw)
+          c b k vc cont w' dw'
+{-# INLINE putIndexed #-}
 
 -- | Store a single value, automatically resolving any vector clock
 -- conflicts that arise.  A single invocation of this function may

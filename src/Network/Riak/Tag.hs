@@ -26,6 +26,8 @@ import Network.Riak.Protocol.GetClientIDRequest
 import Network.Riak.Protocol.GetClientIDResponse
 import Network.Riak.Protocol.GetRequest
 import Network.Riak.Protocol.GetResponse
+import Network.Riak.Protocol.IndexRequest
+import Network.Riak.Protocol.IndexResponse
 import Network.Riak.Protocol.GetServerInfoRequest
 import Network.Riak.Protocol.ListBucketsRequest
 import Network.Riak.Protocol.ListBucketsResponse
@@ -100,17 +102,33 @@ instance Tagged GetRequest where
     messageTag _ = Types.GetRequest
     {-# INLINE messageTag #-}
 
+instance Tagged IndexRequest where
+    messageTag _ = Types.IndexRequest
+    {-# INLINE messageTag #-}
+
 instance Request GetRequest where
     expectedResponse _ = Types.GetResponse
+    {-# INLINE expectedResponse #-}
+
+instance Request IndexRequest where
+    expectedResponse _ = Types.IndexResponse
     {-# INLINE expectedResponse #-}
 
 instance Tagged GetResponse where
     messageTag _ = Types.GetResponse
     {-# INLINE messageTag #-}
 
+instance Tagged IndexResponse where
+    messageTag _ = Types.IndexResponse
+    {-# INLINE messageTag #-}
+
 instance Response GetResponse
 
+instance Response IndexResponse
+
 instance Exchange GetRequest GetResponse
+
+instance Exchange IndexRequest IndexResponse
 
 instance Tagged PutRequest where
     messageTag _ = Types.PutRequest
@@ -213,7 +231,7 @@ putTag = putWord8 . fromIntegral . fromEnum
 getTag :: Get MessageTag
 getTag = do
   n <- getWord8
-  if n > 24
+  if n > 26
     then moduleError "getTag" $ "invalid riak message code: " ++ show n
     else return .  toEnum . fromIntegral $ n
 {-# INLINE getTag #-}

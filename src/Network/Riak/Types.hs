@@ -35,6 +35,8 @@ module Network.Riak.Types
     , Exchange
     , MessageTag(..)
     , Tagged(..)
+    , IndexValue(..)
+    , IndexQuery(..)
     ) where
 
 import Network.Riak.Types.Internal
