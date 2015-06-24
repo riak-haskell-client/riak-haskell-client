@@ -1,50 +1,28 @@
 language: haskell
 
-env:
-  - GHCVER=7.4.2
-  - GHCVER=7.6.3
-  - GHCVER=7.8.1
-  - GHCVER=head
+ghc:
+  - 7.8
 
-matrix:
-  allow_failures:
-    - env: GHCVER=head
+services:
+  - riak
 
-before_install:
-  - ./bin/ci-install-riak
-  - ./bin/ci-start-riak
-  # If $GHCVER is the one travis has, don't bother reinstalling it.
-  # We can also have faster builds by installing some libraries with
-  # `apt`. If it isn't, install the GHC we want from hvr's PPA along
-  # with cabal-1.18.
-  - |
-    if [ $GHCVER = `ghc --numeric-version` ]; then
-      # Try installing some of the build-deps with apt-get for speed.
-      travis/cabal-apt-install --enable-tests $MODE
-      export CABAL=cabal
-    else
-      # Install the GHC we want from hvr's PPA
-      travis_retry sudo add-apt-repository -y ppa:hvr/ghc
-      travis_retry sudo apt-get update
-      travis_retry sudo apt-get install cabal-install-1.18 ghc-$GHCVER happy
-      export CABAL=cabal-1.18
-      export PATH=/opt/ghc/$GHCVER/bin:$PATH
-    fi
-  # Uncomment whenever hackage is down.
-  # - mkdir -p ~/.cabal && cp travis/config ~/.cabal/config && $CABAL update
-  - $CABAL update
-
-  # Update happy when building with GHC head
-  - |
-    if [ $GHCVER = "head" ] || [ $GHCVER = "7.8.1" ]; then
-      $CABAL install happy alex
-      export PATH=$HOME/.cabal/bin:$PATH
-    fi
+before_script:
+  - "curl http://apt.basho.com/gpg/basho.apt.key | sudo apt-key add -"
+  - 'sudo bash -c "echo deb http://apt.basho.com $(lsb_release -sc) main > /etc/apt/sources.list.d/basho.list"'
+  - "sudo apt-get update"
+  - "yes n | sudo apt-get install riak"
+  - "sudo service riak start"
+  # - ! 'echo "root: .riaktest" > spec/support/test_server.yml'
+  # - ! 'echo "source: /usr/sbin" >> spec/support/test_server.yml'
+  - "ulimit -n 2048"
+  - "riak version"
 
 install:
-  - cd protobuf && $CABAL install && cd ..
+  - export CABAL=cabal
+  - $CABAL sandbox init
+  - cd protobuf && $CABAL sandbox init && $CABAL install && cd ..
   - $CABAL install --dependencies-only --enable-tests
-  - $CABAL configure -flib-Werror --enable-tests $MODE
+  - $CABAL configure -flib-Werror --enable-tests
 
 script:
   - $CABAL build
