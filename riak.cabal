@@ -49,6 +49,7 @@ flag debug
 flag developer
   description: operate in developer mode
   default: False
+  manual: True
 
 flag test2i
   description: test secondary indexes (requires default riak engine to have that support)
