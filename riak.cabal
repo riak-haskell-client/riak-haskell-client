@@ -1,5 +1,5 @@
 name:                riak
-version:             0.7.2.1
+version:             0.8.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -49,6 +49,7 @@ flag debug
 flag developer
   description: operate in developer mode
   default: False
+  manual: True
 
 flag test2i
   description: test secondary indexes (requires default riak engine to have that support)
@@ -96,7 +97,7 @@ library
     protocol-buffers-fork == 2.0.*,
     pureMD5,
     random,
-    riak-protobuf == 0.18.*,
+    riak-protobuf == 0.19.*,
     text >= 0.11.0.6,
     time
 
@@ -115,9 +116,6 @@ test-suite test
   main-is: Properties.hs
   hs-source-dirs: tests
   ghc-options: -Wall
-
-  if flag(test2i)
-    cpp-options: -DTEST2I
 
   build-depends:
     base,
