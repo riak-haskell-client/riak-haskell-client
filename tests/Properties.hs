@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
-
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -fno-warn-unused-binds #-}
 import Control.Applicative ((<$>))
 import Control.Exception (finally)
 import Control.Monad (forM_)
@@ -17,7 +18,6 @@ import System.IO.Unsafe (unsafePerformIO)
 import qualified Test.HUnit as HU
 import Test.Framework (defaultMain, Test)
 import Test.Framework.Providers.QuickCheck2 (testProperty)
-import Test.Framework.Providers.HUnit (testCase)
 import Test.QuickCheck (Arbitrary(..), (==>))
 import Test.QuickCheck.Property (Property)
 import Test.QuickCheck.Monadic (assert, monadicIO, run)
