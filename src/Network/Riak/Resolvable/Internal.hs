@@ -33,6 +33,7 @@ import Control.Applicative ((<$>))
 import Control.Arrow (first)
 import Control.Exception (Exception, throwIO)
 import Control.Monad (unless)
+import Control.Monad.IO.Class
 import Data.Aeson.Types (FromJSON, ToJSON)
 import Data.Data (Data)
 import Data.Either (partitionEithers)
@@ -151,23 +152,23 @@ put_ doPut conn bucket key mvclock0 val0 w dw =
     put doPut conn bucket key mvclock0 val0 w dw >> return ()
 {-# INLINE put_ #-}
 
-modify :: (Resolvable a) => Get a -> Put a
-       -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> IO (a,b))
-       -> IO (a,b)
+modify :: (MonadIO m, Resolvable a) => Get a -> Put a
+       -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m (a,b))
+       -> m (a,b)
 modify doGet doPut conn bucket key r w dw act = do
-  a0 <- get doGet conn bucket key r
+  a0 <- liftIO $ get doGet conn bucket key r
   (a,b) <- act (fst <$> a0)
-  (a',_) <- put doPut conn bucket key (snd <$> a0) a w dw
+  (a',_) <- liftIO $ put doPut conn bucket key (snd <$> a0) a w dw
   return (a',b)
 {-# INLINE modify #-}
 
-modify_ :: (Resolvable a) => Get a -> Put a
-        -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> IO a)
-        -> IO a
+modify_ :: (MonadIO m, Resolvable a) => Get a -> Put a
+        -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m a)
+        -> m a
 modify_ doGet doPut conn bucket key r w dw act = do
-  a0 <- get doGet conn bucket key r
+  a0 <- liftIO $ get doGet conn bucket key r
   a <- act (fst <$> a0)
-  fst <$> put doPut conn bucket key (snd <$> a0) a w dw
+  liftIO $ fst <$> put doPut conn bucket key (snd <$> a0) a w dw
 {-# INLINE modify_ #-}
 
 putMany :: (Resolvable a) =>
