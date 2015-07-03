@@ -93,7 +93,7 @@ library
     monad-control >= 0.2.0.1,
     network >= 2.3,
     resource-pool == 0.2.*,
-    protocol-buffers-fork == 2.0.*,
+    protocol-buffers >= 2.1.0 && < 2.2,
     pureMD5,
     random,
     riak-protobuf == 0.18.*,
