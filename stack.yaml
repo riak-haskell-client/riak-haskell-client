@@ -3,6 +3,6 @@ packages:
 - '.'
 - protobuf/
 extra-deps:
-- protocol-buffers-descriptor-fork-2.0.16
-- protocol-buffers-fork-2.0.16
+- protocol-buffers-2.1.6
+- protocol-buffers-descriptor-2.1.6
 resolver: lts-2.16
