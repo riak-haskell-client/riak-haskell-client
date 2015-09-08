@@ -10,13 +10,6 @@ before_install:
   - export PATH=~/.local/bin:$PATH
   - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v0.1.4.0/stack-0.1.4.0-x86_64-linux.tar.gz | tar xz -C ~/.local/bin
 
-  # # Update happy when building with GHC head
-  # - |
-  #   if [ $GHCVER = "head" ]; then
-  #     cabal install happy alex
-  #     export PATH=$HOME/.cabal/bin:$PATH
-  #   fi
-
 matrix:
   include:
     - env: GHCVER=7.8.4 STACK_YAML=stack.yaml
