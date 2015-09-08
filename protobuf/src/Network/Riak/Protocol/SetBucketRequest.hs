@@ -8,7 +8,7 @@ import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
 import qualified Network.Riak.Protocol.BucketProps as Protocol (BucketProps)
  
-data SetBucketRequest = SetBucketRequest{bucket :: !P'.ByteString, props :: !Protocol.BucketProps}
+data SetBucketRequest = SetBucketRequest{bucket :: !(P'.ByteString), props :: !(Protocol.BucketProps)}
                       deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable SetBucketRequest where
@@ -60,3 +60,28 @@ instance P'.ReflectDescriptor SetBucketRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.SetBucketRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"SetBucketRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"SetBucketRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SetBucketRequest.bucket\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SetBucketRequest\"], baseName' = FName \"bucket\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SetBucketRequest.props\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SetBucketRequest\"], baseName' = FName \"props\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.BucketProps\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"BucketProps\"}), hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType SetBucketRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg SetBucketRequest where
+  textPut msg
+   = do
+       P'.tellT "bucket" (bucket msg)
+       P'.tellT "props" (props msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'bucket, parse'props]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'bucket
+         = P'.try
+            (do
+               v <- P'.getT "bucket"
+               Prelude'.return (\ o -> o{bucket = v}))
+        parse'props
+         = P'.try
+            (do
+               v <- P'.getT "props"
+               Prelude'.return (\ o -> o{props = v}))

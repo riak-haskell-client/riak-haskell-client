@@ -8,7 +8,7 @@ import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
 import qualified Network.Riak.Protocol.GetResponse as Protocol (GetResponse)
  
-data IndexObject = IndexObject{key :: !P'.ByteString, object :: !Protocol.GetResponse}
+data IndexObject = IndexObject{key :: !(P'.ByteString), object :: !(Protocol.GetResponse)}
                  deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable IndexObject where
@@ -59,3 +59,28 @@ instance P'.ReflectDescriptor IndexObject where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.IndexObject\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"IndexObject\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"IndexObject.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.IndexObject.key\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"IndexObject\"], baseName' = FName \"key\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.IndexObject.object\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"IndexObject\"], baseName' = FName \"object\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.GetResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetResponse\"}), hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType IndexObject where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg IndexObject where
+  textPut msg
+   = do
+       P'.tellT "key" (key msg)
+       P'.tellT "object" (object msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'key, parse'object]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'key
+         = P'.try
+            (do
+               v <- P'.getT "key"
+               Prelude'.return (\ o -> o{key = v}))
+        parse'object
+         = P'.try
+            (do
+               v <- P'.getT "object"
+               Prelude'.return (\ o -> o{object = v}))

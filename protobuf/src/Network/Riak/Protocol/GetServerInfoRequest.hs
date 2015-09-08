@@ -55,3 +55,11 @@ instance P'.ReflectDescriptor GetServerInfoRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetServerInfoRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetServerInfoRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetServerInfoRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType GetServerInfoRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg GetServerInfoRequest where
+  textPut msg = Prelude'.return ()
+  textGet = Prelude'.return P'.defaultValue

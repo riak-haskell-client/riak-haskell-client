@@ -56,3 +56,22 @@ instance P'.ReflectDescriptor CounterUpdateResponse where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.CounterUpdateResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CounterUpdateResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"CounterUpdateResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.CounterUpdateResponse.value\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"CounterUpdateResponse\"], baseName' = FName \"value\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 8}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 18}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType CounterUpdateResponse where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg CounterUpdateResponse where
+  textPut msg
+   = do
+       P'.tellT "value" (value msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'value]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'value
+         = P'.try
+            (do
+               v <- P'.getT "value"
+               Prelude'.return (\ o -> o{value = v}))

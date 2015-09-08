@@ -7,7 +7,7 @@ import qualified Data.Typeable as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data DeleteRequest = DeleteRequest{bucket :: !P'.ByteString, key :: !P'.ByteString, rw :: !(P'.Maybe P'.Word32),
+data DeleteRequest = DeleteRequest{bucket :: !(P'.ByteString), key :: !(P'.ByteString), rw :: !(P'.Maybe P'.Word32),
                                    vclock :: !(P'.Maybe P'.ByteString), r :: !(P'.Maybe P'.Word32), w :: !(P'.Maybe P'.Word32),
                                    pr :: !(P'.Maybe P'.Word32), pw :: !(P'.Maybe P'.Word32), dw :: !(P'.Maybe P'.Word32),
                                    timeout :: !(P'.Maybe P'.Word32), sloppy_quorum :: !(P'.Maybe P'.Bool),
@@ -108,3 +108,92 @@ instance P'.ReflectDescriptor DeleteRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.DeleteRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"DeleteRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"DeleteRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.bucket\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"bucket\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.key\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"key\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.rw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"rw\"}, fieldNumber = FieldId {getFieldId = 3}, wireTag = WireTag {getWireTag = 24}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.vclock\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"vclock\"}, fieldNumber = FieldId {getFieldId = 4}, wireTag = WireTag {getWireTag = 34}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.r\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"r\"}, fieldNumber = FieldId {getFieldId = 5}, wireTag = WireTag {getWireTag = 40}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.w\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"w\"}, fieldNumber = FieldId {getFieldId = 6}, wireTag = WireTag {getWireTag = 48}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.pr\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"pr\"}, fieldNumber = FieldId {getFieldId = 7}, wireTag = WireTag {getWireTag = 56}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.pw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"pw\"}, fieldNumber = FieldId {getFieldId = 8}, wireTag = WireTag {getWireTag = 64}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.dw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"dw\"}, fieldNumber = FieldId {getFieldId = 9}, wireTag = WireTag {getWireTag = 72}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.timeout\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"timeout\"}, fieldNumber = FieldId {getFieldId = 10}, wireTag = WireTag {getWireTag = 80}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.sloppy_quorum\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"sloppy_quorum\"}, fieldNumber = FieldId {getFieldId = 11}, wireTag = WireTag {getWireTag = 88}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.DeleteRequest.n_val\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"DeleteRequest\"], baseName' = FName \"n_val\"}, fieldNumber = FieldId {getFieldId = 12}, wireTag = WireTag {getWireTag = 96}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType DeleteRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg DeleteRequest where
+  textPut msg
+   = do
+       P'.tellT "bucket" (bucket msg)
+       P'.tellT "key" (key msg)
+       P'.tellT "rw" (rw msg)
+       P'.tellT "vclock" (vclock msg)
+       P'.tellT "r" (r msg)
+       P'.tellT "w" (w msg)
+       P'.tellT "pr" (pr msg)
+       P'.tellT "pw" (pw msg)
+       P'.tellT "dw" (dw msg)
+       P'.tellT "timeout" (timeout msg)
+       P'.tellT "sloppy_quorum" (sloppy_quorum msg)
+       P'.tellT "n_val" (n_val msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy
+                (P'.choice
+                  [parse'bucket, parse'key, parse'rw, parse'vclock, parse'r, parse'w, parse'pr, parse'pw, parse'dw, parse'timeout,
+                   parse'sloppy_quorum, parse'n_val])
+                P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'bucket
+         = P'.try
+            (do
+               v <- P'.getT "bucket"
+               Prelude'.return (\ o -> o{bucket = v}))
+        parse'key
+         = P'.try
+            (do
+               v <- P'.getT "key"
+               Prelude'.return (\ o -> o{key = v}))
+        parse'rw
+         = P'.try
+            (do
+               v <- P'.getT "rw"
+               Prelude'.return (\ o -> o{rw = v}))
+        parse'vclock
+         = P'.try
+            (do
+               v <- P'.getT "vclock"
+               Prelude'.return (\ o -> o{vclock = v}))
+        parse'r
+         = P'.try
+            (do
+               v <- P'.getT "r"
+               Prelude'.return (\ o -> o{r = v}))
+        parse'w
+         = P'.try
+            (do
+               v <- P'.getT "w"
+               Prelude'.return (\ o -> o{w = v}))
+        parse'pr
+         = P'.try
+            (do
+               v <- P'.getT "pr"
+               Prelude'.return (\ o -> o{pr = v}))
+        parse'pw
+         = P'.try
+            (do
+               v <- P'.getT "pw"
+               Prelude'.return (\ o -> o{pw = v}))
+        parse'dw
+         = P'.try
+            (do
+               v <- P'.getT "dw"
+               Prelude'.return (\ o -> o{dw = v}))
+        parse'timeout
+         = P'.try
+            (do
+               v <- P'.getT "timeout"
+               Prelude'.return (\ o -> o{timeout = v}))
+        parse'sloppy_quorum
+         = P'.try
+            (do
+               v <- P'.getT "sloppy_quorum"
+               Prelude'.return (\ o -> o{sloppy_quorum = v}))
+        parse'n_val
+         = P'.try
+            (do
+               v <- P'.getT "n_val"
+               Prelude'.return (\ o -> o{n_val = v}))

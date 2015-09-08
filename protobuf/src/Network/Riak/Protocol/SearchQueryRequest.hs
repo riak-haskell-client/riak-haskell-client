@@ -7,7 +7,7 @@ import qualified Data.Typeable as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data SearchQueryRequest = SearchQueryRequest{q :: !P'.ByteString, index :: !P'.ByteString, rows :: !(P'.Maybe P'.Word32),
+data SearchQueryRequest = SearchQueryRequest{q :: !(P'.ByteString), index :: !(P'.ByteString), rows :: !(P'.Maybe P'.Word32),
                                              start :: !(P'.Maybe P'.Word32), sort :: !(P'.Maybe P'.ByteString),
                                              filter :: !(P'.Maybe P'.ByteString), df :: !(P'.Maybe P'.ByteString),
                                              op :: !(P'.Maybe P'.ByteString), fl :: !(P'.Seq P'.ByteString),
@@ -99,3 +99,80 @@ instance P'.ReflectDescriptor SearchQueryRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.SearchQueryRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"SearchQueryRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"SearchQueryRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.q\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"q\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.index\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"index\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.rows\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"rows\"}, fieldNumber = FieldId {getFieldId = 3}, wireTag = WireTag {getWireTag = 24}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.start\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"start\"}, fieldNumber = FieldId {getFieldId = 4}, wireTag = WireTag {getWireTag = 32}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.sort\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"sort\"}, fieldNumber = FieldId {getFieldId = 5}, wireTag = WireTag {getWireTag = 42}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.filter\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"filter\"}, fieldNumber = FieldId {getFieldId = 6}, wireTag = WireTag {getWireTag = 50}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.df\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"df\"}, fieldNumber = FieldId {getFieldId = 7}, wireTag = WireTag {getWireTag = 58}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.op\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"op\"}, fieldNumber = FieldId {getFieldId = 8}, wireTag = WireTag {getWireTag = 66}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.fl\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"fl\"}, fieldNumber = FieldId {getFieldId = 9}, wireTag = WireTag {getWireTag = 74}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryRequest.presort\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryRequest\"], baseName' = FName \"presort\"}, fieldNumber = FieldId {getFieldId = 10}, wireTag = WireTag {getWireTag = 82}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType SearchQueryRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg SearchQueryRequest where
+  textPut msg
+   = do
+       P'.tellT "q" (q msg)
+       P'.tellT "index" (index msg)
+       P'.tellT "rows" (rows msg)
+       P'.tellT "start" (start msg)
+       P'.tellT "sort" (sort msg)
+       P'.tellT "filter" (filter msg)
+       P'.tellT "df" (df msg)
+       P'.tellT "op" (op msg)
+       P'.tellT "fl" (fl msg)
+       P'.tellT "presort" (presort msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy
+                (P'.choice
+                  [parse'q, parse'index, parse'rows, parse'start, parse'sort, parse'filter, parse'df, parse'op, parse'fl,
+                   parse'presort])
+                P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'q
+         = P'.try
+            (do
+               v <- P'.getT "q"
+               Prelude'.return (\ o -> o{q = v}))
+        parse'index
+         = P'.try
+            (do
+               v <- P'.getT "index"
+               Prelude'.return (\ o -> o{index = v}))
+        parse'rows
+         = P'.try
+            (do
+               v <- P'.getT "rows"
+               Prelude'.return (\ o -> o{rows = v}))
+        parse'start
+         = P'.try
+            (do
+               v <- P'.getT "start"
+               Prelude'.return (\ o -> o{start = v}))
+        parse'sort
+         = P'.try
+            (do
+               v <- P'.getT "sort"
+               Prelude'.return (\ o -> o{sort = v}))
+        parse'filter
+         = P'.try
+            (do
+               v <- P'.getT "filter"
+               Prelude'.return (\ o -> o{filter = v}))
+        parse'df
+         = P'.try
+            (do
+               v <- P'.getT "df"
+               Prelude'.return (\ o -> o{df = v}))
+        parse'op
+         = P'.try
+            (do
+               v <- P'.getT "op"
+               Prelude'.return (\ o -> o{op = v}))
+        parse'fl
+         = P'.try
+            (do
+               v <- P'.getT "fl"
+               Prelude'.return (\ o -> o{fl = P'.append (fl o) v}))
+        parse'presort
+         = P'.try
+            (do
+               v <- P'.getT "presort"
+               Prelude'.return (\ o -> o{presort = v}))

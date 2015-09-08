@@ -7,7 +7,7 @@ import qualified Data.Typeable as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data ListKeysRequest = ListKeysRequest{bucket :: !P'.ByteString, timeout :: !(P'.Maybe P'.Word32)}
+data ListKeysRequest = ListKeysRequest{bucket :: !(P'.ByteString), timeout :: !(P'.Maybe P'.Word32)}
                      deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable ListKeysRequest where
@@ -59,3 +59,28 @@ instance P'.ReflectDescriptor ListKeysRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListKeysRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListKeysRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListKeysRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListKeysRequest.bucket\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListKeysRequest\"], baseName' = FName \"bucket\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListKeysRequest.timeout\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListKeysRequest\"], baseName' = FName \"timeout\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType ListKeysRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg ListKeysRequest where
+  textPut msg
+   = do
+       P'.tellT "bucket" (bucket msg)
+       P'.tellT "timeout" (timeout msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'bucket, parse'timeout]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'bucket
+         = P'.try
+            (do
+               v <- P'.getT "bucket"
+               Prelude'.return (\ o -> o{bucket = v}))
+        parse'timeout
+         = P'.try
+            (do
+               v <- P'.getT "timeout"
+               Prelude'.return (\ o -> o{timeout = v}))

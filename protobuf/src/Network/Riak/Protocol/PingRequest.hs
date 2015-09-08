@@ -55,3 +55,11 @@ instance P'.ReflectDescriptor PingRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.PingRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"PingRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"PingRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType PingRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg PingRequest where
+  textPut msg = Prelude'.return ()
+  textGet = Prelude'.return P'.defaultValue

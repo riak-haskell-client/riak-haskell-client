@@ -188,3 +188,166 @@ instance P'.ReflectDescriptor BucketProps where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.BucketProps\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"BucketProps\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"BucketProps.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.n_val\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"n_val\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 8}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.allow_mult\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"allow_mult\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.last_write_wins\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"last_write_wins\"}, fieldNumber = FieldId {getFieldId = 3}, wireTag = WireTag {getWireTag = 24}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.precommit\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"precommit\"}, fieldNumber = FieldId {getFieldId = 4}, wireTag = WireTag {getWireTag = 34}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.CommitHook\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CommitHook\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.has_precommit\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"has_precommit\"}, fieldNumber = FieldId {getFieldId = 5}, wireTag = WireTag {getWireTag = 40}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Just \"false\", hsDefault = Just (HsDef'Bool False)},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.postcommit\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"postcommit\"}, fieldNumber = FieldId {getFieldId = 6}, wireTag = WireTag {getWireTag = 50}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.CommitHook\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CommitHook\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.has_postcommit\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"has_postcommit\"}, fieldNumber = FieldId {getFieldId = 7}, wireTag = WireTag {getWireTag = 56}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Just \"false\", hsDefault = Just (HsDef'Bool False)},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.chash_keyfun\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"chash_keyfun\"}, fieldNumber = FieldId {getFieldId = 8}, wireTag = WireTag {getWireTag = 66}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.ModFun\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ModFun\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.linkfun\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"linkfun\"}, fieldNumber = FieldId {getFieldId = 9}, wireTag = WireTag {getWireTag = 74}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.ModFun\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ModFun\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.old_vclock\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"old_vclock\"}, fieldNumber = FieldId {getFieldId = 10}, wireTag = WireTag {getWireTag = 80}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.young_vclock\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"young_vclock\"}, fieldNumber = FieldId {getFieldId = 11}, wireTag = WireTag {getWireTag = 88}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.big_vclock\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"big_vclock\"}, fieldNumber = FieldId {getFieldId = 12}, wireTag = WireTag {getWireTag = 96}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.small_vclock\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"small_vclock\"}, fieldNumber = FieldId {getFieldId = 13}, wireTag = WireTag {getWireTag = 104}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.pr\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"pr\"}, fieldNumber = FieldId {getFieldId = 14}, wireTag = WireTag {getWireTag = 112}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.r\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"r\"}, fieldNumber = FieldId {getFieldId = 15}, wireTag = WireTag {getWireTag = 120}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.w\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"w\"}, fieldNumber = FieldId {getFieldId = 16}, wireTag = WireTag {getWireTag = 128}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.pw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"pw\"}, fieldNumber = FieldId {getFieldId = 17}, wireTag = WireTag {getWireTag = 136}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.dw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"dw\"}, fieldNumber = FieldId {getFieldId = 18}, wireTag = WireTag {getWireTag = 144}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.rw\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"rw\"}, fieldNumber = FieldId {getFieldId = 19}, wireTag = WireTag {getWireTag = 152}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.basic_quorum\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"basic_quorum\"}, fieldNumber = FieldId {getFieldId = 20}, wireTag = WireTag {getWireTag = 160}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.notfound_ok\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"notfound_ok\"}, fieldNumber = FieldId {getFieldId = 21}, wireTag = WireTag {getWireTag = 168}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.backend\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"backend\"}, fieldNumber = FieldId {getFieldId = 22}, wireTag = WireTag {getWireTag = 178}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.search\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"search\"}, fieldNumber = FieldId {getFieldId = 23}, wireTag = WireTag {getWireTag = 184}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.BucketProps.repl\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"BucketProps\"], baseName' = FName \"repl\"}, fieldNumber = FieldId {getFieldId = 24}, wireTag = WireTag {getWireTag = 192}, packedTag = Nothing, wireTagLength = 2, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 14}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.BucketProps.ReplMode\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\",MName \"BucketProps\"], baseName = MName \"ReplMode\"}), hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType BucketProps where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg BucketProps where
+  textPut msg
+   = do
+       P'.tellT "n_val" (n_val msg)
+       P'.tellT "allow_mult" (allow_mult msg)
+       P'.tellT "last_write_wins" (last_write_wins msg)
+       P'.tellT "precommit" (precommit msg)
+       P'.tellT "has_precommit" (has_precommit msg)
+       P'.tellT "postcommit" (postcommit msg)
+       P'.tellT "has_postcommit" (has_postcommit msg)
+       P'.tellT "chash_keyfun" (chash_keyfun msg)
+       P'.tellT "linkfun" (linkfun msg)
+       P'.tellT "old_vclock" (old_vclock msg)
+       P'.tellT "young_vclock" (young_vclock msg)
+       P'.tellT "big_vclock" (big_vclock msg)
+       P'.tellT "small_vclock" (small_vclock msg)
+       P'.tellT "pr" (pr msg)
+       P'.tellT "r" (r msg)
+       P'.tellT "w" (w msg)
+       P'.tellT "pw" (pw msg)
+       P'.tellT "dw" (dw msg)
+       P'.tellT "rw" (rw msg)
+       P'.tellT "basic_quorum" (basic_quorum msg)
+       P'.tellT "notfound_ok" (notfound_ok msg)
+       P'.tellT "backend" (backend msg)
+       P'.tellT "search" (search msg)
+       P'.tellT "repl" (repl msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy
+                (P'.choice
+                  [parse'n_val, parse'allow_mult, parse'last_write_wins, parse'precommit, parse'has_precommit, parse'postcommit,
+                   parse'has_postcommit, parse'chash_keyfun, parse'linkfun, parse'old_vclock, parse'young_vclock, parse'big_vclock,
+                   parse'small_vclock, parse'pr, parse'r, parse'w, parse'pw, parse'dw, parse'rw, parse'basic_quorum,
+                   parse'notfound_ok, parse'backend, parse'search, parse'repl])
+                P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'n_val
+         = P'.try
+            (do
+               v <- P'.getT "n_val"
+               Prelude'.return (\ o -> o{n_val = v}))
+        parse'allow_mult
+         = P'.try
+            (do
+               v <- P'.getT "allow_mult"
+               Prelude'.return (\ o -> o{allow_mult = v}))
+        parse'last_write_wins
+         = P'.try
+            (do
+               v <- P'.getT "last_write_wins"
+               Prelude'.return (\ o -> o{last_write_wins = v}))
+        parse'precommit
+         = P'.try
+            (do
+               v <- P'.getT "precommit"
+               Prelude'.return (\ o -> o{precommit = P'.append (precommit o) v}))
+        parse'has_precommit
+         = P'.try
+            (do
+               v <- P'.getT "has_precommit"
+               Prelude'.return (\ o -> o{has_precommit = v}))
+        parse'postcommit
+         = P'.try
+            (do
+               v <- P'.getT "postcommit"
+               Prelude'.return (\ o -> o{postcommit = P'.append (postcommit o) v}))
+        parse'has_postcommit
+         = P'.try
+            (do
+               v <- P'.getT "has_postcommit"
+               Prelude'.return (\ o -> o{has_postcommit = v}))
+        parse'chash_keyfun
+         = P'.try
+            (do
+               v <- P'.getT "chash_keyfun"
+               Prelude'.return (\ o -> o{chash_keyfun = v}))
+        parse'linkfun
+         = P'.try
+            (do
+               v <- P'.getT "linkfun"
+               Prelude'.return (\ o -> o{linkfun = v}))
+        parse'old_vclock
+         = P'.try
+            (do
+               v <- P'.getT "old_vclock"
+               Prelude'.return (\ o -> o{old_vclock = v}))
+        parse'young_vclock
+         = P'.try
+            (do
+               v <- P'.getT "young_vclock"
+               Prelude'.return (\ o -> o{young_vclock = v}))
+        parse'big_vclock
+         = P'.try
+            (do
+               v <- P'.getT "big_vclock"
+               Prelude'.return (\ o -> o{big_vclock = v}))
+        parse'small_vclock
+         = P'.try
+            (do
+               v <- P'.getT "small_vclock"
+               Prelude'.return (\ o -> o{small_vclock = v}))
+        parse'pr
+         = P'.try
+            (do
+               v <- P'.getT "pr"
+               Prelude'.return (\ o -> o{pr = v}))
+        parse'r
+         = P'.try
+            (do
+               v <- P'.getT "r"
+               Prelude'.return (\ o -> o{r = v}))
+        parse'w
+         = P'.try
+            (do
+               v <- P'.getT "w"
+               Prelude'.return (\ o -> o{w = v}))
+        parse'pw
+         = P'.try
+            (do
+               v <- P'.getT "pw"
+               Prelude'.return (\ o -> o{pw = v}))
+        parse'dw
+         = P'.try
+            (do
+               v <- P'.getT "dw"
+               Prelude'.return (\ o -> o{dw = v}))
+        parse'rw
+         = P'.try
+            (do
+               v <- P'.getT "rw"
+               Prelude'.return (\ o -> o{rw = v}))
+        parse'basic_quorum
+         = P'.try
+            (do
+               v <- P'.getT "basic_quorum"
+               Prelude'.return (\ o -> o{basic_quorum = v}))
+        parse'notfound_ok
+         = P'.try
+            (do
+               v <- P'.getT "notfound_ok"
+               Prelude'.return (\ o -> o{notfound_ok = v}))
+        parse'backend
+         = P'.try
+            (do
+               v <- P'.getT "backend"
+               Prelude'.return (\ o -> o{backend = v}))
+        parse'search
+         = P'.try
+            (do
+               v <- P'.getT "search"
+               Prelude'.return (\ o -> o{search = v}))
+        parse'repl
+         = P'.try
+            (do
+               v <- P'.getT "repl"
+               Prelude'.return (\ o -> o{repl = v}))

@@ -65,3 +65,7 @@ instance P'.ReflectEnum ReplMode where
    = P'.EnumInfo (P'.makePNF (P'.pack ".Protocol.BucketProps.ReplMode") ["Network", "Riak"] ["Protocol", "BucketProps"] "ReplMode")
       ["Network", "Riak", "Protocol", "BucketProps", "ReplMode.hs"]
       [(0, "FALSE"), (1, "REALTIME"), (2, "FULLSYNC"), (3, "TRUE")]
+ 
+instance P'.TextType ReplMode where
+  tellT = P'.tellShow
+  getT = P'.getRead
