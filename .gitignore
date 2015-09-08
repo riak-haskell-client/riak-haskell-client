@@ -5,3 +5,4 @@
 .cabal-sandbox
 cabal.sandbox.config
 TAGS
+.stack-work

@@ -1,0 +1,8 @@
+flags: {}
+packages:
+- '.'
+- protobuf/
+extra-deps:
+- protocol-buffers-descriptor-fork-2.0.16
+- protocol-buffers-fork-2.0.16
+resolver: lts-2.16
