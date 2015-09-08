@@ -1,6 +1,7 @@
 #!/bin/bash
 
 protobuf=$((readlink $0 || printf $0) | xargs dirname)
+SED=$(which gsed || which sed)
 
 if [[ -z "$protobuf" ]]; then
     echo "error: don't know where we are!" 1>&2
@@ -19,7 +20,7 @@ if [[ -z "$hprotoc" ]]; then
     exit 1
 fi
 
-sed -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
+$SED -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
     -e 's/MapRedR/MapReduceR/g' -e 's/DelR/DeleteR/' -e 's/ClientId/ClientID/' \
     -e 's/GetServerInfoResponse/ServerInfo/g' \
     -e 's/MapReduceResponse/MapReduce/g' \
