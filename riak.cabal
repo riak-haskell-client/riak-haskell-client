@@ -94,13 +94,13 @@ library
     monad-control >= 0.2.0.1,
     network >= 2.3,
     resource-pool == 0.2.*,
-    protocol-buffers >= 2.1.6 && < 2.2,
+    protocol-buffers >= 2.1.4 && < 2.2,
     pureMD5,
     random,
     riak-protobuf == 0.19.*,
     text >= 0.11.0.6,
     time,
-    transformers >= 0.3.0.0 && < 0.3.1
+    transformers >= 0.3.0.0 && < 0.5
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
