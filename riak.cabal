@@ -84,23 +84,24 @@ library
     Network.Riak.Types.Internal
 
   build-depends:
-    aeson >= 0.3.2.4,
-    attoparsec >= 0.10,
-    base == 4.*,
-    binary,
-    blaze-builder,
-    bytestring,
-    containers,
-    monad-control >= 0.2.0.1,
-    network >= 2.3,
-    resource-pool == 0.2.*,
-    protocol-buffers >= 2.1.4 && < 2.2,
-    pureMD5,
-    random,
-    riak-protobuf == 0.19.*,
-    text >= 0.11.0.6,
-    time,
-    transformers >= 0.3.0.0 && < 0.5
+                aeson                         == 0.8.*,
+                attoparsec                    == 0.13.*,
+                base                          >= 3 && <5,
+                binary,
+                blaze-builder                 >= 0.3 && <= 0.5,
+                bytestring,
+                containers,
+                transformers                  == 0.4.*,
+                monad-control ,
+                network                       >= 2.3,
+                resource-pool                 == 0.2.*,
+                protocol-buffers >= 2.1.4 && < 2.2,
+                pureMD5,
+                random,
+                riak-protobuf                 == 0.18.*,
+                text                          == 1.2.*,
+                time
+                transformers >= 0.3.0.0 && < 0.5
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
