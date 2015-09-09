@@ -85,23 +85,22 @@ library
 
   build-depends:
                 aeson                         == 0.8.*,
-                attoparsec                    == 0.13.*,
+                attoparsec                    >= 0.12.1.6 && < 0.14,
                 base                          >= 3 && <5,
                 binary,
                 blaze-builder                 >= 0.3 && <= 0.5,
                 bytestring,
                 containers,
-                transformers                  == 0.4.*,
+                transformers                  >= 0.3 && < 0.5,
                 monad-control ,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
                 protocol-buffers >= 2.1.4 && < 2.2,
                 pureMD5,
                 random,
-                riak-protobuf                 == 0.18.*,
+                riak-protobuf                 >= 0.19,
                 text                          == 1.2.*,
                 time
-                transformers >= 0.3.0.0 && < 0.5
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
