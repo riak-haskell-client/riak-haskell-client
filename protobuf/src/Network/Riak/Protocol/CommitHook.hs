@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.CommitHook (CommitHook(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -60,3 +60,28 @@ instance P'.ReflectDescriptor CommitHook where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.CommitHook\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CommitHook\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"CommitHook.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.CommitHook.modfun\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"CommitHook\"], baseName' = FName \"modfun\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.ModFun\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ModFun\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.CommitHook.name\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"CommitHook\"], baseName' = FName \"name\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType CommitHook where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg CommitHook where
+  textPut msg
+   = do
+       P'.tellT "modfun" (modfun msg)
+       P'.tellT "name" (name msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'modfun, parse'name]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'modfun
+         = P'.try
+            (do
+               v <- P'.getT "modfun"
+               Prelude'.return (\ o -> o{modfun = v}))
+        parse'name
+         = P'.try
+            (do
+               v <- P'.getT "name"
+               Prelude'.return (\ o -> o{name = v}))

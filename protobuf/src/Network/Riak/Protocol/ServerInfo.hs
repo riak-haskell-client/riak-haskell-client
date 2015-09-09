@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.ServerInfo (ServerInfo(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -58,3 +58,28 @@ instance P'.ReflectDescriptor ServerInfo where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ServerInfo\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ServerInfo\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ServerInfo.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.node\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"node\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.server_version\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"server_version\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType ServerInfo where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg ServerInfo where
+  textPut msg
+   = do
+       P'.tellT "node" (node msg)
+       P'.tellT "server_version" (server_version msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'node, parse'server_version]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'node
+         = P'.try
+            (do
+               v <- P'.getT "node"
+               Prelude'.return (\ o -> o{node = v}))
+        parse'server_version
+         = P'.try
+            (do
+               v <- P'.getT "server_version"
+               Prelude'.return (\ o -> o{server_version = v}))

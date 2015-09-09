@@ -1,30 +1,31 @@
-language: haskell
-
-ghc:
-  - 7.8
+language: c
+sudo: false
 
 services:
   - riak
 
-before_script:
-  - "curl http://apt.basho.com/gpg/basho.apt.key | sudo apt-key add -"
-  - 'sudo bash -c "echo deb http://apt.basho.com $(lsb_release -sc) main > /etc/apt/sources.list.d/basho.list"'
-  - "sudo apt-get update"
-  - "yes n | sudo apt-get install riak"
-  - "sudo service riak start"
-  # - ! 'echo "root: .riaktest" > spec/support/test_server.yml'
-  # - ! 'echo "source: /usr/sbin" >> spec/support/test_server.yml'
-  - "ulimit -n 2048"
-  - "riak version"
+before_install:
+  # stack
+  - mkdir -p ~/.local/bin
+  - export PATH=~/.local/bin:$PATH
+  - curl -L https://github.com/commercialhaskell/stack/releases/download/v0.1.4.0/stack-0.1.4.0-x86_64-linux.tar.gz | tar xz -C ~/.local/bin
+  - ulimit -n 2048
+
+matrix:
+  include:
+    - env: GHCVER=7.8.4 STACK_YAML=stack.yaml
+      addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
+    - env: GHCVER=7.10.2 STACK_YAML=stack-7.10.yaml
+      addons: {apt: {packages: [ghc-7.10.2],sources: [hvr-ghc]}}
+    - env: GHCVER=head STACK_YAML=stack-head.yaml
+      addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
+
+  allow_failures:
+   - env: GHCVER=head STACK_YAML=stack-head
 
 install:
-  - export CABAL=cabal
-  - $CABAL sandbox init
-  - cd protobuf && $CABAL sandbox init && $CABAL install && cd ..
-  - $CABAL install --dependencies-only --enable-tests
-  - $CABAL configure -flib-Werror --enable-tests
+  - stack --no-terminal --skip-ghc-check setup
+  - stack --no-terminal --skip-ghc-check test --only-snapshot
 
 script:
-  - $CABAL build
-  - $CABAL test --show-details=always
-  # - scripts/stats
+  - stack --no-terminal --skip-ghc-check test

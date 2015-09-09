@@ -1,0 +1,6 @@
+flags: {}
+packages:
+- '.'
+- protobuf/
+extra-deps: []
+resolver: lts-3.1

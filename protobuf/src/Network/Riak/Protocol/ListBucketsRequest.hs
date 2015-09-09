@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.ListBucketsRequest (ListBucketsRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -59,3 +59,28 @@ instance P'.ReflectDescriptor ListBucketsRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListBucketsRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListBucketsRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListBucketsRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsRequest.timeout\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsRequest\"], baseName' = FName \"timeout\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 8}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsRequest.stream\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsRequest\"], baseName' = FName \"stream\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType ListBucketsRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg ListBucketsRequest where
+  textPut msg
+   = do
+       P'.tellT "timeout" (timeout msg)
+       P'.tellT "stream" (stream msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'timeout, parse'stream]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'timeout
+         = P'.try
+            (do
+               v <- P'.getT "timeout"
+               Prelude'.return (\ o -> o{timeout = v}))
+        parse'stream
+         = P'.try
+            (do
+               v <- P'.getT "stream"
+               Prelude'.return (\ o -> o{stream = v}))

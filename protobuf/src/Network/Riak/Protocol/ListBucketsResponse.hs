@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.ListBucketsResponse (ListBucketsResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -59,3 +59,28 @@ instance P'.ReflectDescriptor ListBucketsResponse where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ListBucketsResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ListBucketsResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ListBucketsResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsResponse.buckets\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsResponse\"], baseName' = FName \"buckets\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ListBucketsResponse.done\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ListBucketsResponse\"], baseName' = FName \"done\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 16}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 8}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType ListBucketsResponse where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg ListBucketsResponse where
+  textPut msg
+   = do
+       P'.tellT "buckets" (buckets msg)
+       P'.tellT "done" (done msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'buckets, parse'done]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'buckets
+         = P'.try
+            (do
+               v <- P'.getT "buckets"
+               Prelude'.return (\ o -> o{buckets = P'.append (buckets o) v}))
+        parse'done
+         = P'.try
+            (do
+               v <- P'.getT "done"
+               Prelude'.return (\ o -> o{done = v}))

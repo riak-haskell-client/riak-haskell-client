@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.IndexRequest.IndexQueryType (IndexQueryType(..)) where
 import Prelude ((+), (/), (.))
 import qualified Prelude as Prelude'
@@ -58,3 +58,7 @@ instance P'.ReflectEnum IndexQueryType where
         "IndexQueryType")
       ["Network", "Riak", "Protocol", "IndexRequest", "IndexQueryType.hs"]
       [(0, "Eq"), (1, "Range")]
+ 
+instance P'.TextType IndexQueryType where
+  tellT = P'.tellShow
+  getT = P'.getRead

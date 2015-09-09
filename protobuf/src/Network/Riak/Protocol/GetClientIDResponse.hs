@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.GetClientIDResponse (GetClientIDResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -7,7 +7,7 @@ import qualified Data.Typeable as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
  
-data GetClientIDResponse = GetClientIDResponse{client_id :: !P'.ByteString}
+data GetClientIDResponse = GetClientIDResponse{client_id :: !(P'.ByteString)}
                          deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
  
 instance P'.Mergeable GetClientIDResponse where
@@ -56,3 +56,22 @@ instance P'.ReflectDescriptor GetClientIDResponse where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetClientIDResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetClientIDResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetClientIDResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.GetClientIDResponse.client_id\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"GetClientIDResponse\"], baseName' = FName \"client_id\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType GetClientIDResponse where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg GetClientIDResponse where
+  textPut msg
+   = do
+       P'.tellT "client_id" (client_id msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'client_id]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'client_id
+         = P'.try
+            (do
+               v <- P'.getT "client_id"
+               Prelude'.return (\ o -> o{client_id = v}))

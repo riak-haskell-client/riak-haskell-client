@@ -78,8 +78,8 @@ library
     array >= 0.4,
     base == 4.*,
     parsec >= 3,
-    protocol-buffers-fork == 2.0.*,
-    protocol-buffers-descriptor-fork == 2.0.*
+    protocol-buffers >= 2.1.4 && < 2.2,
+    protocol-buffers-descriptor >= 2.1.4 && < 2.2
 
   ghc-options: -Wall -fno-warn-orphans
 

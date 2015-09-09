@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.SearchQueryResponse (SearchQueryResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -63,3 +63,34 @@ instance P'.ReflectDescriptor SearchQueryResponse where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.SearchQueryResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"SearchQueryResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"SearchQueryResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryResponse.docs\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryResponse\"], baseName' = FName \"docs\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = True, mightPack = False, typeCode = FieldType {getFieldType = 11}, typeName = Just (ProtoName {protobufName = FIName \".Protocol.SearchDoc\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"SearchDoc\"}), hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryResponse.max_score\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryResponse\"], baseName' = FName \"max_score\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 21}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 2}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.SearchQueryResponse.num_found\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"SearchQueryResponse\"], baseName' = FName \"num_found\"}, fieldNumber = FieldId {getFieldId = 3}, wireTag = WireTag {getWireTag = 24}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 13}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType SearchQueryResponse where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg SearchQueryResponse where
+  textPut msg
+   = do
+       P'.tellT "docs" (docs msg)
+       P'.tellT "max_score" (max_score msg)
+       P'.tellT "num_found" (num_found msg)
+  textGet
+   = do
+       mods <- P'.sepEndBy (P'.choice [parse'docs, parse'max_score, parse'num_found]) P'.spaces
+       Prelude'.return (Prelude'.foldl (\ v f -> f v) P'.defaultValue mods)
+    where
+        parse'docs
+         = P'.try
+            (do
+               v <- P'.getT "docs"
+               Prelude'.return (\ o -> o{docs = P'.append (docs o) v}))
+        parse'max_score
+         = P'.try
+            (do
+               v <- P'.getT "max_score"
+               Prelude'.return (\ o -> o{max_score = v}))
+        parse'num_found
+         = P'.try
+            (do
+               v <- P'.getT "num_found"
+               Prelude'.return (\ o -> o{num_found = v}))

@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.PingRequest (PingRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
@@ -55,3 +55,11 @@ instance P'.ReflectDescriptor PingRequest where
   reflectDescriptorInfo _
    = Prelude'.read
       "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.PingRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"PingRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"PingRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
+instance P'.TextType PingRequest where
+  tellT = P'.tellSubMessage
+  getT = P'.getSubMessage
+ 
+instance P'.TextMsg PingRequest where
+  textPut msg = Prelude'.return ()
+  textGet = Prelude'.return P'.defaultValue
