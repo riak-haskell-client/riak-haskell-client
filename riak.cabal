@@ -42,6 +42,10 @@ extra-source-files:
 
 cabal-version:       >=1.8
 
+source-repository head
+    type: git
+    location: https://github.com:markhibberd/riak-haskell-client.git
+
 flag debug
   description: allow debug logging
   default: True
