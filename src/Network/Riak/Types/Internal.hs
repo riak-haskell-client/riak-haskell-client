@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
-    RecordWildCards #-}
+    RecordWildCards, RankNTypes #-}
 
 -- |
 -- Module:      Network.Riak.Types.Internal
@@ -40,12 +40,15 @@ module Network.Riak.Types.Internal
     , W
     , fromQuorum
     , toQuorum
+    , fromTag
+    , toTag
     -- * Message identification
     , Request(..)
     , Response
     , Exchange
     , MessageTag(..)
     , Tagged(..)
+    , BucketType
     ) where
 
 import Control.Exception (Exception, throw)
@@ -159,6 +162,8 @@ data Job = JSON ByteString
          | Erlang ByteString
            deriving (Eq, Show, Typeable)
 
+type BucketType = ByteString
+
 -- | An identifier for an inbound or outbound message.
 data MessageTag = ErrorResponse
                 | PingRequest
@@ -187,7 +192,147 @@ data MessageTag = ErrorResponse
                 | MapReduceResponse
                 | IndexRequest
                 | IndexResponse
-                  deriving (Eq, Show, Enum, Typeable)
+                | RpbIndexReq
+                | RpbIndexResp
+                | RpbSearchQueryReq
+                | RpbSearchQueryResp
+                | RpbResetBucketReq
+                | RpbResetBucketResp
+                | RpbGetBucketTypeReq
+                | RpbSetBucketTypeReq
+                | RpbCSBucketReq
+                | RpbCSUpdateReq
+                | RpbCounterUpdateReq
+                | RpbCounterUpdateResp
+                | RpbCounterGetReq
+                | RpbCounterGetResp
+                | RpbYokozunaIndexGetReq
+                | RpbYokozunaIndexGetResp
+                | RpbYokozunaIndexPutReq
+                | RpbYokozunaIndexPutResp
+                | RpbYokozunaSchemaGetReq
+                | RpbYokozunaSchemaGetResp
+                | RpbYokozunaSchemaPutReq
+                | DtFetchRequest
+                | DtFetchResponse
+                | DtUpdateRequest
+                | DtUpdateResponse
+                | RpbAuthReq
+                | RpbAuthResp
+                | RpbStartTls
+                deriving (Eq, Show, Typeable, Data)
+
+toTag :: Word8 -> MessageTag
+toTag 0   = ErrorResponse
+toTag 1   = PingRequest
+toTag 2   = PingResponse
+toTag 3   = GetClientIDRequest
+toTag 4   = GetClientIDResponse
+toTag 5   = SetClientIDRequest
+toTag 6   = SetClientIDResponse
+toTag 7   = GetServerInfoRequest
+toTag 8   = GetServerInfoResponse
+toTag 9   = GetRequest
+toTag 10  = GetResponse
+toTag 11  = PutRequest
+toTag 12  = PutResponse
+toTag 13  = DeleteRequest
+toTag 14  = DeleteResponse
+toTag 15  = ListBucketsRequest
+toTag 16  = ListBucketsResponse
+toTag 17  = ListKeysRequest
+toTag 18  = ListKeysResponse
+toTag 19  = GetBucketRequest
+toTag 20  = GetBucketResponse
+toTag 21  = SetBucketRequest
+toTag 22  = SetBucketResponse
+toTag 23  = MapReduceRequest
+toTag 24  = MapReduceResponse
+toTag 25  = RpbIndexReq
+toTag 26  = RpbIndexResp
+toTag 27  = RpbSearchQueryReq
+toTag 28  = RpbSearchQueryResp
+toTag 29  = RpbResetBucketReq
+toTag 30  = RpbResetBucketResp
+toTag 31  = RpbGetBucketTypeReq
+toTag 32  = RpbSetBucketTypeReq
+toTag 40  = RpbCSBucketReq
+toTag 41  = RpbCSUpdateReq
+toTag 50  = RpbCounterUpdateReq
+toTag 51  = RpbCounterUpdateResp
+toTag 52  = RpbCounterGetReq
+toTag 53  = RpbCounterGetResp
+toTag 54  = RpbYokozunaIndexGetReq
+toTag 55  = RpbYokozunaIndexGetResp
+toTag 56  = RpbYokozunaIndexPutReq
+toTag 57  = RpbYokozunaIndexPutResp
+toTag 58  = RpbYokozunaSchemaGetReq
+toTag 59  = RpbYokozunaSchemaGetResp
+toTag 60  = RpbYokozunaSchemaPutReq
+toTag 80  = DtFetchRequest
+toTag 81  = DtFetchResponse
+toTag 82  = DtUpdateRequest
+toTag 83  = DtUpdateResponse
+toTag 253 = RpbAuthReq
+toTag 254 = RpbAuthResp
+toTag 255 = RpbStartTls
+toTag n = error ("attempted to convert value " ++ show n)
+
+fromTag :: MessageTag -> Word8
+fromTag ErrorResponse = 0
+fromTag PingRequest = 1
+fromTag PingResponse = 2
+fromTag GetClientIDRequest = 3
+fromTag GetClientIDResponse = 4
+fromTag SetClientIDRequest = 5
+fromTag SetClientIDResponse = 6
+fromTag GetServerInfoRequest = 7
+fromTag GetServerInfoResponse = 8
+fromTag GetRequest = 9
+fromTag GetResponse = 10
+fromTag PutRequest = 11
+fromTag PutResponse = 12
+fromTag DeleteRequest = 13
+fromTag DeleteResponse = 14
+fromTag ListBucketsRequest = 15
+fromTag ListBucketsResponse = 16
+fromTag ListKeysRequest = 17
+fromTag ListKeysResponse = 18
+fromTag GetBucketRequest = 19
+fromTag GetBucketResponse = 20
+fromTag SetBucketRequest = 21
+fromTag SetBucketResponse = 22
+fromTag MapReduceRequest = 23
+fromTag MapReduceResponse = 24
+fromTag RpbIndexReq = 25
+fromTag RpbIndexResp = 26
+fromTag RpbSearchQueryReq = 27
+fromTag RpbSearchQueryResp = 28
+fromTag RpbResetBucketReq = 29
+fromTag RpbResetBucketResp = 30
+fromTag RpbGetBucketTypeReq = 31
+fromTag RpbSetBucketTypeReq = 32
+fromTag RpbCSBucketReq = 40
+fromTag RpbCSUpdateReq = 41
+fromTag RpbCounterUpdateReq = 50
+fromTag RpbCounterUpdateResp = 51
+fromTag RpbCounterGetReq = 52
+fromTag RpbCounterGetResp = 53
+fromTag RpbYokozunaIndexGetReq = 54
+fromTag RpbYokozunaIndexGetResp = 55
+fromTag RpbYokozunaIndexPutReq = 56
+fromTag RpbYokozunaIndexPutResp = 57
+fromTag RpbYokozunaSchemaGetReq = 58
+fromTag RpbYokozunaSchemaGetResp = 59
+fromTag RpbYokozunaSchemaPutReq = 60
+fromTag DtFetchRequest = 80
+fromTag DtFetchResponse = 81
+fromTag DtUpdateRequest = 82
+fromTag DtUpdateResponse = 83
+fromTag RpbAuthReq = 253
+fromTag RpbAuthResp = 254
+fromTag RpbStartTls = 255
+
 
 -- | Messages are tagged.
 class Tagged msg where

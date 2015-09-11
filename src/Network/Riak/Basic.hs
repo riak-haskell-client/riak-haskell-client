@@ -41,26 +41,49 @@ module Network.Riak.Basic
     , setBucket
     -- * Map/reduce
     , mapReduce
+    , fetchCounter
+    , incrementCounter
+    , fetchSet
+    , addToSet
+    , removeFromSet
+    , fetchMap
+    , updateMap
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
-import Control.Applicative ((<$>))
+import           Control.Applicative ((<$>))
 #endif
-import Control.Monad.IO.Class
-import Data.Maybe (fromMaybe)
-import Network.Riak.Connection.Internal
-import Network.Riak.Escape (unescape)
-import Network.Riak.Protocol.BucketProps
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.ListKeysResponse
-import Network.Riak.Protocol.MapReduce as MapReduce
-import Network.Riak.Protocol.ServerInfo
-import Network.Riak.Types.Internal hiding (MessageTag(..))
+import           Control.Monad.IO.Class
+import           Data.Maybe (fromMaybe)
+import           Network.Riak.Connection.Internal
+import           Network.Riak.Escape (unescape)
+import           Network.Riak.Protocol.BucketProps
+import           Network.Riak.Protocol.Content
+import           Network.Riak.Protocol.ListKeysResponse
+import           Network.Riak.Protocol.MapReduce as MapReduce
+import           Network.Riak.Protocol.ServerInfo
+import           Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Data.Foldable as F
+import qualified Data.Foldable as F
+import           Data.Int (Int64)
+import           Data.Maybe (fromMaybe)
 import qualified Data.Sequence as Seq
+import qualified Data.Sequence as Seq
+import           Network.Riak.Connection.Internal
+import           Network.Riak.Escape (unescape)
+import           Network.Riak.Protocol.BucketProps
+import           Network.Riak.Protocol.Content
+import           Network.Riak.Protocol.DtFetchResponse hiding (value)
+import           Network.Riak.Protocol.ListKeysResponse
+import           Network.Riak.Protocol.MapEntry (MapEntry)
+import           Network.Riak.Protocol.MapOp
+import           Network.Riak.Protocol.MapReduce as MapReduce
+import           Network.Riak.Protocol.ServerInfo
 import qualified Network.Riak.Request as Req
 import qualified Network.Riak.Response as Resp
 import qualified Network.Riak.Types.Internal as T
+import           Network.Riak.Types.Internal hiding (MessageTag (..))
+import qualified Network.Riak.Value as V
 
 -- | Check to see if the connection to the server is alive.
 ping :: Connection -> IO ()
@@ -111,13 +134,13 @@ put_ conn bucket key mvclock cont w dw =
 delete :: Connection -> T.Bucket -> T.Key -> RW -> IO ()
 delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 
--- List the buckets in the cluster.
+-- | List the buckets in the cluster.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
 listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
 listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
 
--- Fold over the keys in a bucket.
+-- | Fold over the keys in a bucket.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
 foldKeys :: (MonadIO m) => Connection -> T.Bucket -> (a -> Key -> m a) -> a -> m a
@@ -150,3 +173,30 @@ mapReduce conn job f z0 = loop z0 =<< (exchange conn . Req.mapReduce $ job)
       if fromMaybe False . MapReduce.done $ mr
         then return z'
         else loop z' =<< recvResponse conn
+
+-- | Fetch the counter specified by the provided bucket, key, and bucket type.
+fetchCounter :: Connection -> T.Bucket -> Key -> T.BucketType -> R -> IO (Maybe Int64)
+fetchCounter conn buck k t r = Resp.fetchCounter <$> exchange conn (Req.fetchCounter buck k t r)
+
+-- | Increment the counter specified by the provided bucket, key, and bucket type.
+incrementCounter :: Connection -> T.Bucket -> Key -> T.BucketType -> Int64 -> W -> DW -> IO (Maybe Int64)
+incrementCounter conn buck k t n w dw = Resp.incrementCounter <$> exchange conn (Req.incrementCounter buck k t n w dw)
+
+fetchSet :: Connection -> T.Bucket -> Key -> T.BucketType -> R -> IO (Maybe (Seq.Seq Content))
+fetchSet conn b k typ r = Resp.fetchSet <$> exchange conn (Req.fetchSet b k typ r)
+
+addToSet :: (V.IsContent a) => Connection -> T.Bucket -> Key -> T.BucketType -> a -> W -> DW -> IO (Seq.Seq Content)
+addToSet conn b k t items w dw = Resp.updateSet <$> exchange conn (Req.addToSet b k t theContent w dw)
+  where theContent :: Seq.Seq Content
+        theContent = Seq.singleton (V.toContent items)
+
+removeFromSet :: (V.IsContent a) => Connection -> T.Bucket -> Key -> T.BucketType -> a -> W -> DW -> IO (Seq.Seq Content)
+removeFromSet conn b k t items w dw = Resp.updateSet <$> exchange conn (Req.removeFromSet b k t theContent w dw)
+  where theContent :: Seq.Seq Content
+        theContent = Seq.singleton (V.toContent items)
+
+fetchMap :: Connection -> T.Bucket -> Key -> T.BucketType -> R -> IO (Maybe (Seq.Seq MapEntry))
+fetchMap conn b k typ r = Resp.fetchMap <$> exchange conn (Req.fetchMap b k typ r)
+
+updateMap :: Connection -> T.Bucket -> Key -> T.BucketType -> MapOp -> W -> DW -> IO (Seq.Seq MapEntry)
+updateMap conn b k typ op w dw = Resp.updateMap <$> exchange conn (Req.updateMap b k typ op w dw)

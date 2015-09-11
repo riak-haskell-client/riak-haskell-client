@@ -44,22 +44,30 @@ module Network.Riak.Request
     -- * Map/reduce
     , MapReduceRequest
     , mapReduce
+    , FetchDt.DtFetchRequest
+    , fetchCounter
+    , incrementCounter
+    , fetchSet
+    , addToSet
+    , removeFromSet
+    , fetchMap
+    , updateMap
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
-import Control.Applicative ((<$>))
+import           Control.Applicative ((<$>))
 #endif
 import qualified Data.ByteString.Char8 as B8
-import Data.Monoid
-import Network.Riak.Protocol.BucketProps hiding (r,rw)
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetClientIDRequest
-import Network.Riak.Protocol.GetServerInfoRequest
-import Network.Riak.Protocol.ListBucketsRequest
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.PingRequest
-import Network.Riak.Types.Internal hiding (MessageTag(..))
-import Network.Riak.Escape (escape)
+import           Data.Monoid
+import           Network.Riak.Protocol.BucketProps hiding (r,rw)
+import           Network.Riak.Protocol.Content
+import           Network.Riak.Protocol.GetClientIDRequest
+import           Network.Riak.Protocol.GetServerInfoRequest
+import           Network.Riak.Protocol.ListBucketsRequest
+import           Network.Riak.Protocol.MapReduceRequest
+import           Network.Riak.Protocol.PingRequest
+import           Network.Riak.Types.Internal hiding (MessageTag(..))
+import           Network.Riak.Escape (escape)
 import qualified Network.Riak.Protocol.DeleteRequest as Del
 import qualified Network.Riak.Protocol.Link as Link
 import qualified Network.Riak.Protocol.GetBucketRequest as GetBucket
@@ -183,3 +191,41 @@ setBucket = SetBucket.SetBucketRequest . escape
 mapReduce :: Job -> MapReduceRequest
 mapReduce (JSON bs)   = MapReduceRequest bs "application/json"
 mapReduce (Erlang bs) = MapReduceRequest bs "application/x-erlang-binary"
+
+fetchCounter :: Bucket -> Key -> BucketType -> R -> FetchDt.DtFetchRequest
+fetchCounter buck k typ r = FetchDt.DtFetchRequest (escape buck) (escape k) (escape typ) (fromQuorum r) Nothing Nothing Nothing Nothing Nothing Nothing Nothing
+
+updateRequest :: O.DtOp -> Bucket -> Key -> BucketType -> W -> DW -> U.DtUpdateRequest
+updateRequest u b k typ w dw = U.DtUpdateRequest { U.bucket = escape b
+                                                   , U.key = Just k
+                                                   , U.type' = escape typ
+                                                   , U.context = Nothing
+                                                   , U.op = u
+                                                   , U.w = fromQuorum w
+                                                   , U.dw = fromQuorum dw
+                                                   , U.pw = Nothing
+                                                   , U.return_body = Just True
+                                                   , U.timeout = Nothing
+                                                   , U.sloppy_quorum = Nothing
+                                                   , U.n_val = Nothing
+                                                   , U.include_context = Nothing
+                                                   }
+
+
+incrementCounter :: Bucket -> Key -> BucketType -> Int64 -> W -> DW -> U.DtUpdateRequest
+incrementCounter b k t val w dw = updateRequest (defaultValue { O.counter_op = Just (CO.CounterOp (Just val))}) b k t w dw
+
+fetchSet :: Bucket -> Key -> BucketType -> R -> FetchDt.DtFetchRequest
+fetchSet buck k typ r = FetchDt.DtFetchRequest (escape buck) k (escape typ) (fromQuorum r) Nothing Nothing Nothing Nothing Nothing Nothing Nothing
+
+addToSet :: Bucket -> Key -> BucketType -> Seq Content -> W -> DW -> U.DtUpdateRequest
+addToSet b k t set w dw = updateRequest (defaultValue { O.set_op = Just (SO.SetOp (fmap value set) mempty) }) b k t w dw
+
+removeFromSet :: Bucket -> Key -> BucketType -> Seq Content -> W -> DW -> U.DtUpdateRequest
+removeFromSet b k t set w dw = updateRequest (defaultValue { O.set_op = Just (SO.SetOp mempty (fmap value set)) }) b k t w dw
+
+fetchMap :: Bucket -> Key -> BucketType -> R -> FetchDt.DtFetchRequest
+fetchMap buck k typ r = FetchDt.DtFetchRequest (escape buck) k (escape typ) (fromQuorum r) Nothing Nothing Nothing Nothing Nothing Nothing Nothing
+
+updateMap :: Bucket -> Key -> BucketType -> MapOp -> W -> DW -> U.DtUpdateRequest
+updateMap buck k typ op w dw = updateRequest (defaultValue { O.map_op = Just op }) buck k typ w dw
