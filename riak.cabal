@@ -95,16 +95,21 @@ library
                 blaze-builder                 >= 0.3 && <= 0.5,
                 bytestring,
                 containers,
+                enclosed-exceptions,
+                exceptions,
                 transformers                  >= 0.3 && < 0.5,
-                monad-control ,
+                mersenne-random-pure64,
+                monad-control,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
                 protocol-buffers >= 2.1.4 && < 2.2,
                 pureMD5,
                 random,
+                random-shuffle,
                 riak-protobuf                 == 0.20.*,
                 text                          == 1.2.*,
-                time
+                time,
+                vector
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
@@ -118,7 +123,7 @@ library
 
 test-suite test
   type: exitcode-stdio-1.0
-  main-is: Properties.hs
+  main-is: Test.hs
   hs-source-dirs: tests
   ghc-options: -Wall
 
@@ -132,7 +137,7 @@ test-suite test
     containers,
     HUnit,
     QuickCheck,
-    test-framework,
-    test-framework-hunit,
-    test-framework-quickcheck2,
+    tasty,
+    tasty-hunit,
+    tasty-quickcheck,
     text

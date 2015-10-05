@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RecordWildCards, CPP #-}
 
 -- |
 -- Module:      Network.Riak.Request
@@ -26,7 +26,9 @@ module Network.Riak.Response
     , unescapeLinks
     ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
+#endif
 import Data.Maybe (fromMaybe)
 import Network.Riak.Escape (unescape)
 import Network.Riak.Protocol.BucketProps

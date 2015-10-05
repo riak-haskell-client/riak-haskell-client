@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns, OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE BangPatterns, OverloadedStrings, RecordWildCards, CPP #-}
 
 -- |
 -- Module:      Network.Riak.Basic
@@ -43,7 +43,9 @@ module Network.Riak.Basic
     , mapReduce
     ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
+#endif
 import Control.Monad.IO.Class
 import Data.Maybe (fromMaybe)
 import Network.Riak.Connection.Internal

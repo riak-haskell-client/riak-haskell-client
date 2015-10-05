@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, CPP #-}
 
 -- |
 -- Module:      Network.Riak.Request
@@ -46,7 +46,9 @@ module Network.Riak.Request
     , mapReduce
     ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
+#endif
 import qualified Data.ByteString.Char8 as B8
 import Data.Monoid
 import Network.Riak.Protocol.BucketProps hiding (r,rw)
