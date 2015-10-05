@@ -65,6 +65,7 @@ library
   exposed-modules:
     Network.Riak
     Network.Riak.Basic
+    Network.Riak.Cluster
     Network.Riak.Connection
     Network.Riak.Connection.Pool
     Network.Riak.Content
