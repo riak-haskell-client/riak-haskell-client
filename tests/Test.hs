@@ -14,7 +14,6 @@ import qualified Network.Riak.Cluster         as Riak
 import           Network.Riak.Connection.Pool (withConnection)
 import qualified Network.Riak.JSON            as J
 import           Network.Riak.Resolvable      (ResolvableMonoid (..))
-import qualified Network.Riak.Simple          as S
 import           Network.Riak.Types
 import qualified Properties
 import           Test.Tasty
@@ -36,7 +35,6 @@ properties = testGroup "Properties" Properties.tests
 integrationalTests :: TestTree
 integrationalTests = testGroup "Integrational tests"
   [ testClusterSimple
-  -- , testSimpleApi1
 #ifdef TEST2I
   , testIndexedPutGet
 #endif
