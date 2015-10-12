@@ -131,6 +131,9 @@ test-suite test
   if flag(test2i)
     cpp-options: -DTEST2I
 
+  other-modules:
+    Properties
+
   build-depends:
     base,
     riak,
