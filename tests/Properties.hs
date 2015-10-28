@@ -1,30 +1,24 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# OPTIONS_GHC -fno-warn-unused-binds #-}
-import Control.Applicative ((<$>))
-import Control.Exception (finally)
-import Control.Monad (forM_)
-import Data.IORef (IORef, modifyIORef, newIORef, readIORef)
-import Data.Text (Text)
-import Network.Riak (getByIndex)
-import Network.Riak.Connection (defaultClient)
-import Network.Riak.Connection.Pool (Pool, create, withConnection)
-import Network.Riak.Content (binary)
-import Network.Riak.Types (Bucket, Key, Quorum(..), IndexValue(..),
-                           IndexQuery(..))
-import Network.Riak.Resolvable (ResolvableMonoid(..))
-import System.IO.Unsafe (unsafePerformIO)
-import qualified Test.HUnit as HU
-import Test.Framework (defaultMain, Test)
-import Test.Framework.Providers.QuickCheck2 (testProperty)
-import Test.QuickCheck (Arbitrary(..), (==>))
-import Test.QuickCheck.Property (Property)
-import Test.QuickCheck.Monadic (assert, monadicIO, run)
-import qualified Data.Map as M
-import qualified Data.ByteString.Lazy as L
-import qualified Network.Riak.Basic as B
-import qualified Network.Riak.JSON as J
+
+module Properties where
+
+#if __GLASGOW_HASKELL__ < 710
+import           Control.Applicative          ((<$>))
+#endif
+import qualified Data.ByteString.Lazy         as L
+import           Data.IORef                   (IORef, modifyIORef, newIORef)
+import qualified Network.Riak.Basic           as B
+import           Network.Riak.Connection      (defaultClient)
+import           Network.Riak.Connection.Pool (Pool, create, withConnection)
+import           Network.Riak.Content         (binary)
+import           Network.Riak.Types           (Bucket, Key, Quorum (..))
+import           System.IO.Unsafe             (unsafePerformIO)
+import           Test.QuickCheck.Monadic      (assert, monadicIO, run)
+import           Test.Tasty
+import           Test.Tasty.QuickCheck
 
 instance Arbitrary L.ByteString where
     arbitrary     = L.pack `fmap` arbitrary
@@ -49,27 +43,5 @@ t_put_get b k v =
             return (p,r)
     notempty = not . L.null
 
-t_indexed_put_get :: HU.Assertion
-t_indexed_put_get = withConnection pool $ \c -> do
-    let b = "riak-haskell-client-test"
-        k = "test"
-    _ <- J.putIndexed c b k [(IndexInt "someindex" 135)] Nothing
-         (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
-         Default Default
-    keys <- getByIndex c b (IndexQueryExactInt "someindex" 135)
-    HU.assertEqual "" ["test"] keys
-
-main :: IO ()
-main = defaultMain tests `finally` cleanup
-  where
-    cleanup = withConnection pool $ \c -> do
-                bks <- readIORef cruft
-                forM_ bks $ \(b,k) -> B.delete c b k Default
-
-tests :: [Test]
-tests =
-    [ testProperty "t_put_get" t_put_get
-#ifdef TEST2I
-    , testCase "t_indexed_put_get" t_indexed_put_get
-#endif
-    ]
+tests :: [TestTree]
+tests = [ testProperty "t_put_get" t_put_get ]

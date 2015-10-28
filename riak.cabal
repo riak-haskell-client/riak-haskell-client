@@ -65,6 +65,7 @@ library
   exposed-modules:
     Network.Riak
     Network.Riak.Basic
+    Network.Riak.Cluster
     Network.Riak.Connection
     Network.Riak.Connection.Pool
     Network.Riak.Content
@@ -88,23 +89,28 @@ library
     Network.Riak.Types.Internal
 
   build-depends:
-                aeson                         >= 0.8 && < 0.10,
+                aeson                         >= 0.8 && < 0.11,
                 attoparsec                    >= 0.12.1.6 && < 0.14,
                 base                          >= 3 && <5,
                 binary,
                 blaze-builder                 >= 0.3 && <= 0.5,
                 bytestring,
                 containers,
+                enclosed-exceptions           >= 1.0.1.1 && <= 1.1,
+                exceptions                    >= 0.8.0.2 && <= 0.9,
                 transformers                  >= 0.3 && < 0.5,
-                monad-control ,
+                mersenne-random-pure64        >= 0.2.0.4 && < 0.3,
+                monad-control                 >= 1.0.0.4 && < 1.1,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
-                protocol-buffers >= 2.1.4 && < 2.2,
+                protocol-buffers              >= 2.1.4 && < 2.2,
                 pureMD5,
                 random,
+                random-shuffle                >= 0.0.4 && < 0.1,
                 riak-protobuf                 == 0.20.*,
                 text                          == 1.2.*,
-                time
+                time                          >= 1.4.2 && < 1.6,
+                vector                        >= 0.10.12.3 && < 0.11
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
@@ -118,12 +124,15 @@ library
 
 test-suite test
   type: exitcode-stdio-1.0
-  main-is: Properties.hs
+  main-is: Test.hs
   hs-source-dirs: tests
   ghc-options: -Wall
 
   if flag(test2i)
     cpp-options: -DTEST2I
+
+  other-modules:
+    Properties
 
   build-depends:
     base,
@@ -132,7 +141,7 @@ test-suite test
     containers,
     HUnit,
     QuickCheck,
-    test-framework,
-    test-framework-hunit,
-    test-framework-quickcheck2,
+    tasty,
+    tasty-hunit,
+    tasty-quickcheck,
     text
