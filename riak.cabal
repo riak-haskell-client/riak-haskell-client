@@ -32,7 +32,7 @@ homepage:            http://github.com/markhibberd/riak-haskell-client
 license:             OtherLicense
 license-file:        LICENSE
 author:              Bryan O'Sullivan <bos@serpentine.com>
-maintainer:          Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
+maintainer:          Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>, Tim McGilchrist <timmcgil@gmail.com>
 copyright:           Copyright 2011 MailRank, Inc.
                      Portions copyright 2007-2010 Basho Technologies, Inc.
 category:            Network
