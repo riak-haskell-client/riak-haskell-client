@@ -110,7 +110,7 @@ library
                 riak-protobuf                 == 0.20.*,
                 text                          == 1.2.*,
                 time                          >= 1.4.2 && < 1.6,
-                vector                        >= 0.10.12.3 && < 0.11
+                vector                        >= 0.10.12.3 && < 0.12
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
