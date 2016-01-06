@@ -17,32 +17,35 @@ module Network.Riak.Tag
     , getTag
     ) where
 
-import Data.Binary.Put (Put, putWord8)
-import Network.Riak.Protocol.DeleteRequest
-import Network.Riak.Protocol.ErrorResponse
-import Network.Riak.Protocol.GetBucketRequest
-import Network.Riak.Protocol.GetBucketResponse
-import Network.Riak.Protocol.GetClientIDRequest
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.GetRequest
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.IndexRequest
-import Network.Riak.Protocol.IndexResponse
-import Network.Riak.Protocol.GetServerInfoRequest
-import Network.Riak.Protocol.ListBucketsRequest
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.ListKeysRequest
-import Network.Riak.Protocol.ListKeysResponse
-import Network.Riak.Protocol.MapReduce
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.PingRequest
-import Network.Riak.Protocol.PutRequest
-import Network.Riak.Protocol.PutResponse
-import Network.Riak.Protocol.ServerInfo
-import Network.Riak.Protocol.SetBucketRequest
-import Network.Riak.Protocol.SetClientIDRequest
-import Network.Riak.Types.Internal as Types
-import Text.ProtocolBuffers.Get (Get, getWord8)
+import           Data.Binary.Put (Put, putWord8)
+import           Network.Riak.Protocol.DeleteRequest
+import           Network.Riak.Protocol.DtFetchRequest
+import           Network.Riak.Protocol.DtFetchResponse
+import           Network.Riak.Protocol.DtUpdateRequest
+import           Network.Riak.Protocol.DtUpdateResponse
+import           Network.Riak.Protocol.ErrorResponse
+import           Network.Riak.Protocol.GetBucketRequest
+import           Network.Riak.Protocol.GetBucketResponse
+import           Network.Riak.Protocol.GetClientIDRequest
+import           Network.Riak.Protocol.GetClientIDResponse
+import           Network.Riak.Protocol.GetRequest
+import           Network.Riak.Protocol.GetResponse
+import           Network.Riak.Protocol.GetServerInfoRequest
+import           Network.Riak.Protocol.ListBucketsRequest
+import           Network.Riak.Protocol.ListBucketsResponse
+import           Network.Riak.Protocol.ListKeysRequest
+import           Network.Riak.Protocol.ListKeysResponse
+import           Network.Riak.Protocol.MapReduce
+import           Network.Riak.Protocol.MapReduceRequest
+import           Network.Riak.Protocol.PingRequest
+import           Network.Riak.Protocol.PutRequest
+import           Network.Riak.Protocol.PutResponse
+import           Network.Riak.Protocol.ServerInfo
+import           Network.Riak.Protocol.SetBucketRequest
+import           Network.Riak.Protocol.SetClientIDRequest
+import           Network.Riak.Types.Internal as Types
+import           Text.ProtocolBuffers.Get (Get, getWord8)
+
 
 instance Tagged ErrorResponse where
     messageTag _ = Types.ErrorResponse
@@ -224,16 +227,40 @@ instance Response MapReduce
 
 instance Exchange MapReduceRequest MapReduce
 
+-- TODO Should these all be INLINE ? What does that even mean?
+instance Tagged DtFetchRequest where
+    messageTag _ = Types.DtFetchRequest
+
+instance Request DtFetchRequest where
+    expectedResponse _ = Types.DtFetchResponse
+
+instance Tagged DtFetchResponse where
+    messageTag _ = Types.DtFetchResponse
+
+instance Response DtFetchResponse
+
+instance Exchange DtFetchRequest DtFetchResponse
+
+instance Tagged DtUpdateRequest where
+    messageTag _ = Types.DtUpdateRequest
+
+instance Request DtUpdateRequest where
+    expectedResponse _ = Types.DtUpdateResponse
+
+instance Tagged DtUpdateResponse where
+    messageTag _ = Types.DtUpdateResponse
+
+instance Response DtUpdateResponse
+
+instance Exchange DtUpdateRequest DtUpdateResponse
+
+
 putTag :: MessageTag -> Put
-putTag = putWord8 . fromIntegral . fromEnum
+putTag = putWord8 . fromTag
 {-# INLINE putTag #-}
 
 getTag :: Get MessageTag
-getTag = do
-  n <- getWord8
-  if n > 26
-    then moduleError "getTag" $ "invalid riak message code: " ++ show n
-    else return .  toEnum . fromIntegral $ n
+getTag = fmap toTag getWord8
 {-# INLINE getTag #-}
 
 moduleError :: String -> String -> a

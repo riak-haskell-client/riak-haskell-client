@@ -23,26 +23,52 @@ module Network.Riak.Response
     -- * Metadata
     , listBuckets
     , getBucket
-    , unescapeLinks
+    , unescapeLink
+    , fetchCounter
+    , incrementCounter
+    , fetchSet
+    , updateSet
+    , fetchMap
+    , updateMap
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
-import Control.Applicative ((<$>))
+import           Control.Applicative ((<$>))
 #endif
-import Data.Maybe (fromMaybe)
-import Network.Riak.Escape (unescape)
-import Network.Riak.Protocol.BucketProps
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetBucketResponse
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.Link
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.PutResponse
-import Network.Riak.Types.Internal hiding (MessageTag(..))
+import           Data.Maybe (fromMaybe)
+import           Network.Riak.Escape (unescape)
+import           Network.Riak.Protocol.BucketProps
+import           Network.Riak.Protocol.Content
+import           Network.Riak.Protocol.GetBucketResponse
+import           Network.Riak.Protocol.GetClientIDResponse
+import           Network.Riak.Protocol.GetResponse
+import           Network.Riak.Protocol.Link
+import           Network.Riak.Protocol.ListBucketsResponse
+import           Network.Riak.Protocol.PutResponse
+import           Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.Protocol.Link as Link
 import qualified Data.ByteString.Lazy as L
+import           Data.Int (Int64)
+import           Data.Maybe (fromMaybe)
 import qualified Data.Sequence as Seq
+import           Network.Riak.Content
+import qualified Network.Riak.Content as RC
+import           Network.Riak.Escape (unescape)
+import           Network.Riak.Protocol.BucketProps
+import           Network.Riak.Protocol.Content hiding (value)
+import           Network.Riak.Protocol.DtFetchResponse as FetchResp
+import qualified Network.Riak.Protocol.DtUpdateResponse as UpdateResp
+import           Network.Riak.Protocol.DtValue
+import           Network.Riak.Protocol.GetBucketResponse
+import           Network.Riak.Protocol.GetClientIDResponse
+import           Network.Riak.Protocol.GetResponse
+import           Network.Riak.Protocol.Link
+import qualified Network.Riak.Protocol.Link as Link
+import           Network.Riak.Protocol.ListBucketsResponse
+import           Network.Riak.Protocol.MapEntry (MapEntry)
+import           Network.Riak.Protocol.PutResponse
+import           Network.Riak.Types.Internal hiding (MessageTag (..))
+import qualified Text.ProtocolBuffers.Basic as PB (defaultValue)
 
 getClientID :: GetClientIDResponse -> ClientID
 getClientID = client_id
@@ -78,3 +104,27 @@ unescapeLinks :: Content -> Content
 unescapeLinks c = c { links = go <$> links c }
   where go l = l { bucket = unescape <$> bucket l
                  , Link.key = unescape <$> Link.key l }
+
+fetchCounter :: DtFetchResponse -> Maybe Int64
+fetchCounter = FetchResp.value >=> counter_value
+
+incrementCounter :: UpdateResp.DtUpdateResponse -> Maybe Int64
+incrementCounter = UpdateResp.counter_value
+
+fetchSet :: DtFetchResponse -> Maybe (Seq.Seq Content)
+fetchSet u = do
+  v <- FetchResp.value u
+  return $ fmap (binary . unescape) (set_value v)
+
+updateSet :: UpdateResp.DtUpdateResponse -> Seq.Seq Content
+updateSet resp = fmap toC (UpdateResp.set_value resp) where
+  toC :: L.ByteString -> Content
+  toC b = PB.defaultValue { RC.value = b }
+
+fetchMap :: DtFetchResponse -> Maybe (Seq.Seq MapEntry)
+fetchMap u = do
+  v <- FetchResp.value u
+  return $ (map_value v)
+
+updateMap :: UpdateResp.DtUpdateResponse -> Seq.Seq MapEntry
+updateMap resp = UpdateResp.map_value resp
