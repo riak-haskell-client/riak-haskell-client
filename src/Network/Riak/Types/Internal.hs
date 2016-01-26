@@ -46,12 +46,16 @@ module Network.Riak.Types.Internal
     , Exchange
     , MessageTag(..)
     , Tagged(..)
+    , fromTag
+    , toTag
     ) where
 
 import Control.Exception (Exception, throw)
 import Data.ByteString.Lazy (ByteString)
 import Data.Digest.Pure.MD5 (md5)
 import Data.IORef (IORef)
+import Data.Data (Data)
+import Data.Word (Word8)
 import Data.Typeable (Typeable)
 import Data.Word (Word32)
 import Network.Socket (HostName, ServiceName, Socket)
@@ -187,7 +191,66 @@ data MessageTag = ErrorResponse
                 | MapReduceResponse
                 | IndexRequest
                 | IndexResponse
-                  deriving (Eq, Show, Enum, Typeable)
+                deriving (Eq, Show, Typeable, Data)
+
+toTag :: Word8 -> Maybe MessageTag
+toTag 0   = Just ErrorResponse
+toTag 1   = Just PingRequest
+toTag 2   = Just PingResponse
+toTag 3   = Just GetClientIDRequest
+toTag 4   = Just GetClientIDResponse
+toTag 5   = Just SetClientIDRequest
+toTag 6   = Just SetClientIDResponse
+toTag 7   = Just GetServerInfoRequest
+toTag 8   = Just GetServerInfoResponse
+toTag 9   = Just GetRequest
+toTag 10  = Just GetResponse
+toTag 11  = Just PutRequest
+toTag 12  = Just PutResponse
+toTag 13  = Just DeleteRequest
+toTag 14  = Just DeleteResponse
+toTag 15  = Just ListBucketsRequest
+toTag 16  = Just ListBucketsResponse
+toTag 17  = Just ListKeysRequest
+toTag 18  = Just ListKeysResponse
+toTag 19  = Just GetBucketRequest
+toTag 20  = Just GetBucketResponse
+toTag 21  = Just SetBucketRequest
+toTag 22  = Just SetBucketResponse
+toTag 23  = Just MapReduceRequest
+toTag 24  = Just MapReduceResponse
+toTag 25  = Just IndexRequest
+toTag 26  = Just IndexResponse
+toTag _ = Nothing
+
+fromTag :: MessageTag -> Word8
+fromTag ErrorResponse = 0
+fromTag PingRequest = 1
+fromTag PingResponse = 2
+fromTag GetClientIDRequest = 3
+fromTag GetClientIDResponse = 4
+fromTag SetClientIDRequest = 5
+fromTag SetClientIDResponse = 6
+fromTag GetServerInfoRequest = 7
+fromTag GetServerInfoResponse = 8
+fromTag GetRequest = 9
+fromTag GetResponse = 10
+fromTag PutRequest = 11
+fromTag PutResponse = 12
+fromTag DeleteRequest = 13
+fromTag DeleteResponse = 14
+fromTag ListBucketsRequest = 15
+fromTag ListBucketsResponse = 16
+fromTag ListKeysRequest = 17
+fromTag ListKeysResponse = 18
+fromTag GetBucketRequest = 19
+fromTag GetBucketResponse = 20
+fromTag SetBucketRequest = 21
+fromTag SetBucketResponse = 22
+fromTag MapReduceRequest = 23
+fromTag MapReduceResponse = 24
+fromTag IndexRequest = 25
+fromTag IndexResponse = 26
 
 -- | Messages are tagged.
 class Tagged msg where
