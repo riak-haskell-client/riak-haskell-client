@@ -225,15 +225,12 @@ instance Response MapReduce
 instance Exchange MapReduceRequest MapReduce
 
 putTag :: MessageTag -> Put
-putTag = putWord8 . fromIntegral . fromEnum
+putTag = putWord8 . fromIntegral . fromTag
 {-# INLINE putTag #-}
 
 getTag :: Get MessageTag
-getTag = do
-  n <- getWord8
-  if n > 26
-    then moduleError "getTag" $ "invalid riak message code: " ++ show n
-    else return .  toEnum . fromIntegral $ n
+getTag =
+  fmap (\n -> error ("attempted to convert value " ++ show n)) $ fmap toTag getWord8
 {-# INLINE getTag #-}
 
 moduleError :: String -> String -> a
