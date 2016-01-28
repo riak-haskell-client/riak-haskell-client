@@ -11,6 +11,14 @@ before_install:
   - export PATH=~/.local/bin:$PATH
   - curl -L https://github.com/commercialhaskell/stack/releases/download/v0.1.6.0/stack-0.1.6.0-linux-x86_64.tar.gz | tar xz -C /tmp; mv /tmp/stack-0.1.6.0-linux-x86_64/stack ~/.local/bin
   - ulimit -n 4096
+
+  # erlang
+  - kerl build R15B03 erlang-15.3
+  - kerl list builds
+  - kerl install erlang-15.3 ./otp
+  - chmod a+x ./otp/activate
+  - ./otp/activate
+
   # riak
   - sudo apt-get -y install build-essential libc6-dev-i386 git
   - sudo apt-get -y install erlang-nox erlang-dev erlang-reltool
