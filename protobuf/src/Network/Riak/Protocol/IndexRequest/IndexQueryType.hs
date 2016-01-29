@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell #-}
 {-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.IndexRequest.IndexQueryType (IndexQueryType(..)) where
 import Prelude ((+), (/), (.))

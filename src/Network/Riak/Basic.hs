@@ -39,6 +39,7 @@ module Network.Riak.Basic
     , foldKeys
     , getBucket
     , setBucket
+    , getBucketType
     -- * Map/reduce
     , mapReduce
     ) where
@@ -114,15 +115,16 @@ delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
 -- List the buckets in the cluster.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
-listBuckets :: Connection -> IO (Seq.Seq T.Bucket)
-listBuckets conn = Resp.listBuckets <$> exchange conn Req.listBuckets
+listBuckets :: Connection -> Maybe BucketType -> IO (Seq.Seq T.Bucket)
+listBuckets conn btype = Resp.listBuckets <$> exchange conn (Req.listBuckets btype)
 
 -- Fold over the keys in a bucket.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
-foldKeys :: (MonadIO m) => Connection -> T.Bucket -> (a -> Key -> m a) -> a -> m a
-foldKeys conn bucket f z0 = do
-  liftIO $ sendRequest conn $ Req.listKeys bucket
+foldKeys :: (MonadIO m) => Connection -> Maybe BucketType -> Bucket
+         -> (a -> Key -> m a) -> a -> m a
+foldKeys conn btype bucket f z0 = do
+  liftIO $ sendRequest conn $ Req.listKeys btype bucket
   let g z = f z . unescape
       loop z = do
         ListKeysResponse{..} <- liftIO $ recvResponse conn
@@ -133,12 +135,16 @@ foldKeys conn bucket f z0 = do
   loop z0
 
 -- | Retrieve the properties of a bucket.
-getBucket :: Connection -> T.Bucket -> IO BucketProps
-getBucket conn bucket = Resp.getBucket <$> exchange conn (Req.getBucket bucket)
+getBucket :: Connection -> Maybe BucketType -> Bucket -> IO BucketProps
+getBucket conn btype bucket = Resp.getBucket <$> exchange conn (Req.getBucket btype bucket)
 
 -- | Store new properties for a bucket.
-setBucket :: Connection -> T.Bucket -> BucketProps -> IO ()
-setBucket conn bucket props = exchange_ conn $ Req.setBucket bucket props
+setBucket :: Connection -> Maybe BucketType -> Bucket -> BucketProps -> IO ()
+setBucket conn btype bucket props = exchange_ conn $ Req.setBucket btype bucket props
+
+-- | Gets the bucket properties associated with a bucket type.
+getBucketType :: Connection -> T.BucketType -> IO BucketProps
+getBucketType conn btype = Resp.getBucket <$> exchange conn (Req.getBucketType btype)
 
 -- | Run a 'MapReduce' job.  Its result is consumed via a strict left
 -- fold.

@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell #-}
 {-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.GetClientIDRequest (GetClientIDRequest(..)) where
 import Prelude ((+), (/))
@@ -54,7 +54,7 @@ instance P'.ReflectDescriptor GetClientIDRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetClientIDRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetClientIDRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetClientIDRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetClientIDRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetClientIDRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetClientIDRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
  
 instance P'.TextType GetClientIDRequest where
   tellT = P'.tellSubMessage

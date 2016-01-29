@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, CPP #-}
+{-# LANGUAGE RecordWildCards, CPP, OverloadedStrings #-}
 
 -- |
 -- Module:      Network.Riak.Request
@@ -24,25 +24,37 @@ module Network.Riak.Response
     , listBuckets
     , getBucket
     , unescapeLinks
+    , search
+    , getIndex
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
 #endif
-import Data.Maybe (fromMaybe)
 import Network.Riak.Escape (unescape)
-import Network.Riak.Protocol.BucketProps
+import Network.Riak.Protocol.BucketProps (BucketProps)
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetBucketResponse
 import Network.Riak.Protocol.GetClientIDResponse
 import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.Link
 import Network.Riak.Protocol.ListBucketsResponse
 import Network.Riak.Protocol.PutResponse
+import Network.Riak.Protocol.SearchQueryResponse
+import Network.Riak.Protocol.SearchDoc
+import qualified Network.Riak.Protocol.YzIndex as Yz
+import qualified Network.Riak.Protocol.YzIndexGetResponse as Yz
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.Protocol.Link as Link
+import qualified Network.Riak.Protocol.Pair as Pair
+
 import qualified Data.ByteString.Lazy as L
+import qualified Data.ByteString.Lazy.Char8 as LC
 import qualified Data.Sequence as Seq
+import qualified Data.Map.Strict as M
+import Data.Maybe (fromMaybe)
+import Data.Semigroup
+import Control.Arrow ((&&&))
+import Data.Foldable (toList)
 
 getClientID :: GetClientIDResponse -> ClientID
 getClientID = client_id
@@ -76,5 +88,32 @@ getBucket = props
 -- 'Content' value.
 unescapeLinks :: Content -> Content
 unescapeLinks c = c { links = go <$> links c }
-  where go l = l { bucket = unescape <$> bucket l
+  where go l = l { Link.bucket = unescape <$> Link.bucket l
                  , Link.key = unescape <$> Link.key l }
+
+search :: SearchQueryResponse -> [SearchResult]
+search = map toSearchResult . toList . docs
+
+toSearchResult :: SearchDoc -> SearchResult
+toSearchResult r = SearchResult {
+                     bucketType = field "_yz_rt",
+                     bucket     = field "_yz_rb",
+                     key        = field "_yz_rk",
+                     score      = fmap (read . LC.unpack) =<< M.lookup "score" info
+                   }
+    where
+      info :: M.Map L.ByteString (Maybe L.ByteString)
+      info = M.fromList . map (Pair.key &&& Pair.value) . toList . fields $ r
+
+      field :: L.ByteString -> L.ByteString
+      field name
+          = maybe (unexpected $ "field " <> show name <> " has empty value") id
+            . maybe (unexpected $ "no " <> show name <> " field") id
+            . M.lookup name $ info
+
+      unexpected = unexError "Network.Riak.Response" "search"
+
+
+getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
+getIndex = toList . Yz.index
+

@@ -1,23 +1,51 @@
 language: c
-sudo: false
+sudo: required
+dist: trusty
 
-services:
-  - riak
+# services:
+#   - riak
 
 before_install:
   # stack
   - mkdir -p ~/.local/bin
   - export PATH=~/.local/bin:$PATH
   - curl -L https://github.com/commercialhaskell/stack/releases/download/v0.1.6.0/stack-0.1.6.0-linux-x86_64.tar.gz | tar xz -C /tmp; mv /tmp/stack-0.1.6.0-linux-x86_64/stack ~/.local/bin
-  - ulimit -n 2048
+  - ulimit -n 4096
+  # riak
+  - sudo apt-get -y install build-essential libc6-dev-i386 git
+  - sudo apt-get -y install erlang-nox erlang-dev erlang-reltool
+  - RIAK_STRIP_V=$(echo $RIAK | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
+  - wget http://s3.amazonaws.com/downloads.basho.com/riak/$RIAK_STRIP_V/$RIAK/riak-$RIAK.tar.gz
+  - tar zxvf riak-$RIAK.tar.gz
+  - cd riak-$RIAK
+  - make rel
+  - sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
+  - ./rel/riak/bin/riak start
+  - ./rel/riak/bin/riak ping
+  - ./rel/riak/bin/riak-admin wait-for-service riak_kv
+  - ./rel/riak/bin/riak-admin wait-for-service yokozuna
+  - ./rel/riak/bin/riak-admin bucket-type create maps '{"props":{"datatype":"map"}}'
+  - ./rel/riak/bin/riak-admin bucket-type create sets '{"props":{"datatype":"set"}}'
+  - ./rel/riak/bin/riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
+  - ./rel/riak/bin/riak-admin bucket-type activate maps
+  - ./rel/riak/bin/riak-admin bucket-type activate sets
+  - ./rel/riak/bin/riak-admin bucket-type activate counters
+  # +search
+  - curl -XPUT 127.0.0.1:8098/search/index/set-ix -H 'Content-Type:application/json' -d '{"schema":"_yz_default"}'
+  - ./rel/riak/bin/riak-admin bucket-type update sets '{"props":{"search_index":"set-ix"}}'
+  - cd -
 
 matrix:
   include:
-    - env: GHCVER=7.8.4 STACK_YAML=stack.yaml
+    - env: GHCVER=7.8.4 STACK_YAML=stack.yaml RIAK=2.1.3
       addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
-    - env: GHCVER=7.10.2 STACK_YAML=stack-7.10.yaml
+    - env: GHCVER=7.8.4 STACK_YAML=stack.yaml RIAK=2.0.6
+      addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
+    - env: GHCVER=7.10.2 STACK_YAML=stack-7.10.yaml RIAK=2.1.3
       addons: {apt: {packages: [ghc-7.10.2],sources: [hvr-ghc]}}
-    - env: GHCVER=head STACK_YAML=stack-head.yaml
+    - env: GHCVER=7.10.2 STACK_YAML=stack-7.10.yaml RIAK=2.0.6
+      addons: {apt: {packages: [ghc-7.10.2],sources: [hvr-ghc]}}
+    - env: GHCVER=head STACK_YAML=stack-head.yaml RIAK=2.1.3
       addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
 
   allow_failures:

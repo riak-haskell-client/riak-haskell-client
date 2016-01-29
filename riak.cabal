@@ -26,7 +26,10 @@ description:
   [Network.Riak.Basic] manual storage, manual conflict resolution.
   This is the most demanding module to work with, as you must encode
   and decode data yourself, and handle all conflict resolution
-  yourself.
+  yourself
+  .
+  [Network.Riak.CRDT] CRDT operations.
+
 
 homepage:            http://github.com/markhibberd/riak-haskell-client
 license:             OtherLicense
@@ -67,8 +70,15 @@ library
     Network.Riak.Basic
     Network.Riak.Cluster
     Network.Riak.Connection
+    Network.Riak.Connection.Internal
     Network.Riak.Connection.Pool
     Network.Riak.Content
+    Network.Riak.CRDT
+    Network.Riak.CRDT.Ops
+    Network.Riak.CRDT.Request
+    Network.Riak.CRDT.Response
+    Network.Riak.CRDT.Riak
+    Network.Riak.CRDT.Types
     Network.Riak.Debug
     Network.Riak.Escape
     Network.Riak.Functions
@@ -77,16 +87,16 @@ library
     Network.Riak.Request
     Network.Riak.Resolvable
     Network.Riak.Response
+    Network.Riak.Search
     Network.Riak.Types
     Network.Riak.Value
     Network.Riak.Value.Resolvable
+    Network.Riak.Types.Internal
 
   other-modules:
-    Network.Riak.Connection.Internal
     Network.Riak.Connection.NoPush
     Network.Riak.Resolvable.Internal
     Network.Riak.Tag
-    Network.Riak.Types.Internal
 
   build-depends:
                 aeson                         >= 0.8 && < 0.11,
@@ -96,8 +106,11 @@ library
                 blaze-builder                 >= 0.3 && <= 0.5,
                 bytestring,
                 containers,
+                data-default-class            >= 0.0.1,
+                deepseq                       >= 1.3,
                 enclosed-exceptions           >= 1.0.1.1 && <= 1.1,
                 exceptions                    >= 0.8.0.2 && <= 0.9,
+                hashable                      >= 1.2.3,
                 transformers                  >= 0.3 && < 0.5,
                 mersenne-random-pure64        >= 0.2.0.4 && < 0.3,
                 monad-control                 >= 1.0.0.4 && < 1.1,
@@ -107,10 +120,13 @@ library
                 pureMD5,
                 random,
                 random-shuffle                >= 0.0.4 && < 0.1,
-                riak-protobuf                 == 0.20.*,
+                riak-protobuf                 == 0.21.*,
+                semigroups                    >= 0.16,
                 text                          == 1.2.*,
                 time                          >= 1.4.2 && < 1.6,
-                vector                        >= 0.10.12.3 && < 0.12
+                vector                        >= 0.10.12.3 && < 0.12,
+                unordered-containers          >= 0.2.5
+
 
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
@@ -133,6 +149,8 @@ test-suite test
 
   other-modules:
     Properties
+    CRDTProperties
+    Common
 
   build-depends:
     base,
@@ -144,4 +162,22 @@ test-suite test
     tasty,
     tasty-hunit,
     tasty-quickcheck,
-    text
+    text,
+    mtl                    >= 2.1,
+    semigroups             >= 0.16,
+    data-default-class     >= 0.0.1
+
+
+benchmark bench
+  type: exitcode-stdio-1.0
+  hs-source-dirs: benchmarks
+  main-is: Main.hs
+  build-depends:
+    base,
+    riak,
+    criterion   >= 1.1,
+    bytestring  >= 0.10,
+    semigroups  >= 0.16
+
+
+

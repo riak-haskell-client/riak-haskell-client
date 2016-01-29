@@ -35,6 +35,8 @@
 -- and decode data yourself, and handle all conflict resolution
 -- yourself.
 --
+-- [Network.Riak.CRDT] CRDT operations.
+--
 -- A short getting started guide is available at <http://docs.basho.com/riak/latest/dev/taste-of-riak/haskell/>
 --
 module Network.Riak
