@@ -18,6 +18,7 @@ module Network.Riak.Types
     -- * Errors
     , RiakException(excModule, excFunction, excMessage)
     -- * Data types
+    , BucketType
     , Bucket
     , Key
     , Tag
@@ -37,6 +38,7 @@ module Network.Riak.Types
     , Tagged(..)
     , IndexValue(..)
     , IndexQuery(..)
+    , SearchResult(..)
     ) where
 
 import Network.Riak.Types.Internal

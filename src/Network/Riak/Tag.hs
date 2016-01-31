@@ -18,9 +18,14 @@ module Network.Riak.Tag
     ) where
 
 import Data.Binary.Put (Put, putWord8)
+import Data.Word (Word8)
+import qualified Data.HashMap.Strict as HM
+import Control.Applicative
+import Data.Tuple (swap)
 import Network.Riak.Protocol.DeleteRequest
 import Network.Riak.Protocol.ErrorResponse
 import Network.Riak.Protocol.GetBucketRequest
+import Network.Riak.Protocol.GetBucketTypeRequest
 import Network.Riak.Protocol.GetBucketResponse
 import Network.Riak.Protocol.GetClientIDRequest
 import Network.Riak.Protocol.GetClientIDResponse
@@ -41,6 +46,14 @@ import Network.Riak.Protocol.PutResponse
 import Network.Riak.Protocol.ServerInfo
 import Network.Riak.Protocol.SetBucketRequest
 import Network.Riak.Protocol.SetClientIDRequest
+import Network.Riak.Protocol.DtFetchRequest
+import Network.Riak.Protocol.DtFetchResponse
+import Network.Riak.Protocol.DtUpdateRequest
+import Network.Riak.Protocol.DtUpdateResponse
+import Network.Riak.Protocol.SearchQueryRequest
+import Network.Riak.Protocol.SearchQueryResponse
+import Network.Riak.Protocol.YzIndexGetRequest
+import Network.Riak.Protocol.YzIndexGetResponse
 import Network.Riak.Types.Internal as Types
 import Text.ProtocolBuffers.Get (Get, getWord8)
 
@@ -208,6 +221,14 @@ instance Request SetBucketRequest where
     expectedResponse _ = Types.SetBucketResponse
     {-# INLINE expectedResponse #-}
 
+instance Request GetBucketTypeRequest where
+    expectedResponse _ = Types.GetBucketResponse
+
+instance Tagged GetBucketTypeRequest where
+    messageTag _ = Types.GetBucketTypeRequest
+
+instance Exchange GetBucketTypeRequest GetBucketResponse
+
 instance Tagged MapReduceRequest where
     messageTag _ = Types.MapReduceRequest
     {-# INLINE messageTag #-}
@@ -220,21 +241,157 @@ instance Tagged MapReduce where
     messageTag _ = Types.MapReduceResponse
     {-# INLINE messageTag #-}
 
+
 instance Response MapReduce
 
 instance Exchange MapReduceRequest MapReduce
 
+instance Tagged DtFetchRequest where
+    messageTag _ = Types.DtFetchRequest
+    {-# INLINE messageTag #-}
+
+instance Tagged DtFetchResponse where
+    messageTag _ = Types.DtFetchResponse
+    {-# INLINE messageTag #-}
+
+instance Request DtFetchRequest where
+    expectedResponse _ = Types.DtFetchResponse
+    {-# INLINE expectedResponse #-}
+
+instance Response DtFetchResponse
+
+instance Exchange DtFetchRequest DtFetchResponse
+
+instance Tagged DtUpdateRequest where
+    messageTag _ = Types.DtUpdateRequest
+    {-# INLINE messageTag #-}
+
+instance Tagged DtUpdateResponse where
+    messageTag _ = Types.DtUpdateResponse
+    {-# INLINE messageTag #-}
+
+instance Request DtUpdateRequest where
+    expectedResponse _ = Types.DtUpdateResponse
+    {-# INLINE expectedResponse #-}
+
+instance Response DtUpdateResponse
+
+instance Exchange DtUpdateRequest DtUpdateResponse
+
+instance Tagged SearchQueryRequest where
+    messageTag _ = Types.SearchQueryRequest
+    {-# INLINE messageTag #-}
+
+instance Request SearchQueryRequest where
+    expectedResponse _ = Types.SearchQueryResponse
+    {-# INLINE expectedResponse #-}
+
+instance Tagged SearchQueryResponse where
+    messageTag _ = Types.SearchQueryResponse
+    {-# INLINE messageTag #-}
+
+instance Response SearchQueryResponse
+
+instance Exchange SearchQueryRequest SearchQueryResponse
+
+instance Tagged YzIndexGetRequest where
+    messageTag _ = Types.YokozunaIndexGetRequest
+
+instance Request YzIndexGetRequest where
+    expectedResponse _ = Types.YokozunaIndexGetResponse
+
+instance Tagged YzIndexGetResponse where
+    messageTag _ = Types.YokozunaIndexGetResponse
+
+instance Response YzIndexGetResponse
+
+instance Exchange YzIndexGetRequest YzIndexGetResponse
+
 putTag :: MessageTag -> Put
-putTag = putWord8 . fromIntegral . fromEnum
+putTag m = putWord8 $ message2code HM.! m
 {-# INLINE putTag #-}
 
 getTag :: Get MessageTag
 getTag = do
   n <- getWord8
-  if n > 26
-    then moduleError "getTag" $ "invalid riak message code: " ++ show n
-    else return .  toEnum . fromIntegral $ n
+  maybe (err n) pure $ HM.lookup n code2message
+      where
+        err n = moduleError "getTag" $ "invalid riak message code: " ++ show n
 {-# INLINE getTag #-}
 
 moduleError :: String -> String -> a
 moduleError = netError "Network.Riak.Tag"
+
+
+code2message :: HM.HashMap Word8 MessageTag
+code2message = HM.fromList messageCodes
+
+message2code :: HM.HashMap MessageTag Word8
+message2code = HM.fromList . map swap $ messageCodes
+
+messageCodes :: [(Word8, MessageTag)]
+messageCodes = [
+ -- From riak-2.1.3/deps/riak_pb/src/riak_pb_messages.csv
+ --
+ -- This is a list of all known riak messages (with appropriate
+ -- message codes).  Most of them are described at
+ -- http://docs.basho.com/riak/2.1.3/dev/references/protocol-buffers/
+ --
+ -- Commented ones are messages we don't use/support yet.
+ (0, Types.ErrorResponse),
+ (1, Types.PingRequest),
+ (2, Types.PingResponse),
+ (3, Types.GetClientIDResponse),
+ (4, Types.GetClientIDResponse),
+ (5, Types.SetClientIDRequest),
+ (6, Types.SetClientIDResponse),
+ (7, Types.GetServerInfoRequest),
+ (8, Types.GetServerInfoResponse),
+ (9, Types.GetRequest),
+ (10, Types.GetResponse),
+ (11, Types.PutRequest),
+ (12, Types.PutResponse),
+ (13, Types.DeleteRequest),
+ (14, Types.DeleteResponse),
+ (15, Types.ListBucketsRequest),
+ (16, Types.ListBucketsResponse),
+ (17, Types.ListKeysRequest),
+ (18, Types.ListKeysResponse),
+ (19, Types.GetBucketRequest),
+ (20, Types.GetBucketResponse),
+ (21, Types.SetBucketRequest),
+ (22, Types.SetBucketResponse),
+ (23, Types.MapReduceRequest),
+ (24, Types.MapReduceResponse),
+ (25, Types.IndexRequest),
+ (26, Types.IndexResponse),
+ (27, Types.SearchQueryRequest),
+ (28, Types.SearchQueryResponse),
+ -- (29,ResetBucketRequest),
+ -- (30,ResetBucketResp),
+ (31, Types.GetBucketTypeRequest),
+ -- (32,SetBucketTypeReq),
+ -- (33,GetBucketKeyPreflistReq),
+ -- (34,GetBucketKeyPreflistResp),
+ -- (40,CSBucketReq),
+ -- (41,CSBucketResp),
+ -- (50,CounterUpdateReq),
+ -- (51,CounterUpdateResp),
+ -- (52,CounterGetReq),
+ -- (53,CounterGetResp),
+ (54, Types.YokozunaIndexGetRequest),
+ (55, Types.YokozunaIndexGetResponse),
+ -- (56,YokozunaIndexPutReq),
+ -- (57,YokozunaIndexDeleteReq),
+ -- (58,YokozunaSchemaGetReq),
+ -- (59,YokozunaSchemaGetResp),
+ -- (60,YokozunaSchemaPutReq),
+ (80, Types.DtFetchRequest),
+ (81, Types.DtFetchResponse),
+ (82, Types.DtUpdateRequest),
+ (83, Types.DtUpdateResponse)
+ -- (253,RpbAuthReq),
+ -- (254,RpbAuthResp),
+ -- (255,RpbStartTls)
+ ]
+

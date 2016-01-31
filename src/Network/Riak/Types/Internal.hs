@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
-    RecordWildCards #-}
+    RecordWildCards, DeriveGeneric #-}
 
 -- |
 -- Module:      Network.Riak.Types.Internal
@@ -25,11 +25,15 @@ module Network.Riak.Types.Internal
     , unexError
     -- * Data types
     , Bucket
+    , BucketType
     , Key
     , Index
     , IndexQuery(..)
     , IndexValue(..)
     , Tag
+    , SearchQuery
+    , SearchResult(..)
+    , IndexInfo
     , VClock(..)
     , Job(..)
     -- * Quorum management
@@ -50,12 +54,17 @@ module Network.Riak.Types.Internal
 
 import Control.Exception (Exception, throw)
 import Data.ByteString.Lazy (ByteString)
+import Data.Sequence (Seq)
 import Data.Digest.Pure.MD5 (md5)
 import Data.IORef (IORef)
 import Data.Typeable (Typeable)
+import Data.Hashable (Hashable)
 import Data.Word (Word32)
+import GHC.Generics (Generic)
 import Network.Socket (HostName, ServiceName, Socket)
 import Text.ProtocolBuffers (ReflectDescriptor, Wire)
+import qualified Network.Riak.Protocol.YzIndex as YzIndex
+
 
 -- | A client identifier.  This is used by the Riak cluster when
 -- logging vector clock changes, and should be unique for each client.
@@ -129,6 +138,10 @@ instance Show Connection where
 -- replicas, for instance).
 type Bucket = ByteString
 
+-- | Bucket types is a riak >= 2.0 feature allowing groups of buckets
+-- to share configuration details
+type BucketType = ByteString
+
 -- | Keys are unique object identifiers in Riak and are scoped within
 -- buckets.
 type Key = ByteString
@@ -159,7 +172,24 @@ data Job = JSON ByteString
          | Erlang ByteString
            deriving (Eq, Show, Typeable)
 
--- | An identifier for an inbound or outbound message.
+-- | Search request
+type SearchQuery = ByteString
+
+-- | Search result score
+type Score = Double
+
+-- | Search index info
+type IndexInfo = YzIndex.YzIndex
+
+-- | Solr search result
+data SearchResult = SearchResult {
+      bucketType :: BucketType, -- ^ bucket type
+      bucket :: Bucket,         -- ^ bucket
+      key :: Key,               -- ^ key
+      score :: Maybe Score      -- ^ score, if provided
+    } deriving (Eq,Show)
+
+-- | List of (known to us) inbound or outbound message identifiers.
 data MessageTag = ErrorResponse
                 | PingRequest
                 | PingResponse
@@ -183,11 +213,22 @@ data MessageTag = ErrorResponse
                 | GetBucketResponse
                 | SetBucketRequest
                 | SetBucketResponse
+                | GetBucketTypeRequest
                 | MapReduceRequest
                 | MapReduceResponse
                 | IndexRequest
                 | IndexResponse
-                  deriving (Eq, Show, Enum, Typeable)
+                | DtFetchRequest
+                | DtFetchResponse
+                | DtUpdateRequest
+                | DtUpdateResponse
+                | SearchQueryRequest
+                | SearchQueryResponse
+                | YokozunaIndexGetRequest
+                | YokozunaIndexGetResponse
+                  deriving (Eq, Show, Generic)
+
+instance Hashable MessageTag
 
 -- | Messages are tagged.
 class Tagged msg where
@@ -205,7 +246,7 @@ class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Request msg
 class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Response msg
 
 class (Request req, Response resp) => Exchange req resp
-    | req -> resp, resp -> req
+    | req -> resp
 
 instance (Tagged a, Tagged b) => Tagged (Either a b) where
     messageTag (Left l)  = messageTag l

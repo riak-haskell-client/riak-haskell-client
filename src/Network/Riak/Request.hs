@@ -41,9 +41,12 @@ module Network.Riak.Request
     , getBucket
     , SetBucket.SetBucketRequest
     , setBucket
+    , getBucketType
     -- * Map/reduce
     , MapReduceRequest
     , mapReduce
+    , search
+    , getIndex
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -51,14 +54,14 @@ import Control.Applicative ((<$>))
 #endif
 import qualified Data.ByteString.Char8 as B8
 import Data.Monoid
-import Network.Riak.Protocol.BucketProps hiding (r,rw)
+import Network.Riak.Protocol.BucketProps (BucketProps)
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetClientIDRequest
 import Network.Riak.Protocol.GetServerInfoRequest
 import Network.Riak.Protocol.ListBucketsRequest
 import Network.Riak.Protocol.MapReduceRequest
 import Network.Riak.Protocol.PingRequest
-import Network.Riak.Types.Internal hiding (MessageTag(..))
+import Network.Riak.Types.Internal hiding (MessageTag(..),bucket,key)
 import Network.Riak.Escape (escape)
 import qualified Network.Riak.Protocol.DeleteRequest as Del
 import qualified Network.Riak.Protocol.Link as Link
@@ -69,11 +72,20 @@ import qualified Network.Riak.Protocol.IndexRequest.IndexQueryType as IndexQuery
 import qualified Network.Riak.Protocol.ListKeysRequest as Keys
 import qualified Network.Riak.Protocol.PutRequest as Put
 import qualified Network.Riak.Protocol.SetBucketRequest as SetBucket
+import qualified Network.Riak.Protocol.GetBucketTypeRequest as GetBucketType
+import qualified Network.Riak.Protocol.SearchQueryRequest as SearchQueryRequest
+import qualified Network.Riak.Protocol.YzIndexGetRequest as YzIndex
 
 -- | Create a ping request.
 ping :: PingRequest
 ping = PingRequest
 {-# INLINE ping #-}
+{-
+-- | Create a dtUpdate request.
+dtUpdate :: DtUpdate.DtUpdateRequest
+dtUpdate = DtUpdate.DtUpdateRequest
+{-# INLINE dtUpdate #-}
+-}
 
 -- | Create a client-ID request.
 getClientID :: GetClientIDRequest
@@ -99,6 +111,7 @@ get bucket key r = Get.GetRequest { Get.bucket = escape bucket
                                   , Get.timeout = Nothing
                                   , Get.sloppy_quorum = Nothing
                                   , Get.n_val = Nothing
+                                  , Get.type' = Nothing
                                   }
 {-# INLINE get #-}
 
@@ -134,7 +147,11 @@ getByIndex bucket q =
                          , Index.stream = Nothing
                          , Index.max_results = Nothing
                          , Index.continuation = Nothing
-                         , Index.timeout = Nothing }
+                         , Index.timeout = Nothing
+                         , Index.type' = Nothing
+                         , Index.term_regex = Nothing
+                         , Index.pagination_sort = Nothing
+                         }
 
 -- | Create a put request.  The bucket and key names are URL-escaped.
 -- Any 'Link' values inside the 'Content' are assumed to have been
@@ -144,7 +161,7 @@ put :: Bucket -> Key -> Maybe VClock -> Content -> W -> DW -> Bool
 put bucket key mvclock cont mw mdw returnBody =
     Put.PutRequest (escape bucket) (Just $ escape key) (fromVClock <$> mvclock)
                    cont (fromQuorum mw) (fromQuorum mdw) (Just returnBody)
-                   Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing
+                   Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing
 {-# INLINE put #-}
 
 -- | Create a link.  The bucket and key names are URL-escaped.
@@ -156,30 +173,56 @@ link bucket key = Link.Link (Just (escape bucket)) (Just (escape key)) . Just
 delete :: Bucket -> Key -> RW -> Del.DeleteRequest
 delete bucket key rw = Del.DeleteRequest (escape bucket) (escape key)
                                          (fromQuorum rw) Nothing Nothing Nothing
-                                         Nothing Nothing Nothing Nothing Nothing Nothing
+                                         Nothing Nothing Nothing Nothing Nothing Nothing Nothing
 {-# INLINE delete #-}
 
 -- | Create a list-buckets request.
-listBuckets :: ListBucketsRequest
+listBuckets :: Maybe BucketType -> ListBucketsRequest
 listBuckets = ListBucketsRequest Nothing Nothing
 {-# INLINE listBuckets #-}
 
--- | Create a list-keys request.  The bucket name is URL-escaped.
-listKeys :: Bucket -> Keys.ListKeysRequest
-listKeys b = Keys.ListKeysRequest (escape b) Nothing
+-- | Create a list-keys request.  The bucket type and name are URL-escaped.
+listKeys :: Maybe BucketType -> Bucket -> Keys.ListKeysRequest
+listKeys t b = Keys.ListKeysRequest (escape b) Nothing (escape <$> t)
 {-# INLINE listKeys #-}
 
--- | Create a get-bucket request.  The bucket name is URL-escaped.
-getBucket :: Bucket -> GetBucket.GetBucketRequest
-getBucket = GetBucket.GetBucketRequest . escape
+-- | Create a get-bucket request.  The bucket type and name are URL-escaped.
+getBucket :: Maybe BucketType -> Bucket -> GetBucket.GetBucketRequest
+getBucket t b = GetBucket.GetBucketRequest (escape b) (escape <$> t)
 {-# INLINE getBucket #-}
 
--- | Create a set-bucket request.  The bucket name is URL-escaped.
-setBucket :: Bucket -> BucketProps -> SetBucket.SetBucketRequest
-setBucket = SetBucket.SetBucketRequest . escape
+-- | Create a set-bucket request.  The bucket type and name are URL-escaped.
+setBucket :: Maybe BucketType -> Bucket -> BucketProps -> SetBucket.SetBucketRequest
+setBucket t b ps = SetBucket.SetBucketRequest (escape b) ps (escape <$> t)
 {-# INLINE setBucket #-}
+
+-- | Create a get-bucket-type request.  The bucket type is URL-escaped.
+getBucketType :: BucketType -> GetBucketType.GetBucketTypeRequest
+getBucketType t = GetBucketType.GetBucketTypeRequest (escape t)
 
 -- | Create a map-reduce request.
 mapReduce :: Job -> MapReduceRequest
 mapReduce (JSON bs)   = MapReduceRequest bs "application/json"
 mapReduce (Erlang bs) = MapReduceRequest bs "application/x-erlang-binary"
+
+-- | Create a search request
+search :: SearchQuery -> Index -> SearchQueryRequest.SearchQueryRequest
+search q ix = SearchQueryRequest.SearchQueryRequest {
+                SearchQueryRequest.q = q,
+                SearchQueryRequest.index = escape ix,
+                SearchQueryRequest.rows = Nothing,
+                SearchQueryRequest.start = Nothing,
+                SearchQueryRequest.sort = Nothing,
+                SearchQueryRequest.filter = Nothing,
+                SearchQueryRequest.df = Nothing,
+                SearchQueryRequest.op = Nothing,
+                SearchQueryRequest.fl = mempty,
+                SearchQueryRequest.presort = Nothing
+              }
+
+getIndex :: Maybe Index -> YzIndex.YzIndexGetRequest
+getIndex = YzIndex.YzIndexGetRequest
+
+
+
+

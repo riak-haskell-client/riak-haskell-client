@@ -25,8 +25,9 @@ $SED -e 's/Rpb//g' -e 's/Req\>/Request/g' -e 's/Resp\>/Response/g' \
     -e 's/GetServerInfoResponse/ServerInfo/g' \
     -e 's/MapReduceResponse/MapReduce/g' \
     -e '/java/Id' \
+    -e 's/Yokozuna/Yz/' \
     -e '/import "riak.proto"/d' \
-    src/riak.proto src/riak_kv.proto src/riak_search.proto src/riakextra.proto > src/Protocol.proto
+    src/riak.proto src/riak_kv.proto src/riak_dt.proto src/riak_yokozuna.proto src/riak_search.proto src/riakextra.proto > src/Protocol.proto
 
 (cd src && hprotoc -p Network.Riak Protocol.proto)
 
