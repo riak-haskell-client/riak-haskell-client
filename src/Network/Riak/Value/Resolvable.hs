@@ -41,13 +41,14 @@ import qualified Network.Riak.Value as V
 -- | Retrieve a single value.  If conflicting values are returned, the
 -- 'Resolvable' is used to choose a winner.
 get :: (Resolvable a, V.IsContent a) =>
-       Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock))
+       Connection -> Maybe BucketType -> Bucket -> Key -> R -> IO (Maybe (a, VClock))
 get = R.get V.get
 {-# INLINE get #-}
 
 -- | Retrieve multiple values.  If conflicting values are returned for
 -- a key, the 'Resolvable' is used to choose a winner.
-getMany :: (Resolvable a, V.IsContent a) => Connection -> Bucket -> [Key] -> R
+getMany :: (Resolvable a, V.IsContent a) => Connection
+        -> Maybe BucketType -> Bucket -> [Key] -> R
         -> IO [Maybe (a, VClock)]
 getMany = R.getMany V.getMany
 {-# INLINE getMany #-}
@@ -66,7 +67,7 @@ getMany = R.getMany V.getMany
 -- being stuck in a conflict resolution loop, it will throw a
 -- 'ResolutionFailure' exception.
 modify :: (Resolvable a, V.IsContent a) =>
-          Connection -> Bucket -> Key -> R -> W -> DW
+          Connection -> Maybe BucketType -> Bucket -> Key -> R -> W -> DW
        -> (Maybe a -> IO (a,b))
        -- ^ Modification function.  Called with 'Just' the value if
        -- the key is present, 'Nothing' otherwise.
@@ -86,7 +87,7 @@ modify = R.modify V.get V.put
 -- being stuck in a conflict resolution loop, it will throw a
 -- 'ResolutionFailure' exception.
 modify_ :: (Resolvable a, V.IsContent a) =>
-           Connection -> Bucket -> Key -> R -> W -> DW
+           Connection -> Maybe BucketType -> Bucket -> Key -> R -> W -> DW
         -> (Maybe a -> IO a) -> IO a
 modify_ = R.modify_ V.get V.put
 {-# INLINE modify_ #-}
@@ -104,7 +105,8 @@ modify_ = R.modify_ V.get V.put
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
 put :: (Resolvable a, V.IsContent a) =>
-       Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+       Connection -> Maybe BucketType -> Bucket -> Key
+    -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
 put = R.put V.put
 {-# INLINE put #-}
@@ -122,7 +124,8 @@ put = R.put V.put
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
 put_ :: (Resolvable a, V.IsContent a) =>
-        Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+        Connection -> Maybe BucketType -> Bucket -> Key
+     -> Maybe VClock -> a -> W -> DW
      -> IO ()
 put_ = R.put_ V.put
 {-# INLINE put_ #-}
@@ -142,7 +145,7 @@ put_ = R.put_ V.put
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
 putMany :: (Resolvable a, V.IsContent a) =>
-           Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
+           Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
         -> IO [(a, VClock)]
 putMany = R.putMany V.putMany
 {-# INLINE putMany #-}
@@ -159,6 +162,7 @@ putMany = R.putMany V.putMany
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
 putMany_ :: (Resolvable a, V.IsContent a) =>
-            Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
+            Connection -> Maybe BucketType -> Bucket
+         -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
 putMany_ = R.putMany_ V.putMany
 {-# INLINE putMany_ #-}

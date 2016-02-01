@@ -67,10 +67,11 @@ testClusterSimple = testCase "testClusterSimple" $ do
 testIndexedPutGet :: TestTree
 testIndexedPutGet = testCase "testIndexedPutGet" $ do
     rc <- Riak.connectToCluster [Riak.defaultClient]
-    let b = "riak-haskell-client-test"
+    let bt = Nothing
+        b = "riak-haskell-client-test"
         k = "test"
     keys <- Riak.inCluster rc $ \c -> do
-      _ <- J.putIndexed c b k [(IndexInt "someindex" 135)] Nothing
+      _ <- J.putIndexed c bt b k [(IndexInt "someindex" 135)] Nothing
           (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
           Default Default
       Riak.getByIndex c b (IndexQueryExactInt "someindex" 135)

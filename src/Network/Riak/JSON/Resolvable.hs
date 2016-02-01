@@ -41,14 +41,14 @@ import qualified Network.Riak.Resolvable.Internal as R
 -- | Retrieve a single value.  If conflicting values are returned,
 -- 'resolve' is used to choose a winner.
 get :: (FromJSON c, ToJSON c, Resolvable c) =>
-       Connection -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
+       Connection -> Maybe BucketType -> Bucket -> Key -> R -> IO (Maybe (c, VClock))
 get = R.get J.get
 {-# INLINE get #-}
 
 -- | Retrieve multiple values.  If conflicting values are returned for
 -- a key, 'resolve' is used to choose a winner.
 getMany :: (FromJSON c, ToJSON c, Resolvable c)
-           => Connection -> Bucket -> [Key] -> R -> IO [Maybe (c, VClock)]
+           => Connection -> Maybe BucketType -> Bucket -> [Key] -> R -> IO [Maybe (c, VClock)]
 getMany = R.getMany J.getMany
 {-# INLINE getMany #-}
 
@@ -66,7 +66,7 @@ getMany = R.getMany J.getMany
 -- being stuck in a conflict resolution loop, it will throw a
 -- 'ResolutionFailure' exception.
 modify :: (FromJSON a, ToJSON a, Resolvable a) =>
-          Connection -> Bucket -> Key -> R -> W -> DW
+          Connection -> Maybe BucketType -> Bucket -> Key -> R -> W -> DW
        -> (Maybe a -> IO (a,b))
        -- ^ Modification function.  Called with 'Just' the value if
        -- the key is present, 'Nothing' otherwise.
@@ -86,7 +86,7 @@ modify = R.modify J.get J.put
 -- being stuck in a conflict resolution loop, it will throw a
 -- 'ResolutionFailure' exception.
 modify_ :: (MonadIO m, FromJSON a, ToJSON a, Resolvable a) =>
-           Connection -> Bucket -> Key -> R -> W -> DW
+           Connection -> Maybe BucketType -> Bucket -> Key -> R -> W -> DW
         -> (Maybe a -> m a) -> m a
 modify_ = R.modify_ J.get J.put
 {-# INLINE modify_ #-}
@@ -104,20 +104,20 @@ modify_ = R.modify_ J.get J.put
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
 put :: (FromJSON c, ToJSON c, Resolvable c) =>
-       Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+       Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
     -> IO (c, VClock)
 put = R.put J.put
 {-# INLINE put #-}
 
 -- | Store a single value indexed.
 putIndexed :: (FromJSON c, ToJSON c, Resolvable c)
-           => Connection -> Bucket -> Key -> [IndexValue]
+           => Connection -> Maybe BucketType -> Bucket -> Key -> [IndexValue]
            -> Maybe VClock -> c -> W -> DW
            -> IO (c, VClock)
-putIndexed c b k ixs vc cont w' dw' =
-    R.put (\conn bucket' key' mvclock val w dw ->
-               J.putIndexed conn bucket' key' ixs mvclock val w dw)
-          c b k vc cont w' dw'
+putIndexed c bt b k ixs vc cont w' dw' =
+    R.put (\conn btype bucket' key' mvclock val w dw ->
+               J.putIndexed conn btype bucket' key' ixs mvclock val w dw)
+          c bt b k vc cont w' dw'
 {-# INLINE putIndexed #-}
 
 -- | Store a single value, automatically resolving any vector clock
@@ -133,7 +133,7 @@ putIndexed c b k ixs vc cont w' dw' =
 -- conflict resolution loop, it will throw a 'ResolutionFailure'
 -- exception.
 put_ :: (FromJSON c, ToJSON c, Resolvable c) =>
-        Connection -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
+        Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c -> W -> DW
      -> IO ()
 put_ = R.put_ J.put
 {-# INLINE put_ #-}
@@ -153,7 +153,7 @@ put_ = R.put_ J.put
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
 putMany :: (FromJSON c, ToJSON c, Resolvable c) =>
-           Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+           Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
         -> IO [(c, VClock)]
 putMany = R.putMany J.putMany
 {-# INLINE putMany #-}
@@ -170,7 +170,7 @@ putMany = R.putMany J.putMany
 -- If this function gives up due to apparently being stuck in a loop,
 -- it will throw a 'ResolutionFailure' exception.
 putMany_ :: (FromJSON c, ToJSON c, Resolvable c) =>
-            Connection -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
+            Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)] -> W -> DW
          -> IO ()
 putMany_ = R.putMany_ J.putMany
 {-# INLINE putMany_ #-}
