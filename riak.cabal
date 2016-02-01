@@ -41,7 +41,8 @@ copyright:           Copyright 2011 MailRank, Inc.
 category:            Network
 build-type:          Simple
 extra-source-files:
-  README.markdown
+  README.markdown 
+  Changes.md
 
 cabal-version:       >=1.8
 
