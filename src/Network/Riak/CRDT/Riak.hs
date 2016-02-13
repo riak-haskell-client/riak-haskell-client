@@ -2,17 +2,14 @@
 --     copyright: (c) 2016 Sentenai
 --     author:    Antonio Nikishaev <me@lelf.lu>
 --     license:   Apache
--- 
+--
 -- CRDT operations
 module Network.Riak.CRDT.Riak where
 
-import qualified Network.Riak.Connection as Conn
-import Network.Riak.Types
-import Network.Riak.Protocol.DtOp as PB
-import Network.Riak.Protocol.CounterOp as PB
+import           Control.Applicative
 import qualified Network.Riak.CRDT.Types as CRDT
-import Data.Int
-import Control.Applicative
+import qualified Network.Riak.Connection as Conn
+import           Network.Riak.Types
 
 import qualified Network.Riak.CRDT.Request as Req
 import qualified Network.Riak.CRDT.Response as Resp

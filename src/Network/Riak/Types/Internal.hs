@@ -52,18 +52,17 @@ module Network.Riak.Types.Internal
     , Tagged(..)
     ) where
 
-import Control.Exception (Exception, throw)
-import Data.ByteString.Lazy (ByteString)
-import Data.Sequence (Seq)
-import Data.Digest.Pure.MD5 (md5)
-import Data.IORef (IORef)
-import Data.Typeable (Typeable)
-import Data.Hashable (Hashable)
-import Data.Word (Word32)
-import GHC.Generics (Generic)
-import Network.Socket (HostName, ServiceName, Socket)
-import Text.ProtocolBuffers (ReflectDescriptor, Wire)
+import           Control.Exception (Exception, throw)
+import           Data.ByteString.Lazy (ByteString)
+import           Data.Digest.Pure.MD5 (md5)
+import           Data.Hashable (Hashable)
+import           Data.IORef (IORef)
+import           Data.Typeable (Typeable)
+import           Data.Word (Word32)
+import           GHC.Generics (Generic)
 import qualified Network.Riak.Protocol.YzIndex as YzIndex
+import           Network.Socket (HostName, ServiceName, Socket)
+import           Text.ProtocolBuffers (ReflectDescriptor, Wire)
 
 
 -- | A client identifier.  This is used by the Riak cluster when

@@ -2,9 +2,9 @@
 --   copyright: (c) 2016 Sentenai
 --   author:    Antonio Nikishaev <me@lelf.lu>
 --   license:   Apache
--- 
+--
 -- Conversions of CRDT operations to 'PB.DtOp'
--- 
+--
 module Network.Riak.CRDT.Ops (counterUpdateOp,
                               setUpdateOp, SetOpsComb(..), toOpsComb,
                               mapUpdateOp)
@@ -14,20 +14,18 @@ import qualified Network.Riak.Protocol.DtOp as PB
 import qualified Network.Riak.Protocol.CounterOp as PB
 import qualified Network.Riak.Protocol.SetOp as PBSet
 
-import qualified Network.Riak.Protocol.MapOp                 as PBMap
-import qualified Network.Riak.Protocol.MapField              as PBMap
+import qualified Network.Riak.Protocol.MapOp as PBMap
+import qualified Network.Riak.Protocol.MapField as PBMap
 import qualified Network.Riak.Protocol.MapField.MapFieldType as PBMap
-import qualified Network.Riak.Protocol.MapUpdate             as PBMap
+import qualified Network.Riak.Protocol.MapUpdate as PBMap
 
 import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
 
-import Network.Riak.CRDT.Types
-import Data.Monoid
-import Data.Traversable
-import Data.List.NonEmpty (NonEmpty(..))
+import           Data.ByteString.Lazy (ByteString)
+import           Data.Monoid
 import qualified Data.Sequence as Seq
 import qualified Data.Set as S
-import Data.ByteString.Lazy (ByteString)
+import           Network.Riak.CRDT.Types
 
 
 counterUpdateOp :: [CounterOp] -> PB.DtOp
@@ -36,6 +34,7 @@ counterUpdateOp ops = PB.DtOp { PB.counter_op = Just $ counterOpPB ops,
                                 PB.map_op = Nothing
                               }
 
+counterOpPB :: [CounterOp] -> PB.CounterOp
 counterOpPB ops = PB.CounterOp (Just i)
     where CounterInc i = mconcat ops
 
@@ -48,6 +47,7 @@ instance Monoid SetOpsComb where
     mempty = SetOpsComb mempty mempty
     (SetOpsComb a b) `mappend` (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
 
+toOpsComb :: SetOp -> SetOpsComb
 toOpsComb (SetAdd s) = SetOpsComb (S.singleton s) S.empty
 toOpsComb (SetRemove s) = SetOpsComb S.empty (S.singleton s)
 
@@ -100,6 +100,7 @@ setSpecificOp (MapFlagOp fop) u     = u { PBMap.flag_op     = Just $ flagOpPB fo
 setSpecificOp (MapMapOp mop) u      = u { PBMap.map_op      = Just $ mapOpPB [mop] }
 
 
+updateNothing :: ByteString -> MapEntryTag -> PBMap.MapUpdate
 updateNothing f t = PBMap.MapUpdate { PBMap.field = toField f t,
                                     PBMap.counter_op = Nothing,
                                     PBMap.set_op = Nothing,
