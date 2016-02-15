@@ -116,7 +116,7 @@ library
                 monad-control                 >= 1.0.0.4 && < 1.1,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
-                protocol-buffers              >= 2.1.4 && < 2.2,
+                protocol-buffers              >= 2.1.4 && < 2.3,
                 pureMD5,
                 random,
                 random-shuffle                >= 0.0.4 && < 0.1,
