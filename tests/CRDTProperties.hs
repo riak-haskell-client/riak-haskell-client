@@ -2,7 +2,7 @@
 --     copyright: (c) 2016 Sentenai
 --     author:    Antonio Nikishaev <me@lelf.lu>
 --     license:   Apache
--- 
+--
 {-# LANGUAGE OverloadedStrings, FlexibleContexts, TupleSections, ScopedTypeVariables,
     GADTs, StandaloneDeriving, UndecidableInstances, PatternGuards, MultiParamTypeClasses #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
@@ -16,24 +16,23 @@ module CRDTProperties (prop_counters,
 -- command output to list :: [Maybe RiakReturnValue].  Then see it we
 -- get the same list of results simulating Riak in this module.
 
-import Test.QuickCheck
-import Test.QuickCheck.Monadic
-import Data.ByteString.Lazy (ByteString)
 import Control.Applicative
-import Data.Maybe
+import Control.Monad.RWS
+import Data.ByteString.Lazy (ByteString)
+import Data.Default.Class
 import Data.List.NonEmpty
 import qualified Data.Map as Map
-import qualified Data.Set as Set
-import Control.Monad.RWS
-import Data.Default.Class
+import Data.Maybe
 import Data.Proxy
+import qualified Data.Set as Set
+import Test.QuickCheck
+import Test.QuickCheck.Monadic
 
+import Common
 import Test.Tasty
 import Test.Tasty.QuickCheck
-import Common
 
 import qualified Network.Riak.Basic as B
-import qualified Network.Riak.Value as V
 import qualified Network.Riak.CRDT  as C
 
 newtype BucketType = BucketType ByteString deriving (Show,Eq,Ord)
@@ -65,7 +64,7 @@ type RiakState = Map.Map Point C.DataType
 
 -- | observe all current values we care about (instance 'Values') in
 --   riak, gather them into a map.
--- 
+--
 -- As it turns out, observeRiak is not quite cheap operation after
 -- /types/maps/… are populated. So first argument is proxy for the
 -- (only) type we are interested in.
@@ -82,7 +81,7 @@ observeRiak' bt@(BucketType t_) = withSomeConnection $ \c ->
 
 
 -- | We will supply a list of these operations:
--- 
+--
 -- For each Action a op => a,
 data Op a op = Get Bucket Key       -- ^ we can get a value
              | Update Bucket Key op -- ^ we can update a value
@@ -181,8 +180,8 @@ instance Arbitrary C.MapValueOp where
                         C.MapSetOp <$> arbitrary,
                         C.MapFlagOp <$> arbitrary ]
 
+-- TODO Fix this
 instance Arbitrary C.Map
-
 
 -- | Abstract machine.
 -- Yields a value on 'Get', modifies state on 'Update'.
@@ -248,7 +247,7 @@ update :: forall a op. (Action a op) =>
 update op dt
     -- | Dear diary, this is getting out of hand. It'd be far easier to
     -- not bother and assume Nothing ≡ Just mempty in test conditions.
-    -- 
+    --
     -- …but let's continue to bother and gain more safety.
     | Just d <- dt, targetThere dt op
         = operate d
@@ -291,9 +290,14 @@ prop p ops = monadicIO $ do
                           assert $ r1 == r2
 
 
+prop_counters :: [Op C.Counter C.CounterOp] -> Property
 prop_counters = prop (Proxy :: Proxy C.Counter)
-prop_sets     = prop (Proxy :: Proxy C.Set)
-prop_maps     = prop (Proxy :: Proxy C.Map)
+
+prop_sets :: [Op C.Set C.SetOp] -> Property
+prop_sets = prop (Proxy :: Proxy C.Set)
+
+prop_maps :: [Op C.Map C.MapOp] -> Property
+prop_maps = prop (Proxy :: Proxy C.Map)
 
 
 
@@ -303,5 +307,3 @@ tests = testGroup "CRDT quickCheck" [
          testProperty "sets" prop_sets,
          testProperty "maps" prop_maps
         ]
-
-

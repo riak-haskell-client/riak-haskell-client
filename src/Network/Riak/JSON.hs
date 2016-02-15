@@ -63,11 +63,11 @@ instance (FromJSON a, ToJSON a) => V.IsContent (JSON a) where
 -- Choosing among them is your responsibility.
 get :: (FromJSON c, ToJSON c) => Connection -> Bucket -> Key -> R
     -> IO (Maybe ([c], VClock))
-get conn bucket key r = fmap convert <$> V.get conn bucket key r
+get conn bucket' key' r = fmap convert <$> V.get conn bucket' key' r
 
 getMany :: (FromJSON c, ToJSON c) => Connection -> Bucket -> [Key] -> R
     -> IO [Maybe ([c], VClock)]
-getMany conn bucket ks r = map (fmap convert) <$> V.getMany conn bucket ks r
+getMany conn bucket' ks r = map (fmap convert) <$> V.getMany conn bucket' ks r
 
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
@@ -80,16 +80,16 @@ getMany conn bucket ks r = map (fmap convert) <$> V.getMany conn bucket ks r
 put :: (FromJSON c, ToJSON c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)
-put conn bucket key mvclock val w dw =
-    convert <$> V.put conn bucket key mvclock (json val) w dw
+put conn bucket' key' mvclock val w dw =
+    convert <$> V.put conn bucket' key' mvclock (json val) w dw
 
 -- | Store a single value indexed.
 putIndexed :: (FromJSON c, ToJSON c)
            => Connection -> Bucket -> Key -> [IndexValue]
            -> Maybe VClock -> c
            -> W -> DW -> IO ([c], VClock)
-putIndexed conn bucket key ixs mvclock val w dw =
-    convert <$> V.putIndexed conn bucket key ixs mvclock (json val) w dw
+putIndexed conn bucket' key' ixs mvclock val w dw =
+    convert <$> V.putIndexed conn bucket' key' ixs mvclock (json val) w dw
 
 -- | Store a single value, without the possibility of conflict
 -- resolution.
@@ -101,8 +101,8 @@ putIndexed conn bucket key ixs mvclock val w dw =
 put_ :: (FromJSON c, ToJSON c) =>
        Connection -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ()
-put_ conn bucket key mvclock val w dw =
-    V.put_ conn bucket key mvclock (json val) w dw
+put_ conn bucket' key' mvclock val w dw =
+    V.put_ conn bucket' key' mvclock (json val) w dw
 
 -- | Store many values.  This may return multiple conflicting siblings
 -- for each value stored.  Choosing among them, and storing a new
@@ -115,8 +115,8 @@ put_ conn bucket key mvclock val w dw =
 putMany :: (FromJSON c, ToJSON c) =>
            Connection -> Bucket -> [(Key, Maybe VClock, c)]
         -> W -> DW -> IO [([c], VClock)]
-putMany conn bucket puts w dw =
-    map convert <$> V.putMany conn bucket (map f puts) w dw
+putMany conn bucket' puts w dw =
+    map convert <$> V.putMany conn bucket' (map f puts) w dw
   where f (k,v,c) = (k,v,json c)
 
 -- | Store many values, without the possibility of conflict
@@ -129,7 +129,7 @@ putMany conn bucket puts w dw =
 putMany_ :: (FromJSON c, ToJSON c) =>
             Connection -> Bucket -> [(Key, Maybe VClock, c)]
          -> W -> DW -> IO ()
-putMany_ conn bucket puts w dw = V.putMany_ conn bucket (map f puts) w dw
+putMany_ conn bucket' puts w dw = V.putMany_ conn bucket' (map f puts) w dw
   where f (k,v,c) = (k,v,json c)
 
 convert :: ([JSON a], VClock) -> ([a], VClock)

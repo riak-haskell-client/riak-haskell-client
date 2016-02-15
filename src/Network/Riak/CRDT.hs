@@ -8,15 +8,15 @@ CRDT operations
 * Haskell-side
 
     * Haskell values: 'Counter', 'Set' etc
-    
+
     * ADT for operations: 'CounterOp', 'SetOp' etc
-    
+
     * 'modify' to locally modify a value (matching riak behaviour)
 
 * Riak-side
 
     * 'get' to get a current value
-    
+
     * 'sendModify' to ask Riak to apply modifications
 
 TL;DR example
@@ -40,17 +40,15 @@ module Network.Riak.CRDT (module Network.Riak.CRDT.Types,
     where
 
 
-import qualified Data.Set as S
-import qualified Data.Map as M
-import Data.ByteString.Lazy (ByteString)
-import Data.List.NonEmpty (NonEmpty(..))
-import Data.Semigroup
-import Data.Proxy
 import Data.Default.Class
-import Network.Riak.CRDT.Riak
-import Network.Riak.Types
-import Network.Riak.CRDT.Types
+import qualified Data.Map as M
+import Data.Proxy
+import Data.Semigroup
+import qualified Data.Set as S
 import Network.Riak.CRDT.Ops
+import Network.Riak.CRDT.Riak
+import Network.Riak.CRDT.Types
+import Network.Riak.Types
 
 
 -- | Modify a counter by applying operations ops
@@ -172,5 +170,3 @@ instance CRDT Set SetOp where
 instance CRDT Map MapOp where
     modify = modifyMap
     sendModify = mapSendUpdate
-
-

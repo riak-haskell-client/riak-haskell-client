@@ -102,8 +102,8 @@ type Get a = Connection -> Bucket -> Key -> R -> IO (Maybe ([a], VClock))
 
 get :: (Resolvable a) => Get a
     -> (Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
-get doGet conn bucket key r =
-    fmap (first resolveMany) `fmap` doGet conn bucket key r
+get doGet conn bucket' key' r =
+    fmap (first resolveMany) `fmap` doGet conn bucket' key' r
 {-# INLINE get #-}
 
 getMany :: (Resolvable a) =>
@@ -128,11 +128,11 @@ type Put a = Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
 put :: (Resolvable a) => Put a
     -> Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
-put doPut conn bucket key mvclock0 val0 w dw = do
+put doPut conn bucket' key' mvclock0 val0 w dw = do
   let go !i val mvclock
          | i == maxRetries = throwIO RetriesExceeded
          | otherwise       = do
-        (xs, vclock) <- doPut conn bucket key mvclock val w dw
+        (xs, vclock) <- doPut conn bucket' key' mvclock val w dw
         case xs of
           [x] | i > 0 || isJust mvclock -> return (x, vclock)
           (_:_) -> do debugValues "put" "conflict" xs
@@ -152,27 +152,27 @@ put_ :: (Resolvable a) =>
                     -> IO ([a], VClock))
      -> Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
      -> IO ()
-put_ doPut conn bucket key mvclock0 val0 w dw =
-    put doPut conn bucket key mvclock0 val0 w dw >> return ()
+put_ doPut conn bucket' key' mvclock0 val0 w dw =
+    put doPut conn bucket' key' mvclock0 val0 w dw >> return ()
 {-# INLINE put_ #-}
 
 modify :: (MonadIO m, Resolvable a) => Get a -> Put a
        -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m (a,b))
        -> m (a,b)
-modify doGet doPut conn bucket key r w dw act = do
-  a0 <- liftIO $ get doGet conn bucket key r
+modify doGet doPut conn bucket' key' r w dw act = do
+  a0 <- liftIO $ get doGet conn bucket' key' r
   (a,b) <- act (fst <$> a0)
-  (a',_) <- liftIO $ put doPut conn bucket key (snd <$> a0) a w dw
+  (a',_) <- liftIO $ put doPut conn bucket' key' (snd <$> a0) a w dw
   return (a',b)
 {-# INLINE modify #-}
 
 modify_ :: (MonadIO m, Resolvable a) => Get a -> Put a
         -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m a)
         -> m a
-modify_ doGet doPut conn bucket key r w dw act = do
-  a0 <- liftIO $ get doGet conn bucket key r
+modify_ doGet doPut conn bucket' key' r w dw act = do
+  a0 <- liftIO $ get doGet conn bucket' key' r
   a <- act (fst <$> a0)
-  liftIO $ fst <$> put doPut conn bucket key (snd <$> a0) a w dw
+  liftIO $ fst <$> put doPut conn bucket' key' (snd <$> a0) a w dw
 {-# INLINE modify_ #-}
 
 putMany :: (Resolvable a) =>
@@ -180,13 +180,13 @@ putMany :: (Resolvable a) =>
                        -> IO [([a], VClock)])
         -> Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
         -> IO [(a, VClock)]
-putMany doPut conn bucket puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
+putMany doPut conn bucket' puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
  where
   go _ acc [] = return . map snd . sortBy (compare `on` fst) $ acc
   go !i acc puts
       | i == maxRetries = throwIO RetriesExceeded
       | otherwise = do
-    rs <- doPut conn bucket (map snd puts) w dw
+    rs <- doPut conn bucket' (map snd puts) w dw
     let (conflicts, ok) = partitionEithers $ zipWith mush puts rs
     unless (null conflicts) $
       debugValues "putMany" "conflicts" conflicts
@@ -203,8 +203,8 @@ putMany_ :: (Resolvable a) =>
             (Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
                         -> IO [([a], VClock)])
          -> Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
-putMany_ doPut conn bucket puts0 w dw =
-    putMany doPut conn bucket puts0 w dw >> return ()
+putMany_ doPut conn bucket' puts0 w dw =
+    putMany doPut conn bucket' puts0 w dw >> return ()
 {-# INLINE putMany_ #-}
 
 resolveMany' :: (Resolvable a) => a -> [a] -> a

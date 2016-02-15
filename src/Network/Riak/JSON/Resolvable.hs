@@ -115,8 +115,8 @@ putIndexed :: (FromJSON c, ToJSON c, Resolvable c)
            -> Maybe VClock -> c -> W -> DW
            -> IO (c, VClock)
 putIndexed c b k ixs vc cont w' dw' =
-    R.put (\conn bucket key mvclock val w dw ->
-               J.putIndexed conn bucket key ixs mvclock val w dw)
+    R.put (\conn bucket' key' mvclock val w dw ->
+               J.putIndexed conn bucket' key' ixs mvclock val w dw)
           c b k vc cont w' dw'
 {-# INLINE putIndexed #-}
 

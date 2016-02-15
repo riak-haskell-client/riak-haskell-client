@@ -65,7 +65,6 @@ flag test2i
 
 library
   hs-source-dirs: src
-
   exposed-modules:
     Network.Riak
     Network.Riak.Basic
@@ -133,7 +132,7 @@ library
     cpp-options: -DASSERTS -DDEBUG
 
   if flag(developer)
-    ghc-options: -Werror
+    ghc-options: -Wall
     ghc-prof-options: -auto-all
     cpp-options: -DASSERTS -DDEBUG
 

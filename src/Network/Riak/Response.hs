@@ -41,7 +41,6 @@ import Network.Riak.Protocol.ListBucketsResponse
 import Network.Riak.Protocol.PutResponse
 import Network.Riak.Protocol.SearchQueryResponse
 import Network.Riak.Protocol.SearchDoc
-import qualified Network.Riak.Protocol.YzIndex as Yz
 import qualified Network.Riak.Protocol.YzIndexGetResponse as Yz
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import qualified Network.Riak.Protocol.Link as Link
@@ -116,4 +115,3 @@ toSearchResult r = SearchResult {
 
 getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
 getIndex = toList . Yz.index
-

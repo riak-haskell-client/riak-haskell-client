@@ -2,16 +2,17 @@
 --     copyright: (c) 2016 Sentenai
 --     author:    Antonio Nikishaev <me@lelf.lu>
 --     license:   Apache
--- 
+--
 module Network.Riak.CRDT.Request
     (get, counterUpdate, setUpdate, mapUpdate) where
 
-import qualified Network.Riak.Protocol.DtFetchRequest as DtFetch
-import qualified Network.Riak.Protocol.DtUpdateRequest as DtUpdate
-import qualified Network.Riak.Protocol.DtOp as DtOp
-import Network.Riak.CRDT.Ops
+import           Data.ByteString.Lazy (ByteString)
+import           Network.Riak.CRDT.Ops
 import qualified Network.Riak.CRDT.Types as CRDT
-import Network.Riak.Types
+import qualified Network.Riak.Protocol.DtFetchRequest as DtFetch
+import qualified Network.Riak.Protocol.DtOp as DtOp
+import qualified Network.Riak.Protocol.DtUpdateRequest as DtUpdate
+import           Network.Riak.Types
 
 counterUpdate :: [CRDT.CounterOp]
               -> BucketType -> Bucket -> Key
@@ -46,6 +47,7 @@ update op t b k = DtUpdate.DtUpdateRequest {
                     DtUpdate.include_context = Nothing
                   }
 
+get :: ByteString -> ByteString -> ByteString -> DtFetch.DtFetchRequest
 get t b k = DtFetch.DtFetchRequest {
               DtFetch.bucket = b,
               DtFetch.key = k,
