@@ -9,7 +9,7 @@ homepage:            http://github.com/markhibberd/riak-haskell-client
 license:             OtherLicense
 license-file:        LICENSE
 author:              Bryan O'Sullivan <bos@mailrank.com>
-maintainer:          Mark Hibberd <mark@hibberd.id.au>
+maintainer:          Mark Hibberd <mark@hibberd.id.au>, Tim McGilchrist <timmcgil@gmail.com>
 copyright:           Copyright 2011 MailRank, Inc.
                      Portions copyright 2007-2010 Basho Technologies, Inc.
 category:            Network
@@ -110,8 +110,8 @@ library
     array >= 0.4,
     base == 4.*,
     parsec >= 3,
-    protocol-buffers >= 2.1.4 && < 2.2,
-    protocol-buffers-descriptor >= 2.1.4 && < 2.2
+    protocol-buffers >= 2.1.4 && < 2.3,
+    protocol-buffers-descriptor >= 2.1.4 && < 2.3
 
   ghc-options: -Wall -fno-warn-orphans
 
