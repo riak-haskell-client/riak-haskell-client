@@ -1,17 +1,22 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ParallelListComp  #-}
 
 module Main where
 
 import           Control.Monad
+import           Control.Applicative
 import qualified Data.Map                     as M
 import qualified Data.Set                     as S
+import qualified Data.Sequence                as Seq
 import           Data.List.NonEmpty           (NonEmpty(..))
+import           Data.Foldable                (toList)
 import           Data.Semigroup
 import           Data.Text                    (Text)
 import           Control.Concurrent           (threadDelay)
 import qualified Network.Riak                 as Riak
 import qualified Network.Riak.Basic           as B
+import qualified Network.Riak.Content         as B
 import qualified Network.Riak.CRDT            as C
 import qualified Network.Riak.CRDT.Riak       as C
 import qualified Network.Riak.Search          as S
@@ -33,7 +38,8 @@ tests = testGroup "Tests" [properties,
                            integrationalTests,
                            ping'o'death,
                            crdts,
-                           searches
+                           searches,
+                           bucketTypes
                           ]
 properties :: TestTree
 properties = testGroup "simple properties" Properties.tests
@@ -67,10 +73,11 @@ testClusterSimple = testCase "testClusterSimple" $ do
 testIndexedPutGet :: TestTree
 testIndexedPutGet = testCase "testIndexedPutGet" $ do
     rc <- Riak.connectToCluster [Riak.defaultClient]
-    let b = "riak-haskell-client-test"
+    let bt = Nothing
+        b = "riak-haskell-client-test"
         k = "test"
     keys <- Riak.inCluster rc $ \c -> do
-      _ <- J.putIndexed c b k [(IndexInt "someindex" 135)] Nothing
+      _ <- J.putIndexed c bt b k [(IndexInt "someindex" 135)] Nothing
           (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
           Default Default
       Riak.getByIndex c b (IndexQueryExactInt "someindex" 135)
@@ -173,3 +180,25 @@ getIndex = testCase "getIndex" $ do
              assertBool "all indeces" $ not (null all)
              assertEqual "set index" 1 (length one)
 
+bucketTypes :: TestTree
+bucketTypes = testCase "bucketTypes" $ do
+             conn <- Riak.connect Riak.defaultClient
+             [p0,p1,p2] <- sequence [ B.put conn bt b k Nothing o Default Default
+                                      | bt <- types | o <- [o0,o1,o2] ]
+             [r0,r1,r2] <- sequence [ B.get conn bt b k Default | bt <- types ]
+
+             assertBool "sound get Nothing"   (valok r0 o0)
+             assertBool "sound get untyped-1" (valok r1 o1)
+             assertBool "sound get untyped-2" (valok r2 o2)
+
+             assertEqual "put=get Nothing"   (Just p0) r0
+             assertEqual "put=get untyped-1" (Just p1) r1
+             assertEqual "put=get untyped-2" (Just p2) r2
+    where
+      (b,k) = ("xxx","0") :: (Bucket,Key)
+      types = [Nothing, Just "untyped-1", Just "untyped-2"] :: [Maybe BucketType]
+      [o0,o1,o2] = B.binary <$> ["A","B","C"] :: [B.Content]
+
+      valok :: Maybe (Seq.Seq B.Content, VClock) -> B.Content -> Bool
+      valok (Just (rs,_)) o = B.value o `elem` map B.value (toList rs)
+      valok _ _             = False

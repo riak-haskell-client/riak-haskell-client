@@ -101,23 +101,24 @@ addIndexes ix c =
 -- responsibility.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored.
-put :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored.
+put :: (IsContent c) => Connection
+    -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)
-put conn bucket key mvclock val w dw =
+put conn btype bucket key mvclock val w dw =
   putResp =<< exchange conn
-              (Req.put bucket key mvclock (toContent val) w dw True)
+              (Req.put btype bucket key mvclock (toContent val) w dw True)
 
 -- | Store an indexed value.
-putIndexed :: (IsContent c) => Connection -> Bucket -> Key
+putIndexed :: (IsContent c) => Connection -> Maybe BucketType -> Bucket -> Key
            -> [IndexValue]
            -> Maybe VClock -> c
            -> W -> DW -> IO ([c], VClock)
-putIndexed conn b k inds mvclock val w dw =
+putIndexed conn bt b k inds mvclock val w dw =
     putResp =<< exchange conn
-                  (Req.put b k mvclock (addIndexes inds (toContent val))
+                  (Req.put bt b k mvclock (addIndexes inds (toContent val))
                       w dw True)
 
 -- | Store many values.  This may return multiple conflicting siblings
@@ -125,13 +126,14 @@ putIndexed conn b k inds mvclock val w dw =
 -- value in each case, is your responsibility.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored.
-putMany :: (IsContent c) => Connection -> Bucket -> [(Key, Maybe VClock, c)]
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored.
+putMany :: (IsContent c) => Connection
+        -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)]
         -> W -> DW -> IO [([c], VClock)]
-putMany conn b puts w dw =
-  mapM putResp =<< pipeline conn (map (\(k,v,c) -> Req.put b k v (toContent c) w dw True) puts)
+putMany conn bt b puts w dw =
+  mapM putResp =<< pipeline conn (map (\(k,v,c) -> Req.put bt b k v (toContent c) w dw True) puts)
 
 putResp :: (IsContent c) => PutResponse -> IO ([c], VClock)
 putResp PutResponse{..} = do
@@ -145,31 +147,33 @@ putResp PutResponse{..} = do
 -- resolution.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored, and you will not be notified.
-put_ :: (IsContent c) => Connection -> Bucket -> Key -> Maybe VClock -> c
-    -> W -> DW -> IO ()
-put_ conn bucket key mvclock val w dw =
-  exchange_ conn (Req.put bucket key mvclock (toContent val) w dw False)
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored, and you will not be notified.
+put_ :: (IsContent c) => Connection
+     -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c
+     -> W -> DW -> IO ()
+put_ conn btype bucket key mvclock val w dw =
+  exchange_ conn (Req.put btype bucket key mvclock (toContent val) w dw False)
 
 -- | Store many values, without the possibility of conflict
 -- resolution.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored, and you will not be notified.
-putMany_ :: (IsContent c) => Connection -> Bucket -> [(Key, Maybe VClock, c)]
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored, and you will not be notified.
+putMany_ :: (IsContent c) => Connection
+         -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)]
          -> W -> DW -> IO ()
-putMany_ conn b puts w dw =
-  pipeline_ conn . map (\(k,v,c) -> Req.put b k v (toContent c) w dw False) $ puts
+putMany_ conn bt b puts w dw =
+  pipeline_ conn . map (\(k,v,c) -> Req.put bt b k v (toContent c) w dw False) $ puts
 
 -- | Retrieve a value.  This may return multiple conflicting siblings.
 -- Choosing among them is your responsibility.
-get :: (IsContent c) => Connection -> Bucket -> Key -> R
+get :: (IsContent c) => Connection -> Maybe BucketType -> Bucket -> Key -> R
     -> IO (Maybe ([c], VClock))
-get conn bucket key r = getResp =<< exchangeMaybe conn (Req.get bucket key r)
+get conn btype bucket key r = getResp =<< exchangeMaybe conn (Req.get btype bucket key r)
 
 -- | Retrieve list of keys matching some index query.
 getByIndex :: Connection -> Bucket -> IndexQuery
@@ -177,10 +181,11 @@ getByIndex :: Connection -> Bucket -> IndexQuery
 getByIndex conn b indq =
     getByIndexResp =<< exchangeMaybe conn (Req.getByIndex b indq)
 
-getMany :: (IsContent c) => Connection -> Bucket -> [Key] -> R
+getMany :: (IsContent c) => Connection
+        -> Maybe BucketType -> Bucket -> [Key] -> R
         -> IO [Maybe ([c], VClock)]
-getMany conn b ks r =
-    mapM getResp =<< pipelineMaybe conn (map (\k -> Req.get b k r) ks)
+getMany conn bt b ks r =
+    mapM getResp =<< pipelineMaybe conn (map (\k -> Req.get bt b k r) ks)
 
 getResp :: (IsContent c) => Maybe GetResponse -> IO (Maybe ([c], VClock))
 getResp resp =

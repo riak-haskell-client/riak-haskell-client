@@ -24,12 +24,18 @@ before_install:
   - ./rel/riak/bin/riak ping
   - ./rel/riak/bin/riak-admin wait-for-service riak_kv
   - ./rel/riak/bin/riak-admin wait-for-service yokozuna
+  # CRDTs
   - ./rel/riak/bin/riak-admin bucket-type create maps '{"props":{"datatype":"map"}}'
   - ./rel/riak/bin/riak-admin bucket-type create sets '{"props":{"datatype":"set"}}'
   - ./rel/riak/bin/riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
   - ./rel/riak/bin/riak-admin bucket-type activate maps
   - ./rel/riak/bin/riak-admin bucket-type activate sets
   - ./rel/riak/bin/riak-admin bucket-type activate counters
+  # plain bucket-types
+  - ./rel/riak/bin/riak-admin bucket-type create untyped-1 '{"props":{}}'
+  - ./rel/riak/bin/riak-admin bucket-type create untyped-2 '{"props":{}}'
+  - ./rel/riak/bin/riak-admin bucket-type activate untyped-1
+  - ./rel/riak/bin/riak-admin bucket-type activate untyped-2
   # +search
   - curl -XPUT 127.0.0.1:8098/search/index/set-ix -H 'Content-Type:application/json' -d '{"schema":"_yz_default"}'
   - ./rel/riak/bin/riak-admin bucket-type update sets '{"props":{"search_index":"set-ix"}}'

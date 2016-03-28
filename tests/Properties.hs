@@ -37,10 +37,10 @@ t_put_get (QCBucket b) (QCKey k) v =
     monadicIO $ assert . uncurry (==) =<< run act
   where
     act = withSomeConnection $ \c -> do
-            p <- Just <$> B.put c b k Nothing (binary v) Default Default
-            r <- B.get c b k Default
+            p <- Just <$> B.put c btype b k Nothing (binary v) Default Default
+            r <- B.get c btype b k Default
             return (p,r)
-
+    btype = Nothing
 
 put_delete_get :: QCBucket -> QCKey -> L.ByteString -> Property
 put_delete_get (QCBucket b) (QCKey k) v
@@ -49,10 +49,10 @@ put_delete_get (QCBucket b) (QCKey k) v
         assert $ isNothing r
     where
       act = withSomeConnection $ \c -> do
-              _ <- B.put c b k Nothing (binary v) Default Default
-              B.delete c b k Default
-              B.get c b k Default
-
+              _ <- B.put c bt b k Nothing (binary v) Default Default
+              B.delete c bt b k Default
+              B.get c bt b k Default
+      bt = Nothing :: Maybe BucketType
 
 tests :: [TestTree]
 tests = [

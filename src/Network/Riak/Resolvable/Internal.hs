@@ -98,23 +98,25 @@ instance (Resolvable a) => Resolvable (Maybe a) where
     resolve _          b        = b
     {-# INLINE resolve #-}
 
-type Get a = Connection -> Bucket -> Key -> R -> IO (Maybe ([a], VClock))
+type Get a = Connection -> Maybe BucketType -> Bucket -> Key -> R -> IO (Maybe ([a], VClock))
 
 get :: (Resolvable a) => Get a
-    -> (Connection -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
-get doGet conn bucket' key' r =
-    fmap (first resolveMany) `fmap` doGet conn bucket' key' r
+    -> (Connection -> Maybe BucketType -> Bucket -> Key -> R -> IO (Maybe (a, VClock)))
+get doGet conn btype bucket' key' r =
+    fmap (first resolveMany) `fmap` doGet conn btype bucket' key' r
 {-# INLINE get #-}
 
 getMany :: (Resolvable a) =>
-           (Connection -> Bucket -> [Key] -> R -> IO [Maybe ([a], VClock)])
-        -> Connection -> Bucket -> [Key] -> R -> IO [Maybe (a, VClock)]
-getMany doGet conn b ks r =
-    map (fmap (first resolveMany)) `fmap` doGet conn b ks r
+           (Connection -> Maybe BucketType -> Bucket -> [Key]
+                       -> R -> IO [Maybe ([a], VClock)])
+        -> Connection -> Maybe BucketType -> Bucket -> [Key]
+        -> R -> IO [Maybe (a, VClock)]
+getMany doGet conn bt b ks r =
+    map (fmap (first resolveMany)) `fmap` doGet conn bt b ks r
 {-# INLINE getMany #-}
 
 -- If Riak receives a put request with no vclock, and the given
--- bucket+key already exists, it will treat the missing vclock as
+-- type+bucket+key already exists, it will treat the missing vclock as
 -- stale, ignore the put request, and send back whatever values it
 -- currently knows about.  The same problem will arise if we send a
 -- vclock that really is stale, but that's much less likely to occur.
@@ -122,17 +124,17 @@ getMany doGet conn b ks r =
 -- of both put and putMany below, but we do not (can not?) handle the
 -- stale-vclock case.
 
-type Put a = Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+type Put a = Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
            -> IO ([a], VClock)
 
 put :: (Resolvable a) => Put a
-    -> Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+    -> Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
     -> IO (a, VClock)
-put doPut conn bucket' key' mvclock0 val0 w dw = do
+put doPut conn btype bucket' key' mvclock0 val0 w dw = do
   let go !i val mvclock
          | i == maxRetries = throwIO RetriesExceeded
          | otherwise       = do
-        (xs, vclock) <- doPut conn bucket' key' mvclock val w dw
+        (xs, vclock) <- doPut conn btype bucket' key' mvclock val w dw
         case xs of
           [x] | i > 0 || isJust mvclock -> return (x, vclock)
           (_:_) -> do debugValues "put" "conflict" xs
@@ -148,45 +150,47 @@ maxRetries = 64
 {-# INLINE maxRetries #-}
 
 put_ :: (Resolvable a) =>
-        (Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+        (Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
                     -> IO ([a], VClock))
-     -> Connection -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
+     -> Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> a -> W -> DW
      -> IO ()
-put_ doPut conn bucket' key' mvclock0 val0 w dw =
-    put doPut conn bucket' key' mvclock0 val0 w dw >> return ()
+put_ doPut conn btype bucket' key' mvclock0 val0 w dw =
+    put doPut conn btype bucket' key' mvclock0 val0 w dw >> return ()
 {-# INLINE put_ #-}
 
 modify :: (MonadIO m, Resolvable a) => Get a -> Put a
-       -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m (a,b))
+       -> Connection -> Maybe BucketType -> Bucket
+       -> Key -> R -> W -> DW -> (Maybe a -> m (a,b))
        -> m (a,b)
-modify doGet doPut conn bucket' key' r w dw act = do
-  a0 <- liftIO $ get doGet conn bucket' key' r
+modify doGet doPut conn btype bucket' key' r w dw act = do
+  a0 <- liftIO $ get doGet conn btype bucket' key' r
   (a,b) <- act (fst <$> a0)
-  (a',_) <- liftIO $ put doPut conn bucket' key' (snd <$> a0) a w dw
+  (a',_) <- liftIO $ put doPut conn btype bucket' key' (snd <$> a0) a w dw
   return (a',b)
 {-# INLINE modify #-}
 
 modify_ :: (MonadIO m, Resolvable a) => Get a -> Put a
-        -> Connection -> Bucket -> Key -> R -> W -> DW -> (Maybe a -> m a)
+        -> Connection -> Maybe BucketType -> Bucket
+        -> Key -> R -> W -> DW -> (Maybe a -> m a)
         -> m a
-modify_ doGet doPut conn bucket' key' r w dw act = do
-  a0 <- liftIO $ get doGet conn bucket' key' r
+modify_ doGet doPut conn btype bucket' key' r w dw act = do
+  a0 <- liftIO $ get doGet conn btype bucket' key' r
   a <- act (fst <$> a0)
-  liftIO $ fst <$> put doPut conn bucket' key' (snd <$> a0) a w dw
+  liftIO $ fst <$> put doPut conn btype bucket' key' (snd <$> a0) a w dw
 {-# INLINE modify_ #-}
 
 putMany :: (Resolvable a) =>
-           (Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
+           (Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
                        -> IO [([a], VClock)])
-        -> Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
+        -> Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
         -> IO [(a, VClock)]
-putMany doPut conn bucket' puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
+putMany doPut conn btype bucket' puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts0
  where
   go _ acc [] = return . map snd . sortBy (compare `on` fst) $ acc
   go !i acc puts
       | i == maxRetries = throwIO RetriesExceeded
       | otherwise = do
-    rs <- doPut conn bucket' (map snd puts) w dw
+    rs <- doPut conn btype bucket' (map snd puts) w dw
     let (conflicts, ok) = partitionEithers $ zipWith mush puts rs
     unless (null conflicts) $
       debugValues "putMany" "conflicts" conflicts
@@ -200,11 +204,12 @@ putMany doPut conn bucket' puts0 w dw = go (0::Int) [] . zip [(0::Int)..] $ puts
 {-# INLINE putMany #-}
 
 putMany_ :: (Resolvable a) =>
-            (Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
+            (Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW
                         -> IO [([a], VClock)])
-         -> Connection -> Bucket -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
-putMany_ doPut conn bucket' puts0 w dw =
-    putMany doPut conn bucket' puts0 w dw >> return ()
+         -> Connection -> Maybe BucketType -> Bucket
+         -> [(Key, Maybe VClock, a)] -> W -> DW -> IO ()
+putMany_ doPut conn btype bucket' puts0 w dw =
+    putMany doPut conn btype bucket' puts0 w dw >> return ()
 {-# INLINE putMany_ #-}
 
 resolveMany' :: (Resolvable a) => a -> [a] -> a

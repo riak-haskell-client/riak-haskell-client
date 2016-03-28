@@ -77,40 +77,40 @@ getServerInfo conn = exchange conn Req.getServerInfo
 
 -- | Retrieve a value.  This may return multiple conflicting siblings.
 -- Choosing among them is your responsibility.
-get :: Connection -> T.Bucket -> T.Key -> R
+get :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> R
     -> IO (Maybe (Seq.Seq Content, VClock))
-get conn bucket key r = Resp.get <$> exchangeMaybe conn (Req.get bucket key r)
+get conn btype bucket key r = Resp.get <$> exchangeMaybe conn (Req.get btype bucket key r)
 
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
 -- responsibility.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored.
-put :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored.
+put :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> Maybe T.VClock
     -> Content -> W -> DW
     -> IO (Seq.Seq Content, VClock)
-put conn bucket key mvclock cont w dw =
-  Resp.put <$> exchange conn (Req.put bucket key mvclock cont w dw True)
+put conn btype bucket key mvclock cont w dw =
+  Resp.put <$> exchange conn (Req.put btype bucket key mvclock cont w dw True)
 
 -- | Store a single value, without the possibility of conflict
 -- resolution.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored, and you will not be notified.
-put_ :: Connection -> T.Bucket -> T.Key -> Maybe T.VClock
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored, and you will not be notified.
+put_ :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> Maybe T.VClock
      -> Content -> W -> DW
      -> IO ()
-put_ conn bucket key mvclock cont w dw =
-  exchange_ conn (Req.put bucket key mvclock cont w dw False)
+put_ conn btype bucket key mvclock cont w dw =
+  exchange_ conn (Req.put btype bucket key mvclock cont w dw False)
 
 -- | Delete a value.
-delete :: Connection -> T.Bucket -> T.Key -> RW -> IO ()
-delete conn bucket key rw = exchange_ conn $ Req.delete bucket key rw
+delete :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> RW -> IO ()
+delete conn btype bucket key rw = exchange_ conn $ Req.delete btype bucket key rw
 
 -- List the buckets in the cluster.
 --

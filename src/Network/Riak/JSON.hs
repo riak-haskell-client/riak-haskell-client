@@ -61,75 +61,77 @@ instance (FromJSON a, ToJSON a) => V.IsContent (JSON a) where
 
 -- | Retrieve a value.  This may return multiple conflicting siblings.
 -- Choosing among them is your responsibility.
-get :: (FromJSON c, ToJSON c) => Connection -> Bucket -> Key -> R
+get :: (FromJSON c, ToJSON c) => Connection
+    -> Maybe BucketType -> Bucket -> Key -> R
     -> IO (Maybe ([c], VClock))
-get conn bucket' key' r = fmap convert <$> V.get conn bucket' key' r
+get conn btype bucket' key' r = fmap convert <$> V.get conn btype bucket' key' r
 
-getMany :: (FromJSON c, ToJSON c) => Connection -> Bucket -> [Key] -> R
-    -> IO [Maybe ([c], VClock)]
-getMany conn bucket' ks r = map (fmap convert) <$> V.getMany conn bucket' ks r
+getMany :: (FromJSON c, ToJSON c) => Connection
+        -> Maybe BucketType -> Bucket -> [Key] -> R
+        -> IO [Maybe ([c], VClock)]
+getMany conn btype bucket' ks r = map (fmap convert) <$> V.getMany conn btype bucket' ks r
 
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
 -- responsibility.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored.
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored.
 put :: (FromJSON c, ToJSON c) =>
-       Connection -> Bucket -> Key -> Maybe VClock -> c
+       Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ([c], VClock)
-put conn bucket' key' mvclock val w dw =
-    convert <$> V.put conn bucket' key' mvclock (json val) w dw
+put conn btype bucket' key' mvclock val w dw =
+    convert <$> V.put conn btype bucket' key' mvclock (json val) w dw
 
 -- | Store a single value indexed.
 putIndexed :: (FromJSON c, ToJSON c)
-           => Connection -> Bucket -> Key -> [IndexValue]
+           => Connection -> Maybe BucketType -> Bucket -> Key -> [IndexValue]
            -> Maybe VClock -> c
            -> W -> DW -> IO ([c], VClock)
-putIndexed conn bucket' key' ixs mvclock val w dw =
-    convert <$> V.putIndexed conn bucket' key' ixs mvclock (json val) w dw
+putIndexed conn btype bucket' key' ixs mvclock val w dw =
+    convert <$> V.putIndexed conn btype bucket' key' ixs mvclock (json val) w dw
 
 -- | Store a single value, without the possibility of conflict
 -- resolution.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored, and you will not be notified.
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored, and you will not be notified.
 put_ :: (FromJSON c, ToJSON c) =>
-       Connection -> Bucket -> Key -> Maybe VClock -> c
+       Connection -> Maybe BucketType -> Bucket -> Key -> Maybe VClock -> c
     -> W -> DW -> IO ()
-put_ conn bucket' key' mvclock val w dw =
-    V.put_ conn bucket' key' mvclock (json val) w dw
+put_ conn btype bucket' key' mvclock val w dw =
+    V.put_ conn btype bucket' key' mvclock (json val) w dw
 
 -- | Store many values.  This may return multiple conflicting siblings
 -- for each value stored.  Choosing among them, and storing a new
 -- value in each case, is your responsibility.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored.
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored.
 putMany :: (FromJSON c, ToJSON c) =>
-           Connection -> Bucket -> [(Key, Maybe VClock, c)]
+           Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)]
         -> W -> DW -> IO [([c], VClock)]
-putMany conn bucket' puts w dw =
-    map convert <$> V.putMany conn bucket' (map f puts) w dw
+putMany conn btype bucket' puts w dw =
+    map convert <$> V.putMany conn btype bucket' (map f puts) w dw
   where f (k,v,c) = (k,v,json c)
 
 -- | Store many values, without the possibility of conflict
 -- resolution.
 --
 -- You should /only/ supply 'Nothing' as a 'T.VClock' if you are sure
--- that the given bucket+key combination does not already exist.  If
--- you omit a 'T.VClock' but the bucket+key /does/ exist, your value
--- will not be stored, and you will not be notified.
+-- that the given type+bucket+key combination does not already exist.
+-- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
+-- value will not be stored, and you will not be notified.
 putMany_ :: (FromJSON c, ToJSON c) =>
-            Connection -> Bucket -> [(Key, Maybe VClock, c)]
+            Connection -> Maybe BucketType -> Bucket -> [(Key, Maybe VClock, c)]
          -> W -> DW -> IO ()
-putMany_ conn bucket' puts w dw = V.putMany_ conn bucket' (map f puts) w dw
+putMany_ conn btype bucket' puts w dw = V.putMany_ conn btype bucket' (map f puts) w dw
   where f (k,v,c) = (k,v,json c)
 
 convert :: ([JSON a], VClock) -> ([a], VClock)
