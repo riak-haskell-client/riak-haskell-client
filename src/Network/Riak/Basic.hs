@@ -112,13 +112,13 @@ put_ conn btype bucket key mvclock cont w dw =
 delete :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> RW -> IO ()
 delete conn btype bucket key rw = exchange_ conn $ Req.delete btype bucket key rw
 
--- List the buckets in the cluster.
+-- | List the buckets in the cluster.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
 listBuckets :: Connection -> Maybe BucketType -> IO (Seq.Seq T.Bucket)
 listBuckets conn btype = Resp.listBuckets <$> exchange conn (Req.listBuckets btype)
 
--- Fold over the keys in a bucket.
+-- | Fold over the keys in a bucket.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
 foldKeys :: (MonadIO m) => Connection -> Maybe BucketType -> Bucket
