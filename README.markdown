@@ -6,7 +6,7 @@ This library is a fast Haskell client for the
 It uses Riak's [protobuf API](http://docs.basho.com/riak/latest/dev/references/protocol-buffers/) for
 optimal performance.
 
-This project was originally the work of Bryan O'Sullivan (<bos@serpentine.com>), and then [Janrain, Inc.](http://janrain.com/), it is now being maintained by Mark Hibberd (<mark@hibberd.id.au>).
+This project was originally the work of Bryan O'Sullivan (<bos@serpentine.com>), and then [Janrain, Inc.](http://janrain.com/), it is now being maintained by Mark Hibberd (<mark@hibberd.id.au>) and Tim McGilchrist (<timmcgil@gmail.com>).
 
 # Join in!
 
