@@ -11,8 +11,11 @@ module Network.Riak.Cluster
     , Riak.defaultClient
     ) where
 
+import           Control.Concurrent.STM        (atomically)
+import           Control.Concurrent.STM.TMVar
 import           Control.Exception
 import           Control.Exception.Enclosed
+import           Control.Monad.Base            (liftBase)
 import           Control.Monad.Catch           (MonadThrow (..))
 import           Control.Monad.Trans.Control   (MonadBaseControl)
 import           Data.Typeable
@@ -21,6 +24,7 @@ import qualified Data.Vector                   as V
 import           Network.Riak                  (Connection)
 import qualified Network.Riak                  as Riak
 import qualified Network.Riak.Connection.Pool  as Riak
+import           System.Random                 (split)
 import           System.Random.Mersenne.Pure64
 import           System.Random.Shuffle         (shuffle')
 
@@ -28,9 +32,8 @@ import           System.Random.Shuffle         (shuffle')
 data Cluster = Cluster
     { clusterPools :: Vector Riak.Pool
       -- ^ Vector of connection pools to riak cluster nodes
-    , clusterGen   :: PureMT
+    , clusterGen   :: TMVar PureMT
     }
-    deriving (Show)
 
 -- | Error that gets thrown whenever operation couldn't succeed with
 -- any node.
@@ -48,7 +51,8 @@ connectToCluster clients = do
 -- 'Riak.Pool' objects
 connectToClusterWithPools :: [Riak.Pool] -> IO Cluster
 connectToClusterWithPools pools = do
-    mt <- newPureMT
+    gen <- newPureMT
+    mt <- atomically (newTMVar gen)
     return (Cluster (V.fromList pools) mt)
 
 -- | Tries to run some operation for a random riak node. If it fails,
@@ -57,9 +61,15 @@ connectToClusterWithPools pools = do
 inCluster :: (MonadThrow m, MonadBaseControl IO m)
           => Cluster -> (Connection -> m a) -> m a
 inCluster rc f = do
+    gen <- liftBase $ atomically $ do
+      let tMT = clusterGen rc
+      mt <- takeTMVar tMT
+      let (mt1, mt2) = split mt
+      putTMVar tMT mt1
+      return mt1
     let pools = shuffle' (V.toList (clusterPools rc))
                          (V.length (clusterPools rc))
-                         (clusterGen rc)
+                         gen
     go pools []
   where
     go [] errors = throwM (InClusterError errors)
