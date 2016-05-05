@@ -19,8 +19,6 @@ import           Control.Monad.Base            (liftBase)
 import           Control.Monad.Catch           (MonadThrow (..))
 import           Control.Monad.Trans.Control   (MonadBaseControl)
 import           Data.Typeable
-import           Data.Vector                   (Vector)
-import qualified Data.Vector                   as V
 import           Network.Riak                  (Connection)
 import qualified Network.Riak                  as Riak
 import qualified Network.Riak.Connection.Pool  as Riak
@@ -30,7 +28,7 @@ import           System.Random.Shuffle         (shuffle')
 
 -- | Datatype holding connection-pool with all known cluster nodes
 data Cluster = Cluster
-    { clusterPools :: Vector Riak.Pool
+    { clusterPools :: [Riak.Pool]
       -- ^ Vector of connection pools to riak cluster nodes
     , clusterGen   :: TMVar PureMT
     }
@@ -53,7 +51,7 @@ connectToClusterWithPools :: [Riak.Pool] -> IO Cluster
 connectToClusterWithPools pools = do
     gen <- newPureMT
     mt <- atomically (newTMVar gen)
-    return (Cluster (V.fromList pools) mt)
+    return (Cluster pools mt)
 
 -- | Tries to run some operation for a random riak node. If it fails,
 -- tries all other nodes. If all other nodes fail - throws
@@ -67,8 +65,8 @@ inCluster rc f = do
       let (mt1, mt2) = split mt
       putTMVar tMT mt1
       return mt1
-    let pools = shuffle' (V.toList (clusterPools rc))
-                         (V.length (clusterPools rc))
+    let pools = shuffle' (clusterPools rc)
+                         (length (clusterPools rc))
                          gen
     go pools []
   where
