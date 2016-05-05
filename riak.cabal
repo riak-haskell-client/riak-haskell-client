@@ -120,7 +120,6 @@ library
                 protocol-buffers              >= 2.1.4 && < 2.3,
                 pureMD5,
                 random,
-                random-shuffle                >= 0.0.4 && < 0.1,
                 riak-protobuf                 == 0.21.*,
                 semigroups                    >= 0.16,
                 stm                           == 2.4.*,

@@ -22,9 +22,7 @@ import           Data.Typeable
 import           Network.Riak                  (Connection)
 import qualified Network.Riak                  as Riak
 import qualified Network.Riak.Connection.Pool  as Riak
-import           System.Random                 (split)
 import           System.Random.Mersenne.Pure64
-import           System.Random.Shuffle         (shuffle')
 
 -- | Datatype holding connection-pool with all known cluster nodes
 data Cluster = Cluster
@@ -58,20 +56,24 @@ connectToClusterWithPools pools = do
 -- 'InClusterError' exception.
 inCluster :: (MonadThrow m, MonadBaseControl IO m)
           => Cluster -> (Connection -> m a) -> m a
-inCluster rc f = do
-    gen <- liftBase $ atomically $ do
-      let tMT = clusterGen rc
+inCluster Cluster{clusterPools=pools, clusterGen=tMT} f = do
+    rnd <- liftBase $ atomically $ do
       mt <- takeTMVar tMT
-      let (mt1, mt2) = split mt
-      putTMVar tMT mt1
-      return mt1
-    let pools = shuffle' (clusterPools rc)
-                         (length (clusterPools rc))
-                         gen
-    go pools []
+      let (i, mt') = randomInt mt
+      putTMVar tMT mt'
+      return i
+    let n = if null pools then 0 else rnd `mod` length pools
+        -- we rotate pool vector by n
+        pools' = rotateL n pools
+    go pools' []
   where
     go [] errors = throwM (InClusterError errors)
     go (p:ps) es = Riak.withConnectionM p $ \c -> do
         er <- tryAny (f c)
         either (\err -> go ps (err:es))
                return er
+
+rotateL :: Int -> [a] -> [a]
+rotateL i xs = right ++ left
+  where
+    (left, right) = splitAt i xs
