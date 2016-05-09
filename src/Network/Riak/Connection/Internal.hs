@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables #-}
+{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
@@ -40,7 +40,7 @@ module Network.Riak.Connection.Internal
 import Control.Concurrent (forkIO)
 import Control.Concurrent.Chan (newChan, readChan, writeChan)
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
-import Control.Exception (Exception, IOException, throw)
+import Control.Exception (Exception, IOException, throwIO)
 import Control.Monad (forM_, replicateM, replicateM_)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
@@ -200,15 +200,15 @@ putRequest req = do
 
 instance Exception ErrorResponse
 
-throwError :: ErrorResponse -> a
-throwError = throw
+throwError :: ErrorResponse -> IO a
+throwError = throwIO
 
-getResponse :: (Response a) => T.MessageTag -> Get a
-getResponse expected = do
-  tag <- getTag
+getResponse :: Response a => Connection -> Int64 -> a -> T.MessageTag -> IO a
+getResponse conn len v expected = do
+  tag <- recvGet conn getTag
   case undefined of
-   _| tag == expected        -> messageGetM
-    | tag == T.ErrorResponse -> throwError `fmap` messageGetM
+   _| tag == expected        -> recvGetN conn (len-1) messageGetM
+    | tag == T.ErrorResponse -> throwError =<< recvGetN conn (len-1) messageGetM
     | otherwise ->
         moduleError "getResponse" $ "received unexpected response: expected " ++
                                     show expected ++ ", received " ++ show tag
@@ -253,7 +253,7 @@ recvResponse conn = debugRecv showM $ go undefined where
   go :: Response b => b -> IO b
   go dummy = do
     len <- fromIntegral `fmap` recvGet conn getWord32be
-    recvGetN conn len (getResponse (messageTag dummy))
+    getResponse conn len dummy (messageTag dummy)
 
 recvResponse_ :: Connection -> T.MessageTag -> IO ()
 recvResponse_ conn expected = debugRecv show $ do
@@ -269,14 +269,14 @@ recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
     let tag = messageTag dummy
     if len == 1
       then recvCorrectTag "recvMaybeResponse" conn tag 1 Nothing
-      else Just `fmap` recvGetN conn len (getResponse tag)
+      else Just `fmap` getResponse conn len dummy tag
 
 recvCorrectTag :: String -> Connection -> T.MessageTag -> Int64 -> a -> IO a
 recvCorrectTag func conn expected len v = do
   tag <- recvGet conn getTag
   case undefined of
    _| tag == expected -> recvExactly conn (len-1) >> return v
-    | tag == T.ErrorResponse -> throwError `fmap` recvGetN conn len messageGetM
+    | tag == T.ErrorResponse -> throwError =<< recvGetN conn len messageGetM
     | otherwise -> moduleError func $
                    "received unexpected response: expected " ++
                    show expected ++ ", received " ++ show tag

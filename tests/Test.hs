@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ParallelListComp  #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
@@ -13,10 +14,13 @@ import           Data.List.NonEmpty           (NonEmpty(..))
 import           Data.Foldable                (toList)
 import           Data.Semigroup
 import           Data.Text                    (Text)
+import           Control.Applicative
 import           Control.Concurrent           (threadDelay)
+import           Control.Exception
 import qualified Network.Riak                 as Riak
 import qualified Network.Riak.Basic           as B
 import qualified Network.Riak.Content         as B
+import qualified Network.Riak.Content         as B (binary,Content)
 import qualified Network.Riak.CRDT            as C
 import qualified Network.Riak.CRDT.Riak       as C
 import qualified Network.Riak.Search          as S
@@ -24,8 +28,10 @@ import qualified Network.Riak.Cluster         as Riak
 import qualified Network.Riak.JSON            as J
 import           Network.Riak.Resolvable      (ResolvableMonoid (..))
 import           Network.Riak.Types           hiding (key)
+import qualified Network.Riak.Protocol.ErrorResponse as ER
 import qualified Properties
 import qualified CRDTProperties               as CRDT
+import           Common
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
@@ -37,6 +43,7 @@ tests :: TestTree
 tests = testGroup "Tests" [properties,
                            integrationalTests,
                            ping'o'death,
+                           exceptions,
                            crdts,
                            searches,
                            bucketTypes
@@ -202,3 +209,32 @@ bucketTypes = testCase "bucketTypes" $ do
       valok :: Maybe (Seq.Seq B.Content, VClock) -> B.Content -> Bool
       valok (Just (rs,_)) o = B.value o `elem` map B.value (toList rs)
       valok _ _             = False
+
+
+exceptions :: TestTree
+exceptions = testGroup "exceptions" [
+              testCase "correct put"  . shouldBeOK . withSomeConnection $ put,
+              testCase "correct put_" . shouldBeOK . withSomeConnection $ put_,
+              testCase "invalid put"  . shouldThrow . withSomeConnection $ putErr,
+              testCase "invalid put_" . shouldThrow . withSomeConnection $ put_Err
+             ]
+    where
+      put     = putSome B.put  btype
+      put_    = putSome B.put_ btype
+      putErr  = putSome B.put  noBtype
+      put_Err = putSome B.put_ noBtype
+
+      putSome :: (Connection -> Maybe BucketType -> Bucket -> Key
+                             -> Maybe VClock -> B.Content -> Quorum -> Quorum -> IO a)
+              -> Maybe BucketType -> Connection -> IO a
+      putSome f bt c = f c bt buck key Nothing val Default Default
+
+      shouldBeOK act  = act >> assertBool "ok" True
+      shouldThrow act = catch (act >> assertBool "exception" False) (\(e::ER.ErrorResponse) -> pure ())
+
+      btype   = Just "untyped-1"
+      noBtype = Just "no such type"
+      buck = "xxx"
+      key = "0"
+      val = B.binary ""
+
