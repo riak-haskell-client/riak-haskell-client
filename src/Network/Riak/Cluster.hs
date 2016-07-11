@@ -68,10 +68,8 @@ inCluster Cluster{clusterPools=pools, clusterGen=tMT} f = do
     go pools' []
   where
     go [] errors = throwM (InClusterError errors)
-    go (p:ps) es = Riak.withConnectionM p $ \c -> do
-        er <- tryAny (f c)
-        either (\err -> go ps (err:es))
-               return er
+    go (p:ps) es =
+        catchAny (Riak.withConnectionM p f) (\e -> go ps (e:es))
 
 rotateL :: Int -> [a] -> [a]
 rotateL i xs = right ++ left
