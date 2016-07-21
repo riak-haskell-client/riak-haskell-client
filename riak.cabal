@@ -1,5 +1,5 @@
 name:                riak
-version:             1.0.1.1
+version:             1.1.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -99,32 +99,32 @@ library
     Network.Riak.Tag
 
   build-depends:
-                aeson                         >= 0.8 && < 0.12,
+                aeson                         >= 0.8      && < 0.12,
                 attoparsec                    >= 0.12.1.6 && < 0.14,
-                base                          >= 3 && <5,
+                base                          >= 3        && <5,
                 binary,
-                blaze-builder                 >= 0.3 && <= 0.5,
+                blaze-builder                 >= 0.3      && <= 0.5,
                 bytestring,
                 containers,
                 data-default-class            >= 0.0.1,
                 deepseq                       >= 1.3,
-                enclosed-exceptions           >= 1.0.1.1 && <= 1.1,
-                exceptions                    >= 0.8.0.2 && <= 0.9,
+                enclosed-exceptions           >= 1.0.1.1  && <= 1.1,
+                exceptions                    >= 0.8.0.2  && <= 0.9,
                 hashable                      >= 1.2.3,
-                transformers                  >= 0.3 && < 0.6,
+                transformers                  >= 0.3      && < 0.6,
                 transformers-base             == 0.4.*,
-                mersenne-random-pure64        >= 0.2.0.4 && < 0.3,
-                monad-control                 >= 1.0.0.4 && < 1.1,
+                mersenne-random-pure64        >= 0.2.0.4  && < 0.3,
+                monad-control                 >= 1.0.0.4  && < 1.1,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
-                protocol-buffers              >= 2.1.4 && < 2.5,
+                protocol-buffers              >= 2.1.4    && < 2.5,
                 pureMD5,
                 random,
                 riak-protobuf                 == 0.21.*,
                 semigroups                    >= 0.16,
                 stm                           == 2.4.*,
                 text                          == 1.2.*,
-                time                          >= 1.4.2 && < 1.7,
+                time                          >= 1.4.2     && < 1.7,
                 vector                        >= 0.10.12.3 && < 0.12,
                 unordered-containers          >= 0.2.5
 
