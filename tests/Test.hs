@@ -6,31 +6,31 @@
 module Main where
 
 import           Control.Monad
+#if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
-import qualified Data.Map                     as M
-import qualified Data.Set                     as S
-import qualified Data.Sequence                as Seq
-import           Data.List.NonEmpty           (NonEmpty(..))
-import           Data.Foldable                (toList)
+#endif
+import qualified Data.Map as M
+import qualified Data.Set as S
+import qualified Data.Sequence as Seq
+import           Data.List.NonEmpty (NonEmpty(..))
+import           Data.Foldable (toList)
 import           Data.Semigroup
-import           Data.Text                    (Text)
-import           Control.Applicative
-import           Control.Concurrent           (threadDelay)
+import           Data.Text (Text)
+import           Control.Concurrent (threadDelay)
 import           Control.Exception
-import qualified Network.Riak                 as Riak
-import qualified Network.Riak.Basic           as B
-import qualified Network.Riak.Content         as B
-import qualified Network.Riak.Content         as B (binary,Content)
-import qualified Network.Riak.CRDT            as C
-import qualified Network.Riak.CRDT.Riak       as C
-import qualified Network.Riak.Search          as S
-import qualified Network.Riak.Cluster         as Riak
-import qualified Network.Riak.JSON            as J
-import           Network.Riak.Resolvable      (ResolvableMonoid (..))
-import           Network.Riak.Types           hiding (key)
+import qualified Network.Riak as Riak
+import qualified Network.Riak.Basic as B
+import qualified Network.Riak.Content as B (binary,Content,value)
+import qualified Network.Riak.CRDT as C
+import qualified Network.Riak.CRDT.Riak as C
+import qualified Network.Riak.Search as S
+import qualified Network.Riak.Cluster as Riak
+import qualified Network.Riak.JSON as J
+import           Network.Riak.Resolvable (ResolvableMonoid (..))
+import           Network.Riak.Types hiding (key)
 import qualified Network.Riak.Protocol.ErrorResponse as ER
 import qualified Properties
-import qualified CRDTProperties               as CRDT
+import qualified CRDTProperties as CRDT
 import           Common
 import           Test.Tasty
 import           Test.Tasty.HUnit
@@ -140,7 +140,7 @@ map_ = testCase "map update" $ do
                          $ C.xlookup "X" C.MapMapTag d
     where
       act c = do C.mapSendUpdate c btype buck key [mapOp]
-                 C.get c btype buck key 
+                 C.get c btype buck key
 
       btype = "maps"
       fieldX = C.MapField C.MapMapTag "X"
@@ -182,9 +182,9 @@ search = testCase "basic searchRaw" $ do
 getIndex :: TestTree
 getIndex = testCase "getIndex" $ do
              conn <- Riak.connect Riak.defaultClient
-             all <- S.getIndex conn Nothing
+             all' <- S.getIndex conn Nothing
              one <- S.getIndex conn (Just "set-ix")
-             assertBool "all indeces" $ not (null all)
+             assertBool "all indeces" $ not (null all')
              assertEqual "set index" 1 (length one)
 
 bucketTypes :: TestTree
@@ -230,11 +230,10 @@ exceptions = testGroup "exceptions" [
       putSome f bt c = f c bt buck key Nothing val Default Default
 
       shouldBeOK act  = act >> assertBool "ok" True
-      shouldThrow act = catch (act >> assertBool "exception" False) (\(e::ER.ErrorResponse) -> pure ())
+      shouldThrow act = catch (act >> assertBool "exception" False) (\(_e::ER.ErrorResponse) -> pure ())
 
       btype   = Just "untyped-1"
       noBtype = Just "no such type"
       buck = "xxx"
       key = "0"
       val = B.binary ""
-

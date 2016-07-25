@@ -1,4 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
@@ -20,7 +21,9 @@ module Network.Riak.Tag
 import Data.Binary.Put (Put, putWord8)
 import Data.Word (Word8)
 import qualified Data.HashMap.Strict as HM
+#if __GLASGOW_HASKELL__ <= 708
 import Control.Applicative
+#endif
 import Data.Tuple (swap)
 import Network.Riak.Protocol.DeleteRequest
 import Network.Riak.Protocol.ErrorResponse
@@ -394,4 +397,3 @@ messageCodes = [
  -- (254,RpbAuthResp),
  -- (255,RpbStartTls)
  ]
-

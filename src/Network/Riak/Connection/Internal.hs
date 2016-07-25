@@ -204,7 +204,7 @@ throwError :: ErrorResponse -> IO a
 throwError = throwIO
 
 getResponse :: Response a => Connection -> Int64 -> a -> T.MessageTag -> IO a
-getResponse conn len v expected = do
+getResponse conn len _ expected = do
   tag <- recvGet conn getTag
   case undefined of
    _| tag == expected        -> recvGetN conn (len-1) messageGetM

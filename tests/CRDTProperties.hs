@@ -4,7 +4,7 @@
 --     license:   Apache
 --
 {-# LANGUAGE OverloadedStrings, FlexibleContexts, TupleSections, ScopedTypeVariables,
-    GADTs, StandaloneDeriving, UndecidableInstances, PatternGuards, MultiParamTypeClasses #-}
+    GADTs, StandaloneDeriving, UndecidableInstances, PatternGuards, MultiParamTypeClasses, CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module CRDTProperties (prop_counters,
                        prop_sets,
@@ -16,7 +16,9 @@ module CRDTProperties (prop_counters,
 -- command output to list :: [Maybe RiakReturnValue].  Then see it we
 -- get the same list of results simulating Riak in this module.
 
+#if __GLASGOW_HASKELL__ <= 708
 import Control.Applicative
+#endif
 import Control.Monad.RWS
 import Data.ByteString.Lazy (ByteString)
 import Data.Default.Class
@@ -181,7 +183,8 @@ instance Arbitrary C.MapValueOp where
                         C.MapFlagOp <$> arbitrary ]
 
 -- TODO Fix this
-instance Arbitrary C.Map
+instance Arbitrary C.Map where
+  arbitrary = pure (C.Map Map.empty)
 
 -- | Abstract machine.
 -- Yields a value on 'Get', modifies state on 'Update'.
