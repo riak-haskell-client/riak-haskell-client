@@ -2,15 +2,18 @@
 --     copyright: (c) 2016 Sentenai
 --     author:    Antonio Nikishaev <me@lelf.lu>
 --     license:   Apache
--- 
+--
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE CPP #-}
 module Network.Riak.CRDT.Response (get) where
 
+#if __GLASGOW_HASKELL__ <= 708
 import Control.Applicative ((<$>))
+import Data.Traversable
+#endif
 import qualified Data.Sequence as Seq
 import qualified Data.Map as Map
 import Data.Foldable (toList)
-import Data.Traversable
 import Data.Maybe
 import Network.Riak.Protocol.DtFetchResponse (DtFetchResponse,value,type')
 import Network.Riak.Protocol.DtFetchResponse.DataType (DataType(..))
@@ -53,4 +56,3 @@ typeToTag M.SET      = MapSetTag
 typeToTag M.REGISTER = MapRegisterTag
 typeToTag M.FLAG     = MapFlagTag
 typeToTag M.MAP      = MapMapTag
-
