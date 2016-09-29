@@ -57,6 +57,7 @@ import Network.Riak.Protocol.SearchQueryRequest
 import Network.Riak.Protocol.SearchQueryResponse
 import Network.Riak.Protocol.YzIndexGetRequest
 import Network.Riak.Protocol.YzIndexGetResponse
+import Network.Riak.Protocol.YzIndexPutRequest
 import Network.Riak.Types.Internal as Types
 import Text.ProtocolBuffers.Get (Get, getWord8)
 
@@ -310,6 +311,14 @@ instance Response YzIndexGetResponse
 
 instance Exchange YzIndexGetRequest YzIndexGetResponse
 
+instance Request YzIndexPutRequest where
+  expectedResponse _ = Types.YokozunaIndexPutRequest
+
+instance Tagged YzIndexPutRequest where
+  messageTag _ = Types.YokozunaIndexPutRequest
+
+instance Exchange YzIndexPutRequest PutResponse
+
 putTag :: MessageTag -> Put
 putTag m = putWord8 $ message2code HM.! m
 {-# INLINE putTag #-}
@@ -384,7 +393,7 @@ messageCodes = [
  -- (53,CounterGetResp),
  (54, Types.YokozunaIndexGetRequest),
  (55, Types.YokozunaIndexGetResponse),
- -- (56,YokozunaIndexPutReq),
+ (56, Types.YokozunaIndexPutRequest),
  -- (57,YokozunaIndexDeleteReq),
  -- (58,YokozunaSchemaGetReq),
  -- (59,YokozunaSchemaGetResp),
