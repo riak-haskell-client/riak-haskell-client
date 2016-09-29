@@ -36,6 +36,7 @@ module Network.Riak.Types.Internal
     , IndexInfo
     , VClock(..)
     , Job(..)
+    , Timeout
     -- * Quorum management
     , Quorum(..)
     , DW
@@ -180,6 +181,9 @@ type Score = Double
 -- | Search index info
 type IndexInfo = YzIndex.YzIndex
 
+-- | Timeout in milliseconds
+type Timeout = Word32
+
 -- | Solr search result
 data SearchResult = SearchResult {
       bucketType :: BucketType, -- ^ bucket type
@@ -225,6 +229,7 @@ data MessageTag = ErrorResponse
                 | SearchQueryResponse
                 | YokozunaIndexGetRequest
                 | YokozunaIndexGetResponse
+                | YokozunaIndexPutRequest
                   deriving (Eq, Show, Generic)
 
 instance Hashable MessageTag
