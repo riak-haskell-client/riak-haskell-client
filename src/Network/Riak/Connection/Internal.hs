@@ -40,7 +40,7 @@ module Network.Riak.Connection.Internal
 import Control.Concurrent (forkIO)
 import Control.Concurrent.Chan (newChan, readChan, writeChan)
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
-import Control.Exception (Exception, IOException, throwIO)
+import Control.Exception (Exception, IOException, throwIO, bracketOnError)
 import Control.Monad (forM_, replicateM, replicateM_)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
@@ -108,13 +108,16 @@ connect cli0 = do
              (a:_) -> a
              _     -> moduleError "connect" $
                       "could not look up server " ++ host ++ ":" ++ port
-  onIOException "connect" $ do
-    sock <- socket (addrFamily ai) (addrSocketType ai) (addrProtocol ai)
-    Socket.connect sock (addrAddress ai)
-    buf <- newIORef L.empty
-    let conn = Connection sock client buf
-    setClientID conn clientID
-    return conn
+  onIOException "connect" $
+    bracketOnError
+      (socket (addrFamily ai) (addrSocketType ai) (addrProtocol ai))
+      sClose $
+      \sock -> do
+          Socket.connect sock (addrAddress ai)
+          buf <- newIORef L.empty
+          let conn = Connection sock client buf
+          setClientID conn clientID
+          return conn
 
 -- | Disconnect from a server.
 disconnect :: Connection -> IO ()
