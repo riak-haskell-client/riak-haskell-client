@@ -3,5 +3,5 @@ packages:
 - '.'
 - protobuf/
 extra-deps:
-- protocol-buffers-2.1.6
-- protocol-buffers-descriptor-2.1.6
+- protocol-buffers-2.4.0
+- protocol-buffers-descriptor-2.4.0
