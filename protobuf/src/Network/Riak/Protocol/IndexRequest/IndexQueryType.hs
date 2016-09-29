@@ -1,30 +1,32 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.IndexRequest.IndexQueryType (IndexQueryType(..)) where
 import Prelude ((+), (/), (.))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
- 
+
 data IndexQueryType = Eq
                     | Range
-                    deriving (Prelude'.Read, Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
- 
+                    deriving (Prelude'.Read, Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data,
+                              Prelude'.Generic)
+
 instance P'.Mergeable IndexQueryType
- 
+
 instance Prelude'.Bounded IndexQueryType where
   minBound = Eq
   maxBound = Range
- 
+
 instance P'.Default IndexQueryType where
   defaultValue = Eq
- 
+
 toMaybe'Enum :: Prelude'.Int -> P'.Maybe IndexQueryType
 toMaybe'Enum 0 = Prelude'.Just Eq
 toMaybe'Enum 1 = Prelude'.Just Range
 toMaybe'Enum _ = Prelude'.Nothing
- 
+
 instance Prelude'.Enum IndexQueryType where
   fromEnum Eq = 0
   fromEnum Range = 1
@@ -36,7 +38,7 @@ instance Prelude'.Enum IndexQueryType where
   succ _ = Prelude'.error "hprotoc generated code: succ failure for type Network.Riak.Protocol.IndexRequest.IndexQueryType"
   pred Range = Eq
   pred _ = Prelude'.error "hprotoc generated code: pred failure for type Network.Riak.Protocol.IndexRequest.IndexQueryType"
- 
+
 instance P'.Wire IndexQueryType where
   wireSize ft' enum = P'.wireSize ft' (Prelude'.fromEnum enum)
   wirePut ft' enum = P'.wirePut ft' (Prelude'.fromEnum enum)
@@ -44,12 +46,12 @@ instance P'.Wire IndexQueryType where
   wireGet ft' = P'.wireGetErr ft'
   wireGetPacked 14 = P'.wireGetPackedEnum toMaybe'Enum
   wireGetPacked ft' = P'.wireGetErr ft'
- 
+
 instance P'.GPB IndexQueryType
- 
+
 instance P'.MessageAPI msg' (msg' -> IndexQueryType) IndexQueryType where
   getVal m' f' = f' m'
- 
+
 instance P'.ReflectEnum IndexQueryType where
   reflectEnum = [(0, "Eq", Eq), (1, "Range", Range)]
   reflectEnumInfo _
@@ -58,7 +60,7 @@ instance P'.ReflectEnum IndexQueryType where
         "IndexQueryType")
       ["Network", "Riak", "Protocol", "IndexRequest", "IndexQueryType.hs"]
       [(0, "Eq"), (1, "Range")]
- 
+
 instance P'.TextType IndexQueryType where
   tellT = P'.tellShow
   getT = P'.getRead
