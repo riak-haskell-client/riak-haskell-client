@@ -68,7 +68,8 @@ crdts = testGroup "CRDT" [
 searches :: TestTree
 searches = testGroup "Search" [
             search,
-            getIndex
+            getIndex,
+            putIndex
            ]
 
 testClusterSimple :: TestTree
@@ -186,6 +187,14 @@ getIndex = testCase "getIndex" $ do
              one <- S.getIndex conn (Just "set-ix")
              assertBool "all indeces" $ not (null all')
              assertEqual "set index" 1 (length one)
+
+putIndex :: TestTree
+putIndex = testCase "putIndex" $ do
+             conn <- Riak.connect Riak.defaultClient
+             _ <- S.putIndex conn (S.indexInfo "dummy-index" Nothing Nothing) Nothing
+             threadDelay 5000000
+             one <- S.getIndex conn (Just "dummy-index")
+             assertEqual "index was created" 1 (length one)
 
 bucketTypes :: TestTree
 bucketTypes = testCase "bucketTypes" $ do

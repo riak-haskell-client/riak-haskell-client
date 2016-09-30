@@ -15,9 +15,20 @@ import           Control.Applicative
 import           Data.Sequence (Seq)
 import           Network.Riak.Connection.Internal
 import           Network.Riak.Protocol.Content (Content)
+import           Network.Riak.Protocol.YzIndex (YzIndex(YzIndex))
 import qualified Network.Riak.Request as Req
 import qualified Network.Riak.Response as Resp
 import           Network.Riak.Types.Internal
+
+-- | 'IndexInfo' smart constructor.
+--
+-- If 'Nothing', @schema@ defaults to @"_yz_default"@.
+--
+-- If 'Nothing', @n@ defaults to the default @n@ value for buckets that have not
+-- explicitly set the property. In the default installation of @riak@, this is
+-- 3 (see https://github.com/basho/riak_core/blob/develop/priv/riak_core.schema).
+indexInfo :: Index -> Maybe Schema -> Maybe N -> IndexInfo
+indexInfo = YzIndex
 
 -- | Get an index info for @Just index@, or get all indexes for @Nothing@.
 --
