@@ -49,6 +49,7 @@ module Network.Riak.Request
     , search
     , getIndex
     , putIndex
+    , deleteIndex
     ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -78,6 +79,7 @@ import qualified Network.Riak.Protocol.GetBucketTypeRequest as GetBucketType
 import qualified Network.Riak.Protocol.SearchQueryRequest as SearchQueryRequest
 import qualified Network.Riak.Protocol.YzIndexGetRequest as YzIndex
 import qualified Network.Riak.Protocol.YzIndexPutRequest as YzIndex
+import qualified Network.Riak.Protocol.YzIndexDeleteRequest as YzIndex
 
 -- | Create a ping request.
 ping :: PingRequest
@@ -256,3 +258,6 @@ getIndex = YzIndex.YzIndexGetRequest
 
 putIndex :: IndexInfo -> Maybe Timeout -> YzIndex.YzIndexPutRequest
 putIndex = YzIndex.YzIndexPutRequest
+
+deleteIndex :: Index -> YzIndex.YzIndexDeleteRequest
+deleteIndex = YzIndex.YzIndexDeleteRequest

@@ -10,142 +10,142 @@ import Data.ByteString.Lazy (ByteString)
 import Data.Sequence (Seq)
 import GHC.Int (Int64)
 import GHC.Word (Word32)
-import qualified Network.Riak.Protocol.YzSchemaGetResponse
-import qualified Network.Riak.Protocol.MapUpdate
-import qualified Network.Riak.Protocol.CounterUpdateResponse
-import qualified Network.Riak.Protocol.ListKeysResponse
-import qualified Network.Riak.Protocol.SetBucketRequest
-import qualified Network.Riak.Protocol.GetBucketKeyPreflistRequest
-import qualified Network.Riak.Protocol.GetRequest
-import qualified Network.Riak.Protocol.MapOp
-import qualified Network.Riak.Protocol.PutRequest
-import qualified Network.Riak.Protocol.GetClientIDRequest
-import qualified Network.Riak.Protocol.PingRequest
-import qualified Network.Riak.Protocol.SearchDoc
-import qualified Network.Riak.Protocol.DtOp
-import qualified Network.Riak.Protocol.MapUpdate.FlagOp
-import qualified Network.Riak.Protocol.MapReduceRequest
-import qualified Network.Riak.Protocol.ServerInfo
-import qualified Network.Riak.Protocol.IndexResponse
-import qualified Network.Riak.Protocol.GetBucketRequest
-import qualified Network.Riak.Protocol.ModFun
-import qualified Network.Riak.Protocol.DtUpdateRequest
-import qualified Network.Riak.Protocol.CSBucketRequest
-import qualified Network.Riak.Protocol.BucketProps
-import qualified Network.Riak.Protocol.BucketKeyPreflistItem
-import qualified Network.Riak.Protocol.GetBucketTypeRequest
-import qualified Network.Riak.Protocol.GetClientIDResponse
-import qualified Network.Riak.Protocol.SetClientIDRequest
-import qualified Network.Riak.Protocol.PutResponse
-import qualified Network.Riak.Protocol.Content
-import qualified Network.Riak.Protocol.YzSchema
 import qualified Network.Riak.Protocol.AuthRequest
+import qualified Network.Riak.Protocol.BucketKeyPreflistItem
+import qualified Network.Riak.Protocol.BucketProps
+import qualified Network.Riak.Protocol.CommitHook
+import qualified Network.Riak.Protocol.Content
+import qualified Network.Riak.Protocol.CounterGetRequest
+import qualified Network.Riak.Protocol.CounterGetResponse
+import qualified Network.Riak.Protocol.CounterOp
+import qualified Network.Riak.Protocol.CounterUpdateRequest
+import qualified Network.Riak.Protocol.CounterUpdateResponse
+import qualified Network.Riak.Protocol.CSBucketRequest
+import qualified Network.Riak.Protocol.CSBucketResponse
+import qualified Network.Riak.Protocol.DeleteRequest
+import qualified Network.Riak.Protocol.DtFetchRequest
+import qualified Network.Riak.Protocol.DtFetchResponse
+import qualified Network.Riak.Protocol.DtOp
+import qualified Network.Riak.Protocol.DtUpdateRequest
+import qualified Network.Riak.Protocol.DtUpdateResponse
+import qualified Network.Riak.Protocol.DtValue
+import qualified Network.Riak.Protocol.ErrorResponse
+import qualified Network.Riak.Protocol.GetBucketKeyPreflistRequest
+import qualified Network.Riak.Protocol.GetBucketKeyPreflistResponse
+import qualified Network.Riak.Protocol.GetBucketRequest
+import qualified Network.Riak.Protocol.GetBucketResponse
+import qualified Network.Riak.Protocol.GetBucketTypeRequest
+import qualified Network.Riak.Protocol.GetClientIDRequest
+import qualified Network.Riak.Protocol.GetClientIDResponse
+import qualified Network.Riak.Protocol.GetRequest
+import qualified Network.Riak.Protocol.GetResponse
+import qualified Network.Riak.Protocol.GetServerInfoRequest
+import qualified Network.Riak.Protocol.IndexObject
+import qualified Network.Riak.Protocol.IndexRequest
+import qualified Network.Riak.Protocol.IndexResponse
 import qualified Network.Riak.Protocol.Link
 import qualified Network.Riak.Protocol.ListBucketsRequest
-import qualified Network.Riak.Protocol.YzIndexDeleteRequest
-import qualified Network.Riak.Protocol.GetServerInfoRequest
-import qualified Network.Riak.Protocol.CSBucketResponse
-import qualified Network.Riak.Protocol.CounterOp
-import qualified Network.Riak.Protocol.IndexRequest
-import qualified Network.Riak.Protocol.Pair
-import qualified Network.Riak.Protocol.DtUpdateResponse
-import qualified Network.Riak.Protocol.CounterGetResponse
-import qualified Network.Riak.Protocol.ListKeysRequest
-import qualified Network.Riak.Protocol.DeleteRequest
-import qualified Network.Riak.Protocol.YzIndexGetResponse
-import qualified Network.Riak.Protocol.CounterGetRequest
-import qualified Network.Riak.Protocol.CommitHook
 import qualified Network.Riak.Protocol.ListBucketsResponse
-import qualified Network.Riak.Protocol.DtFetchResponse
-import qualified Network.Riak.Protocol.YzSchemaPutRequest
-import qualified Network.Riak.Protocol.GetBucketKeyPreflistResponse
-import qualified Network.Riak.Protocol.DtFetchRequest
-import qualified Network.Riak.Protocol.SearchQueryResponse
+import qualified Network.Riak.Protocol.ListKeysRequest
+import qualified Network.Riak.Protocol.ListKeysResponse
 import qualified Network.Riak.Protocol.MapEntry
-import qualified Network.Riak.Protocol.YzSchemaGetRequest
-import qualified Network.Riak.Protocol.YzIndexGetRequest
-import qualified Network.Riak.Protocol.ErrorResponse
-import qualified Network.Riak.Protocol.CounterUpdateRequest
-import qualified Network.Riak.Protocol.MapReduce
-import qualified Network.Riak.Protocol.MapField.MapFieldType
-import qualified Network.Riak.Protocol.SetOp
-import qualified Network.Riak.Protocol.SearchQueryRequest
-import qualified Network.Riak.Protocol.SetBucketTypeRequest
-import qualified Network.Riak.Protocol.YzIndex
-import qualified Network.Riak.Protocol.ResetBucketRequest
-import qualified Network.Riak.Protocol.GetResponse
-import qualified Network.Riak.Protocol.GetBucketResponse
 import qualified Network.Riak.Protocol.MapField
-import qualified Network.Riak.Protocol.DtValue
+import qualified Network.Riak.Protocol.MapField.MapFieldType
+import qualified Network.Riak.Protocol.MapOp
+import qualified Network.Riak.Protocol.MapReduce
+import qualified Network.Riak.Protocol.MapReduceRequest
+import qualified Network.Riak.Protocol.MapUpdate
+import qualified Network.Riak.Protocol.MapUpdate.FlagOp
+import qualified Network.Riak.Protocol.ModFun
+import qualified Network.Riak.Protocol.Pair
+import qualified Network.Riak.Protocol.PingRequest
+import qualified Network.Riak.Protocol.PutRequest
+import qualified Network.Riak.Protocol.PutResponse
+import qualified Network.Riak.Protocol.ResetBucketRequest
+import qualified Network.Riak.Protocol.SearchDoc
+import qualified Network.Riak.Protocol.SearchQueryRequest
+import qualified Network.Riak.Protocol.SearchQueryResponse
+import qualified Network.Riak.Protocol.ServerInfo
+import qualified Network.Riak.Protocol.SetBucketRequest
+import qualified Network.Riak.Protocol.SetBucketTypeRequest
+import qualified Network.Riak.Protocol.SetClientIDRequest
+import qualified Network.Riak.Protocol.SetOp
+import qualified Network.Riak.Protocol.YzIndex
+import qualified Network.Riak.Protocol.YzIndexDeleteRequest
+import qualified Network.Riak.Protocol.YzIndexGetRequest
+import qualified Network.Riak.Protocol.YzIndexGetResponse
 import qualified Network.Riak.Protocol.YzIndexPutRequest
-import qualified Network.Riak.Protocol.IndexObject
+import qualified Network.Riak.Protocol.YzSchema
+import qualified Network.Riak.Protocol.YzSchemaGetRequest
+import qualified Network.Riak.Protocol.YzSchemaGetResponse
+import qualified Network.Riak.Protocol.YzSchemaPutRequest
 main = pure ()
-makeLenses ''Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse
-makeLenses ''Network.Riak.Protocol.MapUpdate.MapUpdate
-makeLenses ''Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse
-makeLenses ''Network.Riak.Protocol.ListKeysResponse.ListKeysResponse
-makeLenses ''Network.Riak.Protocol.SetBucketRequest.SetBucketRequest
-makeLenses ''Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest
-makeLenses ''Network.Riak.Protocol.GetRequest.GetRequest
-makeLenses ''Network.Riak.Protocol.MapOp.MapOp
-makeLenses ''Network.Riak.Protocol.PutRequest.PutRequest
-makeLenses ''Network.Riak.Protocol.GetClientIDRequest.GetClientIDRequest
-makeLenses ''Network.Riak.Protocol.PingRequest.PingRequest
-makeLenses ''Network.Riak.Protocol.SearchDoc.SearchDoc
-makeLenses ''Network.Riak.Protocol.DtOp.DtOp
-makeLenses ''Network.Riak.Protocol.MapUpdate.FlagOp.FlagOp
-makeLenses ''Network.Riak.Protocol.MapReduceRequest.MapReduceRequest
-makeLenses ''Network.Riak.Protocol.ServerInfo.ServerInfo
-makeLenses ''Network.Riak.Protocol.IndexResponse.IndexResponse
-makeLenses ''Network.Riak.Protocol.GetBucketRequest.GetBucketRequest
-makeLenses ''Network.Riak.Protocol.ModFun.ModFun
-makeLenses ''Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
-makeLenses ''Network.Riak.Protocol.CSBucketRequest.CSBucketRequest
-makeLenses ''Network.Riak.Protocol.BucketProps.BucketProps
-makeLenses ''Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem
-makeLenses ''Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest
-makeLenses ''Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse
-makeLenses ''Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest
-makeLenses ''Network.Riak.Protocol.PutResponse.PutResponse
-makeLenses ''Network.Riak.Protocol.Content.Content
-makeLenses ''Network.Riak.Protocol.YzSchema.YzSchema
 makeLenses ''Network.Riak.Protocol.AuthRequest.AuthRequest
+makeLenses ''Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem
+makeLenses ''Network.Riak.Protocol.BucketProps.BucketProps
+makeLenses ''Network.Riak.Protocol.CommitHook.CommitHook
+makeLenses ''Network.Riak.Protocol.Content.Content
+makeLenses ''Network.Riak.Protocol.CounterGetRequest.CounterGetRequest
+makeLenses ''Network.Riak.Protocol.CounterGetResponse.CounterGetResponse
+makeLenses ''Network.Riak.Protocol.CounterOp.CounterOp
+makeLenses ''Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest
+makeLenses ''Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse
+makeLenses ''Network.Riak.Protocol.CSBucketRequest.CSBucketRequest
+makeLenses ''Network.Riak.Protocol.CSBucketResponse.CSBucketResponse
+makeLenses ''Network.Riak.Protocol.DeleteRequest.DeleteRequest
+makeLenses ''Network.Riak.Protocol.DtFetchRequest.DtFetchRequest
+makeLenses ''Network.Riak.Protocol.DtFetchResponse.DtFetchResponse
+makeLenses ''Network.Riak.Protocol.DtOp.DtOp
+makeLenses ''Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+makeLenses ''Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse
+makeLenses ''Network.Riak.Protocol.DtValue.DtValue
+makeLenses ''Network.Riak.Protocol.ErrorResponse.ErrorResponse
+makeLenses ''Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest
+makeLenses ''Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse
+makeLenses ''Network.Riak.Protocol.GetBucketRequest.GetBucketRequest
+makeLenses ''Network.Riak.Protocol.GetBucketResponse.GetBucketResponse
+makeLenses ''Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest
+makeLenses ''Network.Riak.Protocol.GetClientIDRequest.GetClientIDRequest
+makeLenses ''Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse
+makeLenses ''Network.Riak.Protocol.GetRequest.GetRequest
+makeLenses ''Network.Riak.Protocol.GetResponse.GetResponse
+makeLenses ''Network.Riak.Protocol.GetServerInfoRequest.GetServerInfoRequest
+makeLenses ''Network.Riak.Protocol.IndexObject.IndexObject
+makeLenses ''Network.Riak.Protocol.IndexRequest.IndexRequest
+makeLenses ''Network.Riak.Protocol.IndexResponse.IndexResponse
 makeLenses ''Network.Riak.Protocol.Link.Link
 makeLenses ''Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest
-makeLenses ''Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest
-makeLenses ''Network.Riak.Protocol.GetServerInfoRequest.GetServerInfoRequest
-makeLenses ''Network.Riak.Protocol.CSBucketResponse.CSBucketResponse
-makeLenses ''Network.Riak.Protocol.CounterOp.CounterOp
-makeLenses ''Network.Riak.Protocol.IndexRequest.IndexRequest
-makeLenses ''Network.Riak.Protocol.Pair.Pair
-makeLenses ''Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse
-makeLenses ''Network.Riak.Protocol.CounterGetResponse.CounterGetResponse
-makeLenses ''Network.Riak.Protocol.ListKeysRequest.ListKeysRequest
-makeLenses ''Network.Riak.Protocol.DeleteRequest.DeleteRequest
-makeLenses ''Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse
-makeLenses ''Network.Riak.Protocol.CounterGetRequest.CounterGetRequest
-makeLenses ''Network.Riak.Protocol.CommitHook.CommitHook
 makeLenses ''Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse
-makeLenses ''Network.Riak.Protocol.DtFetchResponse.DtFetchResponse
-makeLenses ''Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest
-makeLenses ''Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse
-makeLenses ''Network.Riak.Protocol.DtFetchRequest.DtFetchRequest
-makeLenses ''Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse
+makeLenses ''Network.Riak.Protocol.ListKeysRequest.ListKeysRequest
+makeLenses ''Network.Riak.Protocol.ListKeysResponse.ListKeysResponse
 makeLenses ''Network.Riak.Protocol.MapEntry.MapEntry
-makeLenses ''Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest
-makeLenses ''Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest
-makeLenses ''Network.Riak.Protocol.ErrorResponse.ErrorResponse
-makeLenses ''Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest
-makeLenses ''Network.Riak.Protocol.MapReduce.MapReduce
-makeLenses ''Network.Riak.Protocol.MapField.MapFieldType.MapFieldType
-makeLenses ''Network.Riak.Protocol.SetOp.SetOp
-makeLenses ''Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest
-makeLenses ''Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest
-makeLenses ''Network.Riak.Protocol.YzIndex.YzIndex
-makeLenses ''Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest
-makeLenses ''Network.Riak.Protocol.GetResponse.GetResponse
-makeLenses ''Network.Riak.Protocol.GetBucketResponse.GetBucketResponse
 makeLenses ''Network.Riak.Protocol.MapField.MapField
-makeLenses ''Network.Riak.Protocol.DtValue.DtValue
+makeLenses ''Network.Riak.Protocol.MapField.MapFieldType.MapFieldType
+makeLenses ''Network.Riak.Protocol.MapOp.MapOp
+makeLenses ''Network.Riak.Protocol.MapReduce.MapReduce
+makeLenses ''Network.Riak.Protocol.MapReduceRequest.MapReduceRequest
+makeLenses ''Network.Riak.Protocol.MapUpdate.MapUpdate
+makeLenses ''Network.Riak.Protocol.MapUpdate.FlagOp.FlagOp
+makeLenses ''Network.Riak.Protocol.ModFun.ModFun
+makeLenses ''Network.Riak.Protocol.Pair.Pair
+makeLenses ''Network.Riak.Protocol.PingRequest.PingRequest
+makeLenses ''Network.Riak.Protocol.PutRequest.PutRequest
+makeLenses ''Network.Riak.Protocol.PutResponse.PutResponse
+makeLenses ''Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest
+makeLenses ''Network.Riak.Protocol.SearchDoc.SearchDoc
+makeLenses ''Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest
+makeLenses ''Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse
+makeLenses ''Network.Riak.Protocol.ServerInfo.ServerInfo
+makeLenses ''Network.Riak.Protocol.SetBucketRequest.SetBucketRequest
+makeLenses ''Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest
+makeLenses ''Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest
+makeLenses ''Network.Riak.Protocol.SetOp.SetOp
+makeLenses ''Network.Riak.Protocol.YzIndex.YzIndex
+makeLenses ''Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest
+makeLenses ''Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest
+makeLenses ''Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse
 makeLenses ''Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest
-makeLenses ''Network.Riak.Protocol.IndexObject.IndexObject
+makeLenses ''Network.Riak.Protocol.YzSchema.YzSchema
+makeLenses ''Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest
+makeLenses ''Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse
+makeLenses ''Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest

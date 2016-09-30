@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts #-}
+{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts, MultiWayIf #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
@@ -209,12 +209,11 @@ throwError = throwIO
 getResponse :: Response a => Connection -> Int64 -> a -> T.MessageTag -> IO a
 getResponse conn len _ expected = do
   tag <- recvGet conn getTag
-  case undefined of
-   _| tag == expected        -> recvGetN conn (len-1) messageGetM
-    | tag == T.ErrorResponse -> throwError =<< recvGetN conn (len-1) messageGetM
-    | otherwise ->
-        moduleError "getResponse" $ "received unexpected response: expected " ++
-                                    show expected ++ ", received " ++ show tag
+  if | tag == expected        -> recvGetN conn (len-1) messageGetM
+     | tag == T.ErrorResponse -> throwError =<< recvGetN conn (len-1) messageGetM
+     | otherwise ->
+         moduleError "getResponse" $ "received unexpected response: expected " ++
+                                     show expected ++ ", received " ++ show tag
 
 -- | Send a request to the server, and receive its response.
 exchange :: Exchange req resp => Connection -> req -> IO resp
@@ -277,12 +276,11 @@ recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
 recvCorrectTag :: String -> Connection -> T.MessageTag -> Int64 -> a -> IO a
 recvCorrectTag func conn expected len v = do
   tag <- recvGet conn getTag
-  case undefined of
-   _| tag == expected -> recvExactly conn (len-1) >> return v
-    | tag == T.ErrorResponse -> throwError =<< recvGetN conn len messageGetM
-    | otherwise -> moduleError func $
-                   "received unexpected response: expected " ++
-                   show expected ++ ", received " ++ show tag
+  if | tag == expected -> recvExactly conn (len-1) >> return v
+     | tag == T.ErrorResponse -> throwError =<< recvGetN conn len messageGetM
+     | otherwise -> moduleError func $
+                    "received unexpected response: expected " ++
+                    show expected ++ ", received " ++ show tag
 
 debugRecv :: (a -> String) -> IO a -> IO a
 #ifdef DEBUG
