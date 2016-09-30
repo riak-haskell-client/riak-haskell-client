@@ -28,6 +28,7 @@ module Network.Riak.Types.Internal
     , BucketType
     , Key
     , Index
+    , Schema
     , IndexQuery(..)
     , IndexValue(..)
     , Tag
@@ -36,6 +37,7 @@ module Network.Riak.Types.Internal
     , IndexInfo
     , VClock(..)
     , Job(..)
+    , N
     , Timeout
     -- * Quorum management
     , Quorum(..)
@@ -149,6 +151,9 @@ type Key = ByteString
 -- | Name of a secondary index
 type Index = ByteString
 
+-- | Name of an index schema
+type Schema = ByteString
+
 -- | Index query. Can be exact or range, int or bin. Index name should
 -- not contain the "_bin" or "_int" part, since it's determined from
 -- data constructor.
@@ -180,6 +185,11 @@ type Score = Double
 
 -- | Search index info
 type IndexInfo = YzIndex.YzIndex
+
+-- | N value
+--
+-- http://docs.basho.com/riak/kv/2.1.4/learn/concepts/replication/
+type N = Word32
 
 -- | Timeout in milliseconds
 type Timeout = Word32
