@@ -10,7 +10,7 @@ import           Control.Applicative          ((<$>))
 #endif
 import qualified Data.ByteString.Lazy         as L
 import           Data.Maybe
-import qualified Network.Riak.Basic           as B
+import qualified Network.Riak.Basic.DSL       as B
 import           Network.Riak.Content         (binary)
 import           Network.Riak.Types           as Riak
 import           Test.QuickCheck.Monadic      (assert, monadicIO, run)
@@ -36,9 +36,9 @@ t_put_get :: QCBucket -> QCKey -> L.ByteString -> Property
 t_put_get (QCBucket b) (QCKey k) v =
     monadicIO $ assert . uncurry (==) =<< run act
   where
-    act = withSomeConnection $ \c -> do
-            p <- Just <$> B.put c btype b k Nothing (binary v) Default Default
-            r <- B.get c btype b k Default
+    act = withRollback $ do
+            p <- Just <$> B.put btype b k Nothing (binary v) Default Default
+            r <- B.get btype b k Default
             return (p,r)
     btype = Nothing
 
@@ -48,10 +48,10 @@ put_delete_get (QCBucket b) (QCKey k) v
         r <- run act
         assert $ isNothing r
     where
-      act = withSomeConnection $ \c -> do
-              _ <- B.put c bt b k Nothing (binary v) Default Default
-              B.delete c bt b k Default
-              B.get c bt b k Default
+      act = withRollback $ do
+              _ <- B.put bt b k Nothing (binary v) Default Default
+              B.delete bt b k Default
+              B.get bt b k Default
       bt = Nothing :: Maybe BucketType
 
 tests :: [TestTree]

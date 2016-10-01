@@ -142,7 +142,7 @@ library
 test-suite test
   type: exitcode-stdio-1.0
   main-is: Test.hs
-  hs-source-dirs: tests
+  hs-source-dirs: tests, tests/dsl
   ghc-options: -Wall
 
   if flag(test2i)
@@ -152,6 +152,7 @@ test-suite test
     Properties
     CRDTProperties
     Common
+    Network.Riak.Basic.DSL
 
   build-depends:
     base,
@@ -159,6 +160,7 @@ test-suite test
     riak-protobuf,
     bytestring,
     containers,
+    free,
     HUnit,
     QuickCheck,
     tasty,
