@@ -7,7 +7,8 @@ module Main where
 
 import           Common
 import qualified CRDTProperties as CRDT
-import           Network.Riak.DSL (rollback)
+import           Network.Riak.DSL (Riak, rollback)
+import qualified Network.Riak.DSL.Basic as Basic
 import qualified Network.Riak.DSL.JSON as J
 import qualified Network.Riak.DSL.Value as V
 import qualified Properties
@@ -216,21 +217,21 @@ bucketTypes = testCase "bucketTypes" $ do
 
 exceptions :: TestTree
 exceptions = testGroup "exceptions" [
-              testCase "correct put"  . shouldBeOK . withSomeConnection $ put,
-              testCase "correct put_" . shouldBeOK . withSomeConnection $ put_,
-              testCase "invalid put"  . shouldThrow . withSomeConnection $ putErr,
-              testCase "invalid put_" . shouldThrow . withSomeConnection $ put_Err
+              testCase "correct put"  . shouldBeOK . withRollback $ put,
+              testCase "correct put_" . shouldBeOK . withRollback $ put_,
+              testCase "invalid put"  . shouldThrow . withRollback $ putErr,
+              testCase "invalid put_" . shouldThrow . withRollback $ put_Err
              ]
     where
-      put     = putSome B.put  btype
-      put_    = putSome B.put_ btype
-      putErr  = putSome B.put  noBtype
-      put_Err = putSome B.put_ noBtype
+      put     = putSome Basic.put  btype
+      put_    = putSome Basic.put_ btype
+      putErr  = putSome Basic.put  noBtype
+      put_Err = putSome Basic.put_ noBtype
 
-      putSome :: (Connection -> Maybe BucketType -> Bucket -> Key
-                             -> Maybe VClock -> B.Content -> Quorum -> Quorum -> IO a)
-              -> Maybe BucketType -> Connection -> IO a
-      putSome f bt c = f c bt buck key Nothing val Default Default
+      putSome :: (Maybe BucketType -> Bucket -> Key
+                             -> Maybe VClock -> B.Content -> Quorum -> Quorum -> Riak a)
+              -> Maybe BucketType -> Riak a
+      putSome f bt = f bt buck key Nothing val Default Default
 
       shouldBeOK act  = act >> assertBool "ok" True
       shouldThrow act = catch (act >> assertBool "exception" False) (\(_e::ER.ErrorResponse) -> pure ())
