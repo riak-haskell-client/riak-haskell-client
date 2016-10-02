@@ -1,6 +1,7 @@
-{-# LANGUAGE CPP               #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ParallelListComp  #-}
+{-# LANGUAGE CPP                 #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ParallelListComp    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
@@ -16,9 +17,11 @@ import           Data.List.NonEmpty (NonEmpty(..))
 import           Data.Foldable (toList)
 import           Data.Semigroup
 import           Data.Text (Text)
+import           Control.Applicative
 import           Control.Concurrent (threadDelay)
 import           Control.Exception
 import qualified Network.Riak as Riak
+import           Network.Riak.Admin.DSL
 import qualified Network.Riak.Basic as B
 import qualified Network.Riak.Content as B (binary,Content,value)
 import qualified Network.Riak.CRDT as C
@@ -32,11 +35,45 @@ import qualified Network.Riak.Protocol.ErrorResponse as ER
 import qualified Properties
 import qualified CRDTProperties as CRDT
 import           Common
+import           Utils
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
 main :: IO ()
-main = defaultMain tests
+main = do
+  setup
+  defaultMain tests
+
+setup :: IO ()
+setup = do
+  -- Create a "set-ix" index and wait for it to exist.
+  shell "curl -s -XPUT 127.0.0.1:8098/search/index/set-ix -H 'Content-Type: application/json'"
+  let loop =
+        try (shell "curl -sf 127.0.0.1:8098/search/index/set-ix") >>= \case
+          Left (_ :: ShellFailure) -> do
+            threadDelay (1*1000*1000)
+            loop
+          Right _ -> pure ()
+  loop
+
+  riakAdmin
+    [ waitForService "riak_kv" Nothing
+    , waitForService "yokozuna" Nothing
+
+    , bucketTypeCreate "maps" (Just "'{\"props\":{\"datatype\":\"map\"}}'")
+    , bucketTypeCreate "sets" (Just "'{\"props\":{\"datatype\":\"set\",\"search_index\":\"set-ix\"}}'")
+    , bucketTypeCreate "counters" (Just "'{\"props\":{\"datatype\":\"counter\"}}'")
+
+    , bucketTypeActivate "maps"
+    , bucketTypeActivate "sets"
+    , bucketTypeActivate "counters"
+
+    , bucketTypeCreate "untyped-1" Nothing
+    , bucketTypeCreate "untyped-2" Nothing
+
+    , bucketTypeActivate "untyped-1"
+    , bucketTypeActivate "untyped-2"
+    ]
 
 
 tests :: TestTree
