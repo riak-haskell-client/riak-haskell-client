@@ -8,7 +8,7 @@ module Network.Riak.Admin.DSL
   , bucketTypeActivate
     -- * Riak admin runners
   , riakAdmin
-  , riakAdminDocker
+  , riakAdminWith
   ) where
 
 import Utils
@@ -50,9 +50,10 @@ bucketTypeActivate name = "riak-admin bucket-type activate " ++ name
 -- | Run a list of riak-admin commands locally, and throw an exception if any of
 -- them fail.
 riakAdmin :: [RiakAdmin] -> IO ()
-riakAdmin = mapM_ shell
+riakAdmin = riakAdminWith ""
 
--- | Run a list of riak-admin commands inside a Docker container, and throw an
--- exception if any of them fail.
-riakAdminDocker :: ContainerId -> [RiakAdmin] -> IO ()
-riakAdminDocker name = riakAdmin . map (\c -> "docker exec " ++ name ++ " " ++ c)
+-- | Like 'riakAdmin', but prefix each command with the given 'String' (plus a
+-- space).
+riakAdminWith :: String -> [RiakAdmin] -> IO ()
+riakAdminWith ""     = mapM_ shell
+riakAdminWith prefix = mapM_ (\s -> shell (prefix ++ " " ++ s))

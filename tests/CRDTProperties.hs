@@ -30,7 +30,7 @@ import qualified Data.Set as Set
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
-import Common
+import Utils
 import Test.Tasty
 import Test.Tasty.QuickCheck
 
@@ -74,7 +74,7 @@ observeRiak :: Action a op => Proxy a -> IO RiakState
 observeRiak p = Map.fromList . catMaybes <$> observeRiak' (BucketType $ bucketType p)
 
 observeRiak' :: BucketType -> IO [Maybe (Point, C.DataType)]
-observeRiak' bt@(BucketType t_) = withSomeConnection $ \c ->
+observeRiak' bt@(BucketType t_) = withGlobalConn $ \c ->
        sequence [ do r <- C.get c t_ b_ k_
                      pure . fmap (p,) $ r
                   | b <- values, k <- values,
@@ -270,7 +270,7 @@ update op dt
 
 doRiak :: Action a op =>
           Proxy a -> [Op a op] -> IO [Maybe C.DataType]
-doRiak p ops = withSomeConnection $ \conn -> do
+doRiak p ops = withGlobalConn $ \conn -> do
                    --print ops
                    (_,_,r) <- runRWST (riak p ops) () conn
                    pure r

@@ -34,7 +34,6 @@ import           Network.Riak.Types hiding (key)
 import qualified Network.Riak.Protocol.ErrorResponse as ER
 import qualified Properties
 import qualified CRDTProperties as CRDT
-import           Common
 import           Utils
 import           Test.Tasty
 import           Test.Tasty.HUnit
@@ -47,16 +46,19 @@ main = do
 setup :: IO ()
 setup = do
   -- Create a "set-ix" index and wait for it to exist.
-  shell "curl -s -XPUT 127.0.0.1:8098/search/index/set-ix -H 'Content-Type: application/json'"
+  let createIxUrl :: String
+      createIxUrl = globalHost ++ ":" ++ show globalHttpPort ++ "/search/index/set-ix"
+
+  shell ("curl -s -XPUT " ++ createIxUrl ++ " -H 'Content-Type: application/json'")
   let loop =
-        try (shell "curl -sf 127.0.0.1:8098/search/index/set-ix") >>= \case
+        try (shell ("curl -sf " ++ createIxUrl)) >>= \case
           Left (_ :: ShellFailure) -> do
             threadDelay (1*1000*1000)
             loop
           Right _ -> pure ()
   loop
 
-  riakAdmin
+  riakAdminWith globalAdmin
     [ waitForService "riak_kv" Nothing
     , waitForService "yokozuna" Nothing
 
@@ -74,7 +76,6 @@ setup = do
     , bucketTypeActivate "untyped-1"
     , bucketTypeActivate "untyped-2"
     ]
-
 
 tests :: TestTree
 tests = testGroup "Tests" [properties,
@@ -110,18 +111,15 @@ searches = testGroup "Search" [
            ]
 
 testClusterSimple :: TestTree
-testClusterSimple = testCase "testClusterSimple" $ do
-    rc <- Riak.connectToCluster [Riak.defaultClient]
-    Riak.inCluster rc B.ping
+testClusterSimple = testCase "testClusterSimple" $ withGlobalConn B.ping
 
 
 testIndexedPutGet :: TestTree
 testIndexedPutGet = testCase "testIndexedPutGet" $ do
-    rc <- Riak.connectToCluster [Riak.defaultClient]
     let bt = Nothing
         b = "riak-haskell-client-test"
         k = "test"
-    keys <- Riak.inCluster rc $ \c -> do
+    keys <- withGlobalConn $ \c -> do
       _ <- J.putIndexed c bt b k [(IndexInt "someindex" 135)] Nothing
           (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
           Default Default
@@ -130,14 +128,11 @@ testIndexedPutGet = testCase "testIndexedPutGet" $ do
 
 ping'o'death :: TestTree
 ping'o'death = testCase "ping'o'death" $ replicateM_ 23 ping
-    where ping = do
-            c <- Riak.connect Riak.defaultClient
-            replicateM_ 1024 $ Riak.ping c
+    where ping = withGlobalConn (\c -> replicateM_ 1024 (Riak.ping c))
 
 
 counter :: TestTree
-counter = testCase "increment" $ do
-              conn <- Riak.connect Riak.defaultClient
+counter = testCase "increment" $ withGlobalConn $ \conn -> do
               Just (C.DTCounter (C.Counter a)) <- act conn
               Just (C.DTCounter (C.Counter b)) <- act conn
               assertEqual "inc by 1" 1 (b-a)
@@ -146,8 +141,7 @@ counter = testCase "increment" $ do
                  C.get c "counters" "xxx" "yyy"
 
 set :: TestTree
-set = testCase "set add" $ do
-        conn <- Riak.connect Riak.defaultClient
+set = testCase "set add" $ withGlobalConn $ \conn -> do
         C.setSendUpdate conn btype buck key [C.SetRemove val]
         C.setSendUpdate conn btype buck key [C.SetAdd val]
         Just (C.DTSet (C.Set r)) <- C.get conn btype buck key
@@ -156,8 +150,7 @@ set = testCase "set add" $ do
       (btype,buck,key,val) = ("sets","xxx","yyy","foo")
 
 map_ :: TestTree
-map_ = testCase "map update" $ do
-         conn <- Riak.connect Riak.defaultClient
+map_ = testCase "map update" $ withGlobalConn $ \conn -> do
          Just (C.DTMap a) <- act conn -- do smth (increment), get
          Just (C.DTMap b) <- act conn -- increment, get
          assertEqual "map update" (C.modify mapOp a) b -- modify's behaviour should match
@@ -198,8 +191,7 @@ map_ = testCase "map update" $ do
 
 
 search :: TestTree
-search = testCase "basic searchRaw" $ do
-           conn <- Riak.connect Riak.defaultClient
+search = testCase "basic searchRaw" $ withGlobalConn $ \conn -> do
            C.sendModify conn btype buck key [C.SetRemove kw]
            delay
            a <- query conn ("set:" <> kw)
@@ -218,8 +210,7 @@ search = testCase "basic searchRaw" $ do
 
 
 getIndex :: TestTree
-getIndex = testCase "getIndex" $ do
-             conn <- Riak.connect Riak.defaultClient
+getIndex = testCase "getIndex" $ withGlobalConn $ \conn -> do
              all' <- S.getIndex conn Nothing
              one <- S.getIndex conn (Just "set-ix")
              assertBool "all indeces" $ not (null all')
@@ -234,8 +225,7 @@ putIndex = testCase "putIndex" $ do
              assertEqual "index was created" 1 (length one)
 
 bucketTypes :: TestTree
-bucketTypes = testCase "bucketTypes" $ do
-             conn <- Riak.connect Riak.defaultClient
+bucketTypes = testCase "bucketTypes" $ withGlobalConn $ \conn -> do
              [p0,p1,p2] <- sequence [ B.put conn bt b k Nothing o Default Default
                                       | bt <- types | o <- [o0,o1,o2] ]
              [r0,r1,r2] <- sequence [ B.get conn bt b k Default | bt <- types ]
@@ -259,10 +249,10 @@ bucketTypes = testCase "bucketTypes" $ do
 
 exceptions :: TestTree
 exceptions = testGroup "exceptions" [
-              testCase "correct put"  . shouldBeOK . withSomeConnection $ put,
-              testCase "correct put_" . shouldBeOK . withSomeConnection $ put_,
-              testCase "invalid put"  . shouldThrow . withSomeConnection $ putErr,
-              testCase "invalid put_" . shouldThrow . withSomeConnection $ put_Err
+              testCase "correct put"  . shouldBeOK . withGlobalConn $ put,
+              testCase "correct put_" . shouldBeOK . withGlobalConn $ put_,
+              testCase "invalid put"  . shouldThrow . withGlobalConn $ putErr,
+              testCase "invalid put_" . shouldThrow . withGlobalConn $ put_Err
              ]
     where
       put     = putSome B.put  btype
