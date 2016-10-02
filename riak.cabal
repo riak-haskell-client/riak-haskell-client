@@ -152,6 +152,7 @@ test-suite test
     Properties
     CRDTProperties
     Common
+    Data.Alacarte
     Network.Riak.DSL
     Network.Riak.DSL.Basic
     Network.Riak.DSL.JSON
