@@ -152,12 +152,16 @@ test-suite test
     Properties
     CRDTProperties
     Common
-    Network.Riak.Basic.DSL
+    Network.Riak.DSL
+    Network.Riak.DSL.Basic
+    Network.Riak.DSL.JSON
+    Network.Riak.DSL.Value
 
   build-depends:
     base,
     riak,
     riak-protobuf,
+    aeson,
     bytestring,
     containers,
     free,

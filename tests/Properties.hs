@@ -10,7 +10,7 @@ import           Control.Applicative          ((<$>))
 #endif
 import qualified Data.ByteString.Lazy         as L
 import           Data.Maybe
-import qualified Network.Riak.Basic.DSL       as B
+import qualified Network.Riak.DSL.Basic       as B
 import           Network.Riak.Content         (binary)
 import           Network.Riak.Types           as Riak
 import           Test.QuickCheck.Monadic      (assert, monadicIO, run)

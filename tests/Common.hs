@@ -1,7 +1,7 @@
 module Common (withRollback, withSomeConnection) where
 
 import qualified Network.Riak.Basic as B
-import Network.Riak.Basic.DSL (Riak, rollback)
+import Network.Riak.DSL (Riak, rollback)
 import Network.Riak.Connection.Pool (Pool, create, withConnection)
 import Network.Riak.Connection (defaultClient)
 import System.IO.Unsafe (unsafePerformIO)

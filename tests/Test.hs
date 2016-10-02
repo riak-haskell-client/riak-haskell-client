@@ -5,6 +5,13 @@
 
 module Main where
 
+import           Common
+import qualified CRDTProperties as CRDT
+import           Network.Riak.DSL (rollback)
+import qualified Network.Riak.DSL.JSON as J
+import qualified Network.Riak.DSL.Value as V
+import qualified Properties
+
 import           Control.Monad
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
@@ -25,13 +32,9 @@ import qualified Network.Riak.CRDT as C
 import qualified Network.Riak.CRDT.Riak as C
 import qualified Network.Riak.Search as S
 import qualified Network.Riak.Cluster as Riak
-import qualified Network.Riak.JSON as J
 import           Network.Riak.Resolvable (ResolvableMonoid (..))
 import           Network.Riak.Types hiding (key)
 import qualified Network.Riak.Protocol.ErrorResponse as ER
-import qualified Properties
-import qualified CRDTProperties as CRDT
-import           Common
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
@@ -83,11 +86,11 @@ testIndexedPutGet = testCase "testIndexedPutGet" $ do
     let bt = Nothing
         b = "riak-haskell-client-test"
         k = "test"
-    keys <- Riak.inCluster rc $ \c -> do
-      _ <- J.putIndexed c bt b k [(IndexInt "someindex" 135)] Nothing
-          (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
-          Default Default
-      Riak.getByIndex c b (IndexQueryExactInt "someindex" 135)
+    keys <- Riak.inCluster rc $ \c -> rollback c $ do
+      _ <- J.putIndexed bt b k [(IndexInt "someindex" 135)] Nothing
+            (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
+            Default Default
+      V.getByIndex b (IndexQueryExactInt "someindex" 135)
     assertEqual "" ["test"] keys
 
 ping'o'death :: TestTree
