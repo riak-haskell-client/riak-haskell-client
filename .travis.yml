@@ -23,6 +23,7 @@ before_install:
   - ./rel/riak/bin/riak start
   - ./rel/riak/bin/riak ping
   - cd -
+  - export PATH=$PWD/riak-$RIAK/rel/riak/bin:$PATH
 
 matrix:
   include:

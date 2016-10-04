@@ -21,10 +21,10 @@ data ShellFailure
 instance Exception ShellFailure
 
 -- | Run a shell command (inheriting stdin, stdout, and stderr), and throw an
--- exception if it fails. Time out after 10 seconds.
+-- exception if it fails. Time out after 30 seconds.
 shell :: String -> IO ()
 shell s =
-  timeout (10*1000*1000) act >>= \case
+  timeout (30*1000*1000) act >>= \case
     Nothing -> throw (ShellTimeout s)
     _       -> pure ()
   where
