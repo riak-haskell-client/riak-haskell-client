@@ -5,7 +5,16 @@
 
 module Main where
 
+import           Common
+import qualified CRDTProperties as CRDT
+import           Network.Riak.DSL (Riak, rollback)
+import qualified Network.Riak.DSL.Basic as B
+import qualified Network.Riak.DSL.JSON as J
+import qualified Network.Riak.DSL.Value as V
+import qualified Properties
+
 import           Control.Monad
+import           Control.Monad.IO.Class (liftIO)
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
 #endif
@@ -19,19 +28,14 @@ import           Data.Text (Text)
 import           Control.Concurrent (threadDelay)
 import           Control.Exception
 import qualified Network.Riak as Riak
-import qualified Network.Riak.Basic as B
-import qualified Network.Riak.Content as B (binary,Content,value)
+import           Network.Riak.Content
 import qualified Network.Riak.CRDT as C
 import qualified Network.Riak.CRDT.Riak as C
 import qualified Network.Riak.Search as S
 import qualified Network.Riak.Cluster as Riak
-import qualified Network.Riak.JSON as J
 import           Network.Riak.Resolvable (ResolvableMonoid (..))
 import           Network.Riak.Types hiding (key)
 import qualified Network.Riak.Protocol.ErrorResponse as ER
-import qualified Properties
-import qualified CRDTProperties as CRDT
-import           Common
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
@@ -74,7 +78,7 @@ searches = testGroup "Search" [
 testClusterSimple :: TestTree
 testClusterSimple = testCase "testClusterSimple" $ do
     rc <- Riak.connectToCluster [Riak.defaultClient]
-    Riak.inCluster rc B.ping
+    Riak.inCluster rc Riak.ping
 
 
 testIndexedPutGet :: TestTree
@@ -83,11 +87,11 @@ testIndexedPutGet = testCase "testIndexedPutGet" $ do
     let bt = Nothing
         b = "riak-haskell-client-test"
         k = "test"
-    keys <- Riak.inCluster rc $ \c -> do
-      _ <- J.putIndexed c bt b k [(IndexInt "someindex" 135)] Nothing
-          (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
-          Default Default
-      Riak.getByIndex c b (IndexQueryExactInt "someindex" 135)
+    keys <- Riak.inCluster rc $ \c -> rollback c $ do
+      _ <- J.putIndexed bt b k [(IndexInt "someindex" 135)] Nothing
+            (RM (M.fromList [("somekey", "someval")] :: M.Map Text Text))
+            Default Default
+      V.getByIndex b (IndexQueryExactInt "someindex" 135)
     assertEqual "" ["test"] keys
 
 ping'o'death :: TestTree
@@ -188,35 +192,35 @@ getIndex = testCase "getIndex" $ do
              assertEqual "set index" 1 (length one)
 
 bucketTypes :: TestTree
-bucketTypes = testCase "bucketTypes" $ do
-             conn <- Riak.connect Riak.defaultClient
-             [p0,p1,p2] <- sequence [ B.put conn bt b k Nothing o Default Default
+bucketTypes = testCase "bucketTypes" $ withRollback $ do
+             [p0,p1,p2] <- sequence [ B.put bt b k Nothing o Default Default
                                       | bt <- types | o <- [o0,o1,o2] ]
-             [r0,r1,r2] <- sequence [ B.get conn bt b k Default | bt <- types ]
+             [r0,r1,r2] <- sequence [ B.get bt b k Default | bt <- types ]
 
-             assertBool "sound get Nothing"   (valok r0 o0)
-             assertBool "sound get untyped-1" (valok r1 o1)
-             assertBool "sound get untyped-2" (valok r2 o2)
+             liftIO $ do
+               assertBool "sound get Nothing"   (valok r0 o0)
+               assertBool "sound get untyped-1" (valok r1 o1)
+               assertBool "sound get untyped-2" (valok r2 o2)
 
-             assertEqual "put=get Nothing"   (Just p0) r0
-             assertEqual "put=get untyped-1" (Just p1) r1
-             assertEqual "put=get untyped-2" (Just p2) r2
+               assertEqual "put=get Nothing"   (Just p0) r0
+               assertEqual "put=get untyped-1" (Just p1) r1
+               assertEqual "put=get untyped-2" (Just p2) r2
     where
       (b,k) = ("xxx","0") :: (Bucket,Key)
       types = [Nothing, Just "untyped-1", Just "untyped-2"] :: [Maybe BucketType]
-      [o0,o1,o2] = B.binary <$> ["A","B","C"] :: [B.Content]
+      [o0,o1,o2] = binary <$> ["A","B","C"] :: [Content]
 
-      valok :: Maybe (Seq.Seq B.Content, VClock) -> B.Content -> Bool
-      valok (Just (rs,_)) o = B.value o `elem` map B.value (toList rs)
+      valok :: Maybe (Seq.Seq Content, VClock) -> Content -> Bool
+      valok (Just (rs,_)) o = value o `elem` map value (toList rs)
       valok _ _             = False
 
 
 exceptions :: TestTree
 exceptions = testGroup "exceptions" [
-              testCase "correct put"  . shouldBeOK . withSomeConnection $ put,
-              testCase "correct put_" . shouldBeOK . withSomeConnection $ put_,
-              testCase "invalid put"  . shouldThrow . withSomeConnection $ putErr,
-              testCase "invalid put_" . shouldThrow . withSomeConnection $ put_Err
+              testCase "correct put"  . shouldBeOK . withRollback $ put,
+              testCase "correct put_" . shouldBeOK . withRollback $ put_,
+              testCase "invalid put"  . shouldThrow . withRollback $ putErr,
+              testCase "invalid put_" . shouldThrow . withRollback $ put_Err
              ]
     where
       put     = putSome B.put  btype
@@ -224,10 +228,10 @@ exceptions = testGroup "exceptions" [
       putErr  = putSome B.put  noBtype
       put_Err = putSome B.put_ noBtype
 
-      putSome :: (Connection -> Maybe BucketType -> Bucket -> Key
-                             -> Maybe VClock -> B.Content -> Quorum -> Quorum -> IO a)
-              -> Maybe BucketType -> Connection -> IO a
-      putSome f bt c = f c bt buck key Nothing val Default Default
+      putSome :: (Maybe BucketType -> Bucket -> Key
+                             -> Maybe VClock -> Content -> Quorum -> Quorum -> Riak a)
+              -> Maybe BucketType -> Riak a
+      putSome f bt = f bt buck key Nothing val Default Default
 
       shouldBeOK act  = act >> assertBool "ok" True
       shouldThrow act = catch (act >> assertBool "exception" False) (\(_e::ER.ErrorResponse) -> pure ())
@@ -236,4 +240,4 @@ exceptions = testGroup "exceptions" [
       noBtype = Just "no such type"
       buck = "xxx"
       key = "0"
-      val = B.binary ""
+      val = binary ""

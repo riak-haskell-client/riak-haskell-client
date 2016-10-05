@@ -1,6 +1,7 @@
-module Common (withSomeConnection) where
+module Common (withRollback, withSomeConnection) where
 
 import qualified Network.Riak.Basic as B
+import Network.Riak.DSL (Riak, rollback)
 import Network.Riak.Connection.Pool (Pool, create, withConnection)
 import Network.Riak.Connection (defaultClient)
 import System.IO.Unsafe (unsafePerformIO)
@@ -15,3 +16,5 @@ pool = unsafePerformIO $
 withSomeConnection :: (B.Connection -> IO a) -> IO a
 withSomeConnection = withConnection pool
 
+withRollback :: Riak a -> IO a
+withRollback m = withSomeConnection (\c -> rollback c m)
