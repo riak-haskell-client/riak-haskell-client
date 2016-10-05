@@ -1,3 +1,6 @@
+* 1.1.1.0
+  - Fixes for 2 connection leaks on errors.
+  - Bump upper bound on aeson to <1.1
 * 1.1.0.0
   - Adds bucket type as argument to many functions.
   - Bugfix for exceptions being ignored (https://github.com/markhibberd/riak-haskell-client/pull/46)
