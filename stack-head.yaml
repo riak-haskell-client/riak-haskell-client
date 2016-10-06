@@ -1,6 +1,0 @@
-flags: {}
-packages:
-- '.'
-- protobuf/
-extra-deps: []
-resolver: nightly-2015-12-20
