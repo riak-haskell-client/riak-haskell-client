@@ -142,8 +142,8 @@ library
 test-suite test
   type: exitcode-stdio-1.0
   main-is: Test.hs
-  hs-source-dirs: tests
-  ghc-options: -Wall
+  hs-source-dirs: tests, tests/dsl
+  ghc-options: -Wall -threaded
 
   if flag(test2i)
     cpp-options: -DTEST2I
@@ -152,6 +152,8 @@ test-suite test
     Properties
     CRDTProperties
     Common
+    Utils
+    Network.Riak.Admin.DSL
 
   build-depends:
     base,
@@ -160,6 +162,7 @@ test-suite test
     bytestring,
     containers,
     HUnit,
+    process,
     QuickCheck,
     tasty,
     tasty-hunit,
