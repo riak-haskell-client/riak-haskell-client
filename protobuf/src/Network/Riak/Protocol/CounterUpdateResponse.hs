@@ -1,21 +1,22 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.CounterUpdateResponse (CounterUpdateResponse(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
- 
+
 data CounterUpdateResponse = CounterUpdateResponse{value :: !(P'.Maybe P'.Int64)}
-                           deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
- 
+                           deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data, Prelude'.Generic)
+
 instance P'.Mergeable CounterUpdateResponse where
   mergeAppend (CounterUpdateResponse x'1) (CounterUpdateResponse y'1) = CounterUpdateResponse (P'.mergeAppend x'1 y'1)
- 
+
 instance P'.Default CounterUpdateResponse where
   defaultValue = CounterUpdateResponse P'.defaultValue
- 
+
 instance P'.Wire CounterUpdateResponse where
   wireSize ft' self'@(CounterUpdateResponse x'1)
    = case ft' of
@@ -45,22 +46,22 @@ instance P'.Wire CounterUpdateResponse where
          = case wire'Tag of
              8 -> Prelude'.fmap (\ !new'Field -> old'Self{value = Prelude'.Just new'Field}) (P'.wireGet 18)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
- 
+
 instance P'.MessageAPI msg' (msg' -> CounterUpdateResponse) CounterUpdateResponse where
   getVal m' f' = f' m'
- 
+
 instance P'.GPB CounterUpdateResponse
- 
+
 instance P'.ReflectDescriptor CounterUpdateResponse where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [8])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.CounterUpdateResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CounterUpdateResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"CounterUpdateResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.CounterUpdateResponse.value\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"CounterUpdateResponse\"], baseName' = FName \"value\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 8}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 18}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
- 
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.CounterUpdateResponse\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"CounterUpdateResponse\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"CounterUpdateResponse.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.CounterUpdateResponse.value\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"CounterUpdateResponse\"], baseName' = FName \"value\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 8}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 18}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], descOneofs = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
+
 instance P'.TextType CounterUpdateResponse where
   tellT = P'.tellSubMessage
   getT = P'.getSubMessage
- 
+
 instance P'.TextMsg CounterUpdateResponse where
   textPut msg
    = do

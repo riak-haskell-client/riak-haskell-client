@@ -1,21 +1,22 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.ServerInfo (ServerInfo(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
- 
+
 data ServerInfo = ServerInfo{node :: !(P'.Maybe P'.ByteString), server_version :: !(P'.Maybe P'.ByteString)}
-                deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
- 
+                deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data, Prelude'.Generic)
+
 instance P'.Mergeable ServerInfo where
   mergeAppend (ServerInfo x'1 x'2) (ServerInfo y'1 y'2) = ServerInfo (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)
- 
+
 instance P'.Default ServerInfo where
   defaultValue = ServerInfo P'.defaultValue P'.defaultValue
- 
+
 instance P'.Wire ServerInfo where
   wireSize ft' self'@(ServerInfo x'1 x'2)
    = case ft' of
@@ -47,22 +48,22 @@ instance P'.Wire ServerInfo where
              10 -> Prelude'.fmap (\ !new'Field -> old'Self{node = Prelude'.Just new'Field}) (P'.wireGet 12)
              18 -> Prelude'.fmap (\ !new'Field -> old'Self{server_version = Prelude'.Just new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
- 
+
 instance P'.MessageAPI msg' (msg' -> ServerInfo) ServerInfo where
   getVal m' f' = f' m'
- 
+
 instance P'.GPB ServerInfo
- 
+
 instance P'.ReflectDescriptor ServerInfo where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [10, 18])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ServerInfo\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ServerInfo\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ServerInfo.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.node\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"node\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.server_version\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"server_version\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
- 
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.ServerInfo\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"ServerInfo\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"ServerInfo.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.node\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"node\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.ServerInfo.server_version\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"ServerInfo\"], baseName' = FName \"server_version\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = False, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], descOneofs = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
+
 instance P'.TextType ServerInfo where
   tellT = P'.tellSubMessage
   getT = P'.getSubMessage
- 
+
 instance P'.TextMsg ServerInfo where
   textPut msg
    = do
