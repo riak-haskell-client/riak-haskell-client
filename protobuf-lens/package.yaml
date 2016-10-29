@@ -1,0 +1,26 @@
+name: riak-protobuf-lens
+version: 0.22.0.0
+synopsis: Lenses for riak-protobuf
+license: OtherLicense
+license-file: LICENSE
+maintainer: Mitchell Rosen <mitchellwrosen@gmail.com>
+category: Network
+extra-source-files:
+  - generate.sh
+  - Changes.md
+  - README.markdown
+github: markhibberd/riak-haskell-client/protobuf-lens
+
+library:
+  source-dirs: src
+  other-modules:
+    - MakeLenses
+    - TH
+  dependencies:
+    - base             >= 3 && <5
+    - bytestring
+    - containers
+    - microlens        <0.5
+    - microlens-th     <0.5
+    - riak-protobuf    ==0.22.*
+    - template-haskell
