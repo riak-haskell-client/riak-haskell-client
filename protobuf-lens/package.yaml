@@ -13,14 +13,22 @@ github: markhibberd/riak-haskell-client/protobuf-lens
 
 library:
   source-dirs: src
-  other-modules:
-    - MakeLenses
-    - TH
   dependencies:
     - base             >= 3 && <5
     - bytestring
     - containers
-    - microlens        <0.5
-    - microlens-th     <0.5
     - riak-protobuf    ==0.22.*
-    - template-haskell
+
+executables:
+  generate:
+    source-dirs: app
+    main: MakeLenses.hs
+    other-modules: TH
+    dependencies:
+      - base             >= 3 && <5
+      - bytestring
+      - containers
+      - microlens        <0.5
+      - microlens-th     <0.5
+      - riak-protobuf    ==0.22.*
+      - template-haskell

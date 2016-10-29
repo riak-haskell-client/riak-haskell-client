@@ -31,13 +31,23 @@ library
       base             >= 3 && <5
     , bytestring
     , containers
+    , riak-protobuf    ==0.22.*
+  exposed-modules:
+      Network.Riak.Protocol.Lens
+  default-language: Haskell2010
+
+executable generate
+  main-is: MakeLenses.hs
+  hs-source-dirs:
+      app
+  build-depends:
+      base             >= 3 && <5
+    , bytestring
+    , containers
     , microlens        <0.5
     , microlens-th     <0.5
     , riak-protobuf    ==0.22.*
     , template-haskell
-  exposed-modules:
-      Network.Riak.Protocol.Lens
   other-modules:
-      MakeLenses
       TH
   default-language: Haskell2010

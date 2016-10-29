@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAKE_LENSES_FILE=src/MakeLenses.hs
+MAKE_LENSES_FILE=app/MakeLenses.hs
 LENS_FILE=src/Network/Riak/Protocol/Lens.hs
 
 rm -f $MAKE_LENSES_FILE
@@ -17,7 +17,6 @@ IMPORTS=(
   "import Data.Sequence (Seq)"
   "import GHC.Int (Int64)"
   "import GHC.Word (Word32)"
-  "import Lens.Micro (Lens')"
 )
 
 # Modules to generate lenses for
@@ -50,8 +49,9 @@ for extension in "${EXTENSIONS[@]}"; do
 done
 
 echo "{-# LANGUAGE TemplateHaskell #-}" >> $OUTFILE
-echo "module MakeLenses where" >> $OUTFILE
+echo "module Main where" >> $OUTFILE
 echo "import TH" >> $OUTFILE
+echo "import Lens.Micro (Lens')" >> $OUTFILE
 
 for import in "${IMPORTS[@]}"; do
   echo $import >> $OUTFILE
@@ -61,12 +61,14 @@ for module in $LENS_MODULES; do
   echo "import qualified $module" >> $OUTFILE
 done
 
+echo "main = pure ()" >> $OUTFILE
+
 for module in $LENS_MODULES; do
   type=$(sed -e 's/.*\.\(.*\)$/\1/' <<< $module)
   echo "makeLenses ''$module.$type" >> $OUTFILE
 done
 
-stack build --ghc-options="-ddump-splices -dppr-cols=500"
+stack build riak-protobuf-lens:exe:generate --ghc-options="-ddump-splices -dppr-cols=200"
 
 ################################################################################
 ## Generate and build Network.Riak.Protocol.Lens with the dumped splices
@@ -79,6 +81,7 @@ for extension in "${EXTENSIONS[@]}"; do
   echo $extension >> $OUTFILE
 done
 
+echo "{-# LANGUAGE RankNTypes #-}" >> $OUTFILE
 echo "module Network.Riak.Protocol.Lens where" >> $OUTFILE
 
 for import in "${IMPORTS[@]}"; do
@@ -89,9 +92,11 @@ for module in $ALL_MODULES; do
   echo "import qualified $module" >> $OUTFILE
 done
 
-cat $(stack path --dist-dir)/build/src/MakeLenses.dump-splices \
+echo "type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s" >> $OUTFILE
+
+cat $(stack path --dist-dir)/build/generate/generate-tmp/app/MakeLenses.dump-splices \
   | sed \
-      -e '/src\/MakeLenses\.hs/d' \
+      -e '/app\/MakeLenses\.hs/d' \
       -e '/makeLenses/d' \
       -e '/======>/d' \
       -e 's/^    //' \

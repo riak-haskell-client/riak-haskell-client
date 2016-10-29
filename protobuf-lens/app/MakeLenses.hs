@@ -3,13 +3,13 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
-module MakeLenses where
+module Main where
 import TH
+import Lens.Micro (Lens')
 import Data.ByteString.Lazy (ByteString)
 import Data.Sequence (Seq)
 import GHC.Int (Int64)
 import GHC.Word (Word32)
-import Lens.Micro (Lens')
 import qualified Network.Riak.Protocol.YzSchemaGetResponse
 import qualified Network.Riak.Protocol.MapUpdate
 import qualified Network.Riak.Protocol.CounterUpdateResponse
@@ -79,6 +79,7 @@ import qualified Network.Riak.Protocol.MapField
 import qualified Network.Riak.Protocol.DtValue
 import qualified Network.Riak.Protocol.YzIndexPutRequest
 import qualified Network.Riak.Protocol.IndexObject
+main = pure ()
 makeLenses ''Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse
 makeLenses ''Network.Riak.Protocol.MapUpdate.MapUpdate
 makeLenses ''Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse
