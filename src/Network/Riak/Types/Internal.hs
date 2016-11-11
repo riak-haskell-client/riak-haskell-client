@@ -199,9 +199,9 @@ type Timeout = Word32
 
 -- | Solr search result
 data SearchResult = SearchResult
-  { docs :: [SearchDoc]
-  , maxScore :: Maybe Float
-  , numFound :: Maybe Word32
+  { docs     :: ![SearchDoc]
+  , maxScore :: !(Maybe Float)
+  , numFound :: !(Maybe Word32)
   }
 
 data SearchDoc = SearchDoc

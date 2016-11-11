@@ -95,7 +95,8 @@ unescapeLinks c = c { links = go <$> links c }
 search :: Q.SearchQueryResponse -> SearchResult
 search resp =
   SearchResult
-    { docs = map (toSearchDoc . foldMap kv . Q.fields) (toList (Q.docs resp))
+    { docs     = map (toSearchDoc . foldMap kv . Q.fields) (toList (Q.docs resp))
+                   `using` seqList rseq
     , maxScore = Q.max_score resp
     , numFound = Q.num_found resp
     }
@@ -127,3 +128,16 @@ search resp =
 
 getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
 getIndex = toList . Yz.index
+
+
+-- Misc. eval helpers taken from @parallel@
+
+using :: a -> (a -> ()) -> a
+using x strat = strat x `seq` x
+
+seqList :: (a -> ()) -> [a] -> ()
+seqList _ [] = ()
+seqList strat (x:xs) = strat x `seq` seqList strat xs
+
+rseq :: a -> ()
+rseq x = x `seq` ()
