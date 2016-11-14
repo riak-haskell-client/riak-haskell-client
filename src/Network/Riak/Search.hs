@@ -7,7 +7,16 @@
 --
 -- http://docs.basho.com/riak/2.1.3/dev/using/search/
 {-# LANGUAGE CPP #-}
-module Network.Riak.Search where
+module Network.Riak.Search
+  ( IndexInfo
+  , SearchResult(..)
+  , SearchDoc(..)
+  , Score
+  , indexInfo
+  , getIndex
+  , putIndex
+  , searchRaw
+  ) where
 
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative

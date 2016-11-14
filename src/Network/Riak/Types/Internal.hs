@@ -202,7 +202,7 @@ data SearchResult = SearchResult
   { docs     :: ![SearchDoc]
   , maxScore :: !(Maybe Float)
   , numFound :: !(Maybe Word32)
-  }
+  } deriving (Eq, Ord, Show)
 
 data SearchDoc = SearchDoc
   { id         :: !ByteString    -- ^ id
@@ -212,7 +212,7 @@ data SearchDoc = SearchDoc
   , score      :: !(Maybe Score) -- ^ score, if requested
   , fields     :: !(Map ByteString (Maybe ByteString))
     -- ^ additional fields requested by the @fl@ query parameter
-  } deriving (Eq,Show)
+  } deriving (Eq, Ord, Show)
 
 -- | List of (known to us) inbound or outbound message identifiers.
 data MessageTag = ErrorResponse
