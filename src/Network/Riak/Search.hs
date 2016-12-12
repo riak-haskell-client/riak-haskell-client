@@ -7,7 +7,16 @@
 --
 -- http://docs.basho.com/riak/2.1.3/dev/using/search/
 {-# LANGUAGE CPP #-}
-module Network.Riak.Search where
+module Network.Riak.Search
+  ( IndexInfo
+  , SearchResult(..)
+  , SearchDoc(..)
+  , Score
+  , indexInfo
+  , getIndex
+  , putIndex
+  , searchRaw
+  ) where
 
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
@@ -42,6 +51,7 @@ getIndex conn ix = Resp.getIndex <$> exchange conn (Req.getIndex ix)
 putIndex :: Connection -> IndexInfo -> Maybe Timeout -> IO (Seq Content, VClock)
 putIndex conn info timeout = Resp.put <$> exchange conn (Req.putIndex info timeout)
 
--- | Search by raw 'SearchQuery' request (a bytestring) using an index.
-searchRaw :: Connection -> SearchQuery -> Index -> IO [SearchResult]
+-- | Search by raw 'SearchQuery' request (a 'Data.ByteString.Lazy.Bytestring')
+-- using an 'Index'.
+searchRaw :: Connection -> SearchQuery -> Index -> IO SearchResult
 searchRaw conn q ix = Resp.search <$> exchange conn (Req.search q ix)

@@ -1,5 +1,5 @@
-{-# LANGUAGE DeriveDataTypeable, FunctionalDependencies, MultiParamTypeClasses,
-    RecordWildCards, DeriveGeneric #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FunctionalDependencies,
+    MultiParamTypeClasses, RecordWildCards, DeriveGeneric #-}
 
 -- |
 -- Module:      Network.Riak.Types.Internal
@@ -34,6 +34,8 @@ module Network.Riak.Types.Internal
     , Tag
     , SearchQuery
     , SearchResult(..)
+    , SearchDoc(..)
+    , Score
     , IndexInfo
     , VClock(..)
     , Job(..)
@@ -60,6 +62,7 @@ import           Data.ByteString.Lazy (ByteString)
 import           Data.Digest.Pure.MD5 (md5)
 import           Data.Hashable (Hashable)
 import           Data.IORef (IORef)
+import           Data.Map (Map)
 import           Data.Typeable (Typeable)
 import           Data.Word (Word32)
 import           GHC.Generics (Generic)
@@ -195,12 +198,21 @@ type N = Word32
 type Timeout = Word32
 
 -- | Solr search result
-data SearchResult = SearchResult {
-      bucketType :: BucketType, -- ^ bucket type
-      bucket :: Bucket,         -- ^ bucket
-      key :: Key,               -- ^ key
-      score :: Maybe Score      -- ^ score, if provided
-    } deriving (Eq,Show)
+data SearchResult = SearchResult
+  { docs     :: ![SearchDoc]
+  , maxScore :: !(Maybe Float)
+  , numFound :: !(Maybe Word32)
+  } deriving (Eq, Ord, Show)
+
+data SearchDoc = SearchDoc
+  { id         :: !ByteString    -- ^ id
+  , bucketType :: !BucketType    -- ^ bucket type
+  , bucket     :: !Bucket        -- ^ bucket
+  , key        :: !Key           -- ^ key
+  , score      :: !(Maybe Score) -- ^ score, if requested
+  , fields     :: !(Map ByteString (Maybe ByteString))
+    -- ^ additional fields requested by the @fl@ query parameter
+  } deriving (Eq, Ord, Show)
 
 -- | List of (known to us) inbound or outbound message identifiers.
 data MessageTag = ErrorResponse

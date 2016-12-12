@@ -203,13 +203,13 @@ search = testCase "basic searchRaw" $ do
            C.sendModify conn btype buck key [C.SetRemove kw]
            delay
            a <- query conn ("set:" <> kw)
-           assertEqual "should not found non-existing" [] a
+           assertEqual "should not found non-existing" (S.SearchResult [] (Just 0.0) (Just 0)) a
            C.sendModify conn btype buck key [C.SetAdd kw]
            delay
            b <- query conn ("set:" <> kw)
-           assertBool "searches specific" $ not (null b)
+           assertBool "searches specific" $ not (null (S.docs b))
            c <- query conn ("set:*")
-           assertBool "searches *" $ not (null c)
+           assertBool "searches *" $ not (null (S.docs c))
     where
       query conn q = S.searchRaw conn q "set-ix"
       (btype,buck,key) = ("sets","xxx","yyy")
