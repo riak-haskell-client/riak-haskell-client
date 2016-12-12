@@ -2,3 +2,4 @@ resolver: lts-7.2
 packages:
 - '.'
 - protobuf/
+- protobuf-lens/

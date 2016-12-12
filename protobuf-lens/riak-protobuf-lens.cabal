@@ -1,0 +1,53 @@
+-- This file has been generated from package.yaml by hpack version 0.14.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           riak-protobuf-lens
+version:        0.22.0.0
+synopsis:       Lenses for riak-protobuf
+category:       Network
+homepage:       https://github.com/markhibberd/riak-haskell-client#readme
+bug-reports:    https://github.com/markhibberd/riak-haskell-client/issues
+maintainer:     Mitchell Rosen <mitchellwrosen@gmail.com>
+license:        OtherLicense
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    Changes.md
+    generate.sh
+    README.markdown
+
+source-repository head
+  type: git
+  location: https://github.com/markhibberd/riak-haskell-client
+  subdir: protobuf-lens
+
+library
+  hs-source-dirs:
+      src
+  build-depends:
+      base             >= 3 && <5
+    , bytestring
+    , containers
+    , riak-protobuf    ==0.22.*
+  exposed-modules:
+      Network.Riak.Protocol.Lens
+  default-language: Haskell2010
+
+executable generate
+  main-is: MakeLenses.hs
+  hs-source-dirs:
+      app
+  build-depends:
+      base             >= 3 && <5
+    , bytestring
+    , containers
+    , microlens        <0.5
+    , microlens-th     <0.5
+    , riak-protobuf    ==0.22.*
+    , template-haskell
+  other-modules:
+      TH
+  default-language: Haskell2010
