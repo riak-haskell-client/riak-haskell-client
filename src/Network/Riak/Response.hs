@@ -95,8 +95,7 @@ unescapeLinks c = c { links = go <$> links c }
 search :: Q.SearchQueryResponse -> SearchResult
 search resp =
   SearchResult
-    { docs     = map (toSearchDoc . foldMap kv . Q.fields) (toList (Q.docs resp))
-                   `using` seqList rseq
+    { docs     = map (foldMap kv . Q.fields) (toList (Q.docs resp))
     , maxScore = Q.max_score resp
     , numFound = Q.num_found resp
     }
@@ -104,40 +103,5 @@ search resp =
     kv :: Pair.Pair -> M.Map L.ByteString (Maybe L.ByteString)
     kv pair = M.singleton (Pair.key pair) (Pair.value pair)
 
-    toSearchDoc :: M.Map L.ByteString (Maybe L.ByteString) -> SearchDoc
-    toSearchDoc m0 =
-      SearchDoc
-        { id         = fromMaybe (unexpected "missing \"_yz_id\"") (join i)
-        , bucketType = fromMaybe (unexpected "missing \"_yz_rt\"") (join bt)
-        , bucket     = fromMaybe (unexpected "missing \"_yz_rb\"") (join b)
-        , key        = fromMaybe (unexpected "missing \"_yz_rk\"") (join k)
-        , score      = join s >>= readMaybe . LC.unpack
-        , fields     = m5
-        }
-      where
-        (i,  m1) = deleteLookup "_yz_id" m0
-        (bt, m2) = deleteLookup "_yz_rt" m1
-        (b,  m3) = deleteLookup "_yz_rb" m2
-        (k,  m4) = deleteLookup "_yz_rk" m3
-        (s,  m5) = deleteLookup "score"  m4
-
-    deleteLookup :: Ord k => k -> M.Map k v -> (Maybe v, M.Map k v)
-    deleteLookup k m = (M.lookup k m, M.delete k m)
-
-    unexpected = unexError "Network.Riak.Response" "search"
-
 getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
 getIndex = toList . Yz.index
-
-
--- Misc. eval helpers taken from @parallel@
-
-using :: a -> (a -> ()) -> a
-using x strat = strat x `seq` x
-
-seqList :: (a -> ()) -> [a] -> ()
-seqList _ [] = ()
-seqList strat (x:xs) = strat x `seq` seqList strat xs
-
-rseq :: a -> ()
-rseq x = x `seq` ()
