@@ -107,7 +107,8 @@ searches :: TestTree
 searches = testGroup "Search" [
             search,
             getIndex,
-            putIndex
+            putIndex,
+            deleteIndex
            ]
 
 testClusterSimple :: TestTree
@@ -217,12 +218,24 @@ getIndex = testCase "getIndex" $ withGlobalConn $ \conn -> do
              assertEqual "set index" 1 (length one)
 
 putIndex :: TestTree
-putIndex = testCase "putIndex" $ do
-             conn <- Riak.connect Riak.defaultClient
+putIndex = testCase "putIndex" $ withGlobalConn $ \conn -> do
              _ <- S.putIndex conn (S.indexInfo "dummy-index" Nothing Nothing) Nothing
              threadDelay 5000000
              one <- S.getIndex conn (Just "dummy-index")
              assertEqual "index was created" 1 (length one)
+
+deleteIndex :: TestTree
+deleteIndex = testCase "deleteIndex" $ withGlobalConn $ \conn -> do
+  S.deleteIndex conn "dummy-index"
+  threadDelay (5*1000*1000)
+
+  _ <- tryJust f (S.getIndex conn (Just "dummy-index"))
+  pure ()
+
+  where
+    f :: ER.ErrorResponse -> Maybe ()
+    f (ER.ErrorResponse "notfound" 0) = Just ()
+    f _ = Nothing
 
 bucketTypes :: TestTree
 bucketTypes = testCase "bucketTypes" $ withGlobalConn $ \conn -> do
