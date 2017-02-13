@@ -99,7 +99,7 @@ library
     Network.Riak.Tag
 
   build-depends:
-                aeson                         >= 0.8      && < 1.1,
+                aeson                         >= 0.8      && < 1.2,
                 attoparsec                    >= 0.12.1.6 && < 0.14,
                 base                          >= 3        && <5,
                 binary,
@@ -186,6 +186,3 @@ benchmark bench
     criterion   >= 1.1,
     bytestring  >= 0.10,
     semigroups  >= 0.16
-
-
-

@@ -19,7 +19,9 @@ IMPORTS=(
   "import GHC.Word (Word32)"
 )
 
-# Modules to generate lenses for
+# Modules to generate lenses for. This is everything in Network.Riak.Protocol.*,
+# except some modules are manually deleted because they don't contain any
+# records to generate lenses for.
 LENS_MODULES=$( \
   find ../protobuf/src/Network/Riak/Protocol -name \*.hs \
     | sed \
@@ -28,12 +30,14 @@ LENS_MODULES=$( \
         -e '/GetClientIdRequest/d' \
         -e '/IndexRequest.IndexQueryType/d' \
         -e 's:../protobuf/src/::' -e 's/.hs//' -e 's:/:.:g' \
+    | sort \
   )
 
 # All protobuf modules
 ALL_MODULES=$( \
   find ../protobuf/src/Network/Riak/Protocol -name \*.hs \
     | sed -e 's:../protobuf/src/::' -e 's/.hs//' -e 's:/:.:g' \
+    | sort \
   )
 
 

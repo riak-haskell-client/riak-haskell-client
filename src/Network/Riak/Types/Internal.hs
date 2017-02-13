@@ -252,6 +252,7 @@ data MessageTag = ErrorResponse
                 | YokozunaIndexGetRequest
                 | YokozunaIndexGetResponse
                 | YokozunaIndexPutRequest
+                | YokozunaIndexDeleteRequest
                   deriving (Eq, Show, Generic)
 
 instance Hashable MessageTag
@@ -273,11 +274,6 @@ class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Response msg
 
 class (Request req, Response resp) => Exchange req resp
     | req -> resp
-
-instance (Tagged a, Tagged b) => Tagged (Either a b) where
-    messageTag (Left l)  = messageTag l
-    messageTag (Right r) = messageTag r
-    {-# INLINE messageTag #-}
 
 -- | A wrapper that keeps Riak vector clocks opaque.
 newtype VClock = VClock {
