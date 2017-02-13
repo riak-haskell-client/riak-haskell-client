@@ -149,16 +149,17 @@ test-suite test
     cpp-options: -DTEST2I
 
   other-modules:
-    Properties
     CRDTProperties
-    Common
+    Internal
     Utils
     Network.Riak.Admin.DSL
+    Properties
 
   build-depends:
     base,
     riak,
     riak-protobuf,
+    aeson,
     bytestring,
     containers,
     HUnit,
@@ -167,10 +168,12 @@ test-suite test
     tasty,
     tasty-hunit,
     tasty-quickcheck,
+    template-haskell,
     text,
     mtl                    >= 2.1,
     semigroups             >= 0.16,
-    data-default-class     >= 0.0.1
+    data-default-class     >= 0.0.1,
+    yaml                   >= 0.8.19
 
 
 benchmark bench

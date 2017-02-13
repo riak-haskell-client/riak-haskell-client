@@ -1,17 +1,61 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE LambdaCase         #-}
+{-# LANGUAGE TemplateHaskell    #-}
 
-module Utils where
+module Utils
+  ( globalAdmin
+  , globalHost
+  , globalHttpPort
+  , shell
+  , withGlobalConn
+  , ShellFailure(..)
+  ) where
 
 import Control.Applicative
 import Control.Exception
 import Control.Monad
 import Data.Typeable
+import Data.Yaml.TH (decodeFile)
+import Internal
 import System.Exit
+import System.IO.Unsafe (unsafePerformIO)
 import System.Timeout
+
+import Control.Applicative
+import qualified Network.Riak as Riak
+import qualified Network.Riak.Basic as B
+import Network.Riak.Connection.Pool (Pool, create, withConnection)
+import Network.Riak.Connection (defaultClient)
 
 import qualified System.Process as Process
 
+
+config :: Config
+config = $$(decodeFile "tests/test.yaml")
+
+-- | The global riak-admin string, configured in test.yaml.
+globalAdmin :: String
+globalAdmin = configAdmin config
+
+globalHost :: String
+globalHost = configHost config
+
+globalHttpPort :: Int
+globalHttpPort = configHttpPort config
+
+-- | Run action in some Riak connection
+withGlobalConn :: (B.Connection -> IO a) -> IO a
+withGlobalConn = withConnection pool
+
+-- | The global riak pool that all tests share.
+pool :: Pool
+pool = unsafePerformIO (create client 1 1 1)
+ where
+  client = Riak.defaultClient
+    { Riak.host = globalHost
+    , Riak.port = show (configProtoPort config)
+    }
+{-# NOINLINE pool #-}
 
 data ShellFailure
   = ShellFailure Int String

@@ -16,7 +16,7 @@ import           Network.Riak.Types           as Riak
 import           Test.QuickCheck.Monadic      (assert, monadicIO, run)
 import           Test.Tasty
 import           Test.Tasty.QuickCheck
-import           Common
+import           Utils
 
 instance Arbitrary L.ByteString where
     arbitrary     = L.pack `fmap` arbitrary
@@ -36,7 +36,7 @@ t_put_get :: QCBucket -> QCKey -> L.ByteString -> Property
 t_put_get (QCBucket b) (QCKey k) v =
     monadicIO $ assert . uncurry (==) =<< run act
   where
-    act = withSomeConnection $ \c -> do
+    act = withGlobalConn $ \c -> do
             p <- Just <$> B.put c btype b k Nothing (binary v) Default Default
             r <- B.get c btype b k Default
             return (p,r)
@@ -48,7 +48,7 @@ put_delete_get (QCBucket b) (QCKey k) v
         r <- run act
         assert $ isNothing r
     where
-      act = withSomeConnection $ \c -> do
+      act = withGlobalConn $ \c -> do
               _ <- B.put c bt b k Nothing (binary v) Default Default
               B.delete c bt b k Default
               B.get c bt b k Default
@@ -59,6 +59,3 @@ tests = [
  testProperty "t_put_get" t_put_get,
  testProperty "put_delete_get" put_delete_get
  ]
-
-
-

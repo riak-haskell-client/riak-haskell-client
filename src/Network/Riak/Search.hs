@@ -15,6 +15,7 @@ module Network.Riak.Search
   , indexInfo
   , getIndex
   , putIndex
+  , deleteIndex
   , searchRaw
   ) where
 
@@ -50,6 +51,12 @@ getIndex conn ix = Resp.getIndex <$> exchange conn (Req.getIndex ix)
 -- https://docs.basho.com/riak/kv/2.1.4/developing/api/protocol-buffers/yz-index-put/
 putIndex :: Connection -> IndexInfo -> Maybe Timeout -> IO (Seq Content, VClock)
 putIndex conn info timeout = Resp.put <$> exchange conn (Req.putIndex info timeout)
+
+-- | Delete an index.
+--
+-- https://docs.basho.com/riak/kv/2.1.4/developing/api/protocol-buffers/yz-index-delete/
+deleteIndex :: Connection -> Index -> IO ()
+deleteIndex conn ix = exchange_ conn (Req.deleteIndex ix)
 
 -- | Search by raw 'SearchQuery' request (a 'Data.ByteString.Lazy.Bytestring')
 -- using an 'Index'.
