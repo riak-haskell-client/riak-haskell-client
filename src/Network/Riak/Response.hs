@@ -95,7 +95,7 @@ unescapeLinks c = c { links = go <$> links c }
 search :: Q.SearchQueryResponse -> SearchResult
 search resp =
   SearchResult
-    { docs     = map (foldMap kv . Q.fields) (toList (Q.docs resp))
+    { docs     = fmap (foldMap kv . Q.fields) (Q.docs resp)
     , maxScore = Q.max_score resp
     , numFound = Q.num_found resp
     }

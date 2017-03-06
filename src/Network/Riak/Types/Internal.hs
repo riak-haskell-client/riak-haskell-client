@@ -62,6 +62,7 @@ import           Data.Digest.Pure.MD5 (md5)
 import           Data.Hashable (Hashable)
 import           Data.IORef (IORef)
 import           Data.Map (Map)
+import           Data.Sequence (Seq)
 import           Data.Typeable (Typeable)
 import           Data.Word (Word32)
 import           GHC.Generics (Generic)
@@ -198,7 +199,7 @@ type Timeout = Word32
 
 -- | Solr search result
 data SearchResult = SearchResult
-  { docs     :: ![Map ByteString (Maybe ByteString)]
+  { docs     :: !(Seq (Map ByteString (Maybe ByteString)))
   , maxScore :: !(Maybe Float)
   , numFound :: !(Maybe Word32)
   } deriving (Eq, Ord, Show)
