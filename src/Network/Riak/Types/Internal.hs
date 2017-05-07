@@ -199,7 +199,7 @@ type Timeout = Word32
 
 -- | Solr search result
 data SearchResult = SearchResult
-  { docs     :: !(Seq (Map ByteString (Maybe ByteString)))
+  { docs     :: !(Seq (Seq (ByteString, Maybe ByteString)))
   , maxScore :: !(Maybe Float)
   , numFound :: !(Maybe Word32)
   } deriving (Eq, Ord, Show)

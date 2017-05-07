@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, CPP, OverloadedStrings #-}
+{-# LANGUAGE NamedFieldPuns, RecordWildCards, CPP, OverloadedStrings #-}
 
 -- |
 -- Module:      Network.Riak.Request
@@ -95,13 +95,13 @@ unescapeLinks c = c { links = go <$> links c }
 search :: Q.SearchQueryResponse -> SearchResult
 search resp =
   SearchResult
-    { docs     = fmap (foldMap kv . Q.fields) (Q.docs resp)
+    { docs     = fmap (fmap unpair . Q.fields) (Q.docs resp)
     , maxScore = Q.max_score resp
     , numFound = Q.num_found resp
     }
   where
-    kv :: Pair.Pair -> M.Map L.ByteString (Maybe L.ByteString)
-    kv pair = M.singleton (Pair.key pair) (Pair.value pair)
+    unpair :: Pair.Pair -> (L.ByteString, Maybe L.ByteString)
+    unpair Pair.Pair{Pair.key, Pair.value} = (key, value)
 
 getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
 getIndex = toList . Yz.index
