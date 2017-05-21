@@ -24,14 +24,17 @@ import qualified Network.Riak as Riak
 import           Network.Riak.Admin.DSL
 import qualified Network.Riak.Basic as B
 import qualified Network.Riak.Content as B (binary,Content,value)
+import           Network.Riak.Connection (exchange)
 import qualified Network.Riak.CRDT as C
 import qualified Network.Riak.CRDT.Riak as C
+import qualified Network.Riak.Request as Req
+import qualified Network.Riak.Response as Resp
 import qualified Network.Riak.Search as S
-import qualified Network.Riak.Cluster as Riak
 import qualified Network.Riak.JSON as J
 import           Network.Riak.Resolvable (ResolvableMonoid (..))
-import           Network.Riak.Types hiding (key)
+import           Network.Riak.Types
 import qualified Network.Riak.Protocol.ErrorResponse as ER
+import qualified Network.Riak.Protocol.SearchQueryRequest as S
 import qualified Properties
 import qualified CRDTProperties as CRDT
 import           Utils
@@ -49,7 +52,7 @@ setup = do
   let createIxUrl :: String
       createIxUrl = globalHost ++ ":" ++ show globalHttpPort ++ "/search/index/set-ix"
 
-  shell ("curl -s -XPUT " ++ createIxUrl ++ " -H 'Content-Type: application/json'")
+  shell ("curl -sf -XPUT " ++ createIxUrl ++ " -H 'Content-Type: application/json'")
   let loop =
         try (shell ("curl -sf " ++ createIxUrl)) >>= \case
           Left (_ :: ShellFailure) -> do
@@ -105,7 +108,8 @@ crdts = testGroup "CRDT" [
 
 searches :: TestTree
 searches = testGroup "Search" [
-            search,
+            search1,
+            search2,
             getIndex,
             putIndex,
             deleteIndex
@@ -191,23 +195,31 @@ map_ = testCase "map update" $ withGlobalConn $ \conn -> do
                            (C.MapCounterOp (C.CounterInc 1))
 
 
-search :: TestTree
-search = testCase "basic searchRaw" $ withGlobalConn $ \conn -> do
+search1 :: TestTree
+search1 = testCase "basic searchRaw" $ withGlobalConn $ \conn -> do
            C.sendModify conn btype buck key [C.SetRemove kw]
            delay
            a <- query conn ("set:" <> kw)
-           assertEqual "should not found non-existing" (S.SearchResult [] (Just 0.0) (Just 0)) a
+           assertEqual "should not found non-existing" (S.SearchResult Seq.empty (Just 0.0) (Just 0)) a
            C.sendModify conn btype buck key [C.SetAdd kw]
            delay
            b <- query conn ("set:" <> kw)
-           assertBool "searches specific" $ not (null (S.docs b))
+           assertBool "searches specific" $ not (Seq.null (S.docs b))
            c <- query conn ("set:*")
-           assertBool "searches *" $ not (null (S.docs c))
+           assertBool "searches *" $ not (Seq.null (S.docs c))
     where
       query conn q = S.searchRaw conn q "set-ix"
       (btype,buck,key) = ("sets","xxx","yyy")
       kw = "haskell"
       delay = threadDelay (1*5000*1000) -- http://docs.basho.com/riak/2.1.3/dev/using/search/#Indexing-Values
+
+search2 :: TestTree
+search2 = testCase "search with fl" $ withGlobalConn $ \conn -> do
+            let req = (Req.search "set:haskell" "set-ix") { S.fl = Seq.singleton "_yz_rk" }
+            resp <- Resp.search <$> exchange conn req
+            assertEqual "only returns fl"
+              (Seq.singleton (Seq.singleton ("_yz_rk", Just "yyy")))
+              (S.docs resp)
 
 
 getIndex :: TestTree

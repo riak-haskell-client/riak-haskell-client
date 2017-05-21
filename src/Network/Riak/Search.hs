@@ -10,7 +10,6 @@
 module Network.Riak.Search
   ( IndexInfo
   , SearchResult(..)
-  , SearchDoc(..)
   , Score
   , indexInfo
   , getIndex

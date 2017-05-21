@@ -34,7 +34,6 @@ module Network.Riak.Types.Internal
     , Tag
     , SearchQuery
     , SearchResult(..)
-    , SearchDoc(..)
     , Score
     , IndexInfo
     , VClock(..)
@@ -63,6 +62,7 @@ import           Data.Digest.Pure.MD5 (md5)
 import           Data.Hashable (Hashable)
 import           Data.IORef (IORef)
 import           Data.Map (Map)
+import           Data.Sequence (Seq)
 import           Data.Typeable (Typeable)
 import           Data.Word (Word32)
 import           GHC.Generics (Generic)
@@ -199,19 +199,9 @@ type Timeout = Word32
 
 -- | Solr search result
 data SearchResult = SearchResult
-  { docs     :: ![SearchDoc]
+  { docs     :: !(Seq (Seq (ByteString, Maybe ByteString)))
   , maxScore :: !(Maybe Float)
   , numFound :: !(Maybe Word32)
-  } deriving (Eq, Ord, Show)
-
-data SearchDoc = SearchDoc
-  { id         :: !ByteString    -- ^ id
-  , bucketType :: !BucketType    -- ^ bucket type
-  , bucket     :: !Bucket        -- ^ bucket
-  , key        :: !Key           -- ^ key
-  , score      :: !(Maybe Score) -- ^ score, if requested
-  , fields     :: !(Map ByteString (Maybe ByteString))
-    -- ^ additional fields requested by the @fl@ query parameter
   } deriving (Eq, Ord, Show)
 
 -- | List of (known to us) inbound or outbound message identifiers.

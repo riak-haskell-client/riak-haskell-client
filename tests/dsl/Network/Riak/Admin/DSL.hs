@@ -19,9 +19,6 @@ type BucketProps = String
 
 type BucketTypeName = String
 
--- | Docker container id or name
-type ContainerId = String
-
 -- | Erlang node name, e.g. "riak@172.17.0.2"
 type NodeName = String
 
