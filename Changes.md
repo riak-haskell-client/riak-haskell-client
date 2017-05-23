@@ -1,3 +1,6 @@
+* 1.1.2.0
+  - Fixes issue where exceptions were not handled properly with many threads (https://github.com/markhibberd/riak-haskell-client/pull/76)
+  - Add / delete indexes
 * 1.1.1.0
   - Fixes for 2 connection leaks on errors.
   - Bump upper bound on aeson to <1.1
