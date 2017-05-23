@@ -37,11 +37,9 @@ module Network.Riak.Connection.Internal
     , recvResponse_
     ) where
 
-import Control.Concurrent (forkIO)
-import Control.Concurrent.Chan (newChan, readChan, writeChan)
-import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
+import Control.Concurrent.Async (async, waitBoth)
 import Control.Exception (Exception, IOException, throwIO, bracketOnError)
-import Control.Monad (forM_, replicateM, replicateM_)
+import Control.Monad (forM_, replicateM)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
@@ -297,16 +295,16 @@ pipe :: (Request req, Show resp) =>
         (Connection -> IO resp) -> Connection -> [req] -> IO [resp]
 pipe _ _ [] = return []
 pipe receive conn@Connection{..} reqs = do
-  ch <- newChan
   let numReqs = length reqs
-  _ <- forkIO . replicateM_ numReqs $ writeChan ch =<< receive conn
   let tag = show (messageTag (head reqs))
   if Debug.level > 1
     then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
     else debug "pipe" $ ">>> " ++ show numReqs ++ "x " ++ tag
-  onIOException ("pipe " ++ tag) .
-    sendAll connSock . runPut . mapM_ putRequest $ reqs
-  replicateM numReqs $ readChan ch
+  receiveResps <- async . replicateM numReqs $ receive conn
+  sendReqs <- async . sendAll connSock . runPut . mapM_ putRequest $ reqs
+  (_, resps) <- onIOException ("pipe " ++ tag) $
+    waitBoth sendReqs receiveResps
+  return resps
 
 -- | Send a series of requests to the server, back to back, and
 -- receive a response for each request sent.  The sending and
@@ -329,16 +327,15 @@ pipelineMaybe = pipe recvMaybeResponse
 pipeline_ :: (Request req) => Connection -> [req] -> IO ()
 pipeline_ _ [] = return ()
 pipeline_ conn@Connection{..} reqs = do
-  done <- newEmptyMVar
-  _ <- forkIO $ do
-         forM_ reqs (recvResponse_ conn . expectedResponse)
-         putMVar done ()
+  receiveResps <- async $
+    forM_ reqs (recvResponse_ conn . expectedResponse)
   if Debug.level > 1
     then forM_ reqs $ \req -> debug "pipe" $ ">>> " ++ showM req
     else debug "pipe" $ ">>> " ++ show (length reqs) ++ "x " ++
                         show (messageTag (head reqs))
-  sendAll connSock . runPut . mapM_ putRequest $ reqs
-  takeMVar done
+  sendReqs <- async . sendAll connSock . runPut . mapM_ putRequest $ reqs
+  _ <- onIOException "pipeline_" $ waitBoth sendReqs receiveResps
+  return ()
 
 onIOException :: String -> IO a -> IO a
 onIOException func act =
