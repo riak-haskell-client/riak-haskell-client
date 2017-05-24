@@ -1,4 +1,4 @@
-resolver: lts-7.19
+resolver: lts-8.15
 packages:
 - '.'
 - protobuf/
@@ -6,4 +6,3 @@ packages:
 extra-deps:
 - yaml-0.8.21.1
 - aeson-1.1.0.0
-
