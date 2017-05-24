@@ -1,0 +1,8 @@
+resolver: lts-7.23
+packages:
+- '.'
+- protobuf/
+- protobuf-lens/
+extra-deps:
+- yaml-0.8.21.1
+- aeson-1.1.0.0
