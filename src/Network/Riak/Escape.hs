@@ -4,7 +4,7 @@
 -- Module:      Network.Riak.Connection
 -- Copyright:   (c) 2011 MailRank, Inc.
 -- License:     Apache
--- Maintainer:  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>
 -- Stability:   experimental
 -- Portability: portable
 --
@@ -36,7 +36,7 @@ import Data.Monoid (mappend, mempty)
 #endif
 import Data.Text (Text)
 import Data.Word (Word8)
-import Network.Riak.Functions (mapEither)
+import Data.Bifunctor (second, first)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Unsafe as B
@@ -78,7 +78,7 @@ instance Escape Text where
     escape = escape . T.encodeUtf8
     {-# INLINE escape #-}
     unescape' lbs = case AL.parse (toByteString <$> unescapeBS) lbs of
-                     AL.Done _ bs    -> mapEither show id $ T.decodeUtf8' bs
+                     AL.Done _ bs    -> first show $ T.decodeUtf8' bs
                      AL.Fail _ _ err -> Left err
     {-# INLINE unescape' #-}
 
@@ -86,14 +86,14 @@ instance Escape TL.Text where
     escape = escape . TL.encodeUtf8
     {-# INLINE escape #-}
     unescape' lbs = case AL.parse (toLazyByteString <$> unescapeBS) lbs of
-                     AL.Done _ bs    -> mapEither show id $ TL.decodeUtf8' bs
+                     AL.Done _ bs    -> first show $ TL.decodeUtf8' bs
                      AL.Fail _ _ err -> Left err
     {-# INLINE unescape' #-}
 
 instance Escape [Char] where
     escape = escape . T.encodeUtf8 . T.pack
     {-# INLINE escape #-}
-    unescape' = mapEither id T.unpack . unescape'
+    unescape' = second T.unpack . unescape'
     {-# INLINE unescape' #-}
 
 -- | URL-escape a byte from a bytestring.
