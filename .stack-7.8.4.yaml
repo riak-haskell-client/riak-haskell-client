@@ -2,7 +2,7 @@ resolver: lts-2.22
 packages:
 - '.'
 - protobuf/
-# extra-deps:
-# - protocol-buffers-2.4.0
-# - protocol-buffers-descriptor-2.4.0
+extra-deps:
+- protocol-buffers-2.4.3
+- protocol-buffers-descriptor-2.4.3
 # - yaml-0.8.21.1
