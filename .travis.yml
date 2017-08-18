@@ -58,7 +58,7 @@ matrix:
   # variable, such as using --stack-yaml to point to a different file.
   - env: BUILD=stack ARGS=""
     compiler: ": #stack default"
-    addons: {apt: {packages: [libgmp-dev]}}
+    addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
   - env: BUILD=stack ARGS="--resolver lts-2 --stack-yaml=./.stack-7.8.4.yaml"
     compiler: ": #stack 7.8.4"
@@ -131,6 +131,19 @@ before_install:
   then
     echo 'jobs: $ncpus' >> $HOME/.cabal/config
   fi
+
+# riak
+- export RIAK_STRIP_V=$(echo $RIAK | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
+- wget http://s3.amazonaws.com/downloads.basho.com/riak/$RIAK_STRIP_V/$RIAK/riak-$RIAK.tar.gz
+- tar zxvf riak-$RIAK.tar.gz
+- cd riak-$RIAK
+- make rel
+- sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
+- ./rel/riak/bin/riak start
+- ./rel/riak/bin/riak ping
+- cd -
+- export PATH=$PWD/riak-$RIAK/rel/riak/bin:$PATH
+
 
 install:
 - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
