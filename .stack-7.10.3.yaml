@@ -2,3 +2,5 @@ resolver: lts-6.35
 packages:
 - '.'
 - protobuf/
+extra-deps:
+- random-1.1
