@@ -47,15 +47,9 @@ import qualified Network.Riak.Protocol.Link as Link
 import qualified Network.Riak.Protocol.Pair as Pair
 
 import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Lazy.Char8 as LC
 import qualified Data.Sequence as Seq
-import qualified Data.Map.Strict as M
+import Data.Foldable (toList)
 import Data.Maybe (fromMaybe)
-import Data.Semigroup
-import Control.Arrow ((&&&))
-import Control.Monad (join)
-import Data.Foldable (foldMap, toList)
-import Text.Read (readMaybe)
 
 getClientID :: GetClientIDResponse -> ClientID
 getClientID = client_id
