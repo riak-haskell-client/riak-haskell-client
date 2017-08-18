@@ -54,54 +54,48 @@ matrix:
   #   compiler: ": #GHC HEAD"
   #   addons: {apt: {packages: [cabal-install-head,ghc-head,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
 
-  # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
-  # variable, such as using --stack-yaml to point to a different file.
-  - env: BUILD=stack ARGS="" RIAK=2.2.3
-    compiler: ": #stack default"
-    addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
+  # # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
+  # # variable, such as using --stack-yaml to point to a different file.
+  # - env: BUILD=stack ARGS="" RIAK=2.2.3
+  #   compiler: ": #stack default"
+  #   addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-2 --stack-yaml=./.stack-7.8.4.yaml" RIAK=2.2.3
-    compiler: ": #stack 7.8.4"
-    addons: {apt: {packages: [libgmp-dev]}}
+  # - env: BUILD=stack ARGS="--resolver lts-2 --stack-yaml=./.stack-7.8.4.yaml" RIAK=2.2.3
+  #   compiler: ": #stack 7.8.4"
+  #   addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.2.3
-    compiler: ": #stack 7.10.3"
-    addons: {apt: {packages: [libgmp-dev]}}
+  # - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.2.3
+  #   compiler: ": #stack 7.10.3"
+  #   addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.2.3
-    compiler: ": #stack 8.0.2"
-    addons: {apt: {packages: [libgmp-dev]}}
+  # - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.2.3
+  #   compiler: ": #stack 8.0.2"
+  #   addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
   # Nightly builds are allowed to fail
   - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
     compiler: ": #stack nightly"
-    addons: {apt: {packages: [libgmp-dev]}}
+    addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
-  # Build on macOS in addition to Linux
-  - env: BUILD=stack ARGS="" RIAK=2.2.3
-    compiler: ": #stack default osx"
-    os: osx
+  # # Build on macOS in addition to Linux
+  # - env: BUILD=stack ARGS="" RIAK=2.2.3
+  #   compiler: ": #stack default osx"
+  #   os: osx
 
-  # Travis includes an macOS which is incompatible with GHC 7.8.4
-  #- env: BUILD=stack ARGS="--resolver lts-2"
-  #  compiler: ": #stack 7.8.4 osx"
-  #  os: osx
+  # - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.2.3
+  #   compiler: ": #stack 7.10.3 osx"
+  #   os: osx
 
-  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.2.3
-    compiler: ": #stack 7.10.3 osx"
-    os: osx
+  # - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.2.3
+  #   compiler: ": #stack 8.0.2 osx"
+  #   os: osx
 
-  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.2.3
-    compiler: ": #stack 8.0.2 osx"
-    os: osx
+  # - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
+  #   compiler: ": #stack nightly osx"
+  #   os: osx
 
-  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
-    compiler: ": #stack nightly osx"
-    os: osx
-
-  allow_failures:
-  # - env: BUILD=cabal GHCVER=head  CABALVER=head HAPPYVER=1.19.5 ALEXVER=3.1.7
-  - env: BUILD=stack ARGS="--resolver nightly" RIAK=2.2.3
+  # allow_failures:
+  # - env: BUILD=stack ARGS="--resolver nightly" RIAK=2.2.3
 
 before_install:
 # Using compiler above sets CC to an invalid value, so unset it
@@ -154,15 +148,6 @@ install:
     stack)
       stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
       ;;
-    cabal)
-      cabal --version
-      travis_retry cabal update
-
-      # Get the list of packages from the stack.yaml file
-      PACKAGES=$(stack --install-ghc query locals | grep '^ *path' | sed 's@^ *path:@@')
-
-      cabal install --only-dependencies --enable-tests --enable-benchmarks --force-reinstalls --ghc-options=-O0 --reorder-goals --max-backjumps=-1 $CABALARGS $PACKAGES
-      ;;
   esac
   set +ex
 
@@ -172,26 +157,6 @@ script:
   case "$BUILD" in
     stack)
       stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
-      ;;
-    cabal)
-      cabal install --enable-tests --enable-benchmarks --force-reinstalls --ghc-options=-O0 --reorder-goals --max-backjumps=-1 $CABALARGS $PACKAGES
-
-      ORIGDIR=$(pwd)
-      for dir in $PACKAGES
-      do
-        cd $dir
-        cabal check || [ "$CABALVER" == "1.16" ]
-        cabal sdist
-        PKGVER=$(cabal info . | awk '{print $2;exit}')
-        SRC_TGZ=$PKGVER.tar.gz
-        cd dist
-        tar zxfv "$SRC_TGZ"
-        cd "$PKGVER"
-        cabal configure --enable-tests
-        cabal build
-        cabal test
-        cd $ORIGDIR
-      done
       ;;
   esac
   set +ex
