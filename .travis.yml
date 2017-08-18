@@ -56,29 +56,29 @@ matrix:
 
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
-  - env: BUILD=stack ARGS=""
+  - env: BUILD=stack ARGS="" RIAK=2.1.3
     compiler: ": #stack default"
     addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-2 --stack-yaml=./.stack-7.8.4.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-2 --stack-yaml=./.stack-7.8.4.yaml" RIAK=2.1.3
     compiler: ": #stack 7.8.4"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.1.3
     compiler: ": #stack 7.10.3"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.1.3
     compiler: ": #stack 8.0.2"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Nightly builds are allowed to fail
-  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml"
+  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.1.3
     compiler: ": #stack nightly"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Build on macOS in addition to Linux
-  - env: BUILD=stack ARGS=""
+  - env: BUILD=stack ARGS="" RIAK=2.1.3
     compiler: ": #stack default osx"
     os: osx
 
@@ -87,21 +87,21 @@ matrix:
   #  compiler: ": #stack 7.8.4 osx"
   #  os: osx
 
-  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-6 --stack-yaml=./.stack-7.10.3.yaml" RIAK=2.1.3
     compiler: ": #stack 7.10.3 osx"
     os: osx
 
-  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-9 --stack-yaml=./.stack-8.0.2.yaml" RIAK=2.1.3
     compiler: ": #stack 8.0.2 osx"
     os: osx
 
-  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml"
+  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.1.3
     compiler: ": #stack nightly osx"
     os: osx
 
   allow_failures:
   # - env: BUILD=cabal GHCVER=head  CABALVER=head HAPPYVER=1.19.5 ALEXVER=3.1.7
-  - env: BUILD=stack ARGS="--resolver nightly"
+  - env: BUILD=stack ARGS="--resolver nightly" RIAK=2.1.3
 
 before_install:
 # Using compiler above sets CC to an invalid value, so unset it
