@@ -125,7 +125,7 @@ library
                 semigroups                    >= 0.16,
                 stm                           == 2.4.*,
                 text                          == 1.2.*,
-                time                          >= 1.4.2     && < 1.7,
+                time                          >= 1.4.2     && < 1.9,
                 vector                        >= 0.10.12.3 && < 0.12,
                 unordered-containers          >= 0.2.5
 
