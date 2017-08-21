@@ -1,4 +1,4 @@
--- This file has been generated from package.yaml by hpack version 0.15.0.
+-- This file has been generated from package.yaml by hpack version 0.17.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -13,8 +13,6 @@ license:        OtherLicense
 license-file:   LICENSE
 build-type:     Simple
 cabal-version:  >= 1.10
-description:
-  Protocol buffer definitions for riak haskell client.
 
 extra-source-files:
     Changes.md

@@ -33,27 +33,6 @@ cache:
 #     addons: {apt: {packages: [libfcgi-dev,libgmp-dev]}}
 matrix:
   include:
-  # We grab the appropriate GHC and cabal-install versions from hvr's PPA. See:
-  # https://github.com/hvr/multi-ghc-travis
-  - env: BUILD=cabal GHCVER=7.8.4 CABALVER=1.18 HAPPYVER=1.19.5 ALEXVER=3.1.7
-    compiler: ": #GHC 7.8.4"
-    addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.4,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-  - env: BUILD=cabal GHCVER=7.10.3 CABALVER=1.22 HAPPYVER=1.19.5 ALEXVER=3.1.7
-    compiler: ": #GHC 7.10.3"
-    addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-  - env: BUILD=cabal GHCVER=8.0.2 CABALVER=1.24 HAPPYVER=1.19.5 ALEXVER=3.1.7
-    compiler: ": #GHC 8.0.2"
-    addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-  - env: BUILD=cabal GHCVER=8.2.1 CABALVER=1.24 HAPPYVER=1.19.5 ALEXVER=3.1.7
-    compiler: ": #GHC 8.2.1"
-    addons: {apt: {packages: [cabal-install-1.24,ghc-8.2.1,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-
-  # Build with the newest GHC and cabal-install. This is an accepted failure,
-  # see below.
-  - env: BUILD=cabal GHCVER=head  CABALVER=head HAPPYVER=1.19.5 ALEXVER=3.1.7
-    compiler: ": #GHC HEAD"
-    addons: {apt: {packages: [cabal-install-head,ghc-head,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
   - env: BUILD=stack ARGS="" RIAK=2.2.3
@@ -73,8 +52,8 @@ matrix:
     addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
   # Nightly builds are allowed to fail
-  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
-    compiler: ": #stack nightly"
+  - env: BUILD=stack ARGS="--resolver nightly-2017-08-17 --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
+    compiler: ": #stack 8.2.1"
     addons: {apt: {packages: [libgmp-dev build-essential libc6-dev-i386 git erlang-nox erlang-dev erlang-reltool]}}
 
   # Build on macOS in addition to Linux
@@ -90,8 +69,8 @@ matrix:
     compiler: ": #stack 8.0.2 osx"
     os: osx
 
-  - env: BUILD=stack ARGS="--resolver nightly --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
-    compiler: ": #stack nightly osx"
+  - env: BUILD=stack ARGS="--resolver nightly-2017-08-17 --stack-yaml=./.stack-8.2.1.yaml" RIAK=2.2.3
+    compiler: ": #stack 8.2.1 osx"
     os: osx
 
   allow_failures:
@@ -146,7 +125,7 @@ install:
   set -ex
   case "$BUILD" in
     stack)
-      stack --no-terminal --install-ghc $ARGS --no-run-tests --test build --bench --only-dependencies
+      stack --no-terminal --install-ghc $ARGS build --no-run-tests --test --bench --only-dependencies
       # stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
       ;;
   esac
@@ -157,7 +136,7 @@ script:
   set -ex
   case "$BUILD" in
     stack)
-      stack --no-terminal $ARGS --no-run-tests --test build --bench --no-run-benchmarks --haddock --no-haddock-deps
+      stack --no-terminal $ARGS build --no-run-tests --test --bench --no-run-benchmarks --haddock --no-haddock-deps
       ;;
   esac
   set +ex
