@@ -21,7 +21,7 @@ before_install:
   - wget https://github.com/basho/riak/archive/riak-$RIAK.zip
   - unzip riak-$RIAK.zip
   # - tar zxvf riak-$RIAK.tar.gz
-  - cd riak-$RIAK
+  - cd riak-riak-$RIAK
   - make
   - make rel
   - sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
