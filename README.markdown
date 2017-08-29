@@ -14,15 +14,15 @@ We are happy to receive bug reports, fixes, documentation enhancements,
 and other improvements.
 
 Please report bugs via the
-[github issue tracker](http://github.com/markhibberd/riak-haskell-client/issues).
+[github issue tracker](http://github.com/riak-haskell-client/riak-haskell-client/issues).
 
-Master [git repository](http://github.com/markhibberd/riak-haskell-client):
+Master [git repository](http://github.com/riak-haskell-client/riak-haskell-client):
 
-* `git clone git://github.com/markhibberd/riak-haskell-client.git`
+* `git clone git://github.com/riak-haskell-client/riak-haskell-client.git`
 
-Note the official repo is now <https://github.com/markhibberd/riak-haskell-client>.
+Note the official repo is now <https://github.com/riak-haskell-client/riak-haskell-client>.
 
 
 # Build
 
-[![Build Status](https://travis-ci.org/markhibberd/riak-haskell-client.svg)](https://travis-ci.org/markhibberd/riak-haskell-client)
+[![Build Status](https://travis-ci.org/riak-haskell-client/riak-haskell-client.svg)](https://travis-ci.org/riak-haskell-client/riak-haskell-client)
