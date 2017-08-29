@@ -5,4 +5,4 @@ packages:
 extra-deps:
 - protocol-buffers-2.4.3
 - protocol-buffers-descriptor-2.4.3
-# - yaml-0.8.21.1
+- yaml-0.8.23.3
