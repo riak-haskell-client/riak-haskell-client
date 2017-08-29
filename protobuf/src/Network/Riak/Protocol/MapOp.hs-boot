@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses, StandaloneDeriving #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses, StandaloneDeriving, CPP #-}
 {-# OPTIONS_GHC  -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.MapOp (MapOp) where
 import qualified Prelude as Prelude'
@@ -17,7 +17,9 @@ instance Prelude'.Eq MapOp
 
 instance Prelude'.Ord MapOp
 
---instance Prelude'.Typeable MapOp
+#if __GLASGOW_HASKELL__ <= 708
+instance Prelude'.Typeable MapOp
+#endif
 
 instance Prelude'.Data MapOp
 
