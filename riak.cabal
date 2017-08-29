@@ -31,7 +31,7 @@ description:
   [Network.Riak.CRDT] CRDT operations.
 
 
-homepage:            http://github.com/markhibberd/riak-haskell-client
+homepage:            http://github.com/riak-haskell-client/riak-haskell-client
 license:             OtherLicense
 license-file:        LICENSE
 author:              Bryan O'Sullivan <bos@serpentine.com>
@@ -48,7 +48,7 @@ cabal-version:       >=1.8
 
 source-repository head
     type: git
-    location: https://github.com:markhibberd/riak-haskell-client.git
+    location: https://github.com:riak-haskell-client/riak-haskell-client.git
 
 flag debug
   description: allow debug logging

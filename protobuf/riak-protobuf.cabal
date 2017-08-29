@@ -5,7 +5,7 @@ description:
   A set of Haskell types for interacting with the protocol buffer
   API of the Riak decentralized data store.
 
-homepage:            http://github.com/markhibberd/riak-haskell-client
+homepage:            http://github.com/riak-haskell-client/riak-haskell-client
 license:             OtherLicense
 license-file:        LICENSE
 author:              Bryan O'Sullivan <bos@mailrank.com>
@@ -117,4 +117,4 @@ library
 
 source-repository head
   type:     git
-  location: http://github.com/markhibberd/riak-haskell-client
+  location: http://github.com/riak-haskell-client/riak-haskell-client
