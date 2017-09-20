@@ -1,5 +1,6 @@
 * Unreleased
   - Bump time upper bound from <1.7 to <1.9
+  - Bump aeson upper bound from <1.2 to <1.3
 * 1.1.2.0
   - Fixes issue where exceptions were not handled properly with many threads (https://github.com/markhibberd/riak-haskell-client/pull/76)
   - Add / delete indexes
