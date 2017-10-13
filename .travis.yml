@@ -2,8 +2,8 @@ language: c
 sudo: required
 dist: trusty
 
-# services:
-#   - riak
+services:
+  - riak
 
 before_install:
   # stack
@@ -11,50 +11,27 @@ before_install:
   - export PATH=~/.local/bin:$PATH
   - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - ulimit -n 4096
-  # riak
-  - sudo apt-get -y install build-essential libc6-dev-i386 git
-  - sudo apt-get -y install erlang-nox erlang-dev erlang-reltool
-  - RIAK_STRIP_V=$(echo $RIAK | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
-  - wget http://s3.amazonaws.com/downloads.basho.com/riak/$RIAK_STRIP_V/$RIAK/riak-$RIAK.tar.gz
-  - tar zxvf riak-$RIAK.tar.gz
-  - cd riak-$RIAK
-  - make rel
-  - sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
-  - ./rel/riak/bin/riak start
-  - ./rel/riak/bin/riak ping
-  - cd -
-  - export PATH=$PWD/riak-$RIAK/rel/riak/bin:$PATH
+  - sudo apt-get install riak
 
 matrix:
   include:
-    - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml" RIAK=2.1.3
-      addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
-    - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml" RIAK=2.0.6
+    - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml"
       addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
 
-    - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml" RIAK=2.1.3
-      addons: {apt: {packages: [ghc-7.10.3],sources: [hvr-ghc]}}
-    - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml" RIAK=2.0.6
+    - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml"
       addons: {apt: {packages: [ghc-7.10.3],sources: [hvr-ghc]}}
 
-    - env: GHCVER=8.0.1 ARGS="--stack-yaml=.stack-8.0.1.yaml" RIAK=2.1.3
-      addons: {apt: {packages: [ghc-8.0.1],sources: [hvr-ghc]}}
-    - env: GHCVER=8.0.1 ARGS="--stack-yaml=.stack-8.0.1.yaml" RIAK=2.0.6
+    - env: GHCVER=8.0.1 ARGS="--stack-yaml=.stack-8.0.1.yaml"
       addons: {apt: {packages: [ghc-8.0.1],sources: [hvr-ghc]}}
 
-    - env: GHCVER=8.0.2 ARGS="" RIAK=2.1.3
-      addons: {apt: {packages: [ghc-8.0.1],sources: [hvr-ghc]}}
-    - env: GHCVER=8.0.2 ARGS="" RIAK=2.0.6
+    - env: GHCVER=8.0.2 ARGS=""
       addons: {apt: {packages: [ghc-8.0.1],sources: [hvr-ghc]}}
 
-    - env: GHCVER=head ARGS="--resolver=nightly" RIAK=2.1.3
-      addons: {apt: {packages: [cabal-install-head,ghc-head], sources: [hvr-ghc]}}
-    - env: GHCVER=head ARGS="--resolver=nightly" RIAK=2.0.6
+    - env: GHCVER=head ARGS="--resolver=nightly"
       addons: {apt: {packages: [cabal-install-head,ghc-head], sources: [hvr-ghc]}}
 
   allow_failures:
-    - env: GHCVER=head ARGS="--resolver=nightly" RIAK=2.1.3
-    - env: GHCVER=head ARGS="--resolver=nightly" RIAK=2.0.6
+    - env: GHCVER=head ARGS="--resolver=nightly"
 
 install:
   - stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
