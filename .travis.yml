@@ -2,8 +2,8 @@ language: c
 sudo: required
 dist: trusty
 
-# services:
-#   - riak
+services:
+  - riak
 
 before_install:
   # stack
@@ -11,19 +11,20 @@ before_install:
   - export PATH=~/.local/bin:$PATH
   - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   - ulimit -n 4096
+  - sudo apt-get install riak
   # riak
-  - sudo apt-get -y install build-essential libc6-dev-i386 git
-  - sudo apt-get -y install erlang-nox erlang-dev erlang-reltool
-  - RIAK_STRIP_V=$(echo $RIAK | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
-  - wget http://s3.amazonaws.com/downloads.basho.com/riak/$RIAK_STRIP_V/$RIAK/riak-$RIAK.tar.gz
-  - tar zxvf riak-$RIAK.tar.gz
-  - cd riak-$RIAK
-  - make rel
-  - sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
-  - ./rel/riak/bin/riak start
-  - ./rel/riak/bin/riak ping
-  - cd -
-  - export PATH=$PWD/riak-$RIAK/rel/riak/bin:$PATH
+  # - sudo apt-get -y install build-essential libc6-dev-i386 git
+  # - sudo apt-get -y install erlang-nox erlang-dev erlang-reltool
+  # - RIAK_STRIP_V=$(echo $RIAK | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
+  # - wget http://s3.amazonaws.com/downloads.basho.com/riak/$RIAK_STRIP_V/$RIAK/riak-$RIAK.tar.gz
+  # - tar zxvf riak-$RIAK.tar.gz
+  # - cd riak-$RIAK
+  # - make rel
+  # - sed -r --in-place -e 's/^(search) = .*/\1 = on/' rel/riak/etc/riak.conf
+  # - ./rel/riak/bin/riak start
+  # - ./rel/riak/bin/riak ping
+  # - cd -
+  # - export PATH=$PWD/riak-$RIAK/rel/riak/bin:$PATH
 
 matrix:
   include:
