@@ -62,6 +62,5 @@ instance P'.TextType PingRequest where
   getT = P'.getSubMessage
 
 instance P'.TextMsg PingRequest where
-  textPut msg = Prelude'.return ()
+  textPut _ = Prelude'.return ()
   textGet = Prelude'.return P'.defaultValue
-    where

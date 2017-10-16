@@ -126,7 +126,7 @@ library
                 stm                           == 2.4.*,
                 text                          == 1.2.*,
                 time                          >= 1.4.2     && < 1.9,
-                vector                        >= 0.10.12.3 && < 0.12,
+                vector                        >= 0.10.12.3 && < 0.13,
                 unordered-containers          >= 0.2.5
 
 

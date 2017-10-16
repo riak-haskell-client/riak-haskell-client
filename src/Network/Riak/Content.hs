@@ -22,7 +22,7 @@ module Network.Riak.Content
     , link
     ) where
 
-import Data.Aeson.Encode (encode)
+import Data.Aeson (encode)
 import Data.Aeson.Types (ToJSON)
 import Network.Riak.Protocol.Content (Content(..))
 import Network.Riak.Types.Internal (Bucket, Key, Tag)

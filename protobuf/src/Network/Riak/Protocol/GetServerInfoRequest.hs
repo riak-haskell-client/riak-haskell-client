@@ -62,6 +62,6 @@ instance P'.TextType GetServerInfoRequest where
   getT = P'.getSubMessage
 
 instance P'.TextMsg GetServerInfoRequest where
-  textPut msg = Prelude'.return ()
+  textPut _ = Prelude'.return ()
   textGet = Prelude'.return P'.defaultValue
     where
