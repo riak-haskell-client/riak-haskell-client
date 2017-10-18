@@ -7,4 +7,4 @@ protoPort: 8087
 
 # String to prefix shell commands that exec riak-admin commands, e.g.
 # "docker exec riak01"
-admin: ""
+admin: "sudo"
