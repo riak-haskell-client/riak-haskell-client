@@ -103,6 +103,7 @@ library
                 async                         >= 2.0.0.0  && < 2.2,
                 attoparsec                    >= 0.12.1.6 && < 0.14,
                 base                          >= 3        && < 5,
+                bifunctors                    >= 4.2      && < 6,
                 binary,
                 blaze-builder                 >= 0.3      && <= 0.5,
                 bytestring,
