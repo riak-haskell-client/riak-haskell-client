@@ -1,0 +1,5 @@
+resolver: nightly-2017-08-17
+packages:
+- '.'
+- protobuf/
+- protobuf-lens/
