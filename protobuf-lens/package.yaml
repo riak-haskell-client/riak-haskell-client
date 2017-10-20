@@ -9,7 +9,7 @@ extra-source-files:
   - generate.sh
   - Changes.md
   - README.markdown
-github: markhibberd/riak-haskell-client/protobuf-lens
+github: riak-haskell-client/riak-haskell-client/protobuf-lens
 
 library:
   source-dirs: src
