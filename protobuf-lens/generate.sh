@@ -10,6 +10,7 @@ EXTENSIONS=(
   "{-# LANGUAGE FlexibleInstances #-}"
   "{-# LANGUAGE FunctionalDependencies #-}"
   "{-# LANGUAGE MultiParamTypeClasses #-}"
+  "{-# #-}"
 )
 
 IMPORTS=(

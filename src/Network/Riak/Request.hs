@@ -64,7 +64,7 @@ import Network.Riak.Protocol.GetServerInfoRequest
 import Network.Riak.Protocol.ListBucketsRequest
 import Network.Riak.Protocol.MapReduceRequest
 import Network.Riak.Protocol.PingRequest
-import Network.Riak.Types.Internal hiding (MessageTag(..),bucket,key)
+import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Riak.Escape (escape)
 import qualified Network.Riak.Protocol.DeleteRequest as Del
 import qualified Network.Riak.Protocol.Link as Link
