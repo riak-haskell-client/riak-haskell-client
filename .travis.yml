@@ -25,6 +25,9 @@ matrix:
     - env: GHCVER=8.0.2 ARGS=""
       addons: {apt: {packages: [ghc-8.0.2],sources: [hvr-ghc]}}
 
+    - env: GHCVER=8.2.1 ARGS="--stack-yaml=.stack-8.2.1.yaml"
+      addons: {apt: {packages: [ghc-8.2.1],sources: [hvr-ghc]}}
+
     - env: GHCVER=head ARGS="--resolver=nightly"
       addons: {apt: {packages: [cabal-install-head,ghc-head], sources: [hvr-ghc]}}
 
