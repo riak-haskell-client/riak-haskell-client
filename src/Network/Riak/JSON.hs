@@ -1,4 +1,6 @@
-{-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving, CPP #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE CPP #-}
 
 -- |
 -- Module:      Network.Riak.JSON
@@ -44,7 +46,7 @@ newtype JSON a = J {
 
 -- | Wrap up a value so that it will be encoded and decoded as JSON
 -- when converted to/from 'Content'.
-json :: (FromJSON a, ToJSON a) => a -> JSON a
+json :: a -> JSON a
 json = J
 {-# INLINE json #-}
 

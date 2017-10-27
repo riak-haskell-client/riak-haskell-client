@@ -291,7 +291,7 @@ debugRecv _ act = act
 {-# INLINE debugRecv #-}
 #endif
 
-pipe :: (Request req, Show resp) =>
+pipe :: (Request req) =>
         (Connection -> IO resp) -> Connection -> [req] -> IO [resp]
 pipe _ _ [] = return []
 pipe receive conn@Connection{..} reqs = do

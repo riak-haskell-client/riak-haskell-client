@@ -88,7 +88,7 @@ class (Show a) => Resolvable a where
 newtype ResolvableMonoid a = RM { unRM :: a }
     deriving (Eq, Ord, Read, Show, Typeable, Data, Monoid, FromJSON, ToJSON)
 
-instance (Eq a, Show a, Monoid a) => Resolvable (ResolvableMonoid a) where
+instance (Show a, Monoid a) => Resolvable (ResolvableMonoid a) where
     resolve = mappend
     {-# INLINE resolve #-}
 
