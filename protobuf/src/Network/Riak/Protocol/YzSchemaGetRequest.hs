@@ -1,22 +1,21 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
-{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.YzSchemaGetRequest (YzSchemaGetRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
-import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
-
+ 
 data YzSchemaGetRequest = YzSchemaGetRequest{name :: !(P'.ByteString)}
-                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data, Prelude'.Generic)
-
+                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
+ 
 instance P'.Mergeable YzSchemaGetRequest where
   mergeAppend (YzSchemaGetRequest x'1) (YzSchemaGetRequest y'1) = YzSchemaGetRequest (P'.mergeAppend x'1 y'1)
-
+ 
 instance P'.Default YzSchemaGetRequest where
   defaultValue = YzSchemaGetRequest P'.defaultValue
-
+ 
 instance P'.Wire YzSchemaGetRequest where
   wireSize ft' self'@(YzSchemaGetRequest x'1)
    = case ft' of
@@ -46,22 +45,22 @@ instance P'.Wire YzSchemaGetRequest where
          = case wire'Tag of
              10 -> Prelude'.fmap (\ !new'Field -> old'Self{name = new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
-
+ 
 instance P'.MessageAPI msg' (msg' -> YzSchemaGetRequest) YzSchemaGetRequest where
   getVal m' f' = f' m'
-
+ 
 instance P'.GPB YzSchemaGetRequest
-
+ 
 instance P'.ReflectDescriptor YzSchemaGetRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList [10]) (P'.fromDistinctAscList [10])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.YzSchemaGetRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"YzSchemaGetRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"YzSchemaGetRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.YzSchemaGetRequest.name\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"YzSchemaGetRequest\"], baseName' = FName \"name\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], descOneofs = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
-
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.YzSchemaGetRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"YzSchemaGetRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"YzSchemaGetRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.YzSchemaGetRequest.name\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"YzSchemaGetRequest\"], baseName' = FName \"name\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
 instance P'.TextType YzSchemaGetRequest where
   tellT = P'.tellSubMessage
   getT = P'.getSubMessage
-
+ 
 instance P'.TextMsg YzSchemaGetRequest where
   textPut msg
    = do

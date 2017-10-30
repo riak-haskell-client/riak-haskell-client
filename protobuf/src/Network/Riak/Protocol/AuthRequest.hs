@@ -1,22 +1,21 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
-{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.AuthRequest (AuthRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
-import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
-
+ 
 data AuthRequest = AuthRequest{user :: !(P'.ByteString), password :: !(P'.ByteString)}
-                 deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data, Prelude'.Generic)
-
+                 deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
+ 
 instance P'.Mergeable AuthRequest where
   mergeAppend (AuthRequest x'1 x'2) (AuthRequest y'1 y'2) = AuthRequest (P'.mergeAppend x'1 y'1) (P'.mergeAppend x'2 y'2)
-
+ 
 instance P'.Default AuthRequest where
   defaultValue = AuthRequest P'.defaultValue P'.defaultValue
-
+ 
 instance P'.Wire AuthRequest where
   wireSize ft' self'@(AuthRequest x'1 x'2)
    = case ft' of
@@ -48,22 +47,22 @@ instance P'.Wire AuthRequest where
              10 -> Prelude'.fmap (\ !new'Field -> old'Self{user = new'Field}) (P'.wireGet 12)
              18 -> Prelude'.fmap (\ !new'Field -> old'Self{password = new'Field}) (P'.wireGet 12)
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
-
+ 
 instance P'.MessageAPI msg' (msg' -> AuthRequest) AuthRequest where
   getVal m' f' = f' m'
-
+ 
 instance P'.GPB AuthRequest
-
+ 
 instance P'.ReflectDescriptor AuthRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList [10, 18]) (P'.fromDistinctAscList [10, 18])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.AuthRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"AuthRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"AuthRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.AuthRequest.user\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"AuthRequest\"], baseName' = FName \"user\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.AuthRequest.password\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"AuthRequest\"], baseName' = FName \"password\", baseNamePrefix' = \"\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], descOneofs = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
-
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.AuthRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"AuthRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"AuthRequest.hs\"], isGroup = False, fields = fromList [FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.AuthRequest.user\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"AuthRequest\"], baseName' = FName \"user\"}, fieldNumber = FieldId {getFieldId = 1}, wireTag = WireTag {getWireTag = 10}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing},FieldInfo {fieldName = ProtoFName {protobufName' = FIName \".Protocol.AuthRequest.password\", haskellPrefix' = [MName \"Network\",MName \"Riak\"], parentModule' = [MName \"Protocol\",MName \"AuthRequest\"], baseName' = FName \"password\"}, fieldNumber = FieldId {getFieldId = 2}, wireTag = WireTag {getWireTag = 18}, packedTag = Nothing, wireTagLength = 1, isPacked = False, isRequired = True, canRepeat = False, mightPack = False, typeCode = FieldType {getFieldType = 12}, typeName = Nothing, hsRawDefault = Nothing, hsDefault = Nothing}], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
 instance P'.TextType AuthRequest where
   tellT = P'.tellSubMessage
   getT = P'.getSubMessage
-
+ 
 instance P'.TextMsg AuthRequest where
   textPut msg
    = do

@@ -1,22 +1,21 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses #-}
-{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.GetClientIDRequest (GetClientIDRequest(..)) where
 import Prelude ((+), (/))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
-import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
-
+ 
 data GetClientIDRequest = GetClientIDRequest{}
-                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data, Prelude'.Generic)
-
+                        deriving (Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
+ 
 instance P'.Mergeable GetClientIDRequest where
   mergeAppend GetClientIDRequest GetClientIDRequest = GetClientIDRequest
-
+ 
 instance P'.Default GetClientIDRequest where
   defaultValue = GetClientIDRequest
-
+ 
 instance P'.Wire GetClientIDRequest where
   wireSize ft' self'@(GetClientIDRequest)
    = case ft' of
@@ -45,23 +44,22 @@ instance P'.Wire GetClientIDRequest where
         update'Self wire'Tag old'Self
          = case wire'Tag of
              _ -> let (field'Number, wire'Type) = P'.splitWireTag wire'Tag in P'.unknown field'Number wire'Type old'Self
-
+ 
 instance P'.MessageAPI msg' (msg' -> GetClientIDRequest) GetClientIDRequest where
   getVal m' f' = f' m'
-
+ 
 instance P'.GPB GetClientIDRequest
-
+ 
 instance P'.ReflectDescriptor GetClientIDRequest where
   getMessageInfo _ = P'.GetMessageInfo (P'.fromDistinctAscList []) (P'.fromDistinctAscList [])
   reflectDescriptorInfo _
    = Prelude'.read
-      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetClientIDRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetClientIDRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetClientIDRequest.hs\"], isGroup = False, fields = fromList [], descOneofs = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False, makeLenses = False}"
-
+      "DescriptorInfo {descName = ProtoName {protobufName = FIName \".Protocol.GetClientIDRequest\", haskellPrefix = [MName \"Network\",MName \"Riak\"], parentModule = [MName \"Protocol\"], baseName = MName \"GetClientIDRequest\"}, descFilePath = [\"Network\",\"Riak\",\"Protocol\",\"GetClientIDRequest.hs\"], isGroup = False, fields = fromList [], keys = fromList [], extRanges = [], knownKeys = fromList [], storeUnknown = False, lazyFields = False}"
+ 
 instance P'.TextType GetClientIDRequest where
   tellT = P'.tellSubMessage
   getT = P'.getSubMessage
-
+ 
 instance P'.TextMsg GetClientIDRequest where
   textPut msg = Prelude'.return ()
   textGet = Prelude'.return P'.defaultValue
-    where
