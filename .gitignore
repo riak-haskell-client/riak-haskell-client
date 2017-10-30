@@ -6,3 +6,5 @@
 cabal.sandbox.config
 TAGS
 .stack-work
+dist
+dist-newstyle

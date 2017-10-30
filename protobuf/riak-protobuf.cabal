@@ -93,6 +93,25 @@ library
     Network.Riak.Protocol.SetBucketTypeRequest
     Network.Riak.Protocol.SetClientIDRequest
     Network.Riak.Protocol.SetOp
+    Network.Riak.Protocol.TsCell
+    Network.Riak.Protocol.TsColumnDescription
+    Network.Riak.Protocol.TsColumnType
+    Network.Riak.Protocol.TsCoverageEntry
+    Network.Riak.Protocol.TsCoverageRequest
+    Network.Riak.Protocol.TsCoverageResponse
+    Network.Riak.Protocol.TsDeleteRequest
+    Network.Riak.Protocol.TsDeleteResponse
+    Network.Riak.Protocol.TsGetRequest
+    Network.Riak.Protocol.TsGetResponse
+    Network.Riak.Protocol.TsInterpolation
+    Network.Riak.Protocol.TsListKeysRequest
+    Network.Riak.Protocol.TsListKeysResponse
+    Network.Riak.Protocol.TsPutRequest
+    Network.Riak.Protocol.TsPutResponse
+    Network.Riak.Protocol.TsQueryRequest
+    Network.Riak.Protocol.TsQueryResponse
+    Network.Riak.Protocol.TsRange
+    Network.Riak.Protocol.TsRow
     Network.Riak.Protocol.YzIndexDeleteRequest
     Network.Riak.Protocol.YzIndexGetRequest
     Network.Riak.Protocol.YzIndexGetResponse
