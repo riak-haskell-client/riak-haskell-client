@@ -1,32 +1,37 @@
--- | module:    Network.Riak.CRDT.Ops
---   copyright: (c) 2016 Sentenai
---   author:    Antonio Nikishaev <me@lelf.lu>
---   license:   Apache
+-- |
+-- Module:      Network.Riak.CRDT.Ops
+-- Copyright:   (c) 2016 Sentenai
+-- Author:      Antonio Nikishaev <me@lelf.lu>
+-- License:     Apache
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>
+-- Stability:   experimental
+-- Portability: portable
+--
 --
 -- Conversions of CRDT operations to 'PB.DtOp'
 --
-module Network.Riak.CRDT.Ops (counterUpdateOp,
-                              setUpdateOp, SetOpsComb(..), toOpsComb,
-                              mapUpdateOp)
-    where
-
-import qualified Network.Riak.Protocol.DtOp as PB
-import qualified Network.Riak.Protocol.CounterOp as PB
-import qualified Network.Riak.Protocol.SetOp as PBSet
-
-import qualified Network.Riak.Protocol.MapOp as PBMap
-import qualified Network.Riak.Protocol.MapField as PBMap
-import qualified Network.Riak.Protocol.MapField.MapFieldType as PBMap
-import qualified Network.Riak.Protocol.MapUpdate as PBMap
-
-import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
+module Network.Riak.CRDT.Ops (
+    counterUpdateOp
+  , setUpdateOp
+  , SetOpsComb(..)
+  , toOpsComb
+  , mapUpdateOp
+  ) where
 
 import           Data.ByteString.Lazy (ByteString)
 import           Data.Semigroup (Semigroup((<>)))
 import qualified Data.Sequence as Seq
 import qualified Data.Set as S
-import           Network.Riak.CRDT.Types
 
+import           Network.Riak.CRDT.Types
+import qualified Network.Riak.Protocol.CounterOp as PB
+import qualified Network.Riak.Protocol.DtOp as PB
+import qualified Network.Riak.Protocol.MapField as PBMap
+import qualified Network.Riak.Protocol.MapField.MapFieldType as PBMap
+import qualified Network.Riak.Protocol.MapOp as PBMap
+import qualified Network.Riak.Protocol.MapUpdate as PBMap
+import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
+import qualified Network.Riak.Protocol.SetOp as PBSet
 
 counterUpdateOp :: [CounterOp] -> PB.DtOp
 counterUpdateOp ops = PB.DtOp { PB.counter_op = Just $ counterOpPB ops,

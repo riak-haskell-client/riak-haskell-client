@@ -11,7 +11,7 @@ CRDT operations
     * Haskell values: 'Counter', 'Set' etc
 
     * ADT for operations: 'CounterOp', 'SetOp' etc
-    
+
     * 'modify' to locally modify a value (matching riak-side behaviour)
 
 * Riak-side
@@ -35,11 +35,11 @@ Just (DTCounter (Counter 42))
 {-# LANGUAGE TypeFamilies, OverloadedStrings, ScopedTypeVariables, PatternGuards #-}
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
 
-module Network.Riak.CRDT (module Network.Riak.CRDT.Types,
-                          get,
-                          CRDT(..))
-    where
-
+module Network.Riak.CRDT (
+    module X
+  , get
+  , CRDT(..)
+  ) where
 
 import Data.Default.Class
 import qualified Data.Map as M
@@ -50,7 +50,7 @@ import Data.Semigroup
 import qualified Data.Set as S
 import Network.Riak.CRDT.Ops
 import Network.Riak.CRDT.Riak
-import Network.Riak.CRDT.Types
+import Network.Riak.CRDT.Types as X
 import Network.Riak.Types
 
 

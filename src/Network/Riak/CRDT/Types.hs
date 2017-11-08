@@ -1,57 +1,62 @@
--- |   module:    Network.Riak.CRDT.Types
---     copyright: (c) 2016 Sentenai
---     author:    Antonio Nikishaev <me@lelf.lu>
---     license:   Apache
--- 
+-- |
+-- Module:      Network.Riak.CRDT.Types
+-- Copyright:   (c) 2016 Sentenai
+-- Author:      Antonio Nikishaev <me@lelf.lu>
+-- License:     Apache
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>
+-- Stability:   experimental
+-- Portability: portable
+--
 -- Haskell-side view of CRDT
--- 
-{-# LANGUAGE OverloadedStrings, PatternGuards, GeneralizedNewtypeDeriving, DeriveGeneric #-}
-
+--
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PatternGuards #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Network.Riak.CRDT.Types (
-        -- * Types
-        DataType(..),
-        -- ** Counters
-        Counter(..), Count,
-        -- *** Modification
-        CounterOp(..),
-        -- ** Sets
-        Set(..),
-        -- *** Modification
-        SetOp(..),
-        -- ** Maps
-        Map(..), MapContent,
-        MapField(..),
-        MapEntry(..),
-        -- *** Inspection
-        xlookup,
-        -- *** Modification
-        MapOp(..), MapPath(..), MapValueOp(..), mapUpdate, (-/),
-        -- ** Registers
-        Register(..),
-        -- *** Modification
-        RegisterOp(..),
-        -- ** Flags
-        Flag(..),
-        -- *** Modification
-        FlagOp(..),
-        -- * Misc
-        NonEmpty(..), mapEntryTag, setFromSeq, MapEntryTag(..))
-    where
+    -- * Types
+    DataType(..)
+    -- ** Counters
+  , Counter(..), Count
+    -- *** Modification
+  , CounterOp(..)
+    -- ** Sets
+  , Set(..)
+    -- *** Modification
+  , SetOp(..)
+    -- ** Maps
+  , Map(..), MapContent
+  , MapField(..)
+  , MapEntry(..)
+    -- *** Inspection
+  , xlookup
+    -- *** Modification
+  , MapOp(..), MapPath(..), MapValueOp(..), mapUpdate, (-/)
+    -- ** Registers
+  , Register(..)
+    -- *** Modification
+  , RegisterOp(..)
+    -- ** Flags
+  , Flag(..)
+    -- *** Modification
+  , FlagOp(..)
+    -- * Misc
+  , NonEmpty(..), mapEntryTag, setFromSeq, MapEntryTag(..)
+  ) where
 
-
-import qualified Data.Map.Strict as M
-import qualified Data.Set as S
-import qualified Data.Sequence as Seq
+import           Control.DeepSeq (NFData)
+import           Data.ByteString.Lazy (ByteString)
+import           Data.Default.Class
 import qualified Data.Foldable as F
-import Data.ByteString.Lazy (ByteString)
-import Data.Int (Int64)
-import Data.List.NonEmpty
-import Data.Semigroup
-import Data.Default.Class
-import Control.DeepSeq (NFData)
-import GHC.Generics (Generic)
-import Data.String
+import           Data.Int (Int64)
+import           Data.List.NonEmpty
+import qualified Data.Map.Strict as M
+import           Data.Semigroup
+import qualified Data.Sequence as Seq
+import qualified Data.Set as S
+import           Data.String (IsString(..))
+import           GHC.Generics (Generic)
 
 
 -- | CRDT Map is indexed by MapField, which is a name tagged by a type
@@ -63,7 +68,7 @@ instance NFData MapField
 
 -- | CRDT Map is a Data.Map indexed by 'MapField' and holding
 -- 'MapEntry'.
--- 
+--
 -- Maps are specials in a way that they can additionally
 -- hold 'Flag's, 'Register's, and most importantly, other 'Map's.
 newtype Map = Map MapContent deriving (Eq,Show,Generic)
@@ -109,7 +114,7 @@ newtype MapPath = MapPath (NonEmpty ByteString) deriving (Eq,Show)
 
 -- | map operations
 -- It's easier to use 'mapUpdate':
--- 
+--
 -- >>> "x" -/ "y" -/ "z" `mapUpdate` SetAdd "elem"
 -- MapUpdate (MapPath ("x" :| ["y","z"])) (MapCounterOp (CounterInc 1))
 data MapOp = MapRemove MapField           -- ^ remove value in map
@@ -147,7 +152,7 @@ infixr 5 `mapUpdate`
 
 -- | Lookup a value of a given 'MapEntryTag' type on a given 'MapPath'
 -- inside a map
--- 
+--
 -- >>> lookup ("a" -/ "b") MapFlagTag $ { "a"/Map: { "b"/Flag: Flag False } } -- pseudo
 -- Just (MapFlag (Flag False))
 xlookup :: MapPath -> MapEntryTag -> Map -> Maybe MapEntry
@@ -161,19 +166,19 @@ xlookup (MapPath (e :| (r:rs))) tag (Map m)
 
 
 -- | Registers can be set to a value
--- 
+--
 -- >>> RegisterSet "foo"
 data RegisterOp = RegisterSet !ByteString deriving (Eq,Show)
 
 -- | Flags can be enabled / disabled
--- 
+--
 -- >>> FlagSet True
 data FlagOp = FlagSet !Bool deriving (Eq,Show)
 
 -- | Flags can only be held as a 'Map' element.
--- 
+--
 -- Flag can be set or unset
--- 
+--
 -- >>> Flag False
 newtype Flag = Flag Bool deriving (Eq,Ord,Show,Generic)
 
@@ -192,7 +197,7 @@ instance Default Flag where
     def = mempty
 
 -- | Registers can only be held as a 'Map' element.
--- 
+--
 -- Register holds a 'ByteString'.
 newtype Register = Register ByteString deriving (Eq,Show,Generic)
 
@@ -221,7 +226,7 @@ data MapValueOp = MapCounterOp !CounterOp
 
 
 -- | CRDT ADT.
--- 
+--
 -- 'Network.Riak.CRDT.Riak.get' operations return value of this type
 data DataType = DTCounter Counter
               | DTSet Set
@@ -231,7 +236,7 @@ data DataType = DTCounter Counter
 instance NFData DataType
 
 -- | CRDT Set is a Data.Set
--- 
+--
 -- >>> Set (Data.Set.fromList ["foo","bar"])
 newtype Set = Set (S.Set ByteString) deriving (Eq,Ord,Show,Generic,Monoid)
 
@@ -245,10 +250,10 @@ instance Default Set where
 
 -- | CRDT Set operations
 data SetOp = SetAdd ByteString    -- ^ add element to the set
-                                  -- 
+                                  --
                                   -- >>> SetAdd "foo"
            | SetRemove ByteString -- ^ remove element from the set
-                                  -- 
+                                  --
                                   -- >>> SetRemove "bar"
              deriving (Eq,Show)
 
@@ -256,7 +261,7 @@ setFromSeq :: Seq.Seq ByteString -> Set
 setFromSeq = Set . S.fromList . F.toList
 
 -- | CRDT Counter hold a integer 'Count'
--- 
+--
 -- >>> Counter 42
 newtype Counter = Counter Count deriving (Eq,Ord,Num,Show,Generic)
 type Count = Int64
@@ -274,7 +279,7 @@ instance Default Counter where
     def = mempty
 
 -- | Counters can be incremented/decremented
--- 
+--
 -- >>> CounterInc 1
 data CounterOp = CounterInc !Count deriving (Eq,Show)
 
@@ -284,4 +289,3 @@ instance Semigroup CounterOp where
 instance Monoid CounterOp where
     mempty = CounterInc 0
     CounterInc x `mappend` CounterInc y = CounterInc . getSum $ Sum x <> Sum y
-
