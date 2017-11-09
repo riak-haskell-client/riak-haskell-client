@@ -1,41 +1,69 @@
 language: c
 sudo: required
 dist: trusty
-
+cache:
+  directories:
+  - "$HOME/.ghc"
+  - "$HOME/.cabal"
+  - "$HOME/.stack"
 before_install:
-  # stack
-  - mkdir -p ~/.local/bin
-  - export PATH=~/.local/bin:$PATH
-  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-
+- mkdir -p ~/.local/bin
+- export PATH=~/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
+  --strip-components=1 -C ~/.local/bin '*/stack'
 before_script:
-  # riak
-  - RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
-  - sudo ./tools/travis-ci/riak-install -d "$RIAK_DOWNLOAD_URL"
-  - sudo ./tools/setup-riak
-
+- RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
+- sudo ./tools/travis-ci/riak-install -d "$RIAK_DOWNLOAD_URL"
+- sudo ./tools/setup-riak
 matrix:
   include:
-    - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml"
-      addons: {apt: {packages: [ghc-7.8.4], sources: [hvr-ghc]}}
-
-    - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml"
-      addons: {apt: {packages: [ghc-7.10.3],sources: [hvr-ghc]}}
-
-    - env: GHCVER=8.0.2 ARGS=""
-      addons: {apt: {packages: [ghc-8.0.2],sources: [hvr-ghc]}}
-
-    - env: GHCVER=8.2.1 ARGS="--stack-yaml=.stack-8.2.1.yaml"
-      addons: {apt: {packages: [ghc-8.2.1],sources: [hvr-ghc]}}
-
-    - env: GHCVER=head ARGS="--resolver=nightly"
-      addons: {apt: {packages: [cabal-install-head,ghc-head], sources: [hvr-ghc]}}
-
+  - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml"
+    addons:
+      apt:
+        packages:
+        - ghc-7.8.4
+        sources:
+        - hvr-ghc
+  - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml"
+    addons:
+      apt:
+        packages:
+        - ghc-7.10.3
+        sources:
+        - hvr-ghc
+  - env: GHCVER=8.0.2 ARGS=""
+    addons:
+      apt:
+        packages:
+        - ghc-8.0.2
+        sources:
+        - hvr-ghc
+  - env: GHCVER=8.2.1 ARGS="--stack-yaml=.stack-8.2.1.yaml"
+    addons:
+      apt:
+        packages:
+        - ghc-8.2.1
+        sources:
+        - hvr-ghc
+  - env: GHCVER=head ARGS="--resolver=nightly"
+    addons:
+      apt:
+        packages:
+        - cabal-install-head
+        - ghc-head
+        sources:
+        - hvr-ghc
   allow_failures:
-    - env: GHCVER=head ARGS="--resolver=nightly"
-
+  - env: GHCVER=head ARGS="--resolver=nightly"
 install:
-  - stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
-
+- stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
 script:
-  - stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
+- stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
+deploy:
+  provider: hackage
+  username: $HACKAGE_USERNAME
+  password:
+    secure: $HACKAGE_PASSWORD
+  on:
+    repo: riak-haskell-client/riak-haskell-client
+    tags: true
