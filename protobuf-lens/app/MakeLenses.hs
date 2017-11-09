@@ -3,6 +3,8 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -no-warn-unused-imports #-}
+{-# OPTIONS_GHC -no-warn-unused-matches #-}
 module Main where
 import TH
 import Lens.Micro (Lens')

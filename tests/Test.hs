@@ -17,7 +17,6 @@ import           Data.List.NonEmpty (NonEmpty(..))
 import           Data.Foldable (toList)
 import           Data.Semigroup
 import           Data.Text (Text)
-import           Control.Applicative
 import           Control.Concurrent (threadDelay)
 import           Control.Exception
 import qualified Network.Riak as Riak

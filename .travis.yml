@@ -38,4 +38,4 @@ install:
   - stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
 
 script:
-  - stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
+  - stack --no-terminal $ARGS test --pedantic --bench --no-run-benchmarks --haddock --no-haddock-deps

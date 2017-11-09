@@ -1,25 +1,31 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE CPP #-}
 module Main where
 
-import Criterion.Main
+import           Criterion.Main
 
-import Network.Riak.Connection.Pool as Pool (Pool, create, withConnection)
-import Network.Riak.Connection (defaultClient)
-import Network.Riak.CRDT
 import qualified Data.ByteString.Lazy.Char8 as B
-import Control.Applicative
-import Control.Monad
-import Data.Maybe
-import Data.String
+import           Network.Riak.CRDT
+import           Network.Riak.Connection (defaultClient)
+import           Network.Riak.Connection.Pool as Pool (Pool, create, withConnection)
+import           Network.Riak.Types (Connection(..), Key, Bucket)
+#if __GLASGOW_HASKELL__ < 710
+import           Control.Applicative
+#endif
+import           Control.Monad
+import           Data.Maybe
+import           Data.String
 import qualified Data.List.NonEmpty as NEL
-import Data.Semigroup
+import           Data.Semigroup
 
 
 main :: IO ()
 main = benchmarks >>= defaultMain
 
+bucket :: Bucket
 bucket = "bench"
 
+benchmarks :: IO [Benchmark]
 benchmarks = do
   pool <- Pool.create defaultClient 1 1 1
   already <- Pool.withConnection pool $ \c -> get c "counters" bucket "__setup"
@@ -47,20 +53,26 @@ setup pool = Pool.withConnection pool $ \c -> do
 -- | * Common things
 
 -- | Key names
-setK n = fromString $ show n
+-- setK n = fromString $ show n
+
+mapElemK :: (Show a, IsString b) => a -> b
 mapElemK n = fromString $ show n <> "-elem"
+
+mapDepthK :: (Show a, IsString b) => a -> b
 mapDepthK n = fromString $ show n <> "-depth"
 
 -- | Map things
+nestedMapPath :: (Enum a, Num a, Show a) => a -> MapPath
 nestedMapPath n = MapPath . NEL.fromList $ [ fromString (show i) | i <- [1..n] ]
 
-
+setupSetN :: Connection -> Key -> Int -> IO ()
 setupSetN c key n = sequence_ [
                      sendModify c "sets" bucket key [SetAdd (B.pack $ show i)]
                          | i <- [1..n]
                     ]
 
 -- | n-elem map with counters
+setupMapN_elem :: Connection -> Key -> Int -> IO ()
 setupMapN_elem c key n = sendModify c "maps" bucket key ops
     where ops = [MapUpdate (MapPath $ (fromString $ show i) :| [])
                            (MapCounterOp $ CounterInc 1)
@@ -68,6 +80,7 @@ setupMapN_elem c key n = sendModify c "maps" bucket key ops
                 ]
 
 -- | n-depth map with a counter
+setupMapN_nest :: Connection -> Key -> Int -> IO ()
 setupMapN_nest c key n = sendModify c "maps" bucket key [op]
     where op = MapUpdate (nestedMapPath n)
                          (MapCounterOp $ CounterInc 1)
@@ -114,20 +127,36 @@ crdt pool = bgroup "CRDT" [
            ]
     where pooled = Pool.withConnection pool
 
-
+getEmpty :: Connection -> IO (Maybe DataType)
 getEmpty c   = get c "counters" "not here" "never was"
+
+getCounter :: Connection -> IO (Maybe DataType)
 getCounter c = get c "counters" "xxx" "yyy"
+
+getSet10 :: Connection -> IO (Maybe DataType)
 getSet10 c   = get c "sets" bucket "10"
+
+getSet100 :: Connection -> IO (Maybe DataType)
 getSet100 c  = get c "sets" bucket "100"
+
+getSet1000 :: Connection -> IO (Maybe DataType)
 getSet1000 c = get c "sets" bucket "1000"
 
+set1kAddRemove :: Connection -> IO ()
 set1kAddRemove c = sequence_ [ sendModify c "sets" bucket "1000" [o]
                                | o <- [SetAdd "foo", SetRemove "foo"] ]
 
+get1Map :: Connection -> IO (Maybe DataType)
 get1Map c = get c "maps" bucket "1"
+
+getNMap :: Int -> Connection -> IO (Maybe DataType)
 getNMap n c = get c "maps" bucket (mapElemK n)
+
+getDMap :: Int -> Connection -> IO (Maybe DataType)
 getDMap n c = get c "maps" bucket (mapDepthK n)
 
+updateNMap :: Int -> Connection -> IO ()
 updateNMap n c = setupMapN_elem c (mapElemK n) n
-updateDMap n c = setupMapN_nest c (mapDepthK n) n
 
+updateDMap :: Int -> Connection -> IO ()
+updateDMap n c = setupMapN_nest c (mapDepthK n) n

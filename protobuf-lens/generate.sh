@@ -10,6 +10,8 @@ EXTENSIONS=(
   "{-# LANGUAGE FlexibleInstances #-}"
   "{-# LANGUAGE FunctionalDependencies #-}"
   "{-# LANGUAGE MultiParamTypeClasses #-}"
+  "{-# OPTIONS_GHC -no-warn-unused-imports #-}"
+  "{-# OPTIONS_GHC -no-warn-unused-matches #-}"
 )
 
 IMPORTS=(

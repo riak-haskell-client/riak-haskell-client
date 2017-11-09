@@ -16,7 +16,6 @@ module Network.Riak.CRDT.Riak (counterSendUpdate,
     where
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
-import           Data.Int
 #endif
 import qualified Network.Riak.CRDT.Types as CRDT
 import qualified Network.Riak.Connection as Conn
