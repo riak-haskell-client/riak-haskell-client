@@ -1,4 +1,4 @@
-* Unreleased
+* 1.1.2.1
   - PR #90. Add GHC 8.2.1 support
   - Bump time upper bound from <1.7 to <1.9
   - Bump aeson upper bound from <1.2 to <1.3
