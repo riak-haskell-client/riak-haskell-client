@@ -60,6 +60,7 @@ install:
 script:
 - stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
 - stack --no-terminal $ARGS sdist
+- mv $(stack path --dist-dir)/riak-*.tar.gz dist
 deploy:
   skip_cleanup: true
   provider: hackage
