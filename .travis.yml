@@ -60,7 +60,7 @@ install:
 script:
 - stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
 - stack --no-terminal $ARGS sdist
-- export PKG_PATH=stack $ARGS path --dist-dir
+- export PKG_PATH=$(stack $ARGS path --dist-dir)
 - mv $PKG_PATH/riak-*.tar.gz dist
 deploy:
   skip_cleanup: true
