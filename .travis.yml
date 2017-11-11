@@ -60,10 +60,10 @@ install:
 script:
 - stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
 deploy:
+  skip_cleanup: true
   provider: hackage
   username: $HACKAGE_USERNAME
-  password:
-    secure: $HACKAGE_PASSWORD
+  password: $HACKAGE_PASSWORD
   on:
     repo: riak-haskell-client/riak-haskell-client
     tags: true
