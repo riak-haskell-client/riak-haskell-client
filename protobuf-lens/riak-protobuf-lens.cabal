@@ -1,7 +1,3 @@
--- This file has been generated from package.yaml by hpack version 0.17.1.
---
--- see: https://github.com/sol/hpack
-
 name:           riak-protobuf-lens
 version:        0.22.0.0
 synopsis:       Lenses for riak-protobuf
@@ -34,7 +30,7 @@ library
       base             >= 3 && <5
     , bytestring
     , containers
-    , riak-protobuf    ==0.22.*
+    , riak-protobuf    == 0.22.*
   exposed-modules:
       Network.Riak.Protocol.Lens
   default-language: Haskell2010
@@ -43,13 +39,14 @@ executable generate
   main-is: MakeLenses.hs
   hs-source-dirs:
       app
+  ghc-options: -ddump-splices -dppr-cols=200 -ddump-to-file
   build-depends:
       base             >= 3 && <5
     , bytestring
     , containers
-    , microlens        <0.5
-    , microlens-th     <0.5
-    , riak-protobuf    ==0.22.*
+    , microlens        < 0.5
+    , microlens-th     < 0.5
+    , riak-protobuf    == 0.22.*
     , template-haskell
   other-modules:
       TH

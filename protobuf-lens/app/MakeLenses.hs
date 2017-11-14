@@ -13,6 +13,8 @@ import GHC.Word (Word32)
 import qualified Network.Riak.Protocol.AuthRequest
 import qualified Network.Riak.Protocol.BucketKeyPreflistItem
 import qualified Network.Riak.Protocol.BucketProps
+import qualified Network.Riak.Protocol.CSBucketRequest
+import qualified Network.Riak.Protocol.CSBucketResponse
 import qualified Network.Riak.Protocol.CommitHook
 import qualified Network.Riak.Protocol.Content
 import qualified Network.Riak.Protocol.CounterGetRequest
@@ -20,8 +22,6 @@ import qualified Network.Riak.Protocol.CounterGetResponse
 import qualified Network.Riak.Protocol.CounterOp
 import qualified Network.Riak.Protocol.CounterUpdateRequest
 import qualified Network.Riak.Protocol.CounterUpdateResponse
-import qualified Network.Riak.Protocol.CSBucketRequest
-import qualified Network.Riak.Protocol.CSBucketResponse
 import qualified Network.Riak.Protocol.DeleteRequest
 import qualified Network.Riak.Protocol.DtFetchRequest
 import qualified Network.Riak.Protocol.DtFetchResponse
@@ -83,6 +83,8 @@ main = pure ()
 makeLenses ''Network.Riak.Protocol.AuthRequest.AuthRequest
 makeLenses ''Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem
 makeLenses ''Network.Riak.Protocol.BucketProps.BucketProps
+makeLenses ''Network.Riak.Protocol.CSBucketRequest.CSBucketRequest
+makeLenses ''Network.Riak.Protocol.CSBucketResponse.CSBucketResponse
 makeLenses ''Network.Riak.Protocol.CommitHook.CommitHook
 makeLenses ''Network.Riak.Protocol.Content.Content
 makeLenses ''Network.Riak.Protocol.CounterGetRequest.CounterGetRequest
@@ -90,8 +92,6 @@ makeLenses ''Network.Riak.Protocol.CounterGetResponse.CounterGetResponse
 makeLenses ''Network.Riak.Protocol.CounterOp.CounterOp
 makeLenses ''Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest
 makeLenses ''Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse
-makeLenses ''Network.Riak.Protocol.CSBucketRequest.CSBucketRequest
-makeLenses ''Network.Riak.Protocol.CSBucketResponse.CSBucketResponse
 makeLenses ''Network.Riak.Protocol.DeleteRequest.DeleteRequest
 makeLenses ''Network.Riak.Protocol.DtFetchRequest.DtFetchRequest
 makeLenses ''Network.Riak.Protocol.DtFetchResponse.DtFetchResponse
