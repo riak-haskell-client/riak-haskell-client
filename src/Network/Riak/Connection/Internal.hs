@@ -109,7 +109,7 @@ connect cli0 = do
   onIOException "connect" $
     bracketOnError
       (socket (addrFamily ai) (addrSocketType ai) (addrProtocol ai))
-      sClose $
+      close $
       \sock -> do
           Socket.connect sock (addrAddress ai)
           buf <- newIORef L.empty
@@ -122,7 +122,7 @@ disconnect :: Connection -> IO ()
 disconnect Connection{..} = onIOException "disconnect" $ do
   debug "disconnect" $ "server " ++ host connClient ++ ":" ++ port connClient ++
                        ", client ID " ++ L.unpack (clientID connClient)
-  sClose connSock
+  close connSock
   writeIORef connBuffer L.empty
 
 -- | We use a larger receive buffer than we usually need, and
@@ -291,7 +291,7 @@ debugRecv _ act = act
 {-# INLINE debugRecv #-}
 #endif
 
-pipe :: (Request req, Show resp) =>
+pipe :: (Request req) =>
         (Connection -> IO resp) -> Connection -> [req] -> IO [resp]
 pipe _ _ [] = return []
 pipe receive conn@Connection{..} reqs = do

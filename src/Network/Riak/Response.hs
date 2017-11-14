@@ -30,6 +30,9 @@ module Network.Riak.Response
 
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
+import Data.Semigroup
+import Control.Arrow ((&&&))
+import Control.Monad (join)
 #endif
 import Network.Riak.Escape (unescape)
 import Network.Riak.Protocol.BucketProps (BucketProps)
@@ -47,15 +50,9 @@ import qualified Network.Riak.Protocol.Link as Link
 import qualified Network.Riak.Protocol.Pair as Pair
 
 import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Lazy.Char8 as LC
 import qualified Data.Sequence as Seq
-import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
-import Data.Semigroup
-import Control.Arrow ((&&&))
-import Control.Monad (join)
-import Data.Foldable (foldMap, toList)
-import Text.Read (readMaybe)
+import Data.Foldable (toList)
 
 getClientID :: GetClientIDResponse -> ClientID
 getClientID = client_id

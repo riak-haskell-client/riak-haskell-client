@@ -1,68 +1,47 @@
 language: c
-sudo: required
-dist: trusty
+sudo: false
+
+git:
+  submodules: false  # whether to recursively clone submodules
+
 cache:
   directories:
-  - "$HOME/.ghc"
-  - "$HOME/.cabal"
-  - "$HOME/.stack"
-before_install:
-- mkdir -p ~/.local/bin
-- export PATH=~/.local/bin:$PATH
-- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
-  --strip-components=1 -C ~/.local/bin '*/stack'
+    - $HOME/.cabal/packages
+    - $HOME/.mafia
 before_script:
-- RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
-- sudo ./tools/travis-ci/riak-install -d "$RIAK_DOWNLOAD_URL"
-- sudo ./tools/setup-riak
+ # riak
+ - RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
+ - sudo ./tools/travis-ci/riak-install -d "$RIAK_DOWNLOAD_URL"
+ - sudo ./tools/setup-riak
+
+before_cache:
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/build-reports.log
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/00-index.*
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/*.json
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.cache
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.tar
+  - rm -fv $HOME/.cabal/packages/hackage.haskell.org/01-index.tar.idx
+
 matrix:
   include:
-  - env: GHCVER=7.8.4 ARGS="--stack-yaml=.stack-7.8.4.yaml"
-    addons:
-      apt:
-        packages:
-        - ghc-7.8.4
-        sources:
-        - hvr-ghc
-  - env: GHCVER=7.10.3 ARGS="--stack-yaml=.stack-7.10.3.yaml"
-    addons:
-      apt:
-        packages:
-        - ghc-7.10.3
-        sources:
-        - hvr-ghc
-  - env: GHCVER=8.0.2 ARGS=""
-    addons:
-      apt:
-        packages:
-        - ghc-8.0.2
-        sources:
-        - hvr-ghc
-  - env: GHCVER=8.2.1 ARGS="--stack-yaml=.stack-8.2.1.yaml"
-    addons:
-      apt:
-        packages:
-        - ghc-8.2.1
-        sources:
-        - hvr-ghc
-  - env: GHCVER=head ARGS="--resolver=nightly"
-    addons:
-      apt:
-        packages:
-        - cabal-install-head
-        - ghc-head
-        sources:
-        - hvr-ghc
-  allow_failures:
-  - env: GHCVER=head ARGS="--resolver=nightly"
+    - compiler: "ghc-7.10.3"
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-1.24,ghc-7.10.3], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.0.2"
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-1.24,ghc-8.0.2], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.2.1"
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-1.24,ghc-8.2.1], sources: [hvr-ghc]}}
+
+before_install:
+ - unset CC
+ - PATH=/opt/ghc/bin:/opt/ghc-ppa-tools/bin:$PATH
+
 install:
-- stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
+ - travis_retry cabal update -v
+ - bin/travis_install
+
 script:
-- stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
-- stack --no-terminal $ARGS sdist
-- export PKG_PATH=$(stack $ARGS path --dist-dir)
-- mkdir -p $HOME/riak-haskell-client/riak-haskell-client/dist/
-- cp $PKG_PATH/riak-*.tar.gz $HOME/riak-haskell-client/riak-haskell-client/dist/
+ - bin/travis_script
+
 deploy:
   skip_cleanup: true
   provider: hackage
