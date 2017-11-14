@@ -5,10 +5,13 @@
 name:           riak-protobuf-lens
 version:        0.22.0.0
 synopsis:       Lenses for riak-protobuf
+description:
+  A set of Haskell lenses for interacting with the protocol buffer
+  API of the Riak decentralized data store.
 category:       Network
 homepage:       https://github.com/riak-haskell-client/riak-haskell-client#readme
 bug-reports:    https://github.com/riak-haskell-client/riak-haskell-client/issues
-maintainer:     Mitchell Rosen <mitchellwrosen@gmail.com>
+maintainer:     Tim McGilchrist <timmcgil@gmail.com>, Mitchell Rosen <mitchellwrosen@gmail.com>
 license:        OtherLicense
 license-file:   LICENSE
 build-type:     Simple
