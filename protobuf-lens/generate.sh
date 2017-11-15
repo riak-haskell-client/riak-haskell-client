@@ -72,7 +72,7 @@ for module in $LENS_MODULES; do
   echo "makeLenses ''$module.$type" >> $OUTFILE
 done
 
-stack build riak-protobuf-lens:exe:generate --ghc-options="-ddump-splices -dppr-cols=200"
+./mafia build
 
 ################################################################################
 ## Generate and build Network.Riak.Protocol.Lens with the dumped splices
@@ -98,7 +98,7 @@ done
 
 echo "type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s" >> $OUTFILE
 
-cat $(stack path --dist-dir)/build/generate/generate-tmp/app/MakeLenses.dump-splices \
+cat dist/build/generate/generate-tmp/app/MakeLenses.dump-splices \
   | sed \
       -e '/app\/MakeLenses\.hs/d' \
       -e '/makeLenses/d' \
@@ -106,4 +106,4 @@ cat $(stack path --dist-dir)/build/generate/generate-tmp/app/MakeLenses.dump-spl
       -e 's/^    //' \
   >> $OUTFILE
 
-stack build
+./mafia build
