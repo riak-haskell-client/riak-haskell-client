@@ -1,3 +1,5 @@
+* 1.1.2.2
+  - Fix for GHC 8.2.2 support
 * 1.1.2.1
   - PR #90. Add GHC 8.2.1 support
   - Bump time upper bound from <1.7 to <1.9

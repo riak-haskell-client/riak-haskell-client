@@ -72,7 +72,9 @@ for module in $LENS_MODULES; do
   echo "makeLenses ''$module.$type" >> $OUTFILE
 done
 
-./mafia build
+# Generate the sandbox/env
+./mafia lock
+cabal build generate
 
 ################################################################################
 ## Generate and build Network.Riak.Protocol.Lens with the dumped splices
