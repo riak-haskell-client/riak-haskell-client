@@ -50,7 +50,6 @@ import Control.Applicative ((<$>))
 import Control.Monad.IO.Class
 import Data.Maybe (fromMaybe)
 import Network.Riak.Connection.Internal
-import Network.Riak.Escape (unescape)
 import Network.Riak.Protocol.BucketProps
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.ListKeysResponse
@@ -125,10 +124,9 @@ foldKeys :: (MonadIO m) => Connection -> Maybe BucketType -> Bucket
          -> (a -> Key -> m a) -> a -> m a
 foldKeys conn btype bucket f z0 = do
   liftIO $ sendRequest conn $ Req.listKeys btype bucket
-  let g z = f z . unescape
-      loop z = do
+  let loop z = do
         ListKeysResponse{..} <- liftIO $ recvResponse conn
-        z1 <- F.foldlM g z keys
+        z1 <- F.foldlM f z keys
         if fromMaybe False done
           then return z1
           else loop z1
