@@ -351,11 +351,11 @@ data WorkerResult
   = WorkerDone               -- Background request-sender has run out of requests.
   | WorkerDied SomeException -- Background request-sender died somehow.
 
-stream :: Request req => (Connection -> IO resp) -> Connection -> Producer' req IO () -> Producer' resp IO ()
+stream :: Request req => (Connection -> IO resp) -> Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
 stream receive conn@Connection{..} reqs = do
-  -- Count the number of outstanding sends
-  countVar :: TVar Int <-
-    lift (newTVarIO 0)
+  -- Keep track of the requests sent
+  requestsChan <-
+    lift newTChanIO
 
   resultVar :: TMVar WorkerResult <-
     lift newEmptyTMVarIO
@@ -378,7 +378,7 @@ stream receive conn@Connection{..} reqs = do
             alive <- lift isDriverAlive
             when alive $ do
               lift (sendRequest conn req)
-              lift (atomically (modifyTVar' countVar (+1)))
+              lift (atomically (writeTChan requestsChan req))
               doSend
 
   -- Spawn the send thread; if it successfully completes, write WorkerDone.
@@ -398,32 +398,39 @@ stream receive conn@Connection{..} reqs = do
   -- In a loop, receive all the responses. If the background worker has died,
   -- propagate its exception to the driver.
   let recvLoop =
-        join . lift . atomically $ do
-          count <- readTVar countVar
-          if count > 0
-            then do
-              writeTVar countVar (count-1)
-              pure $ do
-                resp <- lift (receive conn)
-                Pipes.yield resp
-                recvLoop
-            else do
-              result <- takeTMVar resultVar
-              case result of
-                WorkerDone ->
-                  pure (pure ())
-                WorkerDied ex ->
-                  pure (lift (throwIO ex))
+        join . lift . atomically $
+          (do
+            req <- readTChan requestsChan
+            pure $ do
+              resp <- lift (receive conn)
+              Pipes.yield (req, resp)
+              recvLoop)
+          `orElse`
+          (do
+            result <- takeTMVar resultVar
+            case result of
+              WorkerDone ->
+                pure (pure ())
+              WorkerDied ex ->
+                pure (lift (throwIO ex)))
 
   recvLoop
 
 -- | Like 'pipeline', but stream the responses out as they arrive.
-streaming :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' resp IO ()
+streaming :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
 streaming = stream recvResponse
 
 -- | Like 'pipelineMaybe', but stream the responses out as they arrive.
-streamingMaybe :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' (Maybe resp) IO ()
-streamingMaybe = stream recvMaybeResponse
+streamingMaybe :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
+streamingMaybe conn reqs =
+  Pipes.for
+    (stream recvMaybeResponse conn reqs)
+    (\(req, mresp) ->
+      case mresp of
+        Nothing ->
+          pure ()
+        Just resp ->
+          Pipes.yield (req, resp))
 
 onIOException :: String -> IO a -> IO a
 onIOException func act =
