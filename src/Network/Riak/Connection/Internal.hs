@@ -58,7 +58,7 @@ import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import Numeric (showHex)
-import Pipes (Producer', (>->))
+import Pipes ((>->))
 import System.Mem.Weak (deRefWeak)
 import System.Random (randomIO)
 import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
@@ -351,7 +351,12 @@ data WorkerResult
   = WorkerDone               -- Background request-sender has run out of requests.
   | WorkerDied SomeException -- Background request-sender died somehow.
 
-stream :: Request req => (Connection -> IO resp) -> Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
+stream
+  :: Request req
+  => (Connection -> IO resp)
+  -> Connection
+  -> Pipes.Producer req IO ()
+  -> Pipes.Producer' (req, resp) IO ()
 stream receive conn@Connection{..} reqs = do
   -- Keep track of the requests sent
   requestsChan <-
@@ -417,11 +422,19 @@ stream receive conn@Connection{..} reqs = do
   recvLoop
 
 -- | Like 'pipeline', but stream the responses out as they arrive.
-streaming :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
+streaming
+  :: (Exchange req resp)
+  => Connection
+  -> Pipes.Producer req IO ()
+  -> Pipes.Producer' (req, resp) IO ()
 streaming = stream recvResponse
 
 -- | Like 'pipelineMaybe', but stream the responses out as they arrive.
-streamingMaybe :: (Exchange req resp) => Connection -> Producer' req IO () -> Producer' (req, resp) IO ()
+streamingMaybe
+  :: (Exchange req resp)
+  => Connection
+  -> Pipes.Producer req IO ()
+  -> Pipes.Producer' (req, resp) IO ()
 streamingMaybe conn reqs =
   Pipes.for
     (stream recvMaybeResponse conn reqs)
