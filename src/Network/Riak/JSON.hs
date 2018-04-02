@@ -42,7 +42,7 @@ import qualified Network.Riak.Value as V
 
 newtype JSON a = J {
       plain :: a -- ^ Unwrap a 'JSON'-wrapped value.
-    } deriving (Eq, Ord, Show, Read, Bounded, Typeable, Monoid)
+    } deriving (Eq, Ord, Show, Read, Bounded, Typeable, Semigroup, Monoid)
 
 -- | Wrap up a value so that it will be encoded and decoded as JSON
 -- when converted to/from 'Content'.

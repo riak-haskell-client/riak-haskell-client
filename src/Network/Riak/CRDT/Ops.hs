@@ -43,9 +43,12 @@ data SetOpsComb = SetOpsComb { setAdds :: S.Set ByteString,
                                setRemoves :: S.Set ByteString }
              deriving (Show)
 
+instance Semigroup SetOpsComb where
+    (SetOpsComb a b) <> (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
+
 instance Monoid SetOpsComb where
     mempty = SetOpsComb mempty mempty
-    (SetOpsComb a b) `mappend` (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
+    mappend = (<>)
 
 toOpsComb :: SetOp -> SetOpsComb
 toOpsComb (SetAdd s) = SetOpsComb (S.singleton s) S.empty
