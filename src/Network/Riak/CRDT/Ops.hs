@@ -22,7 +22,8 @@ import qualified Network.Riak.Protocol.MapUpdate as PBMap
 import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
 
 import           Data.ByteString.Lazy (ByteString)
-import           Data.Monoid
+import           Data.Monoid (Monoid(mempty, mappend))
+import           Data.Semigroup (Semigroup((<>)))
 import qualified Data.Sequence as Seq
 import qualified Data.Set as S
 import           Network.Riak.CRDT.Types
@@ -42,6 +43,9 @@ counterOpPB ops = PB.CounterOp (Just i)
 data SetOpsComb = SetOpsComb { setAdds :: S.Set ByteString,
                                setRemoves :: S.Set ByteString }
              deriving (Show)
+
+instance Semigroup SetOpsComb where
+    (SetOpsComb a b) <> (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
 
 instance Monoid SetOpsComb where
     mempty = SetOpsComb mempty mempty

@@ -15,7 +15,9 @@ import qualified Data.Set as S
 import qualified Data.Sequence as Seq
 import           Data.List.NonEmpty (NonEmpty(..))
 import           Data.Foldable (toList)
+#if __GLASGOW_HASKELL__ < 804
 import           Data.Semigroup
+#endif
 import           Data.Text (Text)
 import           Control.Concurrent (threadDelay)
 import           Control.Exception
