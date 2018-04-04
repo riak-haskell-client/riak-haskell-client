@@ -22,7 +22,6 @@ import qualified Network.Riak.Protocol.MapUpdate as PBMap
 import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
 
 import           Data.ByteString.Lazy (ByteString)
-import           Data.Monoid (Monoid(mempty, mappend))
 import           Data.Semigroup (Semigroup((<>)))
 import qualified Data.Sequence as Seq
 import qualified Data.Set as S
