@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts, MultiWayIf, RankNTypes #-}
+{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts, MultiWayIf, RankNTypes, LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
@@ -44,7 +44,6 @@ import Control.Concurrent.Async (async, waitBoth)
 import Control.Concurrent.STM
 import Control.Exception (Exception, IOException, SomeException, catch, mask, throwIO, bracketOnError)
 import Control.Monad (join, forM_, replicateM, when)
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Class (lift)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
@@ -59,7 +58,7 @@ import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import Numeric (showHex)
 import Pipes ((>->))
-import System.Mem.Weak (deRefWeak)
+import System.Mem.Weak (Weak, deRefWeak)
 import System.Random (randomIO)
 import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
 import Text.ProtocolBuffers.Get (Get, Result(..), getWord32be, runGet)
@@ -352,14 +351,16 @@ data WorkerResult
   | WorkerDied SomeException -- Background request-sender died somehow.
 
 stream
-  :: Request req
+  :: forall req resp.
+     Request req
   => (Connection -> IO resp)
   -> Connection
   -> Pipes.Producer req IO ()
   -> Pipes.Producer' (req, resp) IO ()
 stream receive conn@Connection{..} reqs = do
-  -- Keep track of the requests sent
-  requestsChan <-
+  -- Keep track of the requests sent. This allows us to pair requests with their
+  -- corresponding responses.
+  requestsChan :: TChan req <-
     lift newTChanIO
 
   resultVar :: TMVar WorkerResult <-
@@ -370,17 +371,17 @@ stream receive conn@Connection{..} reqs = do
   -- has died, or dropped the producer on the floor - point is, there's no one
   -- left that cares about the responses, so don't bother sending any more
   -- requests.
-  isDriverAlive :: IO Bool <-
-    liftIO $ do
-      var <- mkWeakTMVar resultVar (pure ())
-      pure (isJust <$> deRefWeak var)
+  weakResultVar :: Weak (TMVar WorkerResult) <-
+    lift (mkWeakTMVar resultVar (pure ()))
 
+  -- Background thread: send all of the requests (or die trying).
   let worker :: IO ()
       worker = Pipes.runEffect (reqs >-> doSend)
         where
+          doSend :: Pipes.Consumer' req IO ()
           doSend = do
             req <- Pipes.await
-            alive <- lift isDriverAlive
+            alive <- lift (isJust <$> deRefWeak weakResultVar)
             when alive $ do
               lift (sendRequest conn req)
               lift (atomically (writeTChan requestsChan req))
@@ -393,16 +394,34 @@ stream receive conn@Connection{..} reqs = do
   --
   -- 1. We start the worker action (thread doesn't die right after 'forkIO')
   -- 2. We write WorkerDone after (thread doesn't die right after 'worker')
+  --
+  -- Use 'weakResultVar' instead of 'resultVar' so that only the driver keeps
+  -- 'resultVar' alive.
   _ <-
     lift $
       mask $ \restore ->
-        forkIO $
-          (restore worker >> atomically (putTMVar resultVar WorkerDone))
-            `catch` \ex -> atomically (putTMVar resultVar (WorkerDied ex))
+        forkIO $ do
+          let action :: IO ()
+              action = do
+                restore worker
+                deRefWeak weakResultVar >>= \case
+                  Nothing ->
+                    pure ()
+                  Just var ->
+                    atomically (putTMVar var WorkerDone)
+          let cleanup :: SomeException -> IO ()
+              cleanup ex =
+                deRefWeak weakResultVar >>= \case
+                  Nothing ->
+                    pure ()
+                  Just var ->
+                    atomically (putTMVar var (WorkerDied ex))
+          action `catch` cleanup
 
   -- In a loop, receive all the responses. If the background worker has died,
   -- propagate its exception to the driver.
-  let recvLoop =
+  let recvLoop :: Pipes.Producer' (req, resp) IO ()
+      recvLoop =
         join . lift . atomically $
           (do
             req <- readTChan requestsChan
