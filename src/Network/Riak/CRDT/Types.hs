@@ -283,5 +283,4 @@ instance Semigroup CounterOp where
 
 instance Monoid CounterOp where
     mempty = CounterInc 0
-    CounterInc x `mappend` CounterInc y = CounterInc . getSum $ Sum x <> Sum y
-
+    mappend = (<>)

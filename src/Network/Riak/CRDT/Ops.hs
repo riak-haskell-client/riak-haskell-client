@@ -48,7 +48,7 @@ instance Semigroup SetOpsComb where
 
 instance Monoid SetOpsComb where
     mempty = SetOpsComb mempty mempty
-    (SetOpsComb a b) `mappend` (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
+    mappend = (<>)
 
 toOpsComb :: SetOp -> SetOpsComb
 toOpsComb (SetAdd s) = SetOpsComb (S.singleton s) S.empty
