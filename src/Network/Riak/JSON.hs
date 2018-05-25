@@ -36,13 +36,14 @@ import Data.Aeson.Types (FromJSON(..), ToJSON(..))
 #if __GLASGOW_HASKELL__ < 710
 import Data.Monoid (Monoid)
 #endif
+import Data.Semigroup (Semigroup)
 import Data.Typeable (Typeable)
 import Network.Riak.Types.Internal
 import qualified Network.Riak.Value as V
 
 newtype JSON a = J {
       plain :: a -- ^ Unwrap a 'JSON'-wrapped value.
-    } deriving (Eq, Ord, Show, Read, Bounded, Typeable, Monoid)
+    } deriving (Eq, Ord, Show, Read, Bounded, Typeable, Semigroup, Monoid)
 
 -- | Wrap up a value so that it will be encoded and decoded as JSON
 -- when converted to/from 'Content'.

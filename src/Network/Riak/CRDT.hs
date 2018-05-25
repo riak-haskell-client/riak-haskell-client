@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                 #-}
 {- | module:    Network.Riak.CRDT
      copyright: (c) 2016 Sentenai
      author:    Antonio Nikishaev <me@lelf.lu>
@@ -43,7 +44,9 @@ module Network.Riak.CRDT (module Network.Riak.CRDT.Types,
 import Data.Default.Class
 import qualified Data.Map as M
 import Data.Proxy
+#if __GLASGOW_HASKELL__ < 804
 import Data.Semigroup
+#endif
 import qualified Data.Set as S
 import Network.Riak.CRDT.Ops
 import Network.Riak.CRDT.Riak

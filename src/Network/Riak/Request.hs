@@ -56,7 +56,9 @@ module Network.Riak.Request
 import Control.Applicative ((<$>))
 #endif
 import qualified Data.ByteString.Char8 as B8
+#if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
+#endif
 import Network.Riak.Protocol.BucketProps (BucketProps)
 import Network.Riak.Protocol.Content
 import Network.Riak.Protocol.GetClientIDRequest

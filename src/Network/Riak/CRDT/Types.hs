@@ -278,6 +278,9 @@ instance Default Counter where
 -- >>> CounterInc 1
 data CounterOp = CounterInc !Count deriving (Eq,Show)
 
+instance Semigroup CounterOp where
+    CounterInc x <> CounterInc y = CounterInc . getSum $ Sum x <> Sum y
+
 instance Monoid CounterOp where
     mempty = CounterInc 0
     CounterInc x `mappend` CounterInc y = CounterInc . getSum $ Sum x <> Sum y
