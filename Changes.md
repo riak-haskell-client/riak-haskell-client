@@ -1,3 +1,7 @@
+* 1.1.2.5
+  - Bump aeson and exceptions upper bounds.
+* 1.1.2.4
+  - Bump async upper bounds.
 * 1.1.2.2
   - Fix for GHC 8.2.2 support
 * 1.1.2.1
