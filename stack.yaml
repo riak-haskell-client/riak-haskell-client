@@ -3,3 +3,6 @@ packages:
 - '.'
 - protobuf/
 - protobuf-lens/
+extra-deps:
+- unliftio-0.2.7.0
+- unliftio-core-0.1.1.0

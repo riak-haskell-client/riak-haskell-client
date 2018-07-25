@@ -44,6 +44,7 @@ import Control.Concurrent.Async (async, waitBoth)
 import Control.Concurrent.STM
 import Control.Exception (Exception, IOException, SomeException, catch, mask, throwIO, bracketOnError)
 import Control.Monad (join, forM_, replicateM, when)
+import Control.Monad.IO.Unlift
 import Control.Monad.Trans.Class (lift)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
@@ -69,6 +70,8 @@ import qualified Network.Riak.Types.Internal as T
 import qualified Network.Socket.ByteString as B
 import qualified Network.Socket.ByteString.Lazy as L
 import qualified Pipes
+import qualified UnliftIO
+import qualified UnliftIO.Concurrent as UnliftIO (forkIO)
 
 -- | Default client configuration.  Talks to localhost, port 8087,
 -- with a randomly chosen client ID.
@@ -351,20 +354,20 @@ data WorkerResult
   | WorkerDied SomeException -- Background request-sender died somehow.
 
 stream
-  :: forall req resp.
-     Request req
+  :: forall m req resp.
+     (MonadUnliftIO m, Request req)
   => (Connection -> IO resp)
   -> Connection
-  -> Pipes.Producer req IO ()
-  -> Pipes.Producer' (req, resp) IO ()
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
 stream receive conn@Connection{..} reqs = do
   -- Keep track of the requests sent. This allows us to pair requests with their
   -- corresponding responses.
   requestsChan :: TChan req <-
-    lift newTChanIO
+    liftIO newTChanIO
 
   resultVar :: TMVar WorkerResult <-
-    lift newEmptyTMVarIO
+    liftIO newEmptyTMVarIO
 
   -- Keep a weak reference to the worker result var: if the worker sees this var
   -- has been garbage collected, it knows the driver of the returned producer
@@ -372,19 +375,19 @@ stream receive conn@Connection{..} reqs = do
   -- left that cares about the responses, so don't bother sending any more
   -- requests.
   weakResultVar :: Weak (TMVar WorkerResult) <-
-    lift (mkWeakTMVar resultVar (pure ()))
+    liftIO (mkWeakTMVar resultVar (pure ()))
 
   -- Background thread: send all of the requests (or die trying).
-  let worker :: IO ()
+  let worker :: m ()
       worker = Pipes.runEffect (reqs >-> doSend)
         where
-          doSend :: Pipes.Consumer' req IO ()
+          doSend :: Pipes.Consumer' req m ()
           doSend = do
             req <- Pipes.await
-            alive <- lift (isJust <$> deRefWeak weakResultVar)
+            alive <- liftIO (isJust <$> deRefWeak weakResultVar)
             when alive $ do
-              lift (sendRequest conn req)
-              lift (atomically (writeTChan requestsChan req))
+              liftIO (sendRequest conn req)
+              liftIO (atomically (writeTChan requestsChan req))
               doSend
 
   -- Spawn the send thread; if it successfully completes, write WorkerDone.
@@ -399,34 +402,38 @@ stream receive conn@Connection{..} reqs = do
   -- 'resultVar' alive.
   _ <-
     lift $
-      mask $ \restore ->
-        forkIO $ do
-          let action :: IO ()
+      UnliftIO.mask $ \restore ->
+        UnliftIO.forkIO $ do
+          let action :: m ()
               action = do
                 restore worker
-                deRefWeak weakResultVar >>= \case
-                  Nothing ->
-                    pure ()
-                  Just var ->
-                    atomically (putTMVar var WorkerDone)
-          let cleanup :: SomeException -> IO ()
+                liftIO $
+                  deRefWeak weakResultVar >>= \case
+                    Nothing ->
+                      pure ()
+                    Just var ->
+                      atomically (putTMVar var WorkerDone)
+
+          let cleanup :: SomeException -> m ()
               cleanup ex =
-                deRefWeak weakResultVar >>= \case
-                  Nothing ->
-                    pure ()
-                  Just var ->
-                    atomically (putTMVar var (WorkerDied ex))
-          action `catch` cleanup
+                liftIO $
+                  deRefWeak weakResultVar >>= \case
+                    Nothing ->
+                      pure ()
+                    Just var ->
+                      atomically (putTMVar var (WorkerDied ex))
+
+          action `UnliftIO.catch` cleanup
 
   -- In a loop, receive all the responses. If the background worker has died,
   -- propagate its exception to the driver.
-  let recvLoop :: Pipes.Producer' (req, resp) IO ()
+  let recvLoop :: Pipes.Producer' (req, resp) m ()
       recvLoop =
-        join . lift . atomically $
+        join . liftIO . atomically $
           (do
             req <- readTChan requestsChan
             pure $ do
-              resp <- lift (receive conn)
+              resp <- liftIO (receive conn)
               Pipes.yield (req, resp)
               recvLoop)
           `orElse`
@@ -436,24 +443,24 @@ stream receive conn@Connection{..} reqs = do
               WorkerDone ->
                 pure (pure ())
               WorkerDied ex ->
-                pure (lift (throwIO ex)))
+                pure (liftIO (throwIO ex)))
 
   recvLoop
 
 -- | Like 'pipeline', but stream the responses out as they arrive.
 streaming
-  :: (Exchange req resp)
+  :: (Exchange req resp, MonadUnliftIO m)
   => Connection
-  -> Pipes.Producer req IO ()
-  -> Pipes.Producer' (req, resp) IO ()
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
 streaming = stream recvResponse
 
 -- | Like 'pipelineMaybe', but stream the responses out as they arrive.
 streamingMaybe
-  :: (Exchange req resp)
+  :: (Exchange req resp, MonadUnliftIO m)
   => Connection
-  -> Pipes.Producer req IO ()
-  -> Pipes.Producer' (req, resp) IO ()
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
 streamingMaybe conn reqs =
   Pipes.for
     (stream recvMaybeResponse conn reqs)
