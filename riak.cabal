@@ -121,6 +121,7 @@ library
                 monad-control                 >= 1.0.0.4  && < 1.1,
                 network                       >= 2.3,
                 resource-pool                 == 0.2.*,
+                pipes                         >= 4        && < 4.4,
                 protocol-buffers              >= 2.1.4    && < 2.5,
                 pureMD5,
                 random,
@@ -130,6 +131,8 @@ library
                 text                          == 1.2.*,
                 time                          >= 1.4.2     && < 1.9,
                 vector                        >= 0.10.12.3 && < 0.13,
+                unliftio                      >= 0.2.7,
+                unliftio-core                 >= 0.1.1,
                 unordered-containers          >= 0.2.5
 
 

@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts, MultiWayIf #-}
+{-# LANGUAGE CPP, OverloadedStrings, RecordWildCards, ScopedTypeVariables, FlexibleContexts, MultiWayIf, RankNTypes, LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- |
@@ -29,6 +29,8 @@ module Network.Riak.Connection.Internal
     , pipeline
     , pipelineMaybe
     , pipeline_
+    , streaming
+    , streamingMaybe
     -- * Low-level protocol operations
     -- ** Sending and receiving
     , sendRequest
@@ -37,12 +39,17 @@ module Network.Riak.Connection.Internal
     , recvResponse_
     ) where
 
+import Control.Concurrent (forkIO)
 import Control.Concurrent.Async (async, waitBoth)
-import Control.Exception (Exception, IOException, throwIO, bracketOnError)
-import Control.Monad (forM_, replicateM)
+import Control.Concurrent.STM
+import Control.Exception (Exception, IOException, SomeException, catch, mask, throwIO, bracketOnError)
+import Control.Monad (join, forM_, replicateM, when)
+import Control.Monad.IO.Unlift
+import Control.Monad.Trans.Class (lift)
 import Data.Binary.Put (Put, putWord32be, runPut)
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Int (Int64)
+import Data.Maybe (isJust)
 import Network.Riak.Connection.NoPush (setNoPush)
 import Network.Riak.Debug as Debug
 import Network.Riak.Protocol.ErrorResponse
@@ -51,6 +58,8 @@ import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import Numeric (showHex)
+import Pipes ((>->))
+import System.Mem.Weak (Weak, deRefWeak)
 import System.Random (randomIO)
 import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
 import Text.ProtocolBuffers.Get (Get, Result(..), getWord32be, runGet)
@@ -60,6 +69,9 @@ import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Network.Riak.Types.Internal as T
 import qualified Network.Socket.ByteString as B
 import qualified Network.Socket.ByteString.Lazy as L
+import qualified Pipes
+import qualified UnliftIO
+import qualified UnliftIO.Concurrent as UnliftIO (forkIO)
 
 -- | Default client configuration.  Talks to localhost, port 8087,
 -- with a randomly chosen client ID.
@@ -336,6 +348,128 @@ pipeline_ conn@Connection{..} reqs = do
   sendReqs <- async . sendAll connSock . runPut . mapM_ putRequest $ reqs
   _ <- onIOException "pipeline_" $ waitBoth sendReqs receiveResps
   return ()
+
+data WorkerResult
+  = WorkerDone               -- Background request-sender has run out of requests.
+  | WorkerDied SomeException -- Background request-sender died somehow.
+
+stream
+  :: forall m req resp.
+     (MonadUnliftIO m, Request req)
+  => (Connection -> IO resp)
+  -> Connection
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
+stream receive conn@Connection{..} reqs = do
+  -- Keep track of the requests sent. This allows us to pair requests with their
+  -- corresponding responses.
+  requestsChan :: TChan req <-
+    liftIO newTChanIO
+
+  resultVar :: TMVar WorkerResult <-
+    liftIO newEmptyTMVarIO
+
+  -- Keep a weak reference to the worker result var: if the worker sees this var
+  -- has been garbage collected, it knows the driver of the returned producer
+  -- has died, or dropped the producer on the floor - point is, there's no one
+  -- left that cares about the responses, so don't bother sending any more
+  -- requests.
+  weakResultVar :: Weak (TMVar WorkerResult) <-
+    liftIO (mkWeakTMVar resultVar (pure ()))
+
+  -- Background thread: send all of the requests (or die trying).
+  let worker :: m ()
+      worker = Pipes.runEffect (reqs >-> doSend)
+        where
+          doSend :: Pipes.Consumer' req m ()
+          doSend = do
+            req <- Pipes.await
+            alive <- liftIO (isJust <$> deRefWeak weakResultVar)
+            when alive $ do
+              liftIO (sendRequest conn req)
+              liftIO (atomically (writeTChan requestsChan req))
+              doSend
+
+  -- Spawn the send thread; if it successfully completes, write WorkerDone.
+  -- Else, write the exception that brought it down.
+  --
+  -- 'mask' is used here to guarantee that:
+  --
+  -- 1. We start the worker action (thread doesn't die right after 'forkIO')
+  -- 2. We write WorkerDone after (thread doesn't die right after 'worker')
+  --
+  -- Use 'weakResultVar' instead of 'resultVar' so that only the driver keeps
+  -- 'resultVar' alive.
+  _ <-
+    lift $
+      UnliftIO.mask $ \restore ->
+        UnliftIO.forkIO $ do
+          let action :: m ()
+              action = do
+                restore worker
+                liftIO $
+                  deRefWeak weakResultVar >>= \case
+                    Nothing ->
+                      pure ()
+                    Just var ->
+                      atomically (putTMVar var WorkerDone)
+
+          let cleanup :: SomeException -> m ()
+              cleanup ex =
+                liftIO $
+                  deRefWeak weakResultVar >>= \case
+                    Nothing ->
+                      pure ()
+                    Just var ->
+                      atomically (putTMVar var (WorkerDied ex))
+
+          action `UnliftIO.catch` cleanup
+
+  -- In a loop, receive all the responses. If the background worker has died,
+  -- propagate its exception to the driver.
+  let recvLoop :: Pipes.Producer' (req, resp) m ()
+      recvLoop =
+        join . liftIO . atomically $
+          (do
+            req <- readTChan requestsChan
+            pure $ do
+              resp <- liftIO (receive conn)
+              Pipes.yield (req, resp)
+              recvLoop)
+          `orElse`
+          (do
+            result <- takeTMVar resultVar
+            case result of
+              WorkerDone ->
+                pure (pure ())
+              WorkerDied ex ->
+                pure (liftIO (throwIO ex)))
+
+  recvLoop
+
+-- | Like 'pipeline', but stream the responses out as they arrive.
+streaming
+  :: (Exchange req resp, MonadUnliftIO m)
+  => Connection
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
+streaming = stream recvResponse
+
+-- | Like 'pipelineMaybe', but stream the responses out as they arrive.
+streamingMaybe
+  :: (Exchange req resp, MonadUnliftIO m)
+  => Connection
+  -> Pipes.Producer req m ()
+  -> Pipes.Producer' (req, resp) m ()
+streamingMaybe conn reqs =
+  Pipes.for
+    (stream recvMaybeResponse conn reqs)
+    (\(req, mresp) ->
+      case mresp of
+        Nothing ->
+          pure ()
+        Just resp ->
+          Pipes.yield (req, resp))
 
 onIOException :: String -> IO a -> IO a
 onIOException func act =

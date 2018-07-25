@@ -25,6 +25,8 @@ module Network.Riak.Connection
     , pipeline
     , pipelineMaybe
     , pipeline_
+    , streaming
+    , streamingMaybe
     ) where
 
 import Network.Riak.Connection.Internal
