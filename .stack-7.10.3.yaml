@@ -1,6 +1,0 @@
-resolver: lts-6.19
-packages:
-- '.'
-- protobuf/
-extra-deps:
-- yaml-0.8.21.1
