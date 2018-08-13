@@ -2,12 +2,13 @@ language: c
 sudo: false
 
 git:
-  submodules: false  # whether to recursively clone submodules
+  submodules: true  # whether to recursively clone submodules
 
 cache:
   directories:
     - $HOME/.cabal/packages
     - $HOME/.mafia
+
 before_script:
  # riak
  - RIAK_DOWNLOAD_URL=http://s3.amazonaws.com/downloads.basho.com/riak/2.2/2.2.0/ubuntu/trusty/riak_2.2.0-1_amd64.deb
@@ -37,12 +38,13 @@ before_install:
  - unset CC
  - PATH=/opt/ghc/bin:/opt/ghc-ppa-tools/bin:$PATH
 
-install:
- - travis_retry cabal update -v
- - bin/travis_install
-
 script:
- - bin/travis_script
+ # time it out before travis kills it.
+  # If travis times out the build, it wont save the cache, meaning the
+  # next build will also most likely timeout
+  # (travis_wait doesnt work btw, theres still a global timeout of
+  # approx 40 mins it seems.
+  - timeout 35m bin/ci
 
 deploy:
   skip_cleanup: true
