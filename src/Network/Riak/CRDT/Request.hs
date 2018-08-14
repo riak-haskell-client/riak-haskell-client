@@ -1,10 +1,18 @@
--- |   module:    Network.Riak.CRDT.Request
---     copyright: (c) 2016 Sentenai
---     author:    Antonio Nikishaev <me@lelf.lu>
---     license:   Apache
+-- |
+-- Module:      Network.Riak.CRDT.Request
+-- Copyright:   (c) 2016 Sentenai
+-- Author:      Antonio Nikishaev <me@lelf.lu>
+-- License:     Apache
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>
+-- Stability:   experimental
+-- Portability: portable
 --
-module Network.Riak.CRDT.Request
-    (get, counterUpdate, setUpdate, mapUpdate) where
+module Network.Riak.CRDT.Request (
+    get
+  , counterUpdate
+  , setUpdate
+  , mapUpdate
+  ) where
 
 import           Data.ByteString.Lazy (ByteString)
 import           Network.Riak.CRDT.Ops
@@ -28,7 +36,6 @@ mapUpdate :: [CRDT.MapOp]
           -> BucketType -> Bucket -> Key
           -> DtUpdate.DtUpdateRequest
 mapUpdate ops = update (mapUpdateOp ops)
-
 
 update :: DtOp.DtOp -> BucketType -> Bucket -> Key -> DtUpdate.DtUpdateRequest
 update op t b k = DtUpdate.DtUpdateRequest {

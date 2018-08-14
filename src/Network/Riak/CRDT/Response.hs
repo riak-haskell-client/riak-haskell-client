@@ -1,29 +1,34 @@
--- |   module:    Network.Riak.CRDT.Response
---     copyright: (c) 2016 Sentenai
---     author:    Antonio Nikishaev <me@lelf.lu>
---     license:   Apache
+-- |
+-- Module:      Network.Riak.CRDT.Response
+-- Copyright:   (c) 2016 Sentenai
+-- Author:      Antonio Nikishaev <me@lelf.lu>
+-- License:     Apache
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>
+-- Stability:   experimental
+-- Portability: portable
 --
+
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE CPP #-}
 module Network.Riak.CRDT.Response (get) where
 
 #if __GLASGOW_HASKELL__ <= 708
-import Control.Applicative ((<$>))
-import Data.Traversable
+import           Control.Applicative ((<$>))
+import           Data.Traversable
 #endif
 import qualified Data.Sequence as Seq
 import qualified Data.Map as Map
-import Data.Foldable (toList)
-import Data.Maybe
-import Network.Riak.Protocol.DtFetchResponse (DtFetchResponse,value,type')
-import Network.Riak.Protocol.DtFetchResponse.DataType (DataType(..))
-import Network.Riak.Protocol.DtValue (counter_value,set_value,map_value)
+import           Data.Foldable (toList)
+import           Data.Maybe (catMaybes)
+import           Network.Riak.Protocol.DtFetchResponse (DtFetchResponse,value,type')
+import           Network.Riak.Protocol.DtFetchResponse.DataType (DataType(..))
+import           Network.Riak.Protocol.DtValue (counter_value,set_value,map_value)
 
 import qualified Network.Riak.Protocol.MapEntry as M (MapEntry(..))
 import qualified Network.Riak.Protocol.MapField as M
 import qualified Network.Riak.Protocol.MapField.MapFieldType as M
 
-import Network.Riak.CRDT.Types as CRDT
+import           Network.Riak.CRDT.Types as CRDT
 
 get :: DtFetchResponse -> Maybe CRDT.DataType
 get resp = case type' resp of

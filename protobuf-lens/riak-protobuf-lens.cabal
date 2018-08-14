@@ -58,4 +58,3 @@ library
   exposed-modules:
       Network.Riak.Protocol.Lens
   default-language: Haskell2010
-

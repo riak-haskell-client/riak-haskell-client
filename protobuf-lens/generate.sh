@@ -74,6 +74,7 @@ done
 
 # Generate the sandbox/env
 ./mafia lock
+cabal configure -f developer=true
 cabal build generate
 
 ################################################################################

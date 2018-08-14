@@ -71,6 +71,25 @@ import qualified Network.Riak.Protocol.SetBucketRequest
 import qualified Network.Riak.Protocol.SetBucketTypeRequest
 import qualified Network.Riak.Protocol.SetClientIDRequest
 import qualified Network.Riak.Protocol.SetOp
+import qualified Network.Riak.Protocol.TsCell
+import qualified Network.Riak.Protocol.TsColumnDescription
+import qualified Network.Riak.Protocol.TsColumnType
+import qualified Network.Riak.Protocol.TsCoverageEntry
+import qualified Network.Riak.Protocol.TsCoverageRequest
+import qualified Network.Riak.Protocol.TsCoverageResponse
+import qualified Network.Riak.Protocol.TsDeleteRequest
+import qualified Network.Riak.Protocol.TsDeleteResponse
+import qualified Network.Riak.Protocol.TsGetRequest
+import qualified Network.Riak.Protocol.TsGetResponse
+import qualified Network.Riak.Protocol.TsInterpolation
+import qualified Network.Riak.Protocol.TsListKeysRequest
+import qualified Network.Riak.Protocol.TsListKeysResponse
+import qualified Network.Riak.Protocol.TsPutRequest
+import qualified Network.Riak.Protocol.TsPutResponse
+import qualified Network.Riak.Protocol.TsQueryRequest
+import qualified Network.Riak.Protocol.TsQueryResponse
+import qualified Network.Riak.Protocol.TsRange
+import qualified Network.Riak.Protocol.TsRow
 import qualified Network.Riak.Protocol.YzIndex
 import qualified Network.Riak.Protocol.YzIndexDeleteRequest
 import qualified Network.Riak.Protocol.YzIndexGetRequest
@@ -85,4712 +104,4719 @@ class HasPassword s a | s -> a where
   password :: Lens' s a
 instance HasPassword Network.Riak.Protocol.AuthRequest.AuthRequest ByteString where
   {-# INLINE password #-}
-  password f_aejr (Network.Riak.Protocol.AuthRequest.AuthRequest x_aejs x_aejt)
-    = (fmap (\ y_aeju -> (Network.Riak.Protocol.AuthRequest.AuthRequest x_aejs) y_aeju)) (f_aejr x_aejt)
+  password f_aeH9 (Network.Riak.Protocol.AuthRequest.AuthRequest x_aeHa x_aeHb)
+    = fmap (\ y_aeHc -> Network.Riak.Protocol.AuthRequest.AuthRequest x_aeHa y_aeHc) (f_aeH9 x_aeHb)
 class HasUser s a | s -> a where
   user :: Lens' s a
 instance HasUser Network.Riak.Protocol.AuthRequest.AuthRequest ByteString where
   {-# INLINE user #-}
-  user f_aejv (Network.Riak.Protocol.AuthRequest.AuthRequest x_aejw x_aejx)
-    = (fmap (\ y_aejy -> (Network.Riak.Protocol.AuthRequest.AuthRequest y_aejy) x_aejx)) (f_aejv x_aejw)
+  user f_aeHd (Network.Riak.Protocol.AuthRequest.AuthRequest x_aeHe x_aeHf)
+    = fmap (\ y_aeHg -> Network.Riak.Protocol.AuthRequest.AuthRequest y_aeHg x_aeHf) (f_aeHd x_aeHe)
 class HasNode s a | s -> a where
   node :: Lens' s a
 instance HasNode Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem ByteString where
   {-# INLINE node #-}
-  node f_aelp (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aelq x_aelr x_aels)
-    = (fmap (\ y_aelt -> ((Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aelq) y_aelt) x_aels)) (f_aelp x_aelr)
+  node f_aeJd (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aeJe x_aeJf x_aeJg)
+    = fmap (\ y_aeJh -> Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aeJe y_aeJh x_aeJg) (f_aeJd x_aeJf)
 class HasPartition s a | s -> a where
   partition :: Lens' s a
 instance HasPartition Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem Int64 where
   {-# INLINE partition #-}
-  partition f_aelu (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aelv x_aelw x_aelx)
-    = (fmap (\ y_aely -> ((Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem y_aely) x_aelw) x_aelx)) (f_aelu x_aelv)
+  partition f_aeJi (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aeJj x_aeJk x_aeJl)
+    = fmap (\ y_aeJm -> Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem y_aeJm x_aeJk x_aeJl) (f_aeJi x_aeJj)
 class HasPrimary s a | s -> a where
   primary :: Lens' s a
 instance HasPrimary Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem Bool where
   {-# INLINE primary #-}
-  primary f_aelz (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aelA x_aelB x_aelC)
-    = (fmap (\ y_aelD -> ((Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aelA) x_aelB) y_aelD)) (f_aelz x_aelC)
+  primary f_aeJn (Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aeJo x_aeJp x_aeJq)
+    = fmap (\ y_aeJr -> Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem x_aeJo x_aeJp y_aeJr) (f_aeJn x_aeJq)
 class HasAllowMult s a | s -> a where
   allow_mult :: Lens' s a
 instance HasAllowMult Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE allow_mult #-}
   allow_mult
-    f_aeol
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeom
-                                                   x_aeon
-                                                   x_aeoo
-                                                   x_aeop
-                                                   x_aeoq
-                                                   x_aeor
-                                                   x_aeos
-                                                   x_aeot
-                                                   x_aeou
-                                                   x_aeov
-                                                   x_aeow
-                                                   x_aeox
-                                                   x_aeoy
-                                                   x_aeoz
-                                                   x_aeoA
-                                                   x_aeoB
-                                                   x_aeoC
-                                                   x_aeoD
-                                                   x_aeoE
-                                                   x_aeoF
-                                                   x_aeoG
-                                                   x_aeoH
-                                                   x_aeoI
-                                                   x_aeoJ
-                                                   x_aeoK
-                                                   x_aeoL
-                                                   x_aeoM
-                                                   x_aeoN)
-    = (fmap
-         (\ y_aeoO
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeom) y_aeoO) x_aeoo) x_aeop) x_aeoq) x_aeor) x_aeos)
-                                     x_aeot)
-                                    x_aeou)
-                                   x_aeov)
-                                  x_aeow)
-                                 x_aeox)
-                                x_aeoy)
-                               x_aeoz)
-                              x_aeoA)
-                             x_aeoB)
-                            x_aeoC)
-                           x_aeoD)
-                          x_aeoE)
-                         x_aeoF)
-                        x_aeoG)
-                       x_aeoH)
-                      x_aeoI)
-                     x_aeoJ)
-                    x_aeoK)
-                   x_aeoL)
-                  x_aeoM)
-                 x_aeoN))
-        (f_aeol x_aeon)
+    f_aeSv
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeSw
+                                                   x_aeSx
+                                                   x_aeSy
+                                                   x_aeSz
+                                                   x_aeSA
+                                                   x_aeSB
+                                                   x_aeSC
+                                                   x_aeSD
+                                                   x_aeSE
+                                                   x_aeSF
+                                                   x_aeSG
+                                                   x_aeSH
+                                                   x_aeSI
+                                                   x_aeSJ
+                                                   x_aeSK
+                                                   x_aeSL
+                                                   x_aeSM
+                                                   x_aeSN
+                                                   x_aeSO
+                                                   x_aeSP
+                                                   x_aeSQ
+                                                   x_aeSR
+                                                   x_aeSS
+                                                   x_aeST
+                                                   x_aeSU
+                                                   x_aeSV
+                                                   x_aeSW
+                                                   x_aeSX)
+    = fmap
+        (\ y_aeSY
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeSw
+                y_aeSY
+                x_aeSy
+                x_aeSz
+                x_aeSA
+                x_aeSB
+                x_aeSC
+                x_aeSD
+                x_aeSE
+                x_aeSF
+                x_aeSG
+                x_aeSH
+                x_aeSI
+                x_aeSJ
+                x_aeSK
+                x_aeSL
+                x_aeSM
+                x_aeSN
+                x_aeSO
+                x_aeSP
+                x_aeSQ
+                x_aeSR
+                x_aeSS
+                x_aeST
+                x_aeSU
+                x_aeSV
+                x_aeSW
+                x_aeSX)
+        (f_aeSv x_aeSx)
 class HasBackend s a | s -> a where
   backend :: Lens' s a
 instance HasBackend Network.Riak.Protocol.BucketProps.BucketProps (Maybe ByteString) where
   {-# INLINE backend #-}
   backend
-    f_aeoP
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeoQ
-                                                   x_aeoR
-                                                   x_aeoS
-                                                   x_aeoT
-                                                   x_aeoU
-                                                   x_aeoV
-                                                   x_aeoW
-                                                   x_aeoX
-                                                   x_aeoY
-                                                   x_aeoZ
-                                                   x_aep0
-                                                   x_aep1
-                                                   x_aep2
-                                                   x_aep3
-                                                   x_aep4
-                                                   x_aep5
-                                                   x_aep6
-                                                   x_aep7
-                                                   x_aep8
-                                                   x_aep9
-                                                   x_aepa
-                                                   x_aepb
-                                                   x_aepc
-                                                   x_aepd
-                                                   x_aepe
-                                                   x_aepf
-                                                   x_aepg
-                                                   x_aeph)
-    = (fmap
-         (\ y_aepi
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeoQ) x_aeoR) x_aeoS) x_aeoT) x_aeoU) x_aeoV) x_aeoW)
-                                     x_aeoX)
-                                    x_aeoY)
-                                   x_aeoZ)
-                                  x_aep0)
-                                 x_aep1)
-                                x_aep2)
-                               x_aep3)
-                              x_aep4)
-                             x_aep5)
-                            x_aep6)
-                           x_aep7)
-                          x_aep8)
-                         x_aep9)
-                        x_aepa)
-                       y_aepi)
-                      x_aepc)
-                     x_aepd)
-                    x_aepe)
-                   x_aepf)
-                  x_aepg)
-                 x_aeph))
-        (f_aeoP x_aepb)
+    f_aeSZ
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeT0
+                                                   x_aeT1
+                                                   x_aeT2
+                                                   x_aeT3
+                                                   x_aeT4
+                                                   x_aeT5
+                                                   x_aeT6
+                                                   x_aeT7
+                                                   x_aeT8
+                                                   x_aeT9
+                                                   x_aeTa
+                                                   x_aeTb
+                                                   x_aeTc
+                                                   x_aeTd
+                                                   x_aeTe
+                                                   x_aeTf
+                                                   x_aeTg
+                                                   x_aeTh
+                                                   x_aeTi
+                                                   x_aeTj
+                                                   x_aeTk
+                                                   x_aeTl
+                                                   x_aeTm
+                                                   x_aeTn
+                                                   x_aeTo
+                                                   x_aeTp
+                                                   x_aeTq
+                                                   x_aeTr)
+    = fmap
+        (\ y_aeTs
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeT0
+                x_aeT1
+                x_aeT2
+                x_aeT3
+                x_aeT4
+                x_aeT5
+                x_aeT6
+                x_aeT7
+                x_aeT8
+                x_aeT9
+                x_aeTa
+                x_aeTb
+                x_aeTc
+                x_aeTd
+                x_aeTe
+                x_aeTf
+                x_aeTg
+                x_aeTh
+                x_aeTi
+                x_aeTj
+                x_aeTk
+                y_aeTs
+                x_aeTm
+                x_aeTn
+                x_aeTo
+                x_aeTp
+                x_aeTq
+                x_aeTr)
+        (f_aeSZ x_aeTl)
 class HasBasicQuorum s a | s -> a where
   basic_quorum :: Lens' s a
 instance HasBasicQuorum Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE basic_quorum #-}
   basic_quorum
-    f_aepj
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aepk
-                                                   x_aepl
-                                                   x_aepm
-                                                   x_aepn
-                                                   x_aepo
-                                                   x_aepp
-                                                   x_aepq
-                                                   x_aepr
-                                                   x_aeps
-                                                   x_aept
-                                                   x_aepu
-                                                   x_aepv
-                                                   x_aepw
-                                                   x_aepx
-                                                   x_aepy
-                                                   x_aepz
-                                                   x_aepA
-                                                   x_aepB
-                                                   x_aepC
-                                                   x_aepD
-                                                   x_aepE
-                                                   x_aepF
-                                                   x_aepG
-                                                   x_aepH
-                                                   x_aepI
-                                                   x_aepJ
-                                                   x_aepK
-                                                   x_aepL)
-    = (fmap
-         (\ y_aepM
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aepk) x_aepl) x_aepm) x_aepn) x_aepo) x_aepp) x_aepq)
-                                     x_aepr)
-                                    x_aeps)
-                                   x_aept)
-                                  x_aepu)
-                                 x_aepv)
-                                x_aepw)
-                               x_aepx)
-                              x_aepy)
-                             x_aepz)
-                            x_aepA)
-                           x_aepB)
-                          x_aepC)
-                         y_aepM)
-                        x_aepE)
-                       x_aepF)
-                      x_aepG)
-                     x_aepH)
-                    x_aepI)
-                   x_aepJ)
-                  x_aepK)
-                 x_aepL))
-        (f_aepj x_aepD)
+    f_aeTt
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeTu
+                                                   x_aeTv
+                                                   x_aeTw
+                                                   x_aeTx
+                                                   x_aeTy
+                                                   x_aeTz
+                                                   x_aeTA
+                                                   x_aeTB
+                                                   x_aeTC
+                                                   x_aeTD
+                                                   x_aeTE
+                                                   x_aeTF
+                                                   x_aeTG
+                                                   x_aeTH
+                                                   x_aeTI
+                                                   x_aeTJ
+                                                   x_aeTK
+                                                   x_aeTL
+                                                   x_aeTM
+                                                   x_aeTN
+                                                   x_aeTO
+                                                   x_aeTP
+                                                   x_aeTQ
+                                                   x_aeTR
+                                                   x_aeTS
+                                                   x_aeTT
+                                                   x_aeTU
+                                                   x_aeTV)
+    = fmap
+        (\ y_aeTW
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeTu
+                x_aeTv
+                x_aeTw
+                x_aeTx
+                x_aeTy
+                x_aeTz
+                x_aeTA
+                x_aeTB
+                x_aeTC
+                x_aeTD
+                x_aeTE
+                x_aeTF
+                x_aeTG
+                x_aeTH
+                x_aeTI
+                x_aeTJ
+                x_aeTK
+                x_aeTL
+                x_aeTM
+                y_aeTW
+                x_aeTO
+                x_aeTP
+                x_aeTQ
+                x_aeTR
+                x_aeTS
+                x_aeTT
+                x_aeTU
+                x_aeTV)
+        (f_aeTt x_aeTN)
 class HasBigVclock s a | s -> a where
   big_vclock :: Lens' s a
 instance HasBigVclock Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE big_vclock #-}
   big_vclock
-    f_aepN
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aepO
-                                                   x_aepP
-                                                   x_aepQ
-                                                   x_aepR
-                                                   x_aepS
-                                                   x_aepT
-                                                   x_aepU
-                                                   x_aepV
-                                                   x_aepW
-                                                   x_aepX
-                                                   x_aepY
-                                                   x_aepZ
-                                                   x_aeq0
-                                                   x_aeq1
-                                                   x_aeq2
-                                                   x_aeq3
-                                                   x_aeq4
-                                                   x_aeq5
-                                                   x_aeq6
-                                                   x_aeq7
-                                                   x_aeq8
-                                                   x_aeq9
-                                                   x_aeqa
-                                                   x_aeqb
-                                                   x_aeqc
-                                                   x_aeqd
-                                                   x_aeqe
-                                                   x_aeqf)
-    = (fmap
-         (\ y_aeqg
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aepO) x_aepP) x_aepQ) x_aepR) x_aepS) x_aepT) x_aepU)
-                                     x_aepV)
-                                    x_aepW)
-                                   x_aepX)
-                                  x_aepY)
-                                 y_aeqg)
-                                x_aeq0)
-                               x_aeq1)
-                              x_aeq2)
-                             x_aeq3)
-                            x_aeq4)
-                           x_aeq5)
-                          x_aeq6)
-                         x_aeq7)
-                        x_aeq8)
-                       x_aeq9)
-                      x_aeqa)
-                     x_aeqb)
-                    x_aeqc)
-                   x_aeqd)
-                  x_aeqe)
-                 x_aeqf))
-        (f_aepN x_aepZ)
+    f_aeTX
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeTY
+                                                   x_aeTZ
+                                                   x_aeU0
+                                                   x_aeU1
+                                                   x_aeU2
+                                                   x_aeU3
+                                                   x_aeU4
+                                                   x_aeU5
+                                                   x_aeU6
+                                                   x_aeU7
+                                                   x_aeU8
+                                                   x_aeU9
+                                                   x_aeUa
+                                                   x_aeUb
+                                                   x_aeUc
+                                                   x_aeUd
+                                                   x_aeUe
+                                                   x_aeUf
+                                                   x_aeUg
+                                                   x_aeUh
+                                                   x_aeUi
+                                                   x_aeUj
+                                                   x_aeUk
+                                                   x_aeUl
+                                                   x_aeUm
+                                                   x_aeUn
+                                                   x_aeUo
+                                                   x_aeUp)
+    = fmap
+        (\ y_aeUq
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeTY
+                x_aeTZ
+                x_aeU0
+                x_aeU1
+                x_aeU2
+                x_aeU3
+                x_aeU4
+                x_aeU5
+                x_aeU6
+                x_aeU7
+                x_aeU8
+                y_aeUq
+                x_aeUa
+                x_aeUb
+                x_aeUc
+                x_aeUd
+                x_aeUe
+                x_aeUf
+                x_aeUg
+                x_aeUh
+                x_aeUi
+                x_aeUj
+                x_aeUk
+                x_aeUl
+                x_aeUm
+                x_aeUn
+                x_aeUo
+                x_aeUp)
+        (f_aeTX x_aeU9)
 class HasChashKeyfun s a | s -> a where
   chash_keyfun :: Lens' s a
 instance HasChashKeyfun Network.Riak.Protocol.BucketProps.BucketProps (Maybe Network.Riak.Protocol.ModFun.ModFun) where
   {-# INLINE chash_keyfun #-}
   chash_keyfun
-    f_aeqh
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeqi
-                                                   x_aeqj
-                                                   x_aeqk
-                                                   x_aeql
-                                                   x_aeqm
-                                                   x_aeqn
-                                                   x_aeqo
-                                                   x_aeqp
-                                                   x_aeqq
-                                                   x_aeqr
-                                                   x_aeqs
-                                                   x_aeqt
-                                                   x_aequ
-                                                   x_aeqv
-                                                   x_aeqw
-                                                   x_aeqx
-                                                   x_aeqy
-                                                   x_aeqz
-                                                   x_aeqA
-                                                   x_aeqB
-                                                   x_aeqC
-                                                   x_aeqD
-                                                   x_aeqE
-                                                   x_aeqF
-                                                   x_aeqG
-                                                   x_aeqH
-                                                   x_aeqI
-                                                   x_aeqJ)
-    = (fmap
-         (\ y_aeqK
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeqi) x_aeqj) x_aeqk) x_aeql) x_aeqm) x_aeqn) x_aeqo)
-                                     y_aeqK)
-                                    x_aeqq)
-                                   x_aeqr)
-                                  x_aeqs)
-                                 x_aeqt)
-                                x_aequ)
-                               x_aeqv)
-                              x_aeqw)
-                             x_aeqx)
-                            x_aeqy)
-                           x_aeqz)
-                          x_aeqA)
-                         x_aeqB)
-                        x_aeqC)
-                       x_aeqD)
-                      x_aeqE)
-                     x_aeqF)
-                    x_aeqG)
-                   x_aeqH)
-                  x_aeqI)
-                 x_aeqJ))
-        (f_aeqh x_aeqp)
+    f_aeUr
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeUs
+                                                   x_aeUt
+                                                   x_aeUu
+                                                   x_aeUv
+                                                   x_aeUw
+                                                   x_aeUx
+                                                   x_aeUy
+                                                   x_aeUz
+                                                   x_aeUA
+                                                   x_aeUB
+                                                   x_aeUC
+                                                   x_aeUD
+                                                   x_aeUE
+                                                   x_aeUF
+                                                   x_aeUG
+                                                   x_aeUH
+                                                   x_aeUI
+                                                   x_aeUJ
+                                                   x_aeUK
+                                                   x_aeUL
+                                                   x_aeUM
+                                                   x_aeUN
+                                                   x_aeUO
+                                                   x_aeUP
+                                                   x_aeUQ
+                                                   x_aeUR
+                                                   x_aeUS
+                                                   x_aeUT)
+    = fmap
+        (\ y_aeUU
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeUs
+                x_aeUt
+                x_aeUu
+                x_aeUv
+                x_aeUw
+                x_aeUx
+                x_aeUy
+                y_aeUU
+                x_aeUA
+                x_aeUB
+                x_aeUC
+                x_aeUD
+                x_aeUE
+                x_aeUF
+                x_aeUG
+                x_aeUH
+                x_aeUI
+                x_aeUJ
+                x_aeUK
+                x_aeUL
+                x_aeUM
+                x_aeUN
+                x_aeUO
+                x_aeUP
+                x_aeUQ
+                x_aeUR
+                x_aeUS
+                x_aeUT)
+        (f_aeUr x_aeUz)
 class HasConsistent s a | s -> a where
   consistent :: Lens' s a
 instance HasConsistent Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE consistent #-}
   consistent
-    f_aeqL
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeqM
-                                                   x_aeqN
-                                                   x_aeqO
-                                                   x_aeqP
-                                                   x_aeqQ
-                                                   x_aeqR
-                                                   x_aeqS
-                                                   x_aeqT
-                                                   x_aeqU
-                                                   x_aeqV
-                                                   x_aeqW
-                                                   x_aeqX
-                                                   x_aeqY
-                                                   x_aeqZ
-                                                   x_aer0
-                                                   x_aer1
-                                                   x_aer2
-                                                   x_aer3
-                                                   x_aer4
-                                                   x_aer5
-                                                   x_aer6
-                                                   x_aer7
-                                                   x_aer8
-                                                   x_aer9
-                                                   x_aera
-                                                   x_aerb
-                                                   x_aerc
-                                                   x_aerd)
-    = (fmap
-         (\ y_aere
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeqM) x_aeqN) x_aeqO) x_aeqP) x_aeqQ) x_aeqR) x_aeqS)
-                                     x_aeqT)
-                                    x_aeqU)
-                                   x_aeqV)
-                                  x_aeqW)
-                                 x_aeqX)
-                                x_aeqY)
-                               x_aeqZ)
-                              x_aer0)
-                             x_aer1)
-                            x_aer2)
-                           x_aer3)
-                          x_aer4)
-                         x_aer5)
-                        x_aer6)
-                       x_aer7)
-                      x_aer8)
-                     x_aer9)
-                    x_aera)
-                   x_aerb)
-                  y_aere)
-                 x_aerd))
-        (f_aeqL x_aerc)
+    f_aeUV
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeUW
+                                                   x_aeUX
+                                                   x_aeUY
+                                                   x_aeUZ
+                                                   x_aeV0
+                                                   x_aeV1
+                                                   x_aeV2
+                                                   x_aeV3
+                                                   x_aeV4
+                                                   x_aeV5
+                                                   x_aeV6
+                                                   x_aeV7
+                                                   x_aeV8
+                                                   x_aeV9
+                                                   x_aeVa
+                                                   x_aeVb
+                                                   x_aeVc
+                                                   x_aeVd
+                                                   x_aeVe
+                                                   x_aeVf
+                                                   x_aeVg
+                                                   x_aeVh
+                                                   x_aeVi
+                                                   x_aeVj
+                                                   x_aeVk
+                                                   x_aeVl
+                                                   x_aeVm
+                                                   x_aeVn)
+    = fmap
+        (\ y_aeVo
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeUW
+                x_aeUX
+                x_aeUY
+                x_aeUZ
+                x_aeV0
+                x_aeV1
+                x_aeV2
+                x_aeV3
+                x_aeV4
+                x_aeV5
+                x_aeV6
+                x_aeV7
+                x_aeV8
+                x_aeV9
+                x_aeVa
+                x_aeVb
+                x_aeVc
+                x_aeVd
+                x_aeVe
+                x_aeVf
+                x_aeVg
+                x_aeVh
+                x_aeVi
+                x_aeVj
+                x_aeVk
+                x_aeVl
+                y_aeVo
+                x_aeVn)
+        (f_aeUV x_aeVm)
 class HasDatatype s a | s -> a where
   datatype :: Lens' s a
 instance HasDatatype Network.Riak.Protocol.BucketProps.BucketProps (Maybe ByteString) where
   {-# INLINE datatype #-}
   datatype
-    f_aerf
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aerg
-                                                   x_aerh
-                                                   x_aeri
-                                                   x_aerj
-                                                   x_aerk
-                                                   x_aerl
-                                                   x_aerm
-                                                   x_aern
-                                                   x_aero
-                                                   x_aerp
-                                                   x_aerq
-                                                   x_aerr
-                                                   x_aers
-                                                   x_aert
-                                                   x_aeru
-                                                   x_aerv
-                                                   x_aerw
-                                                   x_aerx
-                                                   x_aery
-                                                   x_aerz
-                                                   x_aerA
-                                                   x_aerB
-                                                   x_aerC
-                                                   x_aerD
-                                                   x_aerE
-                                                   x_aerF
-                                                   x_aerG
-                                                   x_aerH)
-    = (fmap
-         (\ y_aerI
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aerg) x_aerh) x_aeri) x_aerj) x_aerk) x_aerl) x_aerm)
-                                     x_aern)
-                                    x_aero)
-                                   x_aerp)
-                                  x_aerq)
-                                 x_aerr)
-                                x_aers)
-                               x_aert)
-                              x_aeru)
-                             x_aerv)
-                            x_aerw)
-                           x_aerx)
-                          x_aery)
-                         x_aerz)
-                        x_aerA)
-                       x_aerB)
-                      x_aerC)
-                     x_aerD)
-                    x_aerE)
-                   y_aerI)
-                  x_aerG)
-                 x_aerH))
-        (f_aerf x_aerF)
+    f_aeVp
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeVq
+                                                   x_aeVr
+                                                   x_aeVs
+                                                   x_aeVt
+                                                   x_aeVu
+                                                   x_aeVv
+                                                   x_aeVw
+                                                   x_aeVx
+                                                   x_aeVy
+                                                   x_aeVz
+                                                   x_aeVA
+                                                   x_aeVB
+                                                   x_aeVC
+                                                   x_aeVD
+                                                   x_aeVE
+                                                   x_aeVF
+                                                   x_aeVG
+                                                   x_aeVH
+                                                   x_aeVI
+                                                   x_aeVJ
+                                                   x_aeVK
+                                                   x_aeVL
+                                                   x_aeVM
+                                                   x_aeVN
+                                                   x_aeVO
+                                                   x_aeVP
+                                                   x_aeVQ
+                                                   x_aeVR)
+    = fmap
+        (\ y_aeVS
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeVq
+                x_aeVr
+                x_aeVs
+                x_aeVt
+                x_aeVu
+                x_aeVv
+                x_aeVw
+                x_aeVx
+                x_aeVy
+                x_aeVz
+                x_aeVA
+                x_aeVB
+                x_aeVC
+                x_aeVD
+                x_aeVE
+                x_aeVF
+                x_aeVG
+                x_aeVH
+                x_aeVI
+                x_aeVJ
+                x_aeVK
+                x_aeVL
+                x_aeVM
+                x_aeVN
+                x_aeVO
+                y_aeVS
+                x_aeVQ
+                x_aeVR)
+        (f_aeVp x_aeVP)
 class HasDw s a | s -> a where
   dw :: Lens' s a
 instance HasDw Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE dw #-}
   dw
-    f_aerJ
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aerK
-                                                   x_aerL
-                                                   x_aerM
-                                                   x_aerN
-                                                   x_aerO
-                                                   x_aerP
-                                                   x_aerQ
-                                                   x_aerR
-                                                   x_aerS
-                                                   x_aerT
-                                                   x_aerU
-                                                   x_aerV
-                                                   x_aerW
-                                                   x_aerX
-                                                   x_aerY
-                                                   x_aerZ
-                                                   x_aes0
-                                                   x_aes1
-                                                   x_aes2
-                                                   x_aes3
-                                                   x_aes4
-                                                   x_aes5
-                                                   x_aes6
-                                                   x_aes7
-                                                   x_aes8
-                                                   x_aes9
-                                                   x_aesa
-                                                   x_aesb)
-    = (fmap
-         (\ y_aesc
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aerK) x_aerL) x_aerM) x_aerN) x_aerO) x_aerP) x_aerQ)
-                                     x_aerR)
-                                    x_aerS)
-                                   x_aerT)
-                                  x_aerU)
-                                 x_aerV)
-                                x_aerW)
-                               x_aerX)
-                              x_aerY)
-                             x_aerZ)
-                            x_aes0)
-                           y_aesc)
-                          x_aes2)
-                         x_aes3)
-                        x_aes4)
-                       x_aes5)
-                      x_aes6)
-                     x_aes7)
-                    x_aes8)
-                   x_aes9)
-                  x_aesa)
-                 x_aesb))
-        (f_aerJ x_aes1)
+    f_aeVT
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeVU
+                                                   x_aeVV
+                                                   x_aeVW
+                                                   x_aeVX
+                                                   x_aeVY
+                                                   x_aeVZ
+                                                   x_aeW0
+                                                   x_aeW1
+                                                   x_aeW2
+                                                   x_aeW3
+                                                   x_aeW4
+                                                   x_aeW5
+                                                   x_aeW6
+                                                   x_aeW7
+                                                   x_aeW8
+                                                   x_aeW9
+                                                   x_aeWa
+                                                   x_aeWb
+                                                   x_aeWc
+                                                   x_aeWd
+                                                   x_aeWe
+                                                   x_aeWf
+                                                   x_aeWg
+                                                   x_aeWh
+                                                   x_aeWi
+                                                   x_aeWj
+                                                   x_aeWk
+                                                   x_aeWl)
+    = fmap
+        (\ y_aeWm
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeVU
+                x_aeVV
+                x_aeVW
+                x_aeVX
+                x_aeVY
+                x_aeVZ
+                x_aeW0
+                x_aeW1
+                x_aeW2
+                x_aeW3
+                x_aeW4
+                x_aeW5
+                x_aeW6
+                x_aeW7
+                x_aeW8
+                x_aeW9
+                x_aeWa
+                y_aeWm
+                x_aeWc
+                x_aeWd
+                x_aeWe
+                x_aeWf
+                x_aeWg
+                x_aeWh
+                x_aeWi
+                x_aeWj
+                x_aeWk
+                x_aeWl)
+        (f_aeVT x_aeWb)
 class HasHasPostcommit s a | s -> a where
   has_postcommit :: Lens' s a
 instance HasHasPostcommit Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE has_postcommit #-}
   has_postcommit
-    f_aesd
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aese
-                                                   x_aesf
-                                                   x_aesg
-                                                   x_aesh
-                                                   x_aesi
-                                                   x_aesj
-                                                   x_aesk
-                                                   x_aesl
-                                                   x_aesm
-                                                   x_aesn
-                                                   x_aeso
-                                                   x_aesp
-                                                   x_aesq
-                                                   x_aesr
-                                                   x_aess
-                                                   x_aest
-                                                   x_aesu
-                                                   x_aesv
-                                                   x_aesw
-                                                   x_aesx
-                                                   x_aesy
-                                                   x_aesz
-                                                   x_aesA
-                                                   x_aesB
-                                                   x_aesC
-                                                   x_aesD
-                                                   x_aesE
-                                                   x_aesF)
-    = (fmap
-         (\ y_aesG
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aese) x_aesf) x_aesg) x_aesh) x_aesi) x_aesj) y_aesG)
-                                     x_aesl)
-                                    x_aesm)
-                                   x_aesn)
-                                  x_aeso)
-                                 x_aesp)
-                                x_aesq)
-                               x_aesr)
-                              x_aess)
-                             x_aest)
-                            x_aesu)
-                           x_aesv)
-                          x_aesw)
-                         x_aesx)
-                        x_aesy)
-                       x_aesz)
-                      x_aesA)
-                     x_aesB)
-                    x_aesC)
-                   x_aesD)
-                  x_aesE)
-                 x_aesF))
-        (f_aesd x_aesk)
+    f_aeWn
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeWo
+                                                   x_aeWp
+                                                   x_aeWq
+                                                   x_aeWr
+                                                   x_aeWs
+                                                   x_aeWt
+                                                   x_aeWu
+                                                   x_aeWv
+                                                   x_aeWw
+                                                   x_aeWx
+                                                   x_aeWy
+                                                   x_aeWz
+                                                   x_aeWA
+                                                   x_aeWB
+                                                   x_aeWC
+                                                   x_aeWD
+                                                   x_aeWE
+                                                   x_aeWF
+                                                   x_aeWG
+                                                   x_aeWH
+                                                   x_aeWI
+                                                   x_aeWJ
+                                                   x_aeWK
+                                                   x_aeWL
+                                                   x_aeWM
+                                                   x_aeWN
+                                                   x_aeWO
+                                                   x_aeWP)
+    = fmap
+        (\ y_aeWQ
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeWo
+                x_aeWp
+                x_aeWq
+                x_aeWr
+                x_aeWs
+                x_aeWt
+                y_aeWQ
+                x_aeWv
+                x_aeWw
+                x_aeWx
+                x_aeWy
+                x_aeWz
+                x_aeWA
+                x_aeWB
+                x_aeWC
+                x_aeWD
+                x_aeWE
+                x_aeWF
+                x_aeWG
+                x_aeWH
+                x_aeWI
+                x_aeWJ
+                x_aeWK
+                x_aeWL
+                x_aeWM
+                x_aeWN
+                x_aeWO
+                x_aeWP)
+        (f_aeWn x_aeWu)
 class HasHasPrecommit s a | s -> a where
   has_precommit :: Lens' s a
 instance HasHasPrecommit Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE has_precommit #-}
   has_precommit
-    f_aesH
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aesI
-                                                   x_aesJ
-                                                   x_aesK
-                                                   x_aesL
-                                                   x_aesM
-                                                   x_aesN
-                                                   x_aesO
-                                                   x_aesP
-                                                   x_aesQ
-                                                   x_aesR
-                                                   x_aesS
-                                                   x_aesT
-                                                   x_aesU
-                                                   x_aesV
-                                                   x_aesW
-                                                   x_aesX
-                                                   x_aesY
-                                                   x_aesZ
-                                                   x_aet0
-                                                   x_aet1
-                                                   x_aet2
-                                                   x_aet3
-                                                   x_aet4
-                                                   x_aet5
-                                                   x_aet6
-                                                   x_aet7
-                                                   x_aet8
-                                                   x_aet9)
-    = (fmap
-         (\ y_aeta
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aesI) x_aesJ) x_aesK) x_aesL) y_aeta) x_aesN) x_aesO)
-                                     x_aesP)
-                                    x_aesQ)
-                                   x_aesR)
-                                  x_aesS)
-                                 x_aesT)
-                                x_aesU)
-                               x_aesV)
-                              x_aesW)
-                             x_aesX)
-                            x_aesY)
-                           x_aesZ)
-                          x_aet0)
-                         x_aet1)
-                        x_aet2)
-                       x_aet3)
-                      x_aet4)
-                     x_aet5)
-                    x_aet6)
-                   x_aet7)
-                  x_aet8)
-                 x_aet9))
-        (f_aesH x_aesM)
+    f_aeWR
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeWS
+                                                   x_aeWT
+                                                   x_aeWU
+                                                   x_aeWV
+                                                   x_aeWW
+                                                   x_aeWX
+                                                   x_aeWY
+                                                   x_aeWZ
+                                                   x_aeX0
+                                                   x_aeX1
+                                                   x_aeX2
+                                                   x_aeX3
+                                                   x_aeX4
+                                                   x_aeX5
+                                                   x_aeX6
+                                                   x_aeX7
+                                                   x_aeX8
+                                                   x_aeX9
+                                                   x_aeXa
+                                                   x_aeXb
+                                                   x_aeXc
+                                                   x_aeXd
+                                                   x_aeXe
+                                                   x_aeXf
+                                                   x_aeXg
+                                                   x_aeXh
+                                                   x_aeXi
+                                                   x_aeXj)
+    = fmap
+        (\ y_aeXk
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeWS
+                x_aeWT
+                x_aeWU
+                x_aeWV
+                y_aeXk
+                x_aeWX
+                x_aeWY
+                x_aeWZ
+                x_aeX0
+                x_aeX1
+                x_aeX2
+                x_aeX3
+                x_aeX4
+                x_aeX5
+                x_aeX6
+                x_aeX7
+                x_aeX8
+                x_aeX9
+                x_aeXa
+                x_aeXb
+                x_aeXc
+                x_aeXd
+                x_aeXe
+                x_aeXf
+                x_aeXg
+                x_aeXh
+                x_aeXi
+                x_aeXj)
+        (f_aeWR x_aeWW)
 class HasLastWriteWins s a | s -> a where
   last_write_wins :: Lens' s a
 instance HasLastWriteWins Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE last_write_wins #-}
   last_write_wins
-    f_aetb
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aetc
-                                                   x_aetd
-                                                   x_aete
-                                                   x_aetf
-                                                   x_aetg
-                                                   x_aeth
-                                                   x_aeti
-                                                   x_aetj
-                                                   x_aetk
-                                                   x_aetl
-                                                   x_aetm
-                                                   x_aetn
-                                                   x_aeto
-                                                   x_aetp
-                                                   x_aetq
-                                                   x_aetr
-                                                   x_aets
-                                                   x_aett
-                                                   x_aetu
-                                                   x_aetv
-                                                   x_aetw
-                                                   x_aetx
-                                                   x_aety
-                                                   x_aetz
-                                                   x_aetA
-                                                   x_aetB
-                                                   x_aetC
-                                                   x_aetD)
-    = (fmap
-         (\ y_aetE
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aetc) x_aetd) y_aetE) x_aetf) x_aetg) x_aeth) x_aeti)
-                                     x_aetj)
-                                    x_aetk)
-                                   x_aetl)
-                                  x_aetm)
-                                 x_aetn)
-                                x_aeto)
-                               x_aetp)
-                              x_aetq)
-                             x_aetr)
-                            x_aets)
-                           x_aett)
-                          x_aetu)
-                         x_aetv)
-                        x_aetw)
-                       x_aetx)
-                      x_aety)
-                     x_aetz)
-                    x_aetA)
-                   x_aetB)
-                  x_aetC)
-                 x_aetD))
-        (f_aetb x_aete)
+    f_aeXl
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeXm
+                                                   x_aeXn
+                                                   x_aeXo
+                                                   x_aeXp
+                                                   x_aeXq
+                                                   x_aeXr
+                                                   x_aeXs
+                                                   x_aeXt
+                                                   x_aeXu
+                                                   x_aeXv
+                                                   x_aeXw
+                                                   x_aeXx
+                                                   x_aeXy
+                                                   x_aeXz
+                                                   x_aeXA
+                                                   x_aeXB
+                                                   x_aeXC
+                                                   x_aeXD
+                                                   x_aeXE
+                                                   x_aeXF
+                                                   x_aeXG
+                                                   x_aeXH
+                                                   x_aeXI
+                                                   x_aeXJ
+                                                   x_aeXK
+                                                   x_aeXL
+                                                   x_aeXM
+                                                   x_aeXN)
+    = fmap
+        (\ y_aeXO
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeXm
+                x_aeXn
+                y_aeXO
+                x_aeXp
+                x_aeXq
+                x_aeXr
+                x_aeXs
+                x_aeXt
+                x_aeXu
+                x_aeXv
+                x_aeXw
+                x_aeXx
+                x_aeXy
+                x_aeXz
+                x_aeXA
+                x_aeXB
+                x_aeXC
+                x_aeXD
+                x_aeXE
+                x_aeXF
+                x_aeXG
+                x_aeXH
+                x_aeXI
+                x_aeXJ
+                x_aeXK
+                x_aeXL
+                x_aeXM
+                x_aeXN)
+        (f_aeXl x_aeXo)
 class HasLinkfun s a | s -> a where
   linkfun :: Lens' s a
 instance HasLinkfun Network.Riak.Protocol.BucketProps.BucketProps (Maybe Network.Riak.Protocol.ModFun.ModFun) where
   {-# INLINE linkfun #-}
   linkfun
-    f_aetF
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aetG
-                                                   x_aetH
-                                                   x_aetI
-                                                   x_aetJ
-                                                   x_aetK
-                                                   x_aetL
-                                                   x_aetM
-                                                   x_aetN
-                                                   x_aetO
-                                                   x_aetP
-                                                   x_aetQ
-                                                   x_aetR
-                                                   x_aetS
-                                                   x_aetT
-                                                   x_aetU
-                                                   x_aetV
-                                                   x_aetW
-                                                   x_aetX
-                                                   x_aetY
-                                                   x_aetZ
-                                                   x_aeu0
-                                                   x_aeu1
-                                                   x_aeu2
-                                                   x_aeu3
-                                                   x_aeu4
-                                                   x_aeu5
-                                                   x_aeu6
-                                                   x_aeu7)
-    = (fmap
-         (\ y_aeu8
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aetG) x_aetH) x_aetI) x_aetJ) x_aetK) x_aetL) x_aetM)
-                                     x_aetN)
-                                    y_aeu8)
-                                   x_aetP)
-                                  x_aetQ)
-                                 x_aetR)
-                                x_aetS)
-                               x_aetT)
-                              x_aetU)
-                             x_aetV)
-                            x_aetW)
-                           x_aetX)
-                          x_aetY)
-                         x_aetZ)
-                        x_aeu0)
-                       x_aeu1)
-                      x_aeu2)
-                     x_aeu3)
-                    x_aeu4)
-                   x_aeu5)
-                  x_aeu6)
-                 x_aeu7))
-        (f_aetF x_aetO)
+    f_aeXP
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeXQ
+                                                   x_aeXR
+                                                   x_aeXS
+                                                   x_aeXT
+                                                   x_aeXU
+                                                   x_aeXV
+                                                   x_aeXW
+                                                   x_aeXX
+                                                   x_aeXY
+                                                   x_aeXZ
+                                                   x_aeY0
+                                                   x_aeY1
+                                                   x_aeY2
+                                                   x_aeY3
+                                                   x_aeY4
+                                                   x_aeY5
+                                                   x_aeY6
+                                                   x_aeY7
+                                                   x_aeY8
+                                                   x_aeY9
+                                                   x_aeYa
+                                                   x_aeYb
+                                                   x_aeYc
+                                                   x_aeYd
+                                                   x_aeYe
+                                                   x_aeYf
+                                                   x_aeYg
+                                                   x_aeYh)
+    = fmap
+        (\ y_aeYi
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeXQ
+                x_aeXR
+                x_aeXS
+                x_aeXT
+                x_aeXU
+                x_aeXV
+                x_aeXW
+                x_aeXX
+                y_aeYi
+                x_aeXZ
+                x_aeY0
+                x_aeY1
+                x_aeY2
+                x_aeY3
+                x_aeY4
+                x_aeY5
+                x_aeY6
+                x_aeY7
+                x_aeY8
+                x_aeY9
+                x_aeYa
+                x_aeYb
+                x_aeYc
+                x_aeYd
+                x_aeYe
+                x_aeYf
+                x_aeYg
+                x_aeYh)
+        (f_aeXP x_aeXY)
 class HasNVal s a | s -> a where
   n_val :: Lens' s a
 instance HasNVal Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_aeu9
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeua
-                                                   x_aeub
-                                                   x_aeuc
-                                                   x_aeud
-                                                   x_aeue
-                                                   x_aeuf
-                                                   x_aeug
-                                                   x_aeuh
-                                                   x_aeui
-                                                   x_aeuj
-                                                   x_aeuk
-                                                   x_aeul
-                                                   x_aeum
-                                                   x_aeun
-                                                   x_aeuo
-                                                   x_aeup
-                                                   x_aeuq
-                                                   x_aeur
-                                                   x_aeus
-                                                   x_aeut
-                                                   x_aeuu
-                                                   x_aeuv
-                                                   x_aeuw
-                                                   x_aeux
-                                                   x_aeuy
-                                                   x_aeuz
-                                                   x_aeuA
-                                                   x_aeuB)
-    = (fmap
-         (\ y_aeuC
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps y_aeuC) x_aeub) x_aeuc) x_aeud) x_aeue) x_aeuf) x_aeug)
-                                     x_aeuh)
-                                    x_aeui)
-                                   x_aeuj)
-                                  x_aeuk)
-                                 x_aeul)
-                                x_aeum)
-                               x_aeun)
-                              x_aeuo)
-                             x_aeup)
-                            x_aeuq)
-                           x_aeur)
-                          x_aeus)
-                         x_aeut)
-                        x_aeuu)
-                       x_aeuv)
-                      x_aeuw)
-                     x_aeux)
-                    x_aeuy)
-                   x_aeuz)
-                  x_aeuA)
-                 x_aeuB))
-        (f_aeu9 x_aeua)
+    f_aeYj
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeYk
+                                                   x_aeYl
+                                                   x_aeYm
+                                                   x_aeYn
+                                                   x_aeYo
+                                                   x_aeYp
+                                                   x_aeYq
+                                                   x_aeYr
+                                                   x_aeYs
+                                                   x_aeYt
+                                                   x_aeYu
+                                                   x_aeYv
+                                                   x_aeYw
+                                                   x_aeYx
+                                                   x_aeYy
+                                                   x_aeYz
+                                                   x_aeYA
+                                                   x_aeYB
+                                                   x_aeYC
+                                                   x_aeYD
+                                                   x_aeYE
+                                                   x_aeYF
+                                                   x_aeYG
+                                                   x_aeYH
+                                                   x_aeYI
+                                                   x_aeYJ
+                                                   x_aeYK
+                                                   x_aeYL)
+    = fmap
+        (\ y_aeYM
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                y_aeYM
+                x_aeYl
+                x_aeYm
+                x_aeYn
+                x_aeYo
+                x_aeYp
+                x_aeYq
+                x_aeYr
+                x_aeYs
+                x_aeYt
+                x_aeYu
+                x_aeYv
+                x_aeYw
+                x_aeYx
+                x_aeYy
+                x_aeYz
+                x_aeYA
+                x_aeYB
+                x_aeYC
+                x_aeYD
+                x_aeYE
+                x_aeYF
+                x_aeYG
+                x_aeYH
+                x_aeYI
+                x_aeYJ
+                x_aeYK
+                x_aeYL)
+        (f_aeYj x_aeYk)
 class HasNotfoundOk s a | s -> a where
   notfound_ok :: Lens' s a
 instance HasNotfoundOk Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE notfound_ok #-}
   notfound_ok
-    f_aeuD
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeuE
-                                                   x_aeuF
-                                                   x_aeuG
-                                                   x_aeuH
-                                                   x_aeuI
-                                                   x_aeuJ
-                                                   x_aeuK
-                                                   x_aeuL
-                                                   x_aeuM
-                                                   x_aeuN
-                                                   x_aeuO
-                                                   x_aeuP
-                                                   x_aeuQ
-                                                   x_aeuR
-                                                   x_aeuS
-                                                   x_aeuT
-                                                   x_aeuU
-                                                   x_aeuV
-                                                   x_aeuW
-                                                   x_aeuX
-                                                   x_aeuY
-                                                   x_aeuZ
-                                                   x_aev0
-                                                   x_aev1
-                                                   x_aev2
-                                                   x_aev3
-                                                   x_aev4
-                                                   x_aev5)
-    = (fmap
-         (\ y_aev6
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeuE) x_aeuF) x_aeuG) x_aeuH) x_aeuI) x_aeuJ) x_aeuK)
-                                     x_aeuL)
-                                    x_aeuM)
-                                   x_aeuN)
-                                  x_aeuO)
-                                 x_aeuP)
-                                x_aeuQ)
-                               x_aeuR)
-                              x_aeuS)
-                             x_aeuT)
-                            x_aeuU)
-                           x_aeuV)
-                          x_aeuW)
-                         x_aeuX)
-                        y_aev6)
-                       x_aeuZ)
-                      x_aev0)
-                     x_aev1)
-                    x_aev2)
-                   x_aev3)
-                  x_aev4)
-                 x_aev5))
-        (f_aeuD x_aeuY)
+    f_aeYN
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeYO
+                                                   x_aeYP
+                                                   x_aeYQ
+                                                   x_aeYR
+                                                   x_aeYS
+                                                   x_aeYT
+                                                   x_aeYU
+                                                   x_aeYV
+                                                   x_aeYW
+                                                   x_aeYX
+                                                   x_aeYY
+                                                   x_aeYZ
+                                                   x_aeZ0
+                                                   x_aeZ1
+                                                   x_aeZ2
+                                                   x_aeZ3
+                                                   x_aeZ4
+                                                   x_aeZ5
+                                                   x_aeZ6
+                                                   x_aeZ7
+                                                   x_aeZ8
+                                                   x_aeZ9
+                                                   x_aeZa
+                                                   x_aeZb
+                                                   x_aeZc
+                                                   x_aeZd
+                                                   x_aeZe
+                                                   x_aeZf)
+    = fmap
+        (\ y_aeZg
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeYO
+                x_aeYP
+                x_aeYQ
+                x_aeYR
+                x_aeYS
+                x_aeYT
+                x_aeYU
+                x_aeYV
+                x_aeYW
+                x_aeYX
+                x_aeYY
+                x_aeYZ
+                x_aeZ0
+                x_aeZ1
+                x_aeZ2
+                x_aeZ3
+                x_aeZ4
+                x_aeZ5
+                x_aeZ6
+                x_aeZ7
+                y_aeZg
+                x_aeZ9
+                x_aeZa
+                x_aeZb
+                x_aeZc
+                x_aeZd
+                x_aeZe
+                x_aeZf)
+        (f_aeYN x_aeZ8)
 class HasOldVclock s a | s -> a where
   old_vclock :: Lens' s a
 instance HasOldVclock Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE old_vclock #-}
   old_vclock
-    f_aev7
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aev8
-                                                   x_aev9
-                                                   x_aeva
-                                                   x_aevb
-                                                   x_aevc
-                                                   x_aevd
-                                                   x_aeve
-                                                   x_aevf
-                                                   x_aevg
-                                                   x_aevh
-                                                   x_aevi
-                                                   x_aevj
-                                                   x_aevk
-                                                   x_aevl
-                                                   x_aevm
-                                                   x_aevn
-                                                   x_aevo
-                                                   x_aevp
-                                                   x_aevq
-                                                   x_aevr
-                                                   x_aevs
-                                                   x_aevt
-                                                   x_aevu
-                                                   x_aevv
-                                                   x_aevw
-                                                   x_aevx
-                                                   x_aevy
-                                                   x_aevz)
-    = (fmap
-         (\ y_aevA
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aev8) x_aev9) x_aeva) x_aevb) x_aevc) x_aevd) x_aeve)
-                                     x_aevf)
-                                    x_aevg)
-                                   y_aevA)
-                                  x_aevi)
-                                 x_aevj)
-                                x_aevk)
-                               x_aevl)
-                              x_aevm)
-                             x_aevn)
-                            x_aevo)
-                           x_aevp)
-                          x_aevq)
-                         x_aevr)
-                        x_aevs)
-                       x_aevt)
-                      x_aevu)
-                     x_aevv)
-                    x_aevw)
-                   x_aevx)
-                  x_aevy)
-                 x_aevz))
-        (f_aev7 x_aevh)
+    f_aeZh
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeZi
+                                                   x_aeZj
+                                                   x_aeZk
+                                                   x_aeZl
+                                                   x_aeZm
+                                                   x_aeZn
+                                                   x_aeZo
+                                                   x_aeZp
+                                                   x_aeZq
+                                                   x_aeZr
+                                                   x_aeZs
+                                                   x_aeZt
+                                                   x_aeZu
+                                                   x_aeZv
+                                                   x_aeZw
+                                                   x_aeZx
+                                                   x_aeZy
+                                                   x_aeZz
+                                                   x_aeZA
+                                                   x_aeZB
+                                                   x_aeZC
+                                                   x_aeZD
+                                                   x_aeZE
+                                                   x_aeZF
+                                                   x_aeZG
+                                                   x_aeZH
+                                                   x_aeZI
+                                                   x_aeZJ)
+    = fmap
+        (\ y_aeZK
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeZi
+                x_aeZj
+                x_aeZk
+                x_aeZl
+                x_aeZm
+                x_aeZn
+                x_aeZo
+                x_aeZp
+                x_aeZq
+                y_aeZK
+                x_aeZs
+                x_aeZt
+                x_aeZu
+                x_aeZv
+                x_aeZw
+                x_aeZx
+                x_aeZy
+                x_aeZz
+                x_aeZA
+                x_aeZB
+                x_aeZC
+                x_aeZD
+                x_aeZE
+                x_aeZF
+                x_aeZG
+                x_aeZH
+                x_aeZI
+                x_aeZJ)
+        (f_aeZh x_aeZr)
 class HasPostcommit s a | s -> a where
   postcommit :: Lens' s a
 instance HasPostcommit Network.Riak.Protocol.BucketProps.BucketProps (Seq Network.Riak.Protocol.CommitHook.CommitHook) where
   {-# INLINE postcommit #-}
   postcommit
-    f_aevB
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aevC
-                                                   x_aevD
-                                                   x_aevE
-                                                   x_aevF
-                                                   x_aevG
-                                                   x_aevH
-                                                   x_aevI
-                                                   x_aevJ
-                                                   x_aevK
-                                                   x_aevL
-                                                   x_aevM
-                                                   x_aevN
-                                                   x_aevO
-                                                   x_aevP
-                                                   x_aevQ
-                                                   x_aevR
-                                                   x_aevS
-                                                   x_aevT
-                                                   x_aevU
-                                                   x_aevV
-                                                   x_aevW
-                                                   x_aevX
-                                                   x_aevY
-                                                   x_aevZ
-                                                   x_aew0
-                                                   x_aew1
-                                                   x_aew2
-                                                   x_aew3)
-    = (fmap
-         (\ y_aew4
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aevC) x_aevD) x_aevE) x_aevF) x_aevG) y_aew4) x_aevI)
-                                     x_aevJ)
-                                    x_aevK)
-                                   x_aevL)
-                                  x_aevM)
-                                 x_aevN)
-                                x_aevO)
-                               x_aevP)
-                              x_aevQ)
-                             x_aevR)
-                            x_aevS)
-                           x_aevT)
-                          x_aevU)
-                         x_aevV)
-                        x_aevW)
-                       x_aevX)
-                      x_aevY)
-                     x_aevZ)
-                    x_aew0)
-                   x_aew1)
-                  x_aew2)
-                 x_aew3))
-        (f_aevB x_aevH)
+    f_aeZL
+    (Network.Riak.Protocol.BucketProps.BucketProps x_aeZM
+                                                   x_aeZN
+                                                   x_aeZO
+                                                   x_aeZP
+                                                   x_aeZQ
+                                                   x_aeZR
+                                                   x_aeZS
+                                                   x_aeZT
+                                                   x_aeZU
+                                                   x_aeZV
+                                                   x_aeZW
+                                                   x_aeZX
+                                                   x_aeZY
+                                                   x_aeZZ
+                                                   x_af00
+                                                   x_af01
+                                                   x_af02
+                                                   x_af03
+                                                   x_af04
+                                                   x_af05
+                                                   x_af06
+                                                   x_af07
+                                                   x_af08
+                                                   x_af09
+                                                   x_af0a
+                                                   x_af0b
+                                                   x_af0c
+                                                   x_af0d)
+    = fmap
+        (\ y_af0e
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_aeZM
+                x_aeZN
+                x_aeZO
+                x_aeZP
+                x_aeZQ
+                y_af0e
+                x_aeZS
+                x_aeZT
+                x_aeZU
+                x_aeZV
+                x_aeZW
+                x_aeZX
+                x_aeZY
+                x_aeZZ
+                x_af00
+                x_af01
+                x_af02
+                x_af03
+                x_af04
+                x_af05
+                x_af06
+                x_af07
+                x_af08
+                x_af09
+                x_af0a
+                x_af0b
+                x_af0c
+                x_af0d)
+        (f_aeZL x_aeZR)
 class HasPr s a | s -> a where
   pr :: Lens' s a
 instance HasPr Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE pr #-}
   pr
-    f_aew5
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aew6
-                                                   x_aew7
-                                                   x_aew8
-                                                   x_aew9
-                                                   x_aewa
-                                                   x_aewb
-                                                   x_aewc
-                                                   x_aewd
-                                                   x_aewe
-                                                   x_aewf
-                                                   x_aewg
-                                                   x_aewh
-                                                   x_aewi
-                                                   x_aewj
-                                                   x_aewk
-                                                   x_aewl
-                                                   x_aewm
-                                                   x_aewn
-                                                   x_aewo
-                                                   x_aewp
-                                                   x_aewq
-                                                   x_aewr
-                                                   x_aews
-                                                   x_aewt
-                                                   x_aewu
-                                                   x_aewv
-                                                   x_aeww
-                                                   x_aewx)
-    = (fmap
-         (\ y_aewy
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aew6) x_aew7) x_aew8) x_aew9) x_aewa) x_aewb) x_aewc)
-                                     x_aewd)
-                                    x_aewe)
-                                   x_aewf)
-                                  x_aewg)
-                                 x_aewh)
-                                x_aewi)
-                               y_aewy)
-                              x_aewk)
-                             x_aewl)
-                            x_aewm)
-                           x_aewn)
-                          x_aewo)
-                         x_aewp)
-                        x_aewq)
-                       x_aewr)
-                      x_aews)
-                     x_aewt)
-                    x_aewu)
-                   x_aewv)
-                  x_aeww)
-                 x_aewx))
-        (f_aew5 x_aewj)
+    f_af0f
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af0g
+                                                   x_af0h
+                                                   x_af0i
+                                                   x_af0j
+                                                   x_af0k
+                                                   x_af0l
+                                                   x_af0m
+                                                   x_af0n
+                                                   x_af0o
+                                                   x_af0p
+                                                   x_af0q
+                                                   x_af0r
+                                                   x_af0s
+                                                   x_af0t
+                                                   x_af0u
+                                                   x_af0v
+                                                   x_af0w
+                                                   x_af0x
+                                                   x_af0y
+                                                   x_af0z
+                                                   x_af0A
+                                                   x_af0B
+                                                   x_af0C
+                                                   x_af0D
+                                                   x_af0E
+                                                   x_af0F
+                                                   x_af0G
+                                                   x_af0H)
+    = fmap
+        (\ y_af0I
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af0g
+                x_af0h
+                x_af0i
+                x_af0j
+                x_af0k
+                x_af0l
+                x_af0m
+                x_af0n
+                x_af0o
+                x_af0p
+                x_af0q
+                x_af0r
+                x_af0s
+                y_af0I
+                x_af0u
+                x_af0v
+                x_af0w
+                x_af0x
+                x_af0y
+                x_af0z
+                x_af0A
+                x_af0B
+                x_af0C
+                x_af0D
+                x_af0E
+                x_af0F
+                x_af0G
+                x_af0H)
+        (f_af0f x_af0t)
 class HasPrecommit s a | s -> a where
   precommit :: Lens' s a
 instance HasPrecommit Network.Riak.Protocol.BucketProps.BucketProps (Seq Network.Riak.Protocol.CommitHook.CommitHook) where
   {-# INLINE precommit #-}
   precommit
-    f_aewz
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aewA
-                                                   x_aewB
-                                                   x_aewC
-                                                   x_aewD
-                                                   x_aewE
-                                                   x_aewF
-                                                   x_aewG
-                                                   x_aewH
-                                                   x_aewI
-                                                   x_aewJ
-                                                   x_aewK
-                                                   x_aewL
-                                                   x_aewM
-                                                   x_aewN
-                                                   x_aewO
-                                                   x_aewP
-                                                   x_aewQ
-                                                   x_aewR
-                                                   x_aewS
-                                                   x_aewT
-                                                   x_aewU
-                                                   x_aewV
-                                                   x_aewW
-                                                   x_aewX
-                                                   x_aewY
-                                                   x_aewZ
-                                                   x_aex0
-                                                   x_aex1)
-    = (fmap
-         (\ y_aex2
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aewA) x_aewB) x_aewC) y_aex2) x_aewE) x_aewF) x_aewG)
-                                     x_aewH)
-                                    x_aewI)
-                                   x_aewJ)
-                                  x_aewK)
-                                 x_aewL)
-                                x_aewM)
-                               x_aewN)
-                              x_aewO)
-                             x_aewP)
-                            x_aewQ)
-                           x_aewR)
-                          x_aewS)
-                         x_aewT)
-                        x_aewU)
-                       x_aewV)
-                      x_aewW)
-                     x_aewX)
-                    x_aewY)
-                   x_aewZ)
-                  x_aex0)
-                 x_aex1))
-        (f_aewz x_aewD)
+    f_af0J
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af0K
+                                                   x_af0L
+                                                   x_af0M
+                                                   x_af0N
+                                                   x_af0O
+                                                   x_af0P
+                                                   x_af0Q
+                                                   x_af0R
+                                                   x_af0S
+                                                   x_af0T
+                                                   x_af0U
+                                                   x_af0V
+                                                   x_af0W
+                                                   x_af0X
+                                                   x_af0Y
+                                                   x_af0Z
+                                                   x_af10
+                                                   x_af11
+                                                   x_af12
+                                                   x_af13
+                                                   x_af14
+                                                   x_af15
+                                                   x_af16
+                                                   x_af17
+                                                   x_af18
+                                                   x_af19
+                                                   x_af1a
+                                                   x_af1b)
+    = fmap
+        (\ y_af1c
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af0K
+                x_af0L
+                x_af0M
+                y_af1c
+                x_af0O
+                x_af0P
+                x_af0Q
+                x_af0R
+                x_af0S
+                x_af0T
+                x_af0U
+                x_af0V
+                x_af0W
+                x_af0X
+                x_af0Y
+                x_af0Z
+                x_af10
+                x_af11
+                x_af12
+                x_af13
+                x_af14
+                x_af15
+                x_af16
+                x_af17
+                x_af18
+                x_af19
+                x_af1a
+                x_af1b)
+        (f_af0J x_af0N)
 class HasPw s a | s -> a where
   pw :: Lens' s a
 instance HasPw Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE pw #-}
   pw
-    f_aex3
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aex4
-                                                   x_aex5
-                                                   x_aex6
-                                                   x_aex7
-                                                   x_aex8
-                                                   x_aex9
-                                                   x_aexa
-                                                   x_aexb
-                                                   x_aexc
-                                                   x_aexd
-                                                   x_aexe
-                                                   x_aexf
-                                                   x_aexg
-                                                   x_aexh
-                                                   x_aexi
-                                                   x_aexj
-                                                   x_aexk
-                                                   x_aexl
-                                                   x_aexm
-                                                   x_aexn
-                                                   x_aexo
-                                                   x_aexp
-                                                   x_aexq
-                                                   x_aexr
-                                                   x_aexs
-                                                   x_aext
-                                                   x_aexu
-                                                   x_aexv)
-    = (fmap
-         (\ y_aexw
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aex4) x_aex5) x_aex6) x_aex7) x_aex8) x_aex9) x_aexa)
-                                     x_aexb)
-                                    x_aexc)
-                                   x_aexd)
-                                  x_aexe)
-                                 x_aexf)
-                                x_aexg)
-                               x_aexh)
-                              x_aexi)
-                             x_aexj)
-                            y_aexw)
-                           x_aexl)
-                          x_aexm)
-                         x_aexn)
-                        x_aexo)
-                       x_aexp)
-                      x_aexq)
-                     x_aexr)
-                    x_aexs)
-                   x_aext)
-                  x_aexu)
-                 x_aexv))
-        (f_aex3 x_aexk)
+    f_af1d
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af1e
+                                                   x_af1f
+                                                   x_af1g
+                                                   x_af1h
+                                                   x_af1i
+                                                   x_af1j
+                                                   x_af1k
+                                                   x_af1l
+                                                   x_af1m
+                                                   x_af1n
+                                                   x_af1o
+                                                   x_af1p
+                                                   x_af1q
+                                                   x_af1r
+                                                   x_af1s
+                                                   x_af1t
+                                                   x_af1u
+                                                   x_af1v
+                                                   x_af1w
+                                                   x_af1x
+                                                   x_af1y
+                                                   x_af1z
+                                                   x_af1A
+                                                   x_af1B
+                                                   x_af1C
+                                                   x_af1D
+                                                   x_af1E
+                                                   x_af1F)
+    = fmap
+        (\ y_af1G
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af1e
+                x_af1f
+                x_af1g
+                x_af1h
+                x_af1i
+                x_af1j
+                x_af1k
+                x_af1l
+                x_af1m
+                x_af1n
+                x_af1o
+                x_af1p
+                x_af1q
+                x_af1r
+                x_af1s
+                x_af1t
+                y_af1G
+                x_af1v
+                x_af1w
+                x_af1x
+                x_af1y
+                x_af1z
+                x_af1A
+                x_af1B
+                x_af1C
+                x_af1D
+                x_af1E
+                x_af1F)
+        (f_af1d x_af1u)
 class HasR s a | s -> a where
   r :: Lens' s a
 instance HasR Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE r #-}
-  r f_aexx
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aexy
-                                                   x_aexz
-                                                   x_aexA
-                                                   x_aexB
-                                                   x_aexC
-                                                   x_aexD
-                                                   x_aexE
-                                                   x_aexF
-                                                   x_aexG
-                                                   x_aexH
-                                                   x_aexI
-                                                   x_aexJ
-                                                   x_aexK
-                                                   x_aexL
-                                                   x_aexM
-                                                   x_aexN
-                                                   x_aexO
-                                                   x_aexP
-                                                   x_aexQ
-                                                   x_aexR
-                                                   x_aexS
-                                                   x_aexT
-                                                   x_aexU
-                                                   x_aexV
-                                                   x_aexW
-                                                   x_aexX
-                                                   x_aexY
-                                                   x_aexZ)
-    = (fmap
-         (\ y_aey0
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aexy) x_aexz) x_aexA) x_aexB) x_aexC) x_aexD) x_aexE)
-                                     x_aexF)
-                                    x_aexG)
-                                   x_aexH)
-                                  x_aexI)
-                                 x_aexJ)
-                                x_aexK)
-                               x_aexL)
-                              y_aey0)
-                             x_aexN)
-                            x_aexO)
-                           x_aexP)
-                          x_aexQ)
-                         x_aexR)
-                        x_aexS)
-                       x_aexT)
-                      x_aexU)
-                     x_aexV)
-                    x_aexW)
-                   x_aexX)
-                  x_aexY)
-                 x_aexZ))
-        (f_aexx x_aexM)
+  r f_af1H
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af1I
+                                                   x_af1J
+                                                   x_af1K
+                                                   x_af1L
+                                                   x_af1M
+                                                   x_af1N
+                                                   x_af1O
+                                                   x_af1P
+                                                   x_af1Q
+                                                   x_af1R
+                                                   x_af1S
+                                                   x_af1T
+                                                   x_af1U
+                                                   x_af1V
+                                                   x_af1W
+                                                   x_af1X
+                                                   x_af1Y
+                                                   x_af1Z
+                                                   x_af20
+                                                   x_af21
+                                                   x_af22
+                                                   x_af23
+                                                   x_af24
+                                                   x_af25
+                                                   x_af26
+                                                   x_af27
+                                                   x_af28
+                                                   x_af29)
+    = fmap
+        (\ y_af2a
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af1I
+                x_af1J
+                x_af1K
+                x_af1L
+                x_af1M
+                x_af1N
+                x_af1O
+                x_af1P
+                x_af1Q
+                x_af1R
+                x_af1S
+                x_af1T
+                x_af1U
+                x_af1V
+                y_af2a
+                x_af1X
+                x_af1Y
+                x_af1Z
+                x_af20
+                x_af21
+                x_af22
+                x_af23
+                x_af24
+                x_af25
+                x_af26
+                x_af27
+                x_af28
+                x_af29)
+        (f_af1H x_af1W)
 class HasRepl s a | s -> a where
   repl :: Lens' s a
 instance HasRepl Network.Riak.Protocol.BucketProps.BucketProps (Maybe Network.Riak.Protocol.BucketProps.ReplMode.ReplMode) where
   {-# INLINE repl #-}
   repl
-    f_aey1
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aey2
-                                                   x_aey3
-                                                   x_aey4
-                                                   x_aey5
-                                                   x_aey6
-                                                   x_aey7
-                                                   x_aey8
-                                                   x_aey9
-                                                   x_aeya
-                                                   x_aeyb
-                                                   x_aeyc
-                                                   x_aeyd
-                                                   x_aeye
-                                                   x_aeyf
-                                                   x_aeyg
-                                                   x_aeyh
-                                                   x_aeyi
-                                                   x_aeyj
-                                                   x_aeyk
-                                                   x_aeyl
-                                                   x_aeym
-                                                   x_aeyn
-                                                   x_aeyo
-                                                   x_aeyp
-                                                   x_aeyq
-                                                   x_aeyr
-                                                   x_aeys
-                                                   x_aeyt)
-    = (fmap
-         (\ y_aeyu
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aey2) x_aey3) x_aey4) x_aey5) x_aey6) x_aey7) x_aey8)
-                                     x_aey9)
-                                    x_aeya)
-                                   x_aeyb)
-                                  x_aeyc)
-                                 x_aeyd)
-                                x_aeye)
-                               x_aeyf)
-                              x_aeyg)
-                             x_aeyh)
-                            x_aeyi)
-                           x_aeyj)
-                          x_aeyk)
-                         x_aeyl)
-                        x_aeym)
-                       x_aeyn)
-                      x_aeyo)
-                     y_aeyu)
-                    x_aeyq)
-                   x_aeyr)
-                  x_aeys)
-                 x_aeyt))
-        (f_aey1 x_aeyp)
+    f_af2b
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af2c
+                                                   x_af2d
+                                                   x_af2e
+                                                   x_af2f
+                                                   x_af2g
+                                                   x_af2h
+                                                   x_af2i
+                                                   x_af2j
+                                                   x_af2k
+                                                   x_af2l
+                                                   x_af2m
+                                                   x_af2n
+                                                   x_af2o
+                                                   x_af2p
+                                                   x_af2q
+                                                   x_af2r
+                                                   x_af2s
+                                                   x_af2t
+                                                   x_af2u
+                                                   x_af2v
+                                                   x_af2w
+                                                   x_af2x
+                                                   x_af2y
+                                                   x_af2z
+                                                   x_af2A
+                                                   x_af2B
+                                                   x_af2C
+                                                   x_af2D)
+    = fmap
+        (\ y_af2E
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af2c
+                x_af2d
+                x_af2e
+                x_af2f
+                x_af2g
+                x_af2h
+                x_af2i
+                x_af2j
+                x_af2k
+                x_af2l
+                x_af2m
+                x_af2n
+                x_af2o
+                x_af2p
+                x_af2q
+                x_af2r
+                x_af2s
+                x_af2t
+                x_af2u
+                x_af2v
+                x_af2w
+                x_af2x
+                x_af2y
+                y_af2E
+                x_af2A
+                x_af2B
+                x_af2C
+                x_af2D)
+        (f_af2b x_af2z)
 class HasRw s a | s -> a where
   rw :: Lens' s a
 instance HasRw Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE rw #-}
   rw
-    f_aeyv
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeyw
-                                                   x_aeyx
-                                                   x_aeyy
-                                                   x_aeyz
-                                                   x_aeyA
-                                                   x_aeyB
-                                                   x_aeyC
-                                                   x_aeyD
-                                                   x_aeyE
-                                                   x_aeyF
-                                                   x_aeyG
-                                                   x_aeyH
-                                                   x_aeyI
-                                                   x_aeyJ
-                                                   x_aeyK
-                                                   x_aeyL
-                                                   x_aeyM
-                                                   x_aeyN
-                                                   x_aeyO
-                                                   x_aeyP
-                                                   x_aeyQ
-                                                   x_aeyR
-                                                   x_aeyS
-                                                   x_aeyT
-                                                   x_aeyU
-                                                   x_aeyV
-                                                   x_aeyW
-                                                   x_aeyX)
-    = (fmap
-         (\ y_aeyY
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeyw) x_aeyx) x_aeyy) x_aeyz) x_aeyA) x_aeyB) x_aeyC)
-                                     x_aeyD)
-                                    x_aeyE)
-                                   x_aeyF)
-                                  x_aeyG)
-                                 x_aeyH)
-                                x_aeyI)
-                               x_aeyJ)
-                              x_aeyK)
-                             x_aeyL)
-                            x_aeyM)
-                           x_aeyN)
-                          y_aeyY)
-                         x_aeyP)
-                        x_aeyQ)
-                       x_aeyR)
-                      x_aeyS)
-                     x_aeyT)
-                    x_aeyU)
-                   x_aeyV)
-                  x_aeyW)
-                 x_aeyX))
-        (f_aeyv x_aeyO)
+    f_af2F
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af2G
+                                                   x_af2H
+                                                   x_af2I
+                                                   x_af2J
+                                                   x_af2K
+                                                   x_af2L
+                                                   x_af2M
+                                                   x_af2N
+                                                   x_af2O
+                                                   x_af2P
+                                                   x_af2Q
+                                                   x_af2R
+                                                   x_af2S
+                                                   x_af2T
+                                                   x_af2U
+                                                   x_af2V
+                                                   x_af2W
+                                                   x_af2X
+                                                   x_af2Y
+                                                   x_af2Z
+                                                   x_af30
+                                                   x_af31
+                                                   x_af32
+                                                   x_af33
+                                                   x_af34
+                                                   x_af35
+                                                   x_af36
+                                                   x_af37)
+    = fmap
+        (\ y_af38
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af2G
+                x_af2H
+                x_af2I
+                x_af2J
+                x_af2K
+                x_af2L
+                x_af2M
+                x_af2N
+                x_af2O
+                x_af2P
+                x_af2Q
+                x_af2R
+                x_af2S
+                x_af2T
+                x_af2U
+                x_af2V
+                x_af2W
+                x_af2X
+                y_af38
+                x_af2Z
+                x_af30
+                x_af31
+                x_af32
+                x_af33
+                x_af34
+                x_af35
+                x_af36
+                x_af37)
+        (f_af2F x_af2Y)
 class HasSearch s a | s -> a where
   search :: Lens' s a
 instance HasSearch Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE search #-}
   search
-    f_aeyZ
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aez0
-                                                   x_aez1
-                                                   x_aez2
-                                                   x_aez3
-                                                   x_aez4
-                                                   x_aez5
-                                                   x_aez6
-                                                   x_aez7
-                                                   x_aez8
-                                                   x_aez9
-                                                   x_aeza
-                                                   x_aezb
-                                                   x_aezc
-                                                   x_aezd
-                                                   x_aeze
-                                                   x_aezf
-                                                   x_aezg
-                                                   x_aezh
-                                                   x_aezi
-                                                   x_aezj
-                                                   x_aezk
-                                                   x_aezl
-                                                   x_aezm
-                                                   x_aezn
-                                                   x_aezo
-                                                   x_aezp
-                                                   x_aezq
-                                                   x_aezr)
-    = (fmap
-         (\ y_aezs
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aez0) x_aez1) x_aez2) x_aez3) x_aez4) x_aez5) x_aez6)
-                                     x_aez7)
-                                    x_aez8)
-                                   x_aez9)
-                                  x_aeza)
-                                 x_aezb)
-                                x_aezc)
-                               x_aezd)
-                              x_aeze)
-                             x_aezf)
-                            x_aezg)
-                           x_aezh)
-                          x_aezi)
-                         x_aezj)
-                        x_aezk)
-                       x_aezl)
-                      y_aezs)
-                     x_aezn)
-                    x_aezo)
-                   x_aezp)
-                  x_aezq)
-                 x_aezr))
-        (f_aeyZ x_aezm)
+    f_af39
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af3a
+                                                   x_af3b
+                                                   x_af3c
+                                                   x_af3d
+                                                   x_af3e
+                                                   x_af3f
+                                                   x_af3g
+                                                   x_af3h
+                                                   x_af3i
+                                                   x_af3j
+                                                   x_af3k
+                                                   x_af3l
+                                                   x_af3m
+                                                   x_af3n
+                                                   x_af3o
+                                                   x_af3p
+                                                   x_af3q
+                                                   x_af3r
+                                                   x_af3s
+                                                   x_af3t
+                                                   x_af3u
+                                                   x_af3v
+                                                   x_af3w
+                                                   x_af3x
+                                                   x_af3y
+                                                   x_af3z
+                                                   x_af3A
+                                                   x_af3B)
+    = fmap
+        (\ y_af3C
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af3a
+                x_af3b
+                x_af3c
+                x_af3d
+                x_af3e
+                x_af3f
+                x_af3g
+                x_af3h
+                x_af3i
+                x_af3j
+                x_af3k
+                x_af3l
+                x_af3m
+                x_af3n
+                x_af3o
+                x_af3p
+                x_af3q
+                x_af3r
+                x_af3s
+                x_af3t
+                x_af3u
+                x_af3v
+                y_af3C
+                x_af3x
+                x_af3y
+                x_af3z
+                x_af3A
+                x_af3B)
+        (f_af39 x_af3w)
 class HasSearchIndex s a | s -> a where
   search_index :: Lens' s a
 instance HasSearchIndex Network.Riak.Protocol.BucketProps.BucketProps (Maybe ByteString) where
   {-# INLINE search_index #-}
   search_index
-    f_aezt
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aezu
-                                                   x_aezv
-                                                   x_aezw
-                                                   x_aezx
-                                                   x_aezy
-                                                   x_aezz
-                                                   x_aezA
-                                                   x_aezB
-                                                   x_aezC
-                                                   x_aezD
-                                                   x_aezE
-                                                   x_aezF
-                                                   x_aezG
-                                                   x_aezH
-                                                   x_aezI
-                                                   x_aezJ
-                                                   x_aezK
-                                                   x_aezL
-                                                   x_aezM
-                                                   x_aezN
-                                                   x_aezO
-                                                   x_aezP
-                                                   x_aezQ
-                                                   x_aezR
-                                                   x_aezS
-                                                   x_aezT
-                                                   x_aezU
-                                                   x_aezV)
-    = (fmap
-         (\ y_aezW
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aezu) x_aezv) x_aezw) x_aezx) x_aezy) x_aezz) x_aezA)
-                                     x_aezB)
-                                    x_aezC)
-                                   x_aezD)
-                                  x_aezE)
-                                 x_aezF)
-                                x_aezG)
-                               x_aezH)
-                              x_aezI)
-                             x_aezJ)
-                            x_aezK)
-                           x_aezL)
-                          x_aezM)
-                         x_aezN)
-                        x_aezO)
-                       x_aezP)
-                      x_aezQ)
-                     x_aezR)
-                    y_aezW)
-                   x_aezT)
-                  x_aezU)
-                 x_aezV))
-        (f_aezt x_aezS)
+    f_af3D
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af3E
+                                                   x_af3F
+                                                   x_af3G
+                                                   x_af3H
+                                                   x_af3I
+                                                   x_af3J
+                                                   x_af3K
+                                                   x_af3L
+                                                   x_af3M
+                                                   x_af3N
+                                                   x_af3O
+                                                   x_af3P
+                                                   x_af3Q
+                                                   x_af3R
+                                                   x_af3S
+                                                   x_af3T
+                                                   x_af3U
+                                                   x_af3V
+                                                   x_af3W
+                                                   x_af3X
+                                                   x_af3Y
+                                                   x_af3Z
+                                                   x_af40
+                                                   x_af41
+                                                   x_af42
+                                                   x_af43
+                                                   x_af44
+                                                   x_af45)
+    = fmap
+        (\ y_af46
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af3E
+                x_af3F
+                x_af3G
+                x_af3H
+                x_af3I
+                x_af3J
+                x_af3K
+                x_af3L
+                x_af3M
+                x_af3N
+                x_af3O
+                x_af3P
+                x_af3Q
+                x_af3R
+                x_af3S
+                x_af3T
+                x_af3U
+                x_af3V
+                x_af3W
+                x_af3X
+                x_af3Y
+                x_af3Z
+                x_af40
+                x_af41
+                y_af46
+                x_af43
+                x_af44
+                x_af45)
+        (f_af3D x_af42)
 class HasSmallVclock s a | s -> a where
   small_vclock :: Lens' s a
 instance HasSmallVclock Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE small_vclock #-}
   small_vclock
-    f_aezX
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aezY
-                                                   x_aezZ
-                                                   x_aeA0
-                                                   x_aeA1
-                                                   x_aeA2
-                                                   x_aeA3
-                                                   x_aeA4
-                                                   x_aeA5
-                                                   x_aeA6
-                                                   x_aeA7
-                                                   x_aeA8
-                                                   x_aeA9
-                                                   x_aeAa
-                                                   x_aeAb
-                                                   x_aeAc
-                                                   x_aeAd
-                                                   x_aeAe
-                                                   x_aeAf
-                                                   x_aeAg
-                                                   x_aeAh
-                                                   x_aeAi
-                                                   x_aeAj
-                                                   x_aeAk
-                                                   x_aeAl
-                                                   x_aeAm
-                                                   x_aeAn
-                                                   x_aeAo
-                                                   x_aeAp)
-    = (fmap
-         (\ y_aeAq
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aezY) x_aezZ) x_aeA0) x_aeA1) x_aeA2) x_aeA3) x_aeA4)
-                                     x_aeA5)
-                                    x_aeA6)
-                                   x_aeA7)
-                                  x_aeA8)
-                                 x_aeA9)
-                                y_aeAq)
-                               x_aeAb)
-                              x_aeAc)
-                             x_aeAd)
-                            x_aeAe)
-                           x_aeAf)
-                          x_aeAg)
-                         x_aeAh)
-                        x_aeAi)
-                       x_aeAj)
-                      x_aeAk)
-                     x_aeAl)
-                    x_aeAm)
-                   x_aeAn)
-                  x_aeAo)
-                 x_aeAp))
-        (f_aezX x_aeAa)
+    f_af47
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af48
+                                                   x_af49
+                                                   x_af4a
+                                                   x_af4b
+                                                   x_af4c
+                                                   x_af4d
+                                                   x_af4e
+                                                   x_af4f
+                                                   x_af4g
+                                                   x_af4h
+                                                   x_af4i
+                                                   x_af4j
+                                                   x_af4k
+                                                   x_af4l
+                                                   x_af4m
+                                                   x_af4n
+                                                   x_af4o
+                                                   x_af4p
+                                                   x_af4q
+                                                   x_af4r
+                                                   x_af4s
+                                                   x_af4t
+                                                   x_af4u
+                                                   x_af4v
+                                                   x_af4w
+                                                   x_af4x
+                                                   x_af4y
+                                                   x_af4z)
+    = fmap
+        (\ y_af4A
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af48
+                x_af49
+                x_af4a
+                x_af4b
+                x_af4c
+                x_af4d
+                x_af4e
+                x_af4f
+                x_af4g
+                x_af4h
+                x_af4i
+                x_af4j
+                y_af4A
+                x_af4l
+                x_af4m
+                x_af4n
+                x_af4o
+                x_af4p
+                x_af4q
+                x_af4r
+                x_af4s
+                x_af4t
+                x_af4u
+                x_af4v
+                x_af4w
+                x_af4x
+                x_af4y
+                x_af4z)
+        (f_af47 x_af4k)
 class HasW s a | s -> a where
   w :: Lens' s a
 instance HasW Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE w #-}
-  w f_aeAr
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeAs
-                                                   x_aeAt
-                                                   x_aeAu
-                                                   x_aeAv
-                                                   x_aeAw
-                                                   x_aeAx
-                                                   x_aeAy
-                                                   x_aeAz
-                                                   x_aeAA
-                                                   x_aeAB
-                                                   x_aeAC
-                                                   x_aeAD
-                                                   x_aeAE
-                                                   x_aeAF
-                                                   x_aeAG
-                                                   x_aeAH
-                                                   x_aeAI
-                                                   x_aeAJ
-                                                   x_aeAK
-                                                   x_aeAL
-                                                   x_aeAM
-                                                   x_aeAN
-                                                   x_aeAO
-                                                   x_aeAP
-                                                   x_aeAQ
-                                                   x_aeAR
-                                                   x_aeAS
-                                                   x_aeAT)
-    = (fmap
-         (\ y_aeAU
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeAs) x_aeAt) x_aeAu) x_aeAv) x_aeAw) x_aeAx) x_aeAy)
-                                     x_aeAz)
-                                    x_aeAA)
-                                   x_aeAB)
-                                  x_aeAC)
-                                 x_aeAD)
-                                x_aeAE)
-                               x_aeAF)
-                              x_aeAG)
-                             y_aeAU)
-                            x_aeAI)
-                           x_aeAJ)
-                          x_aeAK)
-                         x_aeAL)
-                        x_aeAM)
-                       x_aeAN)
-                      x_aeAO)
-                     x_aeAP)
-                    x_aeAQ)
-                   x_aeAR)
-                  x_aeAS)
-                 x_aeAT))
-        (f_aeAr x_aeAH)
+  w f_af4B
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af4C
+                                                   x_af4D
+                                                   x_af4E
+                                                   x_af4F
+                                                   x_af4G
+                                                   x_af4H
+                                                   x_af4I
+                                                   x_af4J
+                                                   x_af4K
+                                                   x_af4L
+                                                   x_af4M
+                                                   x_af4N
+                                                   x_af4O
+                                                   x_af4P
+                                                   x_af4Q
+                                                   x_af4R
+                                                   x_af4S
+                                                   x_af4T
+                                                   x_af4U
+                                                   x_af4V
+                                                   x_af4W
+                                                   x_af4X
+                                                   x_af4Y
+                                                   x_af4Z
+                                                   x_af50
+                                                   x_af51
+                                                   x_af52
+                                                   x_af53)
+    = fmap
+        (\ y_af54
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af4C
+                x_af4D
+                x_af4E
+                x_af4F
+                x_af4G
+                x_af4H
+                x_af4I
+                x_af4J
+                x_af4K
+                x_af4L
+                x_af4M
+                x_af4N
+                x_af4O
+                x_af4P
+                x_af4Q
+                y_af54
+                x_af4S
+                x_af4T
+                x_af4U
+                x_af4V
+                x_af4W
+                x_af4X
+                x_af4Y
+                x_af4Z
+                x_af50
+                x_af51
+                x_af52
+                x_af53)
+        (f_af4B x_af4R)
 class HasWriteOnce s a | s -> a where
   write_once :: Lens' s a
 instance HasWriteOnce Network.Riak.Protocol.BucketProps.BucketProps (Maybe Bool) where
   {-# INLINE write_once #-}
   write_once
-    f_aeAV
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeAW
-                                                   x_aeAX
-                                                   x_aeAY
-                                                   x_aeAZ
-                                                   x_aeB0
-                                                   x_aeB1
-                                                   x_aeB2
-                                                   x_aeB3
-                                                   x_aeB4
-                                                   x_aeB5
-                                                   x_aeB6
-                                                   x_aeB7
-                                                   x_aeB8
-                                                   x_aeB9
-                                                   x_aeBa
-                                                   x_aeBb
-                                                   x_aeBc
-                                                   x_aeBd
-                                                   x_aeBe
-                                                   x_aeBf
-                                                   x_aeBg
-                                                   x_aeBh
-                                                   x_aeBi
-                                                   x_aeBj
-                                                   x_aeBk
-                                                   x_aeBl
-                                                   x_aeBm
-                                                   x_aeBn)
-    = (fmap
-         (\ y_aeBo
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeAW) x_aeAX) x_aeAY) x_aeAZ) x_aeB0) x_aeB1) x_aeB2)
-                                     x_aeB3)
-                                    x_aeB4)
-                                   x_aeB5)
-                                  x_aeB6)
-                                 x_aeB7)
-                                x_aeB8)
-                               x_aeB9)
-                              x_aeBa)
-                             x_aeBb)
-                            x_aeBc)
-                           x_aeBd)
-                          x_aeBe)
-                         x_aeBf)
-                        x_aeBg)
-                       x_aeBh)
-                      x_aeBi)
-                     x_aeBj)
-                    x_aeBk)
-                   x_aeBl)
-                  x_aeBm)
-                 y_aeBo))
-        (f_aeAV x_aeBn)
+    f_af55
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af56
+                                                   x_af57
+                                                   x_af58
+                                                   x_af59
+                                                   x_af5a
+                                                   x_af5b
+                                                   x_af5c
+                                                   x_af5d
+                                                   x_af5e
+                                                   x_af5f
+                                                   x_af5g
+                                                   x_af5h
+                                                   x_af5i
+                                                   x_af5j
+                                                   x_af5k
+                                                   x_af5l
+                                                   x_af5m
+                                                   x_af5n
+                                                   x_af5o
+                                                   x_af5p
+                                                   x_af5q
+                                                   x_af5r
+                                                   x_af5s
+                                                   x_af5t
+                                                   x_af5u
+                                                   x_af5v
+                                                   x_af5w
+                                                   x_af5x)
+    = fmap
+        (\ y_af5y
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af56
+                x_af57
+                x_af58
+                x_af59
+                x_af5a
+                x_af5b
+                x_af5c
+                x_af5d
+                x_af5e
+                x_af5f
+                x_af5g
+                x_af5h
+                x_af5i
+                x_af5j
+                x_af5k
+                x_af5l
+                x_af5m
+                x_af5n
+                x_af5o
+                x_af5p
+                x_af5q
+                x_af5r
+                x_af5s
+                x_af5t
+                x_af5u
+                x_af5v
+                x_af5w
+                y_af5y)
+        (f_af55 x_af5x)
 class HasYoungVclock s a | s -> a where
   young_vclock :: Lens' s a
 instance HasYoungVclock Network.Riak.Protocol.BucketProps.BucketProps (Maybe Word32) where
   {-# INLINE young_vclock #-}
   young_vclock
-    f_aeBp
-    (Network.Riak.Protocol.BucketProps.BucketProps x_aeBq
-                                                   x_aeBr
-                                                   x_aeBs
-                                                   x_aeBt
-                                                   x_aeBu
-                                                   x_aeBv
-                                                   x_aeBw
-                                                   x_aeBx
-                                                   x_aeBy
-                                                   x_aeBz
-                                                   x_aeBA
-                                                   x_aeBB
-                                                   x_aeBC
-                                                   x_aeBD
-                                                   x_aeBE
-                                                   x_aeBF
-                                                   x_aeBG
-                                                   x_aeBH
-                                                   x_aeBI
-                                                   x_aeBJ
-                                                   x_aeBK
-                                                   x_aeBL
-                                                   x_aeBM
-                                                   x_aeBN
-                                                   x_aeBO
-                                                   x_aeBP
-                                                   x_aeBQ
-                                                   x_aeBR)
-    = (fmap
-         (\ y_aeBS
-            -> (((((((((((((((((((((((((((Network.Riak.Protocol.BucketProps.BucketProps x_aeBq) x_aeBr) x_aeBs) x_aeBt) x_aeBu) x_aeBv) x_aeBw)
-                                     x_aeBx)
-                                    x_aeBy)
-                                   x_aeBz)
-                                  y_aeBS)
-                                 x_aeBB)
-                                x_aeBC)
-                               x_aeBD)
-                              x_aeBE)
-                             x_aeBF)
-                            x_aeBG)
-                           x_aeBH)
-                          x_aeBI)
-                         x_aeBJ)
-                        x_aeBK)
-                       x_aeBL)
-                      x_aeBM)
-                     x_aeBN)
-                    x_aeBO)
-                   x_aeBP)
-                  x_aeBQ)
-                 x_aeBR))
-        (f_aeBp x_aeBA)
+    f_af5z
+    (Network.Riak.Protocol.BucketProps.BucketProps x_af5A
+                                                   x_af5B
+                                                   x_af5C
+                                                   x_af5D
+                                                   x_af5E
+                                                   x_af5F
+                                                   x_af5G
+                                                   x_af5H
+                                                   x_af5I
+                                                   x_af5J
+                                                   x_af5K
+                                                   x_af5L
+                                                   x_af5M
+                                                   x_af5N
+                                                   x_af5O
+                                                   x_af5P
+                                                   x_af5Q
+                                                   x_af5R
+                                                   x_af5S
+                                                   x_af5T
+                                                   x_af5U
+                                                   x_af5V
+                                                   x_af5W
+                                                   x_af5X
+                                                   x_af5Y
+                                                   x_af5Z
+                                                   x_af60
+                                                   x_af61)
+    = fmap
+        (\ y_af62
+           -> Network.Riak.Protocol.BucketProps.BucketProps
+                x_af5A
+                x_af5B
+                x_af5C
+                x_af5D
+                x_af5E
+                x_af5F
+                x_af5G
+                x_af5H
+                x_af5I
+                x_af5J
+                y_af62
+                x_af5L
+                x_af5M
+                x_af5N
+                x_af5O
+                x_af5P
+                x_af5Q
+                x_af5R
+                x_af5S
+                x_af5T
+                x_af5U
+                x_af5V
+                x_af5W
+                x_af5X
+                x_af5Y
+                x_af5Z
+                x_af60
+                x_af61)
+        (f_af5z x_af5K)
 class HasBucket s a | s -> a where
   bucket :: Lens' s a
 instance HasBucket Network.Riak.Protocol.CSBucketRequest.CSBucketRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_aeZu (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_aeZv x_aeZw x_aeZx x_aeZy x_aeZz x_aeZA x_aeZB x_aeZC x_aeZD)
-    = (fmap
-         (\ y_aeZE
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest y_aeZE) x_aeZw) x_aeZx) x_aeZy) x_aeZz) x_aeZA) x_aeZB) x_aeZC)
-                 x_aeZD))
-        (f_aeZu x_aeZv)
+  bucket f_afog (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoh x_afoi x_afoj x_afok x_afol x_afom x_afon x_afoo x_afop)
+    = fmap
+        (\ y_afoq -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest y_afoq x_afoi x_afoj x_afok x_afol x_afom x_afon x_afoo x_afop)
+        (f_afog x_afoh)
 class HasContinuation s a | s -> a where
   continuation :: Lens' s a
 instance HasContinuation Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe ByteString) where
   {-# INLINE continuation #-}
   continuation
-    f_aeZF
-    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_aeZG x_aeZH x_aeZI x_aeZJ x_aeZK x_aeZL x_aeZM x_aeZN x_aeZO)
-    = (fmap
-         (\ y_aeZP
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_aeZG) x_aeZH) x_aeZI) x_aeZJ) x_aeZK) y_aeZP) x_aeZM) x_aeZN)
-                 x_aeZO))
-        (f_aeZF x_aeZL)
+    f_afor
+    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afos x_afot x_afou x_afov x_afow x_afox x_afoy x_afoz x_afoA)
+    = fmap
+        (\ y_afoB -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afos x_afot x_afou x_afov x_afow y_afoB x_afoy x_afoz x_afoA)
+        (f_afor x_afox)
 class HasEndIncl s a | s -> a where
   end_incl :: Lens' s a
 instance HasEndIncl Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe Bool) where
   {-# INLINE end_incl #-}
   end_incl
-    f_aeZQ
-    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_aeZR x_aeZS x_aeZT x_aeZU x_aeZV x_aeZW x_aeZX x_aeZY x_aeZZ)
-    = (fmap
-         (\ y_af00
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_aeZR) x_aeZS) x_aeZT) x_aeZU) y_af00) x_aeZW) x_aeZX) x_aeZY)
-                 x_aeZZ))
-        (f_aeZQ x_aeZV)
+    f_afoC
+    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoD x_afoE x_afoF x_afoG x_afoH x_afoI x_afoJ x_afoK x_afoL)
+    = fmap
+        (\ y_afoM -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoD x_afoE x_afoF x_afoG y_afoM x_afoI x_afoJ x_afoK x_afoL)
+        (f_afoC x_afoH)
 class HasEndKey s a | s -> a where
   end_key :: Lens' s a
 instance HasEndKey Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe ByteString) where
   {-# INLINE end_key #-}
-  end_key f_af01 (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af02 x_af03 x_af04 x_af05 x_af06 x_af07 x_af08 x_af09 x_af0a)
-    = (fmap
-         (\ y_af0b
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af02) x_af03) y_af0b) x_af05) x_af06) x_af07) x_af08) x_af09)
-                 x_af0a))
-        (f_af01 x_af04)
+  end_key f_afoN (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoO x_afoP x_afoQ x_afoR x_afoS x_afoT x_afoU x_afoV x_afoW)
+    = fmap
+        (\ y_afoX -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoO x_afoP y_afoX x_afoR x_afoS x_afoT x_afoU x_afoV x_afoW)
+        (f_afoN x_afoQ)
 class HasMaxResults s a | s -> a where
   max_results :: Lens' s a
 instance HasMaxResults Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe Word32) where
   {-# INLINE max_results #-}
   max_results
-    f_af0c
-    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0d x_af0e x_af0f x_af0g x_af0h x_af0i x_af0j x_af0k x_af0l)
-    = (fmap
-         (\ y_af0m
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0d) x_af0e) x_af0f) x_af0g) x_af0h) x_af0i) y_af0m) x_af0k)
-                 x_af0l))
-        (f_af0c x_af0j)
+    f_afoY
+    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoZ x_afp0 x_afp1 x_afp2 x_afp3 x_afp4 x_afp5 x_afp6 x_afp7)
+    = fmap
+        (\ y_afp8 -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afoZ x_afp0 x_afp1 x_afp2 x_afp3 x_afp4 y_afp8 x_afp6 x_afp7)
+        (f_afoY x_afp5)
 class HasStartIncl s a | s -> a where
   start_incl :: Lens' s a
 instance HasStartIncl Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe Bool) where
   {-# INLINE start_incl #-}
   start_incl
-    f_af0n
-    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0o x_af0p x_af0q x_af0r x_af0s x_af0t x_af0u x_af0v x_af0w)
-    = (fmap
-         (\ y_af0x
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0o) x_af0p) x_af0q) y_af0x) x_af0s) x_af0t) x_af0u) x_af0v)
-                 x_af0w))
-        (f_af0n x_af0r)
+    f_afp9
+    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpa x_afpb x_afpc x_afpd x_afpe x_afpf x_afpg x_afph x_afpi)
+    = fmap
+        (\ y_afpj -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpa x_afpb x_afpc y_afpj x_afpe x_afpf x_afpg x_afph x_afpi)
+        (f_afp9 x_afpd)
 class HasStartKey s a | s -> a where
   start_key :: Lens' s a
 instance HasStartKey Network.Riak.Protocol.CSBucketRequest.CSBucketRequest ByteString where
   {-# INLINE start_key #-}
   start_key
-    f_af0y
-    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0z x_af0A x_af0B x_af0C x_af0D x_af0E x_af0F x_af0G x_af0H)
-    = (fmap
-         (\ y_af0I
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0z) y_af0I) x_af0B) x_af0C) x_af0D) x_af0E) x_af0F) x_af0G)
-                 x_af0H))
-        (f_af0y x_af0A)
+    f_afpk
+    (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpl x_afpm x_afpn x_afpo x_afpp x_afpq x_afpr x_afps x_afpt)
+    = fmap
+        (\ y_afpu -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpl y_afpu x_afpn x_afpo x_afpp x_afpq x_afpr x_afps x_afpt)
+        (f_afpk x_afpm)
 class HasTimeout s a | s -> a where
   timeout :: Lens' s a
 instance HasTimeout Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe Word32) where
   {-# INLINE timeout #-}
-  timeout f_af0J (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0K x_af0L x_af0M x_af0N x_af0O x_af0P x_af0Q x_af0R x_af0S)
-    = (fmap
-         (\ y_af0T
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0K) x_af0L) x_af0M) x_af0N) x_af0O) x_af0P) x_af0Q) y_af0T)
-                 x_af0S))
-        (f_af0J x_af0R)
+  timeout f_afpv (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpw x_afpx x_afpy x_afpz x_afpA x_afpB x_afpC x_afpD x_afpE)
+    = fmap
+        (\ y_afpF -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpw x_afpx x_afpy x_afpz x_afpA x_afpB x_afpC y_afpF x_afpE)
+        (f_afpv x_afpD)
 class HasType' s a | s -> a where
   type' :: Lens' s a
 instance HasType' Network.Riak.Protocol.CSBucketRequest.CSBucketRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_af0U (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0V x_af0W x_af0X x_af0Y x_af0Z x_af10 x_af11 x_af12 x_af13)
-    = (fmap
-         (\ y_af14
-            -> ((((((((Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_af0V) x_af0W) x_af0X) x_af0Y) x_af0Z) x_af10) x_af11) x_af12)
-                 y_af14))
-        (f_af0U x_af13)
+  type' f_afpG (Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpH x_afpI x_afpJ x_afpK x_afpL x_afpM x_afpN x_afpO x_afpP)
+    = fmap
+        (\ y_afpQ -> Network.Riak.Protocol.CSBucketRequest.CSBucketRequest x_afpH x_afpI x_afpJ x_afpK x_afpL x_afpM x_afpN x_afpO y_afpQ)
+        (f_afpG x_afpP)
 instance HasContinuation Network.Riak.Protocol.CSBucketResponse.CSBucketResponse (Maybe ByteString) where
   {-# INLINE continuation #-}
-  continuation f_af8K (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_af8L x_af8M x_af8N)
-    = (fmap (\ y_af8O -> ((Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_af8L) y_af8O) x_af8N)) (f_af8K x_af8M)
+  continuation f_afvQ (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_afvR x_afvS x_afvT)
+    = fmap (\ y_afvU -> Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_afvR y_afvU x_afvT) (f_afvQ x_afvS)
 class HasDone s a | s -> a where
   done :: Lens' s a
 instance HasDone Network.Riak.Protocol.CSBucketResponse.CSBucketResponse (Maybe Bool) where
   {-# INLINE done #-}
-  done f_af8P (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_af8Q x_af8R x_af8S)
-    = (fmap (\ y_af8T -> ((Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_af8Q) x_af8R) y_af8T)) (f_af8P x_af8S)
+  done f_afvV (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_afvW x_afvX x_afvY)
+    = fmap (\ y_afvZ -> Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_afvW x_afvX y_afvZ) (f_afvV x_afvY)
 class HasObjects s a | s -> a where
   objects :: Lens' s a
 instance HasObjects Network.Riak.Protocol.CSBucketResponse.CSBucketResponse (Seq Network.Riak.Protocol.IndexObject.IndexObject) where
   {-# INLINE objects #-}
-  objects f_af8U (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_af8V x_af8W x_af8X)
-    = (fmap (\ y_af8Y -> ((Network.Riak.Protocol.CSBucketResponse.CSBucketResponse y_af8Y) x_af8W) x_af8X)) (f_af8U x_af8V)
+  objects f_afw0 (Network.Riak.Protocol.CSBucketResponse.CSBucketResponse x_afw1 x_afw2 x_afw3)
+    = fmap (\ y_afw4 -> Network.Riak.Protocol.CSBucketResponse.CSBucketResponse y_afw4 x_afw2 x_afw3) (f_afw0 x_afw1)
 class HasModfun s a | s -> a where
   modfun :: Lens' s a
 instance HasModfun Network.Riak.Protocol.CommitHook.CommitHook (Maybe Network.Riak.Protocol.ModFun.ModFun) where
   {-# INLINE modfun #-}
-  modfun f_afb5 (Network.Riak.Protocol.CommitHook.CommitHook x_afb6 x_afb7)
-    = (fmap (\ y_afb8 -> (Network.Riak.Protocol.CommitHook.CommitHook y_afb8) x_afb7)) (f_afb5 x_afb6)
+  modfun f_afxI (Network.Riak.Protocol.CommitHook.CommitHook x_afxJ x_afxK)
+    = fmap (\ y_afxL -> Network.Riak.Protocol.CommitHook.CommitHook y_afxL x_afxK) (f_afxI x_afxJ)
 class HasName s a | s -> a where
   name :: Lens' s a
 instance HasName Network.Riak.Protocol.CommitHook.CommitHook (Maybe ByteString) where
   {-# INLINE name #-}
-  name f_afb9 (Network.Riak.Protocol.CommitHook.CommitHook x_afba x_afbb)
-    = (fmap (\ y_afbc -> (Network.Riak.Protocol.CommitHook.CommitHook x_afba) y_afbc)) (f_afb9 x_afbb)
+  name f_afxM (Network.Riak.Protocol.CommitHook.CommitHook x_afxN x_afxO)
+    = fmap (\ y_afxP -> Network.Riak.Protocol.CommitHook.CommitHook x_afxN y_afxP) (f_afxM x_afxO)
 class HasCharset s a | s -> a where
   charset :: Lens' s a
 instance HasCharset Network.Riak.Protocol.Content.Content (Maybe ByteString) where
   {-# INLINE charset #-}
-  charset f_afd0 (Network.Riak.Protocol.Content.Content x_afd1 x_afd2 x_afd3 x_afd4 x_afd5 x_afd6 x_afd7 x_afd8 x_afd9 x_afda x_afdb)
-    = (fmap
-         (\ y_afdc
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afd1) x_afd2) y_afdc) x_afd4) x_afd5) x_afd6) x_afd7) x_afd8) x_afd9) x_afda)
-                 x_afdb))
-        (f_afd0 x_afd3)
+  charset f_afzl (Network.Riak.Protocol.Content.Content x_afzm x_afzn x_afzo x_afzp x_afzq x_afzr x_afzs x_afzt x_afzu x_afzv x_afzw)
+    = fmap
+        (\ y_afzx -> Network.Riak.Protocol.Content.Content x_afzm x_afzn y_afzx x_afzp x_afzq x_afzr x_afzs x_afzt x_afzu x_afzv x_afzw)
+        (f_afzl x_afzo)
 class HasContentEncoding s a | s -> a where
   content_encoding :: Lens' s a
 instance HasContentEncoding Network.Riak.Protocol.Content.Content (Maybe ByteString) where
   {-# INLINE content_encoding #-}
   content_encoding
-    f_afdd
-    (Network.Riak.Protocol.Content.Content x_afde x_afdf x_afdg x_afdh x_afdi x_afdj x_afdk x_afdl x_afdm x_afdn x_afdo)
-    = (fmap
-         (\ y_afdp
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afde) x_afdf) x_afdg) y_afdp) x_afdi) x_afdj) x_afdk) x_afdl) x_afdm) x_afdn)
-                 x_afdo))
-        (f_afdd x_afdh)
+    f_afzy
+    (Network.Riak.Protocol.Content.Content x_afzz x_afzA x_afzB x_afzC x_afzD x_afzE x_afzF x_afzG x_afzH x_afzI x_afzJ)
+    = fmap
+        (\ y_afzK -> Network.Riak.Protocol.Content.Content x_afzz x_afzA x_afzB y_afzK x_afzD x_afzE x_afzF x_afzG x_afzH x_afzI x_afzJ)
+        (f_afzy x_afzC)
 class HasContentType s a | s -> a where
   content_type :: Lens' s a
 instance HasContentType Network.Riak.Protocol.Content.Content (Maybe ByteString) where
   {-# INLINE content_type #-}
   content_type
-    f_afdq
-    (Network.Riak.Protocol.Content.Content x_afdr x_afds x_afdt x_afdu x_afdv x_afdw x_afdx x_afdy x_afdz x_afdA x_afdB)
-    = (fmap
-         (\ y_afdC
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afdr) y_afdC) x_afdt) x_afdu) x_afdv) x_afdw) x_afdx) x_afdy) x_afdz) x_afdA)
-                 x_afdB))
-        (f_afdq x_afds)
+    f_afzL
+    (Network.Riak.Protocol.Content.Content x_afzM x_afzN x_afzO x_afzP x_afzQ x_afzR x_afzS x_afzT x_afzU x_afzV x_afzW)
+    = fmap
+        (\ y_afzX -> Network.Riak.Protocol.Content.Content x_afzM y_afzX x_afzO x_afzP x_afzQ x_afzR x_afzS x_afzT x_afzU x_afzV x_afzW)
+        (f_afzL x_afzN)
 class HasDeleted s a | s -> a where
   deleted :: Lens' s a
 instance HasDeleted Network.Riak.Protocol.Content.Content (Maybe Bool) where
   {-# INLINE deleted #-}
-  deleted f_afdD (Network.Riak.Protocol.Content.Content x_afdE x_afdF x_afdG x_afdH x_afdI x_afdJ x_afdK x_afdL x_afdM x_afdN x_afdO)
-    = (fmap
-         (\ y_afdP
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afdE) x_afdF) x_afdG) x_afdH) x_afdI) x_afdJ) x_afdK) x_afdL) x_afdM) x_afdN)
-                 y_afdP))
-        (f_afdD x_afdO)
+  deleted f_afzY (Network.Riak.Protocol.Content.Content x_afzZ x_afA0 x_afA1 x_afA2 x_afA3 x_afA4 x_afA5 x_afA6 x_afA7 x_afA8 x_afA9)
+    = fmap
+        (\ y_afAa -> Network.Riak.Protocol.Content.Content x_afzZ x_afA0 x_afA1 x_afA2 x_afA3 x_afA4 x_afA5 x_afA6 x_afA7 x_afA8 y_afAa)
+        (f_afzY x_afA9)
 class HasIndexes s a | s -> a where
   indexes :: Lens' s a
 instance HasIndexes Network.Riak.Protocol.Content.Content (Seq Network.Riak.Protocol.Pair.Pair) where
   {-# INLINE indexes #-}
-  indexes f_afdQ (Network.Riak.Protocol.Content.Content x_afdR x_afdS x_afdT x_afdU x_afdV x_afdW x_afdX x_afdY x_afdZ x_afe0 x_afe1)
-    = (fmap
-         (\ y_afe2
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afdR) x_afdS) x_afdT) x_afdU) x_afdV) x_afdW) x_afdX) x_afdY) x_afdZ) y_afe2)
-                 x_afe1))
-        (f_afdQ x_afe0)
+  indexes f_afAb (Network.Riak.Protocol.Content.Content x_afAc x_afAd x_afAe x_afAf x_afAg x_afAh x_afAi x_afAj x_afAk x_afAl x_afAm)
+    = fmap
+        (\ y_afAn -> Network.Riak.Protocol.Content.Content x_afAc x_afAd x_afAe x_afAf x_afAg x_afAh x_afAi x_afAj x_afAk y_afAn x_afAm)
+        (f_afAb x_afAl)
 class HasLastMod s a | s -> a where
   last_mod :: Lens' s a
 instance HasLastMod Network.Riak.Protocol.Content.Content (Maybe Word32) where
   {-# INLINE last_mod #-}
-  last_mod f_afe3 (Network.Riak.Protocol.Content.Content x_afe4 x_afe5 x_afe6 x_afe7 x_afe8 x_afe9 x_afea x_afeb x_afec x_afed x_afee)
-    = (fmap
-         (\ y_afef
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afe4) x_afe5) x_afe6) x_afe7) x_afe8) x_afe9) y_afef) x_afeb) x_afec) x_afed)
-                 x_afee))
-        (f_afe3 x_afea)
+  last_mod f_afAo (Network.Riak.Protocol.Content.Content x_afAp x_afAq x_afAr x_afAs x_afAt x_afAu x_afAv x_afAw x_afAx x_afAy x_afAz)
+    = fmap
+        (\ y_afAA -> Network.Riak.Protocol.Content.Content x_afAp x_afAq x_afAr x_afAs x_afAt x_afAu y_afAA x_afAw x_afAx x_afAy x_afAz)
+        (f_afAo x_afAv)
 class HasLastModUsecs s a | s -> a where
   last_mod_usecs :: Lens' s a
 instance HasLastModUsecs Network.Riak.Protocol.Content.Content (Maybe Word32) where
   {-# INLINE last_mod_usecs #-}
   last_mod_usecs
-    f_afeg
-    (Network.Riak.Protocol.Content.Content x_afeh x_afei x_afej x_afek x_afel x_afem x_afen x_afeo x_afep x_afeq x_afer)
-    = (fmap
-         (\ y_afes
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afeh) x_afei) x_afej) x_afek) x_afel) x_afem) x_afen) y_afes) x_afep) x_afeq)
-                 x_afer))
-        (f_afeg x_afeo)
+    f_afAB
+    (Network.Riak.Protocol.Content.Content x_afAC x_afAD x_afAE x_afAF x_afAG x_afAH x_afAI x_afAJ x_afAK x_afAL x_afAM)
+    = fmap
+        (\ y_afAN -> Network.Riak.Protocol.Content.Content x_afAC x_afAD x_afAE x_afAF x_afAG x_afAH x_afAI y_afAN x_afAK x_afAL x_afAM)
+        (f_afAB x_afAJ)
 class HasLinks s a | s -> a where
   links :: Lens' s a
 instance HasLinks Network.Riak.Protocol.Content.Content (Seq Network.Riak.Protocol.Link.Link) where
   {-# INLINE links #-}
-  links f_afet (Network.Riak.Protocol.Content.Content x_afeu x_afev x_afew x_afex x_afey x_afez x_afeA x_afeB x_afeC x_afeD x_afeE)
-    = (fmap
-         (\ y_afeF
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afeu) x_afev) x_afew) x_afex) x_afey) y_afeF) x_afeA) x_afeB) x_afeC) x_afeD)
-                 x_afeE))
-        (f_afet x_afez)
+  links f_afAO (Network.Riak.Protocol.Content.Content x_afAP x_afAQ x_afAR x_afAS x_afAT x_afAU x_afAV x_afAW x_afAX x_afAY x_afAZ)
+    = fmap
+        (\ y_afB0 -> Network.Riak.Protocol.Content.Content x_afAP x_afAQ x_afAR x_afAS x_afAT y_afB0 x_afAV x_afAW x_afAX x_afAY x_afAZ)
+        (f_afAO x_afAU)
 class HasUsermeta s a | s -> a where
   usermeta :: Lens' s a
 instance HasUsermeta Network.Riak.Protocol.Content.Content (Seq Network.Riak.Protocol.Pair.Pair) where
   {-# INLINE usermeta #-}
-  usermeta f_afeG (Network.Riak.Protocol.Content.Content x_afeH x_afeI x_afeJ x_afeK x_afeL x_afeM x_afeN x_afeO x_afeP x_afeQ x_afeR)
-    = (fmap
-         (\ y_afeS
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_afeH) x_afeI) x_afeJ) x_afeK) x_afeL) x_afeM) x_afeN) x_afeO) y_afeS) x_afeQ)
-                 x_afeR))
-        (f_afeG x_afeP)
+  usermeta f_afB1 (Network.Riak.Protocol.Content.Content x_afB2 x_afB3 x_afB4 x_afB5 x_afB6 x_afB7 x_afB8 x_afB9 x_afBa x_afBb x_afBc)
+    = fmap
+        (\ y_afBd -> Network.Riak.Protocol.Content.Content x_afB2 x_afB3 x_afB4 x_afB5 x_afB6 x_afB7 x_afB8 x_afB9 y_afBd x_afBb x_afBc)
+        (f_afB1 x_afBa)
 class HasValue s a | s -> a where
   value :: Lens' s a
 instance HasValue Network.Riak.Protocol.Content.Content ByteString where
   {-# INLINE value #-}
-  value f_afeT (Network.Riak.Protocol.Content.Content x_afeU x_afeV x_afeW x_afeX x_afeY x_afeZ x_aff0 x_aff1 x_aff2 x_aff3 x_aff4)
-    = (fmap
-         (\ y_aff5
-            -> ((((((((((Network.Riak.Protocol.Content.Content y_aff5) x_afeV) x_afeW) x_afeX) x_afeY) x_afeZ) x_aff0) x_aff1) x_aff2) x_aff3)
-                 x_aff4))
-        (f_afeT x_afeU)
+  value f_afBe (Network.Riak.Protocol.Content.Content x_afBf x_afBg x_afBh x_afBi x_afBj x_afBk x_afBl x_afBm x_afBn x_afBo x_afBp)
+    = fmap
+        (\ y_afBq -> Network.Riak.Protocol.Content.Content y_afBq x_afBg x_afBh x_afBi x_afBj x_afBk x_afBl x_afBm x_afBn x_afBo x_afBp)
+        (f_afBe x_afBf)
 class HasVtag s a | s -> a where
   vtag :: Lens' s a
 instance HasVtag Network.Riak.Protocol.Content.Content (Maybe ByteString) where
   {-# INLINE vtag #-}
-  vtag f_aff6 (Network.Riak.Protocol.Content.Content x_aff7 x_aff8 x_aff9 x_affa x_affb x_affc x_affd x_affe x_afff x_affg x_affh)
-    = (fmap
-         (\ y_affi
-            -> ((((((((((Network.Riak.Protocol.Content.Content x_aff7) x_aff8) x_aff9) x_affa) y_affi) x_affc) x_affd) x_affe) x_afff) x_affg)
-                 x_affh))
-        (f_aff6 x_affb)
+  vtag f_afBr (Network.Riak.Protocol.Content.Content x_afBs x_afBt x_afBu x_afBv x_afBw x_afBx x_afBy x_afBz x_afBA x_afBB x_afBC)
+    = fmap
+        (\ y_afBD -> Network.Riak.Protocol.Content.Content x_afBs x_afBt x_afBu x_afBv y_afBD x_afBx x_afBy x_afBz x_afBA x_afBB x_afBC)
+        (f_afBr x_afBw)
 instance HasBasicQuorum Network.Riak.Protocol.CounterGetRequest.CounterGetRequest (Maybe Bool) where
   {-# INLINE basic_quorum #-}
-  basic_quorum f_afoE (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afoF x_afoG x_afoH x_afoI x_afoJ x_afoK)
-    = (fmap (\ y_afoL -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afoF) x_afoG) x_afoH) x_afoI) y_afoL) x_afoK))
-        (f_afoE x_afoJ)
+  basic_quorum f_afIT (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afIU x_afIV x_afIW x_afIX x_afIY x_afIZ)
+    = fmap
+        (\ y_afJ0 -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afIU x_afIV x_afIW x_afIX y_afJ0 x_afIZ) (f_afIT x_afIY)
 instance HasBucket Network.Riak.Protocol.CounterGetRequest.CounterGetRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_afoM (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afoN x_afoO x_afoP x_afoQ x_afoR x_afoS)
-    = (fmap (\ y_afoT -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest y_afoT) x_afoO) x_afoP) x_afoQ) x_afoR) x_afoS))
-        (f_afoM x_afoN)
+  bucket f_afJ1 (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJ2 x_afJ3 x_afJ4 x_afJ5 x_afJ6 x_afJ7)
+    = fmap
+        (\ y_afJ8 -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest y_afJ8 x_afJ3 x_afJ4 x_afJ5 x_afJ6 x_afJ7) (f_afJ1 x_afJ2)
 class HasKey s a | s -> a where
   key :: Lens' s a
 instance HasKey Network.Riak.Protocol.CounterGetRequest.CounterGetRequest ByteString where
   {-# INLINE key #-}
-  key f_afoU (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afoV x_afoW x_afoX x_afoY x_afoZ x_afp0)
-    = (fmap (\ y_afp1 -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afoV) y_afp1) x_afoX) x_afoY) x_afoZ) x_afp0))
-        (f_afoU x_afoW)
+  key f_afJ9 (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJa x_afJb x_afJc x_afJd x_afJe x_afJf)
+    = fmap
+        (\ y_afJg -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJa y_afJg x_afJc x_afJd x_afJe x_afJf) (f_afJ9 x_afJb)
 instance HasNotfoundOk Network.Riak.Protocol.CounterGetRequest.CounterGetRequest (Maybe Bool) where
   {-# INLINE notfound_ok #-}
-  notfound_ok f_afp2 (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afp3 x_afp4 x_afp5 x_afp6 x_afp7 x_afp8)
-    = (fmap (\ y_afp9 -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afp3) x_afp4) x_afp5) x_afp6) x_afp7) y_afp9))
-        (f_afp2 x_afp8)
+  notfound_ok f_afJh (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJi x_afJj x_afJk x_afJl x_afJm x_afJn)
+    = fmap
+        (\ y_afJo -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJi x_afJj x_afJk x_afJl x_afJm y_afJo) (f_afJh x_afJn)
 instance HasPr Network.Riak.Protocol.CounterGetRequest.CounterGetRequest (Maybe Word32) where
   {-# INLINE pr #-}
-  pr f_afpa (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afpb x_afpc x_afpd x_afpe x_afpf x_afpg)
-    = (fmap (\ y_afph -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afpb) x_afpc) x_afpd) y_afph) x_afpf) x_afpg))
-        (f_afpa x_afpe)
+  pr f_afJp (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJq x_afJr x_afJs x_afJt x_afJu x_afJv)
+    = fmap
+        (\ y_afJw -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJq x_afJr x_afJs y_afJw x_afJu x_afJv) (f_afJp x_afJt)
 instance HasR Network.Riak.Protocol.CounterGetRequest.CounterGetRequest (Maybe Word32) where
   {-# INLINE r #-}
-  r f_afpi (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afpj x_afpk x_afpl x_afpm x_afpn x_afpo)
-    = (fmap (\ y_afpp -> (((((Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afpj) x_afpk) y_afpp) x_afpm) x_afpn) x_afpo))
-        (f_afpi x_afpl)
+  r f_afJx (Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJy x_afJz x_afJA x_afJB x_afJC x_afJD)
+    = fmap
+        (\ y_afJE -> Network.Riak.Protocol.CounterGetRequest.CounterGetRequest x_afJy x_afJz y_afJE x_afJB x_afJC x_afJD) (f_afJx x_afJA)
 instance HasValue Network.Riak.Protocol.CounterGetResponse.CounterGetResponse (Maybe Int64) where
   {-# INLINE value #-}
-  value f_afrM (Network.Riak.Protocol.CounterGetResponse.CounterGetResponse x_afrN)
-    = (fmap (\ y_afrO -> Network.Riak.Protocol.CounterGetResponse.CounterGetResponse y_afrO)) (f_afrM x_afrN)
+  value f_afLA (Network.Riak.Protocol.CounterGetResponse.CounterGetResponse x_afLB)
+    = fmap (\ y_afLC -> Network.Riak.Protocol.CounterGetResponse.CounterGetResponse y_afLC) (f_afLA x_afLB)
 class HasIncrement s a | s -> a where
   increment :: Lens' s a
 instance HasIncrement Network.Riak.Protocol.CounterOp.CounterOp (Maybe Int64) where
   {-# INLINE increment #-}
-  increment f_afsf (Network.Riak.Protocol.CounterOp.CounterOp x_afsg)
-    = (fmap (\ y_afsh -> Network.Riak.Protocol.CounterOp.CounterOp y_afsh)) (f_afsf x_afsg)
+  increment f_afM0 (Network.Riak.Protocol.CounterOp.CounterOp x_afM1)
+    = fmap (\ y_afM2 -> Network.Riak.Protocol.CounterOp.CounterOp y_afM2) (f_afM0 x_afM1)
 class HasAmount s a | s -> a where
   amount :: Lens' s a
 instance HasAmount Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest Int64 where
   {-# INLINE amount #-}
-  amount f_aftf (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftg x_afth x_afti x_aftj x_aftk x_aftl x_aftm)
-    = (fmap
-         (\ y_aftn
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftg) x_afth) y_aftn) x_aftj) x_aftk) x_aftl) x_aftm))
-        (f_aftf x_afti)
+  amount f_afMQ (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afMR x_afMS x_afMT x_afMU x_afMV x_afMW x_afMX)
+    = fmap
+        (\ y_afMY -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afMR x_afMS y_afMY x_afMU x_afMV x_afMW x_afMX)
+        (f_afMQ x_afMT)
 instance HasBucket Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_afto (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftp x_aftq x_aftr x_afts x_aftt x_aftu x_aftv)
-    = (fmap
-         (\ y_aftw
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest y_aftw) x_aftq) x_aftr) x_afts) x_aftt) x_aftu) x_aftv))
-        (f_afto x_aftp)
+  bucket f_afMZ (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afN0 x_afN1 x_afN2 x_afN3 x_afN4 x_afN5 x_afN6)
+    = fmap
+        (\ y_afN7 -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest y_afN7 x_afN1 x_afN2 x_afN3 x_afN4 x_afN5 x_afN6)
+        (f_afMZ x_afN0)
 instance HasDw Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest (Maybe Word32) where
   {-# INLINE dw #-}
-  dw f_aftx (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afty x_aftz x_aftA x_aftB x_aftC x_aftD x_aftE)
-    = (fmap
-         (\ y_aftF
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afty) x_aftz) x_aftA) x_aftB) y_aftF) x_aftD) x_aftE))
-        (f_aftx x_aftC)
+  dw f_afN8 (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afN9 x_afNa x_afNb x_afNc x_afNd x_afNe x_afNf)
+    = fmap
+        (\ y_afNg -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afN9 x_afNa x_afNb x_afNc y_afNg x_afNe x_afNf)
+        (f_afN8 x_afNd)
 instance HasKey Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest ByteString where
   {-# INLINE key #-}
-  key f_aftG (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftH x_aftI x_aftJ x_aftK x_aftL x_aftM x_aftN)
-    = (fmap
-         (\ y_aftO
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftH) y_aftO) x_aftJ) x_aftK) x_aftL) x_aftM) x_aftN))
-        (f_aftG x_aftI)
+  key f_afNh (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNi x_afNj x_afNk x_afNl x_afNm x_afNn x_afNo)
+    = fmap
+        (\ y_afNp -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNi y_afNp x_afNk x_afNl x_afNm x_afNn x_afNo)
+        (f_afNh x_afNj)
 instance HasPw Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest (Maybe Word32) where
   {-# INLINE pw #-}
-  pw f_aftP (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftQ x_aftR x_aftS x_aftT x_aftU x_aftV x_aftW)
-    = (fmap
-         (\ y_aftX
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftQ) x_aftR) x_aftS) x_aftT) x_aftU) y_aftX) x_aftW))
-        (f_aftP x_aftV)
+  pw f_afNq (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNr x_afNs x_afNt x_afNu x_afNv x_afNw x_afNx)
+    = fmap
+        (\ y_afNy -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNr x_afNs x_afNt x_afNu x_afNv y_afNy x_afNx)
+        (f_afNq x_afNw)
 class HasReturnvalue s a | s -> a where
   returnvalue :: Lens' s a
 instance HasReturnvalue Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest (Maybe Bool) where
   {-# INLINE returnvalue #-}
-  returnvalue f_aftY (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftZ x_afu0 x_afu1 x_afu2 x_afu3 x_afu4 x_afu5)
-    = (fmap
-         (\ y_afu6
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_aftZ) x_afu0) x_afu1) x_afu2) x_afu3) x_afu4) y_afu6))
-        (f_aftY x_afu5)
+  returnvalue f_afNz (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNA x_afNB x_afNC x_afND x_afNE x_afNF x_afNG)
+    = fmap
+        (\ y_afNH -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNA x_afNB x_afNC x_afND x_afNE x_afNF y_afNH)
+        (f_afNz x_afNG)
 instance HasW Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest (Maybe Word32) where
   {-# INLINE w #-}
-  w f_afu7 (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afu8 x_afu9 x_afua x_afub x_afuc x_afud x_afue)
-    = (fmap
-         (\ y_afuf
-            -> ((((((Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afu8) x_afu9) x_afua) y_afuf) x_afuc) x_afud) x_afue))
-        (f_afu7 x_afub)
+  w f_afNI (Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNJ x_afNK x_afNL x_afNM x_afNN x_afNO x_afNP)
+    = fmap
+        (\ y_afNQ -> Network.Riak.Protocol.CounterUpdateRequest.CounterUpdateRequest x_afNJ x_afNK x_afNL y_afNQ x_afNN x_afNO x_afNP)
+        (f_afNI x_afNM)
 instance HasValue Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse (Maybe Int64) where
   {-# INLINE value #-}
-  value f_afxt (Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse x_afxu)
-    = (fmap (\ y_afxv -> Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse y_afxv)) (f_afxt x_afxu)
+  value f_afQr (Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse x_afQs)
+    = fmap (\ y_afQt -> Network.Riak.Protocol.CounterUpdateResponse.CounterUpdateResponse y_afQt) (f_afQr x_afQs)
 instance HasBucket Network.Riak.Protocol.DeleteRequest.DeleteRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_afxW
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afxX
-                                                       x_afxY
-                                                       x_afxZ
-                                                       x_afy0
-                                                       x_afy1
-                                                       x_afy2
-                                                       x_afy3
-                                                       x_afy4
-                                                       x_afy5
-                                                       x_afy6
-                                                       x_afy7
-                                                       x_afy8
-                                                       x_afy9)
-    = (fmap
-         (\ y_afya
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest y_afya) x_afxY) x_afxZ) x_afy0) x_afy1) x_afy2) x_afy3) x_afy4)
-                     x_afy5)
-                    x_afy6)
-                   x_afy7)
-                  x_afy8)
-                 x_afy9))
-        (f_afxW x_afxX)
+    f_afQR
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afQS
+                                                       x_afQT
+                                                       x_afQU
+                                                       x_afQV
+                                                       x_afQW
+                                                       x_afQX
+                                                       x_afQY
+                                                       x_afQZ
+                                                       x_afR0
+                                                       x_afR1
+                                                       x_afR2
+                                                       x_afR3
+                                                       x_afR4)
+    = fmap
+        (\ y_afR5
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                y_afR5 x_afQT x_afQU x_afQV x_afQW x_afQX x_afQY x_afQZ x_afR0 x_afR1 x_afR2 x_afR3 x_afR4)
+        (f_afQR x_afQS)
 instance HasDw Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE dw #-}
   dw
-    f_afyb
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyc
-                                                       x_afyd
-                                                       x_afye
-                                                       x_afyf
-                                                       x_afyg
-                                                       x_afyh
-                                                       x_afyi
-                                                       x_afyj
-                                                       x_afyk
-                                                       x_afyl
-                                                       x_afym
-                                                       x_afyn
-                                                       x_afyo)
-    = (fmap
-         (\ y_afyp
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyc) x_afyd) x_afye) x_afyf) x_afyg) x_afyh) x_afyi) x_afyj)
-                     y_afyp)
-                    x_afyl)
-                   x_afym)
-                  x_afyn)
-                 x_afyo))
-        (f_afyb x_afyk)
+    f_afR6
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afR7
+                                                       x_afR8
+                                                       x_afR9
+                                                       x_afRa
+                                                       x_afRb
+                                                       x_afRc
+                                                       x_afRd
+                                                       x_afRe
+                                                       x_afRf
+                                                       x_afRg
+                                                       x_afRh
+                                                       x_afRi
+                                                       x_afRj)
+    = fmap
+        (\ y_afRk
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afR7 x_afR8 x_afR9 x_afRa x_afRb x_afRc x_afRd x_afRe y_afRk x_afRg x_afRh x_afRi x_afRj)
+        (f_afR6 x_afRf)
 instance HasKey Network.Riak.Protocol.DeleteRequest.DeleteRequest ByteString where
   {-# INLINE key #-}
   key
-    f_afyq
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyr
-                                                       x_afys
-                                                       x_afyt
-                                                       x_afyu
-                                                       x_afyv
-                                                       x_afyw
-                                                       x_afyx
-                                                       x_afyy
-                                                       x_afyz
-                                                       x_afyA
-                                                       x_afyB
-                                                       x_afyC
-                                                       x_afyD)
-    = (fmap
-         (\ y_afyE
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyr) y_afyE) x_afyt) x_afyu) x_afyv) x_afyw) x_afyx) x_afyy)
-                     x_afyz)
-                    x_afyA)
-                   x_afyB)
-                  x_afyC)
-                 x_afyD))
-        (f_afyq x_afys)
+    f_afRl
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afRm
+                                                       x_afRn
+                                                       x_afRo
+                                                       x_afRp
+                                                       x_afRq
+                                                       x_afRr
+                                                       x_afRs
+                                                       x_afRt
+                                                       x_afRu
+                                                       x_afRv
+                                                       x_afRw
+                                                       x_afRx
+                                                       x_afRy)
+    = fmap
+        (\ y_afRz
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afRm y_afRz x_afRo x_afRp x_afRq x_afRr x_afRs x_afRt x_afRu x_afRv x_afRw x_afRx x_afRy)
+        (f_afRl x_afRn)
 instance HasNVal Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_afyF
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyG
-                                                       x_afyH
-                                                       x_afyI
-                                                       x_afyJ
-                                                       x_afyK
-                                                       x_afyL
-                                                       x_afyM
-                                                       x_afyN
-                                                       x_afyO
-                                                       x_afyP
-                                                       x_afyQ
-                                                       x_afyR
-                                                       x_afyS)
-    = (fmap
-         (\ y_afyT
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyG) x_afyH) x_afyI) x_afyJ) x_afyK) x_afyL) x_afyM) x_afyN)
-                     x_afyO)
-                    x_afyP)
-                   x_afyQ)
-                  y_afyT)
-                 x_afyS))
-        (f_afyF x_afyR)
+    f_afRA
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afRB
+                                                       x_afRC
+                                                       x_afRD
+                                                       x_afRE
+                                                       x_afRF
+                                                       x_afRG
+                                                       x_afRH
+                                                       x_afRI
+                                                       x_afRJ
+                                                       x_afRK
+                                                       x_afRL
+                                                       x_afRM
+                                                       x_afRN)
+    = fmap
+        (\ y_afRO
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afRB x_afRC x_afRD x_afRE x_afRF x_afRG x_afRH x_afRI x_afRJ x_afRK x_afRL y_afRO x_afRN)
+        (f_afRA x_afRM)
 instance HasPr Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE pr #-}
   pr
-    f_afyU
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyV
-                                                       x_afyW
-                                                       x_afyX
-                                                       x_afyY
-                                                       x_afyZ
-                                                       x_afz0
-                                                       x_afz1
-                                                       x_afz2
-                                                       x_afz3
-                                                       x_afz4
-                                                       x_afz5
-                                                       x_afz6
-                                                       x_afz7)
-    = (fmap
-         (\ y_afz8
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afyV) x_afyW) x_afyX) x_afyY) x_afyZ) x_afz0) y_afz8) x_afz2)
-                     x_afz3)
-                    x_afz4)
-                   x_afz5)
-                  x_afz6)
-                 x_afz7))
-        (f_afyU x_afz1)
+    f_afRP
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afRQ
+                                                       x_afRR
+                                                       x_afRS
+                                                       x_afRT
+                                                       x_afRU
+                                                       x_afRV
+                                                       x_afRW
+                                                       x_afRX
+                                                       x_afRY
+                                                       x_afRZ
+                                                       x_afS0
+                                                       x_afS1
+                                                       x_afS2)
+    = fmap
+        (\ y_afS3
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afRQ x_afRR x_afRS x_afRT x_afRU x_afRV y_afS3 x_afRX x_afRY x_afRZ x_afS0 x_afS1 x_afS2)
+        (f_afRP x_afRW)
 instance HasPw Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE pw #-}
   pw
-    f_afz9
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afza
-                                                       x_afzb
-                                                       x_afzc
-                                                       x_afzd
-                                                       x_afze
-                                                       x_afzf
-                                                       x_afzg
-                                                       x_afzh
-                                                       x_afzi
-                                                       x_afzj
-                                                       x_afzk
-                                                       x_afzl
-                                                       x_afzm)
-    = (fmap
-         (\ y_afzn
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afza) x_afzb) x_afzc) x_afzd) x_afze) x_afzf) x_afzg) y_afzn)
-                     x_afzi)
-                    x_afzj)
-                   x_afzk)
-                  x_afzl)
-                 x_afzm))
-        (f_afz9 x_afzh)
+    f_afS4
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afS5
+                                                       x_afS6
+                                                       x_afS7
+                                                       x_afS8
+                                                       x_afS9
+                                                       x_afSa
+                                                       x_afSb
+                                                       x_afSc
+                                                       x_afSd
+                                                       x_afSe
+                                                       x_afSf
+                                                       x_afSg
+                                                       x_afSh)
+    = fmap
+        (\ y_afSi
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afS5 x_afS6 x_afS7 x_afS8 x_afS9 x_afSa x_afSb y_afSi x_afSd x_afSe x_afSf x_afSg x_afSh)
+        (f_afS4 x_afSc)
 instance HasR Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE r #-}
-  r f_afzo
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzp
-                                                       x_afzq
-                                                       x_afzr
-                                                       x_afzs
-                                                       x_afzt
-                                                       x_afzu
-                                                       x_afzv
-                                                       x_afzw
-                                                       x_afzx
-                                                       x_afzy
-                                                       x_afzz
-                                                       x_afzA
-                                                       x_afzB)
-    = (fmap
-         (\ y_afzC
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzp) x_afzq) x_afzr) x_afzs) y_afzC) x_afzu) x_afzv) x_afzw)
-                     x_afzx)
-                    x_afzy)
-                   x_afzz)
-                  x_afzA)
-                 x_afzB))
-        (f_afzo x_afzt)
+  r f_afSj
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afSk
+                                                       x_afSl
+                                                       x_afSm
+                                                       x_afSn
+                                                       x_afSo
+                                                       x_afSp
+                                                       x_afSq
+                                                       x_afSr
+                                                       x_afSs
+                                                       x_afSt
+                                                       x_afSu
+                                                       x_afSv
+                                                       x_afSw)
+    = fmap
+        (\ y_afSx
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afSk x_afSl x_afSm x_afSn y_afSx x_afSp x_afSq x_afSr x_afSs x_afSt x_afSu x_afSv x_afSw)
+        (f_afSj x_afSo)
 instance HasRw Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE rw #-}
   rw
-    f_afzD
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzE
-                                                       x_afzF
-                                                       x_afzG
-                                                       x_afzH
-                                                       x_afzI
-                                                       x_afzJ
-                                                       x_afzK
-                                                       x_afzL
-                                                       x_afzM
-                                                       x_afzN
-                                                       x_afzO
-                                                       x_afzP
-                                                       x_afzQ)
-    = (fmap
-         (\ y_afzR
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzE) x_afzF) y_afzR) x_afzH) x_afzI) x_afzJ) x_afzK) x_afzL)
-                     x_afzM)
-                    x_afzN)
-                   x_afzO)
-                  x_afzP)
-                 x_afzQ))
-        (f_afzD x_afzG)
+    f_afSy
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afSz
+                                                       x_afSA
+                                                       x_afSB
+                                                       x_afSC
+                                                       x_afSD
+                                                       x_afSE
+                                                       x_afSF
+                                                       x_afSG
+                                                       x_afSH
+                                                       x_afSI
+                                                       x_afSJ
+                                                       x_afSK
+                                                       x_afSL)
+    = fmap
+        (\ y_afSM
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afSz x_afSA y_afSM x_afSC x_afSD x_afSE x_afSF x_afSG x_afSH x_afSI x_afSJ x_afSK x_afSL)
+        (f_afSy x_afSB)
 class HasSloppyQuorum s a | s -> a where
   sloppy_quorum :: Lens' s a
 instance HasSloppyQuorum Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Bool) where
   {-# INLINE sloppy_quorum #-}
   sloppy_quorum
-    f_afzS
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzT
-                                                       x_afzU
-                                                       x_afzV
-                                                       x_afzW
-                                                       x_afzX
-                                                       x_afzY
-                                                       x_afzZ
-                                                       x_afA0
-                                                       x_afA1
-                                                       x_afA2
-                                                       x_afA3
-                                                       x_afA4
-                                                       x_afA5)
-    = (fmap
-         (\ y_afA6
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afzT) x_afzU) x_afzV) x_afzW) x_afzX) x_afzY) x_afzZ) x_afA0)
-                     x_afA1)
-                    x_afA2)
-                   y_afA6)
-                  x_afA4)
-                 x_afA5))
-        (f_afzS x_afA3)
+    f_afSN
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afSO
+                                                       x_afSP
+                                                       x_afSQ
+                                                       x_afSR
+                                                       x_afSS
+                                                       x_afST
+                                                       x_afSU
+                                                       x_afSV
+                                                       x_afSW
+                                                       x_afSX
+                                                       x_afSY
+                                                       x_afSZ
+                                                       x_afT0)
+    = fmap
+        (\ y_afT1
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afSO x_afSP x_afSQ x_afSR x_afSS x_afST x_afSU x_afSV x_afSW x_afSX y_afT1 x_afSZ x_afT0)
+        (f_afSN x_afSY)
 instance HasTimeout Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_afA7
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afA8
-                                                       x_afA9
-                                                       x_afAa
-                                                       x_afAb
-                                                       x_afAc
-                                                       x_afAd
-                                                       x_afAe
-                                                       x_afAf
-                                                       x_afAg
-                                                       x_afAh
-                                                       x_afAi
-                                                       x_afAj
-                                                       x_afAk)
-    = (fmap
-         (\ y_afAl
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afA8) x_afA9) x_afAa) x_afAb) x_afAc) x_afAd) x_afAe) x_afAf)
-                     x_afAg)
-                    y_afAl)
-                   x_afAi)
-                  x_afAj)
-                 x_afAk))
-        (f_afA7 x_afAh)
+    f_afT2
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afT3
+                                                       x_afT4
+                                                       x_afT5
+                                                       x_afT6
+                                                       x_afT7
+                                                       x_afT8
+                                                       x_afT9
+                                                       x_afTa
+                                                       x_afTb
+                                                       x_afTc
+                                                       x_afTd
+                                                       x_afTe
+                                                       x_afTf)
+    = fmap
+        (\ y_afTg
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afT3 x_afT4 x_afT5 x_afT6 x_afT7 x_afT8 x_afT9 x_afTa x_afTb y_afTg x_afTd x_afTe x_afTf)
+        (f_afT2 x_afTc)
 instance HasType' Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe ByteString) where
   {-# INLINE type' #-}
   type'
-    f_afAm
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAn
-                                                       x_afAo
-                                                       x_afAp
-                                                       x_afAq
-                                                       x_afAr
-                                                       x_afAs
-                                                       x_afAt
-                                                       x_afAu
-                                                       x_afAv
-                                                       x_afAw
-                                                       x_afAx
-                                                       x_afAy
-                                                       x_afAz)
-    = (fmap
-         (\ y_afAA
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAn) x_afAo) x_afAp) x_afAq) x_afAr) x_afAs) x_afAt) x_afAu)
-                     x_afAv)
-                    x_afAw)
-                   x_afAx)
-                  x_afAy)
-                 y_afAA))
-        (f_afAm x_afAz)
+    f_afTh
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afTi
+                                                       x_afTj
+                                                       x_afTk
+                                                       x_afTl
+                                                       x_afTm
+                                                       x_afTn
+                                                       x_afTo
+                                                       x_afTp
+                                                       x_afTq
+                                                       x_afTr
+                                                       x_afTs
+                                                       x_afTt
+                                                       x_afTu)
+    = fmap
+        (\ y_afTv
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afTi x_afTj x_afTk x_afTl x_afTm x_afTn x_afTo x_afTp x_afTq x_afTr x_afTs x_afTt y_afTv)
+        (f_afTh x_afTu)
 class HasVclock s a | s -> a where
   vclock :: Lens' s a
 instance HasVclock Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe ByteString) where
   {-# INLINE vclock #-}
   vclock
-    f_afAB
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAC
-                                                       x_afAD
-                                                       x_afAE
-                                                       x_afAF
-                                                       x_afAG
-                                                       x_afAH
-                                                       x_afAI
-                                                       x_afAJ
-                                                       x_afAK
-                                                       x_afAL
-                                                       x_afAM
-                                                       x_afAN
-                                                       x_afAO)
-    = (fmap
-         (\ y_afAP
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAC) x_afAD) x_afAE) y_afAP) x_afAG) x_afAH) x_afAI) x_afAJ)
-                     x_afAK)
-                    x_afAL)
-                   x_afAM)
-                  x_afAN)
-                 x_afAO))
-        (f_afAB x_afAF)
+    f_afTw
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afTx
+                                                       x_afTy
+                                                       x_afTz
+                                                       x_afTA
+                                                       x_afTB
+                                                       x_afTC
+                                                       x_afTD
+                                                       x_afTE
+                                                       x_afTF
+                                                       x_afTG
+                                                       x_afTH
+                                                       x_afTI
+                                                       x_afTJ)
+    = fmap
+        (\ y_afTK
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afTx x_afTy x_afTz y_afTK x_afTB x_afTC x_afTD x_afTE x_afTF x_afTG x_afTH x_afTI x_afTJ)
+        (f_afTw x_afTA)
 instance HasW Network.Riak.Protocol.DeleteRequest.DeleteRequest (Maybe Word32) where
   {-# INLINE w #-}
-  w f_afAQ
-    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAR
-                                                       x_afAS
-                                                       x_afAT
-                                                       x_afAU
-                                                       x_afAV
-                                                       x_afAW
-                                                       x_afAX
-                                                       x_afAY
-                                                       x_afAZ
-                                                       x_afB0
-                                                       x_afB1
-                                                       x_afB2
-                                                       x_afB3)
-    = (fmap
-         (\ y_afB4
-            -> ((((((((((((Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afAR) x_afAS) x_afAT) x_afAU) x_afAV) y_afB4) x_afAX) x_afAY)
-                     x_afAZ)
-                    x_afB0)
-                   x_afB1)
-                  x_afB2)
-                 x_afB3))
-        (f_afAQ x_afAW)
+  w f_afTL
+    (Network.Riak.Protocol.DeleteRequest.DeleteRequest x_afTM
+                                                       x_afTN
+                                                       x_afTO
+                                                       x_afTP
+                                                       x_afTQ
+                                                       x_afTR
+                                                       x_afTS
+                                                       x_afTT
+                                                       x_afTU
+                                                       x_afTV
+                                                       x_afTW
+                                                       x_afTX
+                                                       x_afTY)
+    = fmap
+        (\ y_afTZ
+           -> Network.Riak.Protocol.DeleteRequest.DeleteRequest
+                x_afTM x_afTN x_afTO x_afTP x_afTQ y_afTZ x_afTS x_afTT x_afTU x_afTV x_afTW x_afTX x_afTY)
+        (f_afTL x_afTR)
 instance HasBasicQuorum Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Bool) where
   {-# INLINE basic_quorum #-}
   basic_quorum
-    f_afFV
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afFW x_afFX x_afFY x_afFZ x_afG0 x_afG1 x_afG2 x_afG3 x_afG4 x_afG5 x_afG6)
-    = (fmap
-         (\ y_afG7
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afFW) x_afFX) x_afFY) x_afFZ) x_afG0) y_afG7) x_afG2) x_afG3)
-                   x_afG4)
-                  x_afG5)
-                 x_afG6))
-        (f_afFV x_afG1)
+    f_afXV
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afXW x_afXX x_afXY x_afXZ x_afY0 x_afY1 x_afY2 x_afY3 x_afY4 x_afY5 x_afY6)
+    = fmap
+        (\ y_afY7
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afXW x_afXX x_afXY x_afXZ x_afY0 y_afY7 x_afY2 x_afY3 x_afY4 x_afY5 x_afY6)
+        (f_afXV x_afY1)
 instance HasBucket Network.Riak.Protocol.DtFetchRequest.DtFetchRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_afG8
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afG9 x_afGa x_afGb x_afGc x_afGd x_afGe x_afGf x_afGg x_afGh x_afGi x_afGj)
-    = (fmap
-         (\ y_afGk
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest y_afGk) x_afGa) x_afGb) x_afGc) x_afGd) x_afGe) x_afGf) x_afGg)
-                   x_afGh)
-                  x_afGi)
-                 x_afGj))
-        (f_afG8 x_afG9)
+    f_afY8
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afY9 x_afYa x_afYb x_afYc x_afYd x_afYe x_afYf x_afYg x_afYh x_afYi x_afYj)
+    = fmap
+        (\ y_afYk
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest y_afYk x_afYa x_afYb x_afYc x_afYd x_afYe x_afYf x_afYg x_afYh x_afYi x_afYj)
+        (f_afY8 x_afY9)
 class HasIncludeContext s a | s -> a where
   include_context :: Lens' s a
 instance HasIncludeContext Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Bool) where
   {-# INLINE include_context #-}
   include_context
-    f_afGl
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGm x_afGn x_afGo x_afGp x_afGq x_afGr x_afGs x_afGt x_afGu x_afGv x_afGw)
-    = (fmap
-         (\ y_afGx
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGm) x_afGn) x_afGo) x_afGp) x_afGq) x_afGr) x_afGs) x_afGt)
-                   x_afGu)
-                  x_afGv)
-                 y_afGx))
-        (f_afGl x_afGw)
+    f_afYl
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYm x_afYn x_afYo x_afYp x_afYq x_afYr x_afYs x_afYt x_afYu x_afYv x_afYw)
+    = fmap
+        (\ y_afYx
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYm x_afYn x_afYo x_afYp x_afYq x_afYr x_afYs x_afYt x_afYu x_afYv y_afYx)
+        (f_afYl x_afYw)
 instance HasKey Network.Riak.Protocol.DtFetchRequest.DtFetchRequest ByteString where
   {-# INLINE key #-}
   key
-    f_afGy
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGz x_afGA x_afGB x_afGC x_afGD x_afGE x_afGF x_afGG x_afGH x_afGI x_afGJ)
-    = (fmap
-         (\ y_afGK
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGz) y_afGK) x_afGB) x_afGC) x_afGD) x_afGE) x_afGF) x_afGG)
-                   x_afGH)
-                  x_afGI)
-                 x_afGJ))
-        (f_afGy x_afGA)
+    f_afYy
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYz x_afYA x_afYB x_afYC x_afYD x_afYE x_afYF x_afYG x_afYH x_afYI x_afYJ)
+    = fmap
+        (\ y_afYK
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYz y_afYK x_afYB x_afYC x_afYD x_afYE x_afYF x_afYG x_afYH x_afYI x_afYJ)
+        (f_afYy x_afYA)
 instance HasNVal Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_afGL
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGM x_afGN x_afGO x_afGP x_afGQ x_afGR x_afGS x_afGT x_afGU x_afGV x_afGW)
-    = (fmap
-         (\ y_afGX
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGM) x_afGN) x_afGO) x_afGP) x_afGQ) x_afGR) x_afGS) x_afGT)
-                   x_afGU)
-                  y_afGX)
-                 x_afGW))
-        (f_afGL x_afGV)
+    f_afYL
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYM x_afYN x_afYO x_afYP x_afYQ x_afYR x_afYS x_afYT x_afYU x_afYV x_afYW)
+    = fmap
+        (\ y_afYX
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYM x_afYN x_afYO x_afYP x_afYQ x_afYR x_afYS x_afYT x_afYU y_afYX x_afYW)
+        (f_afYL x_afYV)
 instance HasNotfoundOk Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Bool) where
   {-# INLINE notfound_ok #-}
   notfound_ok
-    f_afGY
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGZ x_afH0 x_afH1 x_afH2 x_afH3 x_afH4 x_afH5 x_afH6 x_afH7 x_afH8 x_afH9)
-    = (fmap
-         (\ y_afHa
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afGZ) x_afH0) x_afH1) x_afH2) x_afH3) x_afH4) y_afHa) x_afH6)
-                   x_afH7)
-                  x_afH8)
-                 x_afH9))
-        (f_afGY x_afH5)
+    f_afYY
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYZ x_afZ0 x_afZ1 x_afZ2 x_afZ3 x_afZ4 x_afZ5 x_afZ6 x_afZ7 x_afZ8 x_afZ9)
+    = fmap
+        (\ y_afZa
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afYZ x_afZ0 x_afZ1 x_afZ2 x_afZ3 x_afZ4 y_afZa x_afZ6 x_afZ7 x_afZ8 x_afZ9)
+        (f_afYY x_afZ5)
 instance HasPr Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Word32) where
   {-# INLINE pr #-}
   pr
-    f_afHb
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHc x_afHd x_afHe x_afHf x_afHg x_afHh x_afHi x_afHj x_afHk x_afHl x_afHm)
-    = (fmap
-         (\ y_afHn
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHc) x_afHd) x_afHe) x_afHf) y_afHn) x_afHh) x_afHi) x_afHj)
-                   x_afHk)
-                  x_afHl)
-                 x_afHm))
-        (f_afHb x_afHg)
+    f_afZb
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZc x_afZd x_afZe x_afZf x_afZg x_afZh x_afZi x_afZj x_afZk x_afZl x_afZm)
+    = fmap
+        (\ y_afZn
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZc x_afZd x_afZe x_afZf y_afZn x_afZh x_afZi x_afZj x_afZk x_afZl x_afZm)
+        (f_afZb x_afZg)
 instance HasR Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Word32) where
   {-# INLINE r #-}
-  r f_afHo
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHp x_afHq x_afHr x_afHs x_afHt x_afHu x_afHv x_afHw x_afHx x_afHy x_afHz)
-    = (fmap
-         (\ y_afHA
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHp) x_afHq) x_afHr) y_afHA) x_afHt) x_afHu) x_afHv) x_afHw)
-                   x_afHx)
-                  x_afHy)
-                 x_afHz))
-        (f_afHo x_afHs)
+  r f_afZo
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZp x_afZq x_afZr x_afZs x_afZt x_afZu x_afZv x_afZw x_afZx x_afZy x_afZz)
+    = fmap
+        (\ y_afZA
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZp x_afZq x_afZr y_afZA x_afZt x_afZu x_afZv x_afZw x_afZx x_afZy x_afZz)
+        (f_afZo x_afZs)
 instance HasSloppyQuorum Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Bool) where
   {-# INLINE sloppy_quorum #-}
   sloppy_quorum
-    f_afHB
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHC x_afHD x_afHE x_afHF x_afHG x_afHH x_afHI x_afHJ x_afHK x_afHL x_afHM)
-    = (fmap
-         (\ y_afHN
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHC) x_afHD) x_afHE) x_afHF) x_afHG) x_afHH) x_afHI) x_afHJ)
-                   y_afHN)
-                  x_afHL)
-                 x_afHM))
-        (f_afHB x_afHK)
+    f_afZB
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZC x_afZD x_afZE x_afZF x_afZG x_afZH x_afZI x_afZJ x_afZK x_afZL x_afZM)
+    = fmap
+        (\ y_afZN
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZC x_afZD x_afZE x_afZF x_afZG x_afZH x_afZI x_afZJ y_afZN x_afZL x_afZM)
+        (f_afZB x_afZK)
 instance HasTimeout Network.Riak.Protocol.DtFetchRequest.DtFetchRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_afHO
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHP x_afHQ x_afHR x_afHS x_afHT x_afHU x_afHV x_afHW x_afHX x_afHY x_afHZ)
-    = (fmap
-         (\ y_afI0
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afHP) x_afHQ) x_afHR) x_afHS) x_afHT) x_afHU) x_afHV) y_afI0)
-                   x_afHX)
-                  x_afHY)
-                 x_afHZ))
-        (f_afHO x_afHW)
+    f_afZO
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZP x_afZQ x_afZR x_afZS x_afZT x_afZU x_afZV x_afZW x_afZX x_afZY x_afZZ)
+    = fmap
+        (\ y_ag00
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afZP x_afZQ x_afZR x_afZS x_afZT x_afZU x_afZV y_ag00 x_afZX x_afZY x_afZZ)
+        (f_afZO x_afZW)
 instance HasType' Network.Riak.Protocol.DtFetchRequest.DtFetchRequest ByteString where
   {-# INLINE type' #-}
   type'
-    f_afI1
-    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afI2 x_afI3 x_afI4 x_afI5 x_afI6 x_afI7 x_afI8 x_afI9 x_afIa x_afIb x_afIc)
-    = (fmap
-         (\ y_afId
-            -> ((((((((((Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_afI2) x_afI3) y_afId) x_afI5) x_afI6) x_afI7) x_afI8) x_afI9)
-                   x_afIa)
-                  x_afIb)
-                 x_afIc))
-        (f_afI1 x_afI4)
+    f_ag01
+    (Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_ag02 x_ag03 x_ag04 x_ag05 x_ag06 x_ag07 x_ag08 x_ag09 x_ag0a x_ag0b x_ag0c)
+    = fmap
+        (\ y_ag0d
+           -> Network.Riak.Protocol.DtFetchRequest.DtFetchRequest x_ag02 x_ag03 y_ag0d x_ag05 x_ag06 x_ag07 x_ag08 x_ag09 x_ag0a x_ag0b x_ag0c)
+        (f_ag01 x_ag04)
 class HasContext s a | s -> a where
   context :: Lens' s a
 instance HasContext Network.Riak.Protocol.DtFetchResponse.DtFetchResponse (Maybe ByteString) where
   {-# INLINE context #-}
-  context f_afLX (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_afLY x_afLZ x_afM0)
-    = (fmap (\ y_afM1 -> ((Network.Riak.Protocol.DtFetchResponse.DtFetchResponse y_afM1) x_afLZ) x_afM0)) (f_afLX x_afLY)
+  context f_ag9k (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_ag9l x_ag9m x_ag9n)
+    = fmap (\ y_ag9o -> Network.Riak.Protocol.DtFetchResponse.DtFetchResponse y_ag9o x_ag9m x_ag9n) (f_ag9k x_ag9l)
 instance HasType' Network.Riak.Protocol.DtFetchResponse.DtFetchResponse Network.Riak.Protocol.DtFetchResponse.DataType.DataType where
   {-# INLINE type' #-}
-  type' f_afM2 (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_afM3 x_afM4 x_afM5)
-    = (fmap (\ y_afM6 -> ((Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_afM3) y_afM6) x_afM5)) (f_afM2 x_afM4)
+  type' f_ag9p (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_ag9q x_ag9r x_ag9s)
+    = fmap (\ y_ag9t -> Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_ag9q y_ag9t x_ag9s) (f_ag9p x_ag9r)
 instance HasValue Network.Riak.Protocol.DtFetchResponse.DtFetchResponse (Maybe Network.Riak.Protocol.DtValue.DtValue) where
   {-# INLINE value #-}
-  value f_afM7 (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_afM8 x_afM9 x_afMa)
-    = (fmap (\ y_afMb -> ((Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_afM8) x_afM9) y_afMb)) (f_afM7 x_afMa)
+  value f_ag9u (Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_ag9v x_ag9w x_ag9x)
+    = fmap (\ y_ag9y -> Network.Riak.Protocol.DtFetchResponse.DtFetchResponse x_ag9v x_ag9w y_ag9y) (f_ag9u x_ag9x)
 class HasCounterOp s a | s -> a where
   counter_op :: Lens' s a
 instance HasCounterOp Network.Riak.Protocol.DtOp.DtOp (Maybe Network.Riak.Protocol.CounterOp.CounterOp) where
   {-# INLINE counter_op #-}
-  counter_op f_afNJ (Network.Riak.Protocol.DtOp.DtOp x_afNK x_afNL x_afNM)
-    = (fmap (\ y_afNN -> ((Network.Riak.Protocol.DtOp.DtOp y_afNN) x_afNL) x_afNM)) (f_afNJ x_afNK)
+  counter_op f_agaS (Network.Riak.Protocol.DtOp.DtOp x_agaT x_agaU x_agaV)
+    = fmap (\ y_agaW -> Network.Riak.Protocol.DtOp.DtOp y_agaW x_agaU x_agaV) (f_agaS x_agaT)
 class HasMapOp s a | s -> a where
   map_op :: Lens' s a
 instance HasMapOp Network.Riak.Protocol.DtOp.DtOp (Maybe Network.Riak.Protocol.MapOp.MapOp) where
   {-# INLINE map_op #-}
-  map_op f_afNO (Network.Riak.Protocol.DtOp.DtOp x_afNP x_afNQ x_afNR)
-    = (fmap (\ y_afNS -> ((Network.Riak.Protocol.DtOp.DtOp x_afNP) x_afNQ) y_afNS)) (f_afNO x_afNR)
+  map_op f_agaX (Network.Riak.Protocol.DtOp.DtOp x_agaY x_agaZ x_agb0)
+    = fmap (\ y_agb1 -> Network.Riak.Protocol.DtOp.DtOp x_agaY x_agaZ y_agb1) (f_agaX x_agb0)
 class HasSetOp s a | s -> a where
   set_op :: Lens' s a
 instance HasSetOp Network.Riak.Protocol.DtOp.DtOp (Maybe Network.Riak.Protocol.SetOp.SetOp) where
   {-# INLINE set_op #-}
-  set_op f_afNT (Network.Riak.Protocol.DtOp.DtOp x_afNU x_afNV x_afNW)
-    = (fmap (\ y_afNX -> ((Network.Riak.Protocol.DtOp.DtOp x_afNU) y_afNX) x_afNW)) (f_afNT x_afNV)
+  set_op f_agb2 (Network.Riak.Protocol.DtOp.DtOp x_agb3 x_agb4 x_agb5)
+    = fmap (\ y_agb6 -> Network.Riak.Protocol.DtOp.DtOp x_agb3 y_agb6 x_agb5) (f_agb2 x_agb4)
 instance HasBucket Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_afQB
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afQC
-                                                           x_afQD
-                                                           x_afQE
-                                                           x_afQF
-                                                           x_afQG
-                                                           x_afQH
-                                                           x_afQI
-                                                           x_afQJ
-                                                           x_afQK
-                                                           x_afQL
-                                                           x_afQM
-                                                           x_afQN
-                                                           x_afQO)
-    = (fmap
-         (\ y_afQP
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest y_afQP) x_afQD) x_afQE) x_afQF) x_afQG) x_afQH) x_afQI) x_afQJ)
-                     x_afQK)
-                    x_afQL)
-                   x_afQM)
-                  x_afQN)
-                 x_afQO))
-        (f_afQB x_afQC)
+    f_agdc
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agdd
+                                                           x_agde
+                                                           x_agdf
+                                                           x_agdg
+                                                           x_agdh
+                                                           x_agdi
+                                                           x_agdj
+                                                           x_agdk
+                                                           x_agdl
+                                                           x_agdm
+                                                           x_agdn
+                                                           x_agdo
+                                                           x_agdp)
+    = fmap
+        (\ y_agdq
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                y_agdq x_agde x_agdf x_agdg x_agdh x_agdi x_agdj x_agdk x_agdl x_agdm x_agdn x_agdo x_agdp)
+        (f_agdc x_agdd)
 instance HasContext Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe ByteString) where
   {-# INLINE context #-}
   context
-    f_afQQ
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afQR
-                                                           x_afQS
-                                                           x_afQT
-                                                           x_afQU
-                                                           x_afQV
-                                                           x_afQW
-                                                           x_afQX
-                                                           x_afQY
-                                                           x_afQZ
-                                                           x_afR0
-                                                           x_afR1
-                                                           x_afR2
-                                                           x_afR3)
-    = (fmap
-         (\ y_afR4
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afQR) x_afQS) x_afQT) y_afR4) x_afQV) x_afQW) x_afQX) x_afQY)
-                     x_afQZ)
-                    x_afR0)
-                   x_afR1)
-                  x_afR2)
-                 x_afR3))
-        (f_afQQ x_afQU)
+    f_agdr
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agds
+                                                           x_agdt
+                                                           x_agdu
+                                                           x_agdv
+                                                           x_agdw
+                                                           x_agdx
+                                                           x_agdy
+                                                           x_agdz
+                                                           x_agdA
+                                                           x_agdB
+                                                           x_agdC
+                                                           x_agdD
+                                                           x_agdE)
+    = fmap
+        (\ y_agdF
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agds x_agdt x_agdu y_agdF x_agdw x_agdx x_agdy x_agdz x_agdA x_agdB x_agdC x_agdD x_agdE)
+        (f_agdr x_agdv)
 instance HasDw Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Word32) where
   {-# INLINE dw #-}
   dw
-    f_afR5
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afR6
-                                                           x_afR7
-                                                           x_afR8
-                                                           x_afR9
-                                                           x_afRa
-                                                           x_afRb
-                                                           x_afRc
-                                                           x_afRd
-                                                           x_afRe
-                                                           x_afRf
-                                                           x_afRg
-                                                           x_afRh
-                                                           x_afRi)
-    = (fmap
-         (\ y_afRj
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afR6) x_afR7) x_afR8) x_afR9) x_afRa) x_afRb) y_afRj) x_afRd)
-                     x_afRe)
-                    x_afRf)
-                   x_afRg)
-                  x_afRh)
-                 x_afRi))
-        (f_afR5 x_afRc)
+    f_agdG
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agdH
+                                                           x_agdI
+                                                           x_agdJ
+                                                           x_agdK
+                                                           x_agdL
+                                                           x_agdM
+                                                           x_agdN
+                                                           x_agdO
+                                                           x_agdP
+                                                           x_agdQ
+                                                           x_agdR
+                                                           x_agdS
+                                                           x_agdT)
+    = fmap
+        (\ y_agdU
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agdH x_agdI x_agdJ x_agdK x_agdL x_agdM y_agdU x_agdO x_agdP x_agdQ x_agdR x_agdS x_agdT)
+        (f_agdG x_agdN)
 instance HasIncludeContext Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Bool) where
   {-# INLINE include_context #-}
   include_context
-    f_afRk
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRl
-                                                           x_afRm
-                                                           x_afRn
-                                                           x_afRo
-                                                           x_afRp
-                                                           x_afRq
-                                                           x_afRr
-                                                           x_afRs
-                                                           x_afRt
-                                                           x_afRu
-                                                           x_afRv
-                                                           x_afRw
-                                                           x_afRx)
-    = (fmap
-         (\ y_afRy
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRl) x_afRm) x_afRn) x_afRo) x_afRp) x_afRq) x_afRr) x_afRs)
-                     x_afRt)
-                    x_afRu)
-                   x_afRv)
-                  x_afRw)
-                 y_afRy))
-        (f_afRk x_afRx)
+    f_agdV
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agdW
+                                                           x_agdX
+                                                           x_agdY
+                                                           x_agdZ
+                                                           x_age0
+                                                           x_age1
+                                                           x_age2
+                                                           x_age3
+                                                           x_age4
+                                                           x_age5
+                                                           x_age6
+                                                           x_age7
+                                                           x_age8)
+    = fmap
+        (\ y_age9
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agdW x_agdX x_agdY x_agdZ x_age0 x_age1 x_age2 x_age3 x_age4 x_age5 x_age6 x_age7 y_age9)
+        (f_agdV x_age8)
 instance HasKey Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe ByteString) where
   {-# INLINE key #-}
   key
-    f_afRz
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRA
-                                                           x_afRB
-                                                           x_afRC
-                                                           x_afRD
-                                                           x_afRE
-                                                           x_afRF
-                                                           x_afRG
-                                                           x_afRH
-                                                           x_afRI
-                                                           x_afRJ
-                                                           x_afRK
-                                                           x_afRL
-                                                           x_afRM)
-    = (fmap
-         (\ y_afRN
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRA) y_afRN) x_afRC) x_afRD) x_afRE) x_afRF) x_afRG) x_afRH)
-                     x_afRI)
-                    x_afRJ)
-                   x_afRK)
-                  x_afRL)
-                 x_afRM))
-        (f_afRz x_afRB)
+    f_agea
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_ageb
+                                                           x_agec
+                                                           x_aged
+                                                           x_agee
+                                                           x_agef
+                                                           x_ageg
+                                                           x_ageh
+                                                           x_agei
+                                                           x_agej
+                                                           x_agek
+                                                           x_agel
+                                                           x_agem
+                                                           x_agen)
+    = fmap
+        (\ y_ageo
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_ageb y_ageo x_aged x_agee x_agef x_ageg x_ageh x_agei x_agej x_agek x_agel x_agem x_agen)
+        (f_agea x_agec)
 instance HasNVal Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_afRO
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRP
-                                                           x_afRQ
-                                                           x_afRR
-                                                           x_afRS
-                                                           x_afRT
-                                                           x_afRU
-                                                           x_afRV
-                                                           x_afRW
-                                                           x_afRX
-                                                           x_afRY
-                                                           x_afRZ
-                                                           x_afS0
-                                                           x_afS1)
-    = (fmap
-         (\ y_afS2
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afRP) x_afRQ) x_afRR) x_afRS) x_afRT) x_afRU) x_afRV) x_afRW)
-                     x_afRX)
-                    x_afRY)
-                   x_afRZ)
-                  y_afS2)
-                 x_afS1))
-        (f_afRO x_afS0)
+    f_agep
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_ageq
+                                                           x_ager
+                                                           x_ages
+                                                           x_aget
+                                                           x_ageu
+                                                           x_agev
+                                                           x_agew
+                                                           x_agex
+                                                           x_agey
+                                                           x_agez
+                                                           x_ageA
+                                                           x_ageB
+                                                           x_ageC)
+    = fmap
+        (\ y_ageD
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_ageq x_ager x_ages x_aget x_ageu x_agev x_agew x_agex x_agey x_agez x_ageA y_ageD x_ageC)
+        (f_agep x_ageB)
 class HasOp s a | s -> a where
   op :: Lens' s a
 instance HasOp Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest Network.Riak.Protocol.DtOp.DtOp where
   {-# INLINE op #-}
   op
-    f_afS3
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afS4
-                                                           x_afS5
-                                                           x_afS6
-                                                           x_afS7
-                                                           x_afS8
-                                                           x_afS9
-                                                           x_afSa
-                                                           x_afSb
-                                                           x_afSc
-                                                           x_afSd
-                                                           x_afSe
-                                                           x_afSf
-                                                           x_afSg)
-    = (fmap
-         (\ y_afSh
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afS4) x_afS5) x_afS6) x_afS7) y_afSh) x_afS9) x_afSa) x_afSb)
-                     x_afSc)
-                    x_afSd)
-                   x_afSe)
-                  x_afSf)
-                 x_afSg))
-        (f_afS3 x_afS8)
+    f_ageE
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_ageF
+                                                           x_ageG
+                                                           x_ageH
+                                                           x_ageI
+                                                           x_ageJ
+                                                           x_ageK
+                                                           x_ageL
+                                                           x_ageM
+                                                           x_ageN
+                                                           x_ageO
+                                                           x_ageP
+                                                           x_ageQ
+                                                           x_ageR)
+    = fmap
+        (\ y_ageS
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_ageF x_ageG x_ageH x_ageI y_ageS x_ageK x_ageL x_ageM x_ageN x_ageO x_ageP x_ageQ x_ageR)
+        (f_ageE x_ageJ)
 instance HasPw Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Word32) where
   {-# INLINE pw #-}
   pw
-    f_afSi
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSj
-                                                           x_afSk
-                                                           x_afSl
-                                                           x_afSm
-                                                           x_afSn
-                                                           x_afSo
-                                                           x_afSp
-                                                           x_afSq
-                                                           x_afSr
-                                                           x_afSs
-                                                           x_afSt
-                                                           x_afSu
-                                                           x_afSv)
-    = (fmap
-         (\ y_afSw
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSj) x_afSk) x_afSl) x_afSm) x_afSn) x_afSo) x_afSp) y_afSw)
-                     x_afSr)
-                    x_afSs)
-                   x_afSt)
-                  x_afSu)
-                 x_afSv))
-        (f_afSi x_afSq)
+    f_ageT
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_ageU
+                                                           x_ageV
+                                                           x_ageW
+                                                           x_ageX
+                                                           x_ageY
+                                                           x_ageZ
+                                                           x_agf0
+                                                           x_agf1
+                                                           x_agf2
+                                                           x_agf3
+                                                           x_agf4
+                                                           x_agf5
+                                                           x_agf6)
+    = fmap
+        (\ y_agf7
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_ageU x_ageV x_ageW x_ageX x_ageY x_ageZ x_agf0 y_agf7 x_agf2 x_agf3 x_agf4 x_agf5 x_agf6)
+        (f_ageT x_agf1)
 class HasReturnBody s a | s -> a where
   return_body :: Lens' s a
 instance HasReturnBody Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Bool) where
   {-# INLINE return_body #-}
   return_body
-    f_afSx
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSy
-                                                           x_afSz
-                                                           x_afSA
-                                                           x_afSB
-                                                           x_afSC
-                                                           x_afSD
-                                                           x_afSE
-                                                           x_afSF
-                                                           x_afSG
-                                                           x_afSH
-                                                           x_afSI
-                                                           x_afSJ
-                                                           x_afSK)
-    = (fmap
-         (\ y_afSL
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSy) x_afSz) x_afSA) x_afSB) x_afSC) x_afSD) x_afSE) x_afSF)
-                     y_afSL)
-                    x_afSH)
-                   x_afSI)
-                  x_afSJ)
-                 x_afSK))
-        (f_afSx x_afSG)
+    f_agf8
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agf9
+                                                           x_agfa
+                                                           x_agfb
+                                                           x_agfc
+                                                           x_agfd
+                                                           x_agfe
+                                                           x_agff
+                                                           x_agfg
+                                                           x_agfh
+                                                           x_agfi
+                                                           x_agfj
+                                                           x_agfk
+                                                           x_agfl)
+    = fmap
+        (\ y_agfm
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agf9 x_agfa x_agfb x_agfc x_agfd x_agfe x_agff x_agfg y_agfm x_agfi x_agfj x_agfk x_agfl)
+        (f_agf8 x_agfh)
 instance HasSloppyQuorum Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Bool) where
   {-# INLINE sloppy_quorum #-}
   sloppy_quorum
-    f_afSM
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSN
-                                                           x_afSO
-                                                           x_afSP
-                                                           x_afSQ
-                                                           x_afSR
-                                                           x_afSS
-                                                           x_afST
-                                                           x_afSU
-                                                           x_afSV
-                                                           x_afSW
-                                                           x_afSX
-                                                           x_afSY
-                                                           x_afSZ)
-    = (fmap
-         (\ y_afT0
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afSN) x_afSO) x_afSP) x_afSQ) x_afSR) x_afSS) x_afST) x_afSU)
-                     x_afSV)
-                    x_afSW)
-                   y_afT0)
-                  x_afSY)
-                 x_afSZ))
-        (f_afSM x_afSX)
+    f_agfn
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agfo
+                                                           x_agfp
+                                                           x_agfq
+                                                           x_agfr
+                                                           x_agfs
+                                                           x_agft
+                                                           x_agfu
+                                                           x_agfv
+                                                           x_agfw
+                                                           x_agfx
+                                                           x_agfy
+                                                           x_agfz
+                                                           x_agfA)
+    = fmap
+        (\ y_agfB
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agfo x_agfp x_agfq x_agfr x_agfs x_agft x_agfu x_agfv x_agfw x_agfx y_agfB x_agfz x_agfA)
+        (f_agfn x_agfy)
 instance HasTimeout Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_afT1
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afT2
-                                                           x_afT3
-                                                           x_afT4
-                                                           x_afT5
-                                                           x_afT6
-                                                           x_afT7
-                                                           x_afT8
-                                                           x_afT9
-                                                           x_afTa
-                                                           x_afTb
-                                                           x_afTc
-                                                           x_afTd
-                                                           x_afTe)
-    = (fmap
-         (\ y_afTf
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afT2) x_afT3) x_afT4) x_afT5) x_afT6) x_afT7) x_afT8) x_afT9)
-                     x_afTa)
-                    y_afTf)
-                   x_afTc)
-                  x_afTd)
-                 x_afTe))
-        (f_afT1 x_afTb)
+    f_agfC
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agfD
+                                                           x_agfE
+                                                           x_agfF
+                                                           x_agfG
+                                                           x_agfH
+                                                           x_agfI
+                                                           x_agfJ
+                                                           x_agfK
+                                                           x_agfL
+                                                           x_agfM
+                                                           x_agfN
+                                                           x_agfO
+                                                           x_agfP)
+    = fmap
+        (\ y_agfQ
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agfD x_agfE x_agfF x_agfG x_agfH x_agfI x_agfJ x_agfK x_agfL y_agfQ x_agfN x_agfO x_agfP)
+        (f_agfC x_agfM)
 instance HasType' Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest ByteString where
   {-# INLINE type' #-}
   type'
-    f_afTg
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afTh
-                                                           x_afTi
-                                                           x_afTj
-                                                           x_afTk
-                                                           x_afTl
-                                                           x_afTm
-                                                           x_afTn
-                                                           x_afTo
-                                                           x_afTp
-                                                           x_afTq
-                                                           x_afTr
-                                                           x_afTs
-                                                           x_afTt)
-    = (fmap
-         (\ y_afTu
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afTh) x_afTi) y_afTu) x_afTk) x_afTl) x_afTm) x_afTn) x_afTo)
-                     x_afTp)
-                    x_afTq)
-                   x_afTr)
-                  x_afTs)
-                 x_afTt))
-        (f_afTg x_afTj)
+    f_agfR
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agfS
+                                                           x_agfT
+                                                           x_agfU
+                                                           x_agfV
+                                                           x_agfW
+                                                           x_agfX
+                                                           x_agfY
+                                                           x_agfZ
+                                                           x_agg0
+                                                           x_agg1
+                                                           x_agg2
+                                                           x_agg3
+                                                           x_agg4)
+    = fmap
+        (\ y_agg5
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agfS x_agfT y_agg5 x_agfV x_agfW x_agfX x_agfY x_agfZ x_agg0 x_agg1 x_agg2 x_agg3 x_agg4)
+        (f_agfR x_agfU)
 instance HasW Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest (Maybe Word32) where
   {-# INLINE w #-}
-  w f_afTv
-    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afTw
-                                                           x_afTx
-                                                           x_afTy
-                                                           x_afTz
-                                                           x_afTA
-                                                           x_afTB
-                                                           x_afTC
-                                                           x_afTD
-                                                           x_afTE
-                                                           x_afTF
-                                                           x_afTG
-                                                           x_afTH
-                                                           x_afTI)
-    = (fmap
-         (\ y_afTJ
-            -> ((((((((((((Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_afTw) x_afTx) x_afTy) x_afTz) x_afTA) y_afTJ) x_afTC) x_afTD)
-                     x_afTE)
-                    x_afTF)
-                   x_afTG)
-                  x_afTH)
-                 x_afTI))
-        (f_afTv x_afTB)
+  w f_agg6
+    (Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest x_agg7
+                                                           x_agg8
+                                                           x_agg9
+                                                           x_agga
+                                                           x_aggb
+                                                           x_aggc
+                                                           x_aggd
+                                                           x_agge
+                                                           x_aggf
+                                                           x_aggg
+                                                           x_aggh
+                                                           x_aggi
+                                                           x_aggj)
+    = fmap
+        (\ y_aggk
+           -> Network.Riak.Protocol.DtUpdateRequest.DtUpdateRequest
+                x_agg7 x_agg8 x_agg9 x_agga x_aggb y_aggk x_aggd x_agge x_aggf x_aggg x_aggh x_aggi x_aggj)
+        (f_agg6 x_aggc)
 instance HasContext Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse (Maybe ByteString) where
   {-# INLINE context #-}
-  context f_afYA (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYB x_afYC x_afYD x_afYE x_afYF)
-    = (fmap (\ y_afYG -> ((((Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYB) y_afYG) x_afYD) x_afYE) x_afYF))
-        (f_afYA x_afYC)
+  context f_agki (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkj x_agkk x_agkl x_agkm x_agkn)
+    = fmap (\ y_agko -> Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkj y_agko x_agkl x_agkm x_agkn) (f_agki x_agkk)
 class HasCounterValue s a | s -> a where
   counter_value :: Lens' s a
 instance HasCounterValue Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse (Maybe Int64) where
   {-# INLINE counter_value #-}
-  counter_value f_afYH (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYI x_afYJ x_afYK x_afYL x_afYM)
-    = (fmap (\ y_afYN -> ((((Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYI) x_afYJ) y_afYN) x_afYL) x_afYM))
-        (f_afYH x_afYK)
+  counter_value f_agkp (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkq x_agkr x_agks x_agkt x_agku)
+    = fmap (\ y_agkv -> Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkq x_agkr y_agkv x_agkt x_agku) (f_agkp x_agks)
 instance HasKey Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse (Maybe ByteString) where
   {-# INLINE key #-}
-  key f_afYO (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYP x_afYQ x_afYR x_afYS x_afYT)
-    = (fmap (\ y_afYU -> ((((Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse y_afYU) x_afYQ) x_afYR) x_afYS) x_afYT))
-        (f_afYO x_afYP)
+  key f_agkw (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkx x_agky x_agkz x_agkA x_agkB)
+    = fmap (\ y_agkC -> Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse y_agkC x_agky x_agkz x_agkA x_agkB) (f_agkw x_agkx)
 class HasMapValue s a | s -> a where
   map_value :: Lens' s a
 instance HasMapValue Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse (Seq Network.Riak.Protocol.MapEntry.MapEntry) where
   {-# INLINE map_value #-}
-  map_value f_afYV (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYW x_afYX x_afYY x_afYZ x_afZ0)
-    = (fmap (\ y_afZ1 -> ((((Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afYW) x_afYX) x_afYY) x_afYZ) y_afZ1))
-        (f_afYV x_afZ0)
+  map_value f_agkD (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkE x_agkF x_agkG x_agkH x_agkI)
+    = fmap (\ y_agkJ -> Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkE x_agkF x_agkG x_agkH y_agkJ) (f_agkD x_agkI)
 class HasSetValue s a | s -> a where
   set_value :: Lens' s a
 instance HasSetValue Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse (Seq ByteString) where
   {-# INLINE set_value #-}
-  set_value f_afZ2 (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afZ3 x_afZ4 x_afZ5 x_afZ6 x_afZ7)
-    = (fmap (\ y_afZ8 -> ((((Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_afZ3) x_afZ4) x_afZ5) y_afZ8) x_afZ7))
-        (f_afZ2 x_afZ6)
+  set_value f_agkK (Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkL x_agkM x_agkN x_agkO x_agkP)
+    = fmap (\ y_agkQ -> Network.Riak.Protocol.DtUpdateResponse.DtUpdateResponse x_agkL x_agkM x_agkN y_agkQ x_agkP) (f_agkK x_agkO)
 instance HasCounterValue Network.Riak.Protocol.DtValue.DtValue (Maybe Int64) where
   {-# INLINE counter_value #-}
-  counter_value f_ag2m (Network.Riak.Protocol.DtValue.DtValue x_ag2n x_ag2o x_ag2p)
-    = (fmap (\ y_ag2q -> ((Network.Riak.Protocol.DtValue.DtValue y_ag2q) x_ag2o) x_ag2p)) (f_ag2m x_ag2n)
+  counter_value f_agnm (Network.Riak.Protocol.DtValue.DtValue x_agnn x_agno x_agnp)
+    = fmap (\ y_agnq -> Network.Riak.Protocol.DtValue.DtValue y_agnq x_agno x_agnp) (f_agnm x_agnn)
 instance HasMapValue Network.Riak.Protocol.DtValue.DtValue (Seq Network.Riak.Protocol.MapEntry.MapEntry) where
   {-# INLINE map_value #-}
-  map_value f_ag2r (Network.Riak.Protocol.DtValue.DtValue x_ag2s x_ag2t x_ag2u)
-    = (fmap (\ y_ag2v -> ((Network.Riak.Protocol.DtValue.DtValue x_ag2s) x_ag2t) y_ag2v)) (f_ag2r x_ag2u)
+  map_value f_agnr (Network.Riak.Protocol.DtValue.DtValue x_agns x_agnt x_agnu)
+    = fmap (\ y_agnv -> Network.Riak.Protocol.DtValue.DtValue x_agns x_agnt y_agnv) (f_agnr x_agnu)
 instance HasSetValue Network.Riak.Protocol.DtValue.DtValue (Seq ByteString) where
   {-# INLINE set_value #-}
-  set_value f_ag2w (Network.Riak.Protocol.DtValue.DtValue x_ag2x x_ag2y x_ag2z)
-    = (fmap (\ y_ag2A -> ((Network.Riak.Protocol.DtValue.DtValue x_ag2x) y_ag2A) x_ag2z)) (f_ag2w x_ag2y)
+  set_value f_agnw (Network.Riak.Protocol.DtValue.DtValue x_agnx x_agny x_agnz)
+    = fmap (\ y_agnA -> Network.Riak.Protocol.DtValue.DtValue x_agnx y_agnA x_agnz) (f_agnw x_agny)
 class HasErrcode s a | s -> a where
   errcode :: Lens' s a
 instance HasErrcode Network.Riak.Protocol.ErrorResponse.ErrorResponse Word32 where
   {-# INLINE errcode #-}
-  errcode f_ag3z (Network.Riak.Protocol.ErrorResponse.ErrorResponse x_ag3A x_ag3B)
-    = (fmap (\ y_ag3C -> (Network.Riak.Protocol.ErrorResponse.ErrorResponse x_ag3A) y_ag3C)) (f_ag3z x_ag3B)
+  errcode f_agoq (Network.Riak.Protocol.ErrorResponse.ErrorResponse x_agor x_agos)
+    = fmap (\ y_agot -> Network.Riak.Protocol.ErrorResponse.ErrorResponse x_agor y_agot) (f_agoq x_agos)
 class HasErrmsg s a | s -> a where
   errmsg :: Lens' s a
 instance HasErrmsg Network.Riak.Protocol.ErrorResponse.ErrorResponse ByteString where
   {-# INLINE errmsg #-}
-  errmsg f_ag3D (Network.Riak.Protocol.ErrorResponse.ErrorResponse x_ag3E x_ag3F)
-    = (fmap (\ y_ag3G -> (Network.Riak.Protocol.ErrorResponse.ErrorResponse y_ag3G) x_ag3F)) (f_ag3D x_ag3E)
+  errmsg f_agou (Network.Riak.Protocol.ErrorResponse.ErrorResponse x_agov x_agow)
+    = fmap (\ y_agox -> Network.Riak.Protocol.ErrorResponse.ErrorResponse y_agox x_agow) (f_agou x_agov)
 instance HasBucket Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_ag5v (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_ag5w x_ag5x x_ag5y)
-    = (fmap (\ y_ag5z -> ((Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest y_ag5z) x_ag5x) x_ag5y))
-        (f_ag5v x_ag5w)
+  bucket f_agq0 (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_agq1 x_agq2 x_agq3)
+    = fmap
+        (\ y_agq4 -> Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest y_agq4 x_agq2 x_agq3) (f_agq0 x_agq1)
 instance HasKey Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest ByteString where
   {-# INLINE key #-}
-  key f_ag5A (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_ag5B x_ag5C x_ag5D)
-    = (fmap (\ y_ag5E -> ((Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_ag5B) y_ag5E) x_ag5D))
-        (f_ag5A x_ag5C)
+  key f_agq5 (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_agq6 x_agq7 x_agq8)
+    = fmap
+        (\ y_agq9 -> Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_agq6 y_agq9 x_agq8) (f_agq5 x_agq7)
 instance HasType' Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_ag5F (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_ag5G x_ag5H x_ag5I)
-    = (fmap (\ y_ag5J -> ((Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_ag5G) x_ag5H) y_ag5J))
-        (f_ag5F x_ag5I)
+  type' f_agqa (Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_agqb x_agqc x_agqd)
+    = fmap
+        (\ y_agqe -> Network.Riak.Protocol.GetBucketKeyPreflistRequest.GetBucketKeyPreflistRequest x_agqb x_agqc y_agqe) (f_agqa x_agqd)
 class HasPreflist s a | s -> a where
   preflist :: Lens' s a
 instance HasPreflist Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse (Seq Network.Riak.Protocol.BucketKeyPreflistItem.BucketKeyPreflistItem) where
   {-# INLINE preflist #-}
-  preflist f_ag6I (Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse x_ag6J)
-    = (fmap (\ y_ag6K -> Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse y_ag6K)) (f_ag6I x_ag6J)
+  preflist f_agr4 (Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse x_agr5)
+    = fmap (\ y_agr6 -> Network.Riak.Protocol.GetBucketKeyPreflistResponse.GetBucketKeyPreflistResponse y_agr6) (f_agr4 x_agr5)
 instance HasBucket Network.Riak.Protocol.GetBucketRequest.GetBucketRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_ag7I (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_ag7J x_ag7K)
-    = (fmap (\ y_ag7L -> (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest y_ag7L) x_ag7K)) (f_ag7I x_ag7J)
+  bucket f_agrU (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_agrV x_agrW)
+    = fmap (\ y_agrX -> Network.Riak.Protocol.GetBucketRequest.GetBucketRequest y_agrX x_agrW) (f_agrU x_agrV)
 instance HasType' Network.Riak.Protocol.GetBucketRequest.GetBucketRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_ag7M (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_ag7N x_ag7O)
-    = (fmap (\ y_ag7P -> (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_ag7N) y_ag7P)) (f_ag7M x_ag7O)
+  type' f_agrY (Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_agrZ x_ags0)
+    = fmap (\ y_ags1 -> Network.Riak.Protocol.GetBucketRequest.GetBucketRequest x_agrZ y_ags1) (f_agrY x_ags0)
 class HasProps s a | s -> a where
   props :: Lens' s a
 instance HasProps Network.Riak.Protocol.GetBucketResponse.GetBucketResponse Network.Riak.Protocol.BucketProps.BucketProps where
   {-# INLINE props #-}
-  props f_ag8x (Network.Riak.Protocol.GetBucketResponse.GetBucketResponse x_ag8y)
-    = (fmap (\ y_ag8z -> Network.Riak.Protocol.GetBucketResponse.GetBucketResponse y_ag8z)) (f_ag8x x_ag8y)
+  props f_agsD (Network.Riak.Protocol.GetBucketResponse.GetBucketResponse x_agsE)
+    = fmap (\ y_agsF -> Network.Riak.Protocol.GetBucketResponse.GetBucketResponse y_agsF) (f_agsD x_agsE)
 instance HasType' Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest ByteString where
   {-# INLINE type' #-}
-  type' f_ag9x (Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest x_ag9y)
-    = (fmap (\ y_ag9z -> Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest y_ag9z)) (f_ag9x x_ag9y)
+  type' f_agtt (Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest x_agtu)
+    = fmap (\ y_agtv -> Network.Riak.Protocol.GetBucketTypeRequest.GetBucketTypeRequest y_agtv) (f_agtt x_agtu)
 class HasClientId s a | s -> a where
   client_id :: Lens' s a
 instance HasClientId Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse ByteString where
   {-# INLINE client_id #-}
-  client_id f_aga7 (Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse x_aga8)
-    = (fmap (\ y_aga9 -> Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse y_aga9)) (f_aga7 x_aga8)
+  client_id f_agu3 (Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse x_agu4)
+    = fmap (\ y_agu5 -> Network.Riak.Protocol.GetClientIDResponse.GetClientIDResponse y_agu5) (f_agu3 x_agu4)
 instance HasBasicQuorum Network.Riak.Protocol.GetRequest.GetRequest (Maybe Bool) where
   {-# INLINE basic_quorum #-}
   basic_quorum
-    f_agb7
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agb8
-                                                 x_agb9
-                                                 x_agba
-                                                 x_agbb
-                                                 x_agbc
-                                                 x_agbd
-                                                 x_agbe
-                                                 x_agbf
-                                                 x_agbg
-                                                 x_agbh
-                                                 x_agbi
-                                                 x_agbj
-                                                 x_agbk)
-    = (fmap
-         (\ y_agbl
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agb8) x_agb9) x_agba) x_agbb) y_agbl) x_agbd) x_agbe) x_agbf) x_agbg)
-                    x_agbh)
-                   x_agbi)
-                  x_agbj)
-                 x_agbk))
-        (f_agb7 x_agbc)
+    f_aguT
+    (Network.Riak.Protocol.GetRequest.GetRequest x_aguU
+                                                 x_aguV
+                                                 x_aguW
+                                                 x_aguX
+                                                 x_aguY
+                                                 x_aguZ
+                                                 x_agv0
+                                                 x_agv1
+                                                 x_agv2
+                                                 x_agv3
+                                                 x_agv4
+                                                 x_agv5
+                                                 x_agv6)
+    = fmap
+        (\ y_agv7
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_aguU x_aguV x_aguW x_aguX y_agv7 x_aguZ x_agv0 x_agv1 x_agv2 x_agv3 x_agv4 x_agv5 x_agv6)
+        (f_aguT x_aguY)
 instance HasBucket Network.Riak.Protocol.GetRequest.GetRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_agbm
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agbn
-                                                 x_agbo
-                                                 x_agbp
-                                                 x_agbq
-                                                 x_agbr
-                                                 x_agbs
-                                                 x_agbt
-                                                 x_agbu
-                                                 x_agbv
-                                                 x_agbw
-                                                 x_agbx
-                                                 x_agby
-                                                 x_agbz)
-    = (fmap
-         (\ y_agbA
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest y_agbA) x_agbo) x_agbp) x_agbq) x_agbr) x_agbs) x_agbt) x_agbu) x_agbv)
-                    x_agbw)
-                   x_agbx)
-                  x_agby)
-                 x_agbz))
-        (f_agbm x_agbn)
+    f_agv8
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agv9
+                                                 x_agva
+                                                 x_agvb
+                                                 x_agvc
+                                                 x_agvd
+                                                 x_agve
+                                                 x_agvf
+                                                 x_agvg
+                                                 x_agvh
+                                                 x_agvi
+                                                 x_agvj
+                                                 x_agvk
+                                                 x_agvl)
+    = fmap
+        (\ y_agvm
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                y_agvm x_agva x_agvb x_agvc x_agvd x_agve x_agvf x_agvg x_agvh x_agvi x_agvj x_agvk x_agvl)
+        (f_agv8 x_agv9)
 class HasDeletedvclock s a | s -> a where
   deletedvclock :: Lens' s a
 instance HasDeletedvclock Network.Riak.Protocol.GetRequest.GetRequest (Maybe Bool) where
   {-# INLINE deletedvclock #-}
   deletedvclock
-    f_agbB
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agbC
-                                                 x_agbD
-                                                 x_agbE
-                                                 x_agbF
-                                                 x_agbG
-                                                 x_agbH
-                                                 x_agbI
-                                                 x_agbJ
-                                                 x_agbK
-                                                 x_agbL
-                                                 x_agbM
-                                                 x_agbN
-                                                 x_agbO)
-    = (fmap
-         (\ y_agbP
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agbC) x_agbD) x_agbE) x_agbF) x_agbG) x_agbH) x_agbI) x_agbJ) y_agbP)
-                    x_agbL)
-                   x_agbM)
-                  x_agbN)
-                 x_agbO))
-        (f_agbB x_agbK)
+    f_agvn
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agvo
+                                                 x_agvp
+                                                 x_agvq
+                                                 x_agvr
+                                                 x_agvs
+                                                 x_agvt
+                                                 x_agvu
+                                                 x_agvv
+                                                 x_agvw
+                                                 x_agvx
+                                                 x_agvy
+                                                 x_agvz
+                                                 x_agvA)
+    = fmap
+        (\ y_agvB
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agvo x_agvp x_agvq x_agvr x_agvs x_agvt x_agvu x_agvv y_agvB x_agvx x_agvy x_agvz x_agvA)
+        (f_agvn x_agvw)
 class HasHead s a | s -> a where
   head :: Lens' s a
 instance HasHead Network.Riak.Protocol.GetRequest.GetRequest (Maybe Bool) where
   {-# INLINE head #-}
   head
-    f_agbQ
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agbR
-                                                 x_agbS
-                                                 x_agbT
-                                                 x_agbU
-                                                 x_agbV
-                                                 x_agbW
-                                                 x_agbX
-                                                 x_agbY
-                                                 x_agbZ
-                                                 x_agc0
-                                                 x_agc1
-                                                 x_agc2
-                                                 x_agc3)
-    = (fmap
-         (\ y_agc4
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agbR) x_agbS) x_agbT) x_agbU) x_agbV) x_agbW) x_agbX) y_agc4) x_agbZ)
-                    x_agc0)
-                   x_agc1)
-                  x_agc2)
-                 x_agc3))
-        (f_agbQ x_agbY)
+    f_agvC
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agvD
+                                                 x_agvE
+                                                 x_agvF
+                                                 x_agvG
+                                                 x_agvH
+                                                 x_agvI
+                                                 x_agvJ
+                                                 x_agvK
+                                                 x_agvL
+                                                 x_agvM
+                                                 x_agvN
+                                                 x_agvO
+                                                 x_agvP)
+    = fmap
+        (\ y_agvQ
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agvD x_agvE x_agvF x_agvG x_agvH x_agvI x_agvJ y_agvQ x_agvL x_agvM x_agvN x_agvO x_agvP)
+        (f_agvC x_agvK)
 class HasIfModified s a | s -> a where
   if_modified :: Lens' s a
 instance HasIfModified Network.Riak.Protocol.GetRequest.GetRequest (Maybe ByteString) where
   {-# INLINE if_modified #-}
   if_modified
-    f_agc5
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agc6
-                                                 x_agc7
-                                                 x_agc8
-                                                 x_agc9
-                                                 x_agca
-                                                 x_agcb
-                                                 x_agcc
-                                                 x_agcd
-                                                 x_agce
-                                                 x_agcf
-                                                 x_agcg
-                                                 x_agch
-                                                 x_agci)
-    = (fmap
-         (\ y_agcj
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agc6) x_agc7) x_agc8) x_agc9) x_agca) x_agcb) y_agcj) x_agcd) x_agce)
-                    x_agcf)
-                   x_agcg)
-                  x_agch)
-                 x_agci))
-        (f_agc5 x_agcc)
+    f_agvR
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agvS
+                                                 x_agvT
+                                                 x_agvU
+                                                 x_agvV
+                                                 x_agvW
+                                                 x_agvX
+                                                 x_agvY
+                                                 x_agvZ
+                                                 x_agw0
+                                                 x_agw1
+                                                 x_agw2
+                                                 x_agw3
+                                                 x_agw4)
+    = fmap
+        (\ y_agw5
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agvS x_agvT x_agvU x_agvV x_agvW x_agvX y_agw5 x_agvZ x_agw0 x_agw1 x_agw2 x_agw3 x_agw4)
+        (f_agvR x_agvY)
 instance HasKey Network.Riak.Protocol.GetRequest.GetRequest ByteString where
   {-# INLINE key #-}
   key
-    f_agck
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agcl
-                                                 x_agcm
-                                                 x_agcn
-                                                 x_agco
-                                                 x_agcp
-                                                 x_agcq
-                                                 x_agcr
-                                                 x_agcs
-                                                 x_agct
-                                                 x_agcu
-                                                 x_agcv
-                                                 x_agcw
-                                                 x_agcx)
-    = (fmap
-         (\ y_agcy
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agcl) y_agcy) x_agcn) x_agco) x_agcp) x_agcq) x_agcr) x_agcs) x_agct)
-                    x_agcu)
-                   x_agcv)
-                  x_agcw)
-                 x_agcx))
-        (f_agck x_agcm)
+    f_agw6
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agw7
+                                                 x_agw8
+                                                 x_agw9
+                                                 x_agwa
+                                                 x_agwb
+                                                 x_agwc
+                                                 x_agwd
+                                                 x_agwe
+                                                 x_agwf
+                                                 x_agwg
+                                                 x_agwh
+                                                 x_agwi
+                                                 x_agwj)
+    = fmap
+        (\ y_agwk
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agw7 y_agwk x_agw9 x_agwa x_agwb x_agwc x_agwd x_agwe x_agwf x_agwg x_agwh x_agwi x_agwj)
+        (f_agw6 x_agw8)
 instance HasNVal Network.Riak.Protocol.GetRequest.GetRequest (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_agcz
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agcA
-                                                 x_agcB
-                                                 x_agcC
-                                                 x_agcD
-                                                 x_agcE
-                                                 x_agcF
-                                                 x_agcG
-                                                 x_agcH
-                                                 x_agcI
-                                                 x_agcJ
-                                                 x_agcK
-                                                 x_agcL
-                                                 x_agcM)
-    = (fmap
-         (\ y_agcN
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agcA) x_agcB) x_agcC) x_agcD) x_agcE) x_agcF) x_agcG) x_agcH) x_agcI)
-                    x_agcJ)
-                   x_agcK)
-                  y_agcN)
-                 x_agcM))
-        (f_agcz x_agcL)
+    f_agwl
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agwm
+                                                 x_agwn
+                                                 x_agwo
+                                                 x_agwp
+                                                 x_agwq
+                                                 x_agwr
+                                                 x_agws
+                                                 x_agwt
+                                                 x_agwu
+                                                 x_agwv
+                                                 x_agww
+                                                 x_agwx
+                                                 x_agwy)
+    = fmap
+        (\ y_agwz
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agwm x_agwn x_agwo x_agwp x_agwq x_agwr x_agws x_agwt x_agwu x_agwv x_agww y_agwz x_agwy)
+        (f_agwl x_agwx)
 instance HasNotfoundOk Network.Riak.Protocol.GetRequest.GetRequest (Maybe Bool) where
   {-# INLINE notfound_ok #-}
   notfound_ok
-    f_agcO
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agcP
-                                                 x_agcQ
-                                                 x_agcR
-                                                 x_agcS
-                                                 x_agcT
-                                                 x_agcU
-                                                 x_agcV
-                                                 x_agcW
-                                                 x_agcX
-                                                 x_agcY
-                                                 x_agcZ
-                                                 x_agd0
-                                                 x_agd1)
-    = (fmap
-         (\ y_agd2
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agcP) x_agcQ) x_agcR) x_agcS) x_agcT) y_agd2) x_agcV) x_agcW) x_agcX)
-                    x_agcY)
-                   x_agcZ)
-                  x_agd0)
-                 x_agd1))
-        (f_agcO x_agcU)
+    f_agwA
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agwB
+                                                 x_agwC
+                                                 x_agwD
+                                                 x_agwE
+                                                 x_agwF
+                                                 x_agwG
+                                                 x_agwH
+                                                 x_agwI
+                                                 x_agwJ
+                                                 x_agwK
+                                                 x_agwL
+                                                 x_agwM
+                                                 x_agwN)
+    = fmap
+        (\ y_agwO
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agwB x_agwC x_agwD x_agwE x_agwF y_agwO x_agwH x_agwI x_agwJ x_agwK x_agwL x_agwM x_agwN)
+        (f_agwA x_agwG)
 instance HasPr Network.Riak.Protocol.GetRequest.GetRequest (Maybe Word32) where
   {-# INLINE pr #-}
   pr
-    f_agd3
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agd4
-                                                 x_agd5
-                                                 x_agd6
-                                                 x_agd7
-                                                 x_agd8
-                                                 x_agd9
-                                                 x_agda
-                                                 x_agdb
-                                                 x_agdc
-                                                 x_agdd
-                                                 x_agde
-                                                 x_agdf
-                                                 x_agdg)
-    = (fmap
-         (\ y_agdh
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agd4) x_agd5) x_agd6) y_agdh) x_agd8) x_agd9) x_agda) x_agdb) x_agdc)
-                    x_agdd)
-                   x_agde)
-                  x_agdf)
-                 x_agdg))
-        (f_agd3 x_agd7)
+    f_agwP
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agwQ
+                                                 x_agwR
+                                                 x_agwS
+                                                 x_agwT
+                                                 x_agwU
+                                                 x_agwV
+                                                 x_agwW
+                                                 x_agwX
+                                                 x_agwY
+                                                 x_agwZ
+                                                 x_agx0
+                                                 x_agx1
+                                                 x_agx2)
+    = fmap
+        (\ y_agx3
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agwQ x_agwR x_agwS y_agx3 x_agwU x_agwV x_agwW x_agwX x_agwY x_agwZ x_agx0 x_agx1 x_agx2)
+        (f_agwP x_agwT)
 instance HasR Network.Riak.Protocol.GetRequest.GetRequest (Maybe Word32) where
   {-# INLINE r #-}
-  r f_agdi
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agdj
-                                                 x_agdk
-                                                 x_agdl
-                                                 x_agdm
-                                                 x_agdn
-                                                 x_agdo
-                                                 x_agdp
-                                                 x_agdq
-                                                 x_agdr
-                                                 x_agds
-                                                 x_agdt
-                                                 x_agdu
-                                                 x_agdv)
-    = (fmap
-         (\ y_agdw
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agdj) x_agdk) y_agdw) x_agdm) x_agdn) x_agdo) x_agdp) x_agdq) x_agdr)
-                    x_agds)
-                   x_agdt)
-                  x_agdu)
-                 x_agdv))
-        (f_agdi x_agdl)
+  r f_agx4
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agx5
+                                                 x_agx6
+                                                 x_agx7
+                                                 x_agx8
+                                                 x_agx9
+                                                 x_agxa
+                                                 x_agxb
+                                                 x_agxc
+                                                 x_agxd
+                                                 x_agxe
+                                                 x_agxf
+                                                 x_agxg
+                                                 x_agxh)
+    = fmap
+        (\ y_agxi
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agx5 x_agx6 y_agxi x_agx8 x_agx9 x_agxa x_agxb x_agxc x_agxd x_agxe x_agxf x_agxg x_agxh)
+        (f_agx4 x_agx7)
 instance HasSloppyQuorum Network.Riak.Protocol.GetRequest.GetRequest (Maybe Bool) where
   {-# INLINE sloppy_quorum #-}
   sloppy_quorum
-    f_agdx
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agdy
-                                                 x_agdz
-                                                 x_agdA
-                                                 x_agdB
-                                                 x_agdC
-                                                 x_agdD
-                                                 x_agdE
-                                                 x_agdF
-                                                 x_agdG
-                                                 x_agdH
-                                                 x_agdI
-                                                 x_agdJ
-                                                 x_agdK)
-    = (fmap
-         (\ y_agdL
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agdy) x_agdz) x_agdA) x_agdB) x_agdC) x_agdD) x_agdE) x_agdF) x_agdG)
-                    x_agdH)
-                   y_agdL)
-                  x_agdJ)
-                 x_agdK))
-        (f_agdx x_agdI)
+    f_agxj
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agxk
+                                                 x_agxl
+                                                 x_agxm
+                                                 x_agxn
+                                                 x_agxo
+                                                 x_agxp
+                                                 x_agxq
+                                                 x_agxr
+                                                 x_agxs
+                                                 x_agxt
+                                                 x_agxu
+                                                 x_agxv
+                                                 x_agxw)
+    = fmap
+        (\ y_agxx
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agxk x_agxl x_agxm x_agxn x_agxo x_agxp x_agxq x_agxr x_agxs x_agxt y_agxx x_agxv x_agxw)
+        (f_agxj x_agxu)
 instance HasTimeout Network.Riak.Protocol.GetRequest.GetRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_agdM
-    (Network.Riak.Protocol.GetRequest.GetRequest x_agdN
-                                                 x_agdO
-                                                 x_agdP
-                                                 x_agdQ
-                                                 x_agdR
-                                                 x_agdS
-                                                 x_agdT
-                                                 x_agdU
-                                                 x_agdV
-                                                 x_agdW
-                                                 x_agdX
-                                                 x_agdY
-                                                 x_agdZ)
-    = (fmap
-         (\ y_age0
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_agdN) x_agdO) x_agdP) x_agdQ) x_agdR) x_agdS) x_agdT) x_agdU) x_agdV)
-                    y_age0)
-                   x_agdX)
-                  x_agdY)
-                 x_agdZ))
-        (f_agdM x_agdW)
+    f_agxy
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agxz
+                                                 x_agxA
+                                                 x_agxB
+                                                 x_agxC
+                                                 x_agxD
+                                                 x_agxE
+                                                 x_agxF
+                                                 x_agxG
+                                                 x_agxH
+                                                 x_agxI
+                                                 x_agxJ
+                                                 x_agxK
+                                                 x_agxL)
+    = fmap
+        (\ y_agxM
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agxz x_agxA x_agxB x_agxC x_agxD x_agxE x_agxF x_agxG x_agxH y_agxM x_agxJ x_agxK x_agxL)
+        (f_agxy x_agxI)
 instance HasType' Network.Riak.Protocol.GetRequest.GetRequest (Maybe ByteString) where
   {-# INLINE type' #-}
   type'
-    f_age1
-    (Network.Riak.Protocol.GetRequest.GetRequest x_age2
-                                                 x_age3
-                                                 x_age4
-                                                 x_age5
-                                                 x_age6
-                                                 x_age7
-                                                 x_age8
-                                                 x_age9
-                                                 x_agea
-                                                 x_ageb
-                                                 x_agec
-                                                 x_aged
-                                                 x_agee)
-    = (fmap
-         (\ y_agef
-            -> ((((((((((((Network.Riak.Protocol.GetRequest.GetRequest x_age2) x_age3) x_age4) x_age5) x_age6) x_age7) x_age8) x_age9) x_agea)
-                    x_ageb)
-                   x_agec)
-                  x_aged)
-                 y_agef))
-        (f_age1 x_agee)
+    f_agxN
+    (Network.Riak.Protocol.GetRequest.GetRequest x_agxO
+                                                 x_agxP
+                                                 x_agxQ
+                                                 x_agxR
+                                                 x_agxS
+                                                 x_agxT
+                                                 x_agxU
+                                                 x_agxV
+                                                 x_agxW
+                                                 x_agxX
+                                                 x_agxY
+                                                 x_agxZ
+                                                 x_agy0)
+    = fmap
+        (\ y_agy1
+           -> Network.Riak.Protocol.GetRequest.GetRequest
+                x_agxO x_agxP x_agxQ x_agxR x_agxS x_agxT x_agxU x_agxV x_agxW x_agxX x_agxY x_agxZ y_agy1)
+        (f_agxN x_agy0)
 class HasContent s a | s -> a where
   content :: Lens' s a
 instance HasContent Network.Riak.Protocol.GetResponse.GetResponse (Seq Network.Riak.Protocol.Content.Content) where
   {-# INLINE content #-}
-  content f_agjF (Network.Riak.Protocol.GetResponse.GetResponse x_agjG x_agjH x_agjI)
-    = (fmap (\ y_agjJ -> ((Network.Riak.Protocol.GetResponse.GetResponse y_agjJ) x_agjH) x_agjI)) (f_agjF x_agjG)
+  content f_agCn (Network.Riak.Protocol.GetResponse.GetResponse x_agCo x_agCp x_agCq)
+    = fmap (\ y_agCr -> Network.Riak.Protocol.GetResponse.GetResponse y_agCr x_agCp x_agCq) (f_agCn x_agCo)
 class HasUnchanged s a | s -> a where
   unchanged :: Lens' s a
 instance HasUnchanged Network.Riak.Protocol.GetResponse.GetResponse (Maybe Bool) where
   {-# INLINE unchanged #-}
-  unchanged f_agjK (Network.Riak.Protocol.GetResponse.GetResponse x_agjL x_agjM x_agjN)
-    = (fmap (\ y_agjO -> ((Network.Riak.Protocol.GetResponse.GetResponse x_agjL) x_agjM) y_agjO)) (f_agjK x_agjN)
+  unchanged f_agCs (Network.Riak.Protocol.GetResponse.GetResponse x_agCt x_agCu x_agCv)
+    = fmap (\ y_agCw -> Network.Riak.Protocol.GetResponse.GetResponse x_agCt x_agCu y_agCw) (f_agCs x_agCv)
 instance HasVclock Network.Riak.Protocol.GetResponse.GetResponse (Maybe ByteString) where
   {-# INLINE vclock #-}
-  vclock f_agjP (Network.Riak.Protocol.GetResponse.GetResponse x_agjQ x_agjR x_agjS)
-    = (fmap (\ y_agjT -> ((Network.Riak.Protocol.GetResponse.GetResponse x_agjQ) y_agjT) x_agjS)) (f_agjP x_agjR)
+  vclock f_agCx (Network.Riak.Protocol.GetResponse.GetResponse x_agCy x_agCz x_agCA)
+    = fmap (\ y_agCB -> Network.Riak.Protocol.GetResponse.GetResponse x_agCy y_agCB x_agCA) (f_agCx x_agCz)
 instance HasKey Network.Riak.Protocol.IndexObject.IndexObject ByteString where
   {-# INLINE key #-}
-  key f_agm7 (Network.Riak.Protocol.IndexObject.IndexObject x_agm8 x_agm9)
-    = (fmap (\ y_agma -> (Network.Riak.Protocol.IndexObject.IndexObject y_agma) x_agm9)) (f_agm7 x_agm8)
+  key f_agEp (Network.Riak.Protocol.IndexObject.IndexObject x_agEq x_agEr)
+    = fmap (\ y_agEs -> Network.Riak.Protocol.IndexObject.IndexObject y_agEs x_agEr) (f_agEp x_agEq)
 class HasObject s a | s -> a where
   object :: Lens' s a
 instance HasObject Network.Riak.Protocol.IndexObject.IndexObject Network.Riak.Protocol.GetResponse.GetResponse where
   {-# INLINE object #-}
-  object f_agmb (Network.Riak.Protocol.IndexObject.IndexObject x_agmc x_agmd)
-    = (fmap (\ y_agme -> (Network.Riak.Protocol.IndexObject.IndexObject x_agmc) y_agme)) (f_agmb x_agmd)
+  object f_agEt (Network.Riak.Protocol.IndexObject.IndexObject x_agEu x_agEv)
+    = fmap (\ y_agEw -> Network.Riak.Protocol.IndexObject.IndexObject x_agEu y_agEw) (f_agEt x_agEv)
 instance HasBucket Network.Riak.Protocol.IndexRequest.IndexRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_agnv
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agnw
-                                                     x_agnx
-                                                     x_agny
-                                                     x_agnz
-                                                     x_agnA
-                                                     x_agnB
-                                                     x_agnC
-                                                     x_agnD
-                                                     x_agnE
-                                                     x_agnF
-                                                     x_agnG
-                                                     x_agnH
-                                                     x_agnI
-                                                     x_agnJ)
-    = (fmap
-         (\ y_agnK
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest y_agnK) x_agnx) x_agny) x_agnz) x_agnA) x_agnB) x_agnC) x_agnD)
-                      x_agnE)
-                     x_agnF)
-                    x_agnG)
-                   x_agnH)
-                  x_agnI)
-                 x_agnJ))
-        (f_agnv x_agnw)
+    f_agKZ
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agL0
+                                                     x_agL1
+                                                     x_agL2
+                                                     x_agL3
+                                                     x_agL4
+                                                     x_agL5
+                                                     x_agL6
+                                                     x_agL7
+                                                     x_agL8
+                                                     x_agL9
+                                                     x_agLa
+                                                     x_agLb
+                                                     x_agLc
+                                                     x_agLd)
+    = fmap
+        (\ y_agLe
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                y_agLe x_agL1 x_agL2 x_agL3 x_agL4 x_agL5 x_agL6 x_agL7 x_agL8 x_agL9 x_agLa x_agLb x_agLc x_agLd)
+        (f_agKZ x_agL0)
 instance HasContinuation Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE continuation #-}
   continuation
-    f_agnL
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agnM
-                                                     x_agnN
-                                                     x_agnO
-                                                     x_agnP
-                                                     x_agnQ
-                                                     x_agnR
-                                                     x_agnS
-                                                     x_agnT
-                                                     x_agnU
-                                                     x_agnV
-                                                     x_agnW
-                                                     x_agnX
-                                                     x_agnY
-                                                     x_agnZ)
-    = (fmap
-         (\ y_ago0
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agnM) x_agnN) x_agnO) x_agnP) x_agnQ) x_agnR) x_agnS) x_agnT)
-                      x_agnU)
-                     y_ago0)
-                    x_agnW)
-                   x_agnX)
-                  x_agnY)
-                 x_agnZ))
-        (f_agnL x_agnV)
+    f_agLf
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agLg
+                                                     x_agLh
+                                                     x_agLi
+                                                     x_agLj
+                                                     x_agLk
+                                                     x_agLl
+                                                     x_agLm
+                                                     x_agLn
+                                                     x_agLo
+                                                     x_agLp
+                                                     x_agLq
+                                                     x_agLr
+                                                     x_agLs
+                                                     x_agLt)
+    = fmap
+        (\ y_agLu
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agLg x_agLh x_agLi x_agLj x_agLk x_agLl x_agLm x_agLn x_agLo y_agLu x_agLq x_agLr x_agLs x_agLt)
+        (f_agLf x_agLp)
 class HasIndex s a | s -> a where
   index :: Lens' s a
 instance HasIndex Network.Riak.Protocol.IndexRequest.IndexRequest ByteString where
   {-# INLINE index #-}
   index
-    f_ago1
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_ago2
-                                                     x_ago3
-                                                     x_ago4
-                                                     x_ago5
-                                                     x_ago6
-                                                     x_ago7
-                                                     x_ago8
-                                                     x_ago9
-                                                     x_agoa
-                                                     x_agob
-                                                     x_agoc
-                                                     x_agod
-                                                     x_agoe
-                                                     x_agof)
-    = (fmap
-         (\ y_agog
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_ago2) y_agog) x_ago4) x_ago5) x_ago6) x_ago7) x_ago8) x_ago9)
-                      x_agoa)
-                     x_agob)
-                    x_agoc)
-                   x_agod)
-                  x_agoe)
-                 x_agof))
-        (f_ago1 x_ago3)
+    f_agLv
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agLw
+                                                     x_agLx
+                                                     x_agLy
+                                                     x_agLz
+                                                     x_agLA
+                                                     x_agLB
+                                                     x_agLC
+                                                     x_agLD
+                                                     x_agLE
+                                                     x_agLF
+                                                     x_agLG
+                                                     x_agLH
+                                                     x_agLI
+                                                     x_agLJ)
+    = fmap
+        (\ y_agLK
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agLw y_agLK x_agLy x_agLz x_agLA x_agLB x_agLC x_agLD x_agLE x_agLF x_agLG x_agLH x_agLI x_agLJ)
+        (f_agLv x_agLx)
 instance HasKey Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE key #-}
   key
-    f_agoh
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agoi
-                                                     x_agoj
-                                                     x_agok
-                                                     x_agol
-                                                     x_agom
-                                                     x_agon
-                                                     x_agoo
-                                                     x_agop
-                                                     x_agoq
-                                                     x_agor
-                                                     x_agos
-                                                     x_agot
-                                                     x_agou
-                                                     x_agov)
-    = (fmap
-         (\ y_agow
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agoi) x_agoj) x_agok) y_agow) x_agom) x_agon) x_agoo) x_agop)
-                      x_agoq)
-                     x_agor)
-                    x_agos)
-                   x_agot)
-                  x_agou)
-                 x_agov))
-        (f_agoh x_agol)
+    f_agLL
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agLM
+                                                     x_agLN
+                                                     x_agLO
+                                                     x_agLP
+                                                     x_agLQ
+                                                     x_agLR
+                                                     x_agLS
+                                                     x_agLT
+                                                     x_agLU
+                                                     x_agLV
+                                                     x_agLW
+                                                     x_agLX
+                                                     x_agLY
+                                                     x_agLZ)
+    = fmap
+        (\ y_agM0
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agLM x_agLN x_agLO y_agM0 x_agLQ x_agLR x_agLS x_agLT x_agLU x_agLV x_agLW x_agLX x_agLY x_agLZ)
+        (f_agLL x_agLP)
 instance HasMaxResults Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe Word32) where
   {-# INLINE max_results #-}
   max_results
-    f_agox
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agoy
-                                                     x_agoz
-                                                     x_agoA
-                                                     x_agoB
-                                                     x_agoC
-                                                     x_agoD
-                                                     x_agoE
-                                                     x_agoF
-                                                     x_agoG
-                                                     x_agoH
-                                                     x_agoI
-                                                     x_agoJ
-                                                     x_agoK
-                                                     x_agoL)
-    = (fmap
-         (\ y_agoM
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agoy) x_agoz) x_agoA) x_agoB) x_agoC) x_agoD) x_agoE) x_agoF)
-                      y_agoM)
-                     x_agoH)
-                    x_agoI)
-                   x_agoJ)
-                  x_agoK)
-                 x_agoL))
-        (f_agox x_agoG)
+    f_agM1
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agM2
+                                                     x_agM3
+                                                     x_agM4
+                                                     x_agM5
+                                                     x_agM6
+                                                     x_agM7
+                                                     x_agM8
+                                                     x_agM9
+                                                     x_agMa
+                                                     x_agMb
+                                                     x_agMc
+                                                     x_agMd
+                                                     x_agMe
+                                                     x_agMf)
+    = fmap
+        (\ y_agMg
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agM2 x_agM3 x_agM4 x_agM5 x_agM6 x_agM7 x_agM8 x_agM9 y_agMg x_agMb x_agMc x_agMd x_agMe x_agMf)
+        (f_agM1 x_agMa)
 class HasPaginationSort s a | s -> a where
   pagination_sort :: Lens' s a
 instance HasPaginationSort Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe Bool) where
   {-# INLINE pagination_sort #-}
   pagination_sort
-    f_agoN
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agoO
-                                                     x_agoP
-                                                     x_agoQ
-                                                     x_agoR
-                                                     x_agoS
-                                                     x_agoT
-                                                     x_agoU
-                                                     x_agoV
-                                                     x_agoW
-                                                     x_agoX
-                                                     x_agoY
-                                                     x_agoZ
-                                                     x_agp0
-                                                     x_agp1)
-    = (fmap
-         (\ y_agp2
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agoO) x_agoP) x_agoQ) x_agoR) x_agoS) x_agoT) x_agoU) x_agoV)
-                      x_agoW)
-                     x_agoX)
-                    x_agoY)
-                   x_agoZ)
-                  x_agp0)
-                 y_agp2))
-        (f_agoN x_agp1)
+    f_agMh
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agMi
+                                                     x_agMj
+                                                     x_agMk
+                                                     x_agMl
+                                                     x_agMm
+                                                     x_agMn
+                                                     x_agMo
+                                                     x_agMp
+                                                     x_agMq
+                                                     x_agMr
+                                                     x_agMs
+                                                     x_agMt
+                                                     x_agMu
+                                                     x_agMv)
+    = fmap
+        (\ y_agMw
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agMi x_agMj x_agMk x_agMl x_agMm x_agMn x_agMo x_agMp x_agMq x_agMr x_agMs x_agMt x_agMu y_agMw)
+        (f_agMh x_agMv)
 class HasQtype s a | s -> a where
   qtype :: Lens' s a
 instance HasQtype Network.Riak.Protocol.IndexRequest.IndexRequest Network.Riak.Protocol.IndexRequest.IndexQueryType.IndexQueryType where
   {-# INLINE qtype #-}
   qtype
-    f_agp3
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agp4
-                                                     x_agp5
-                                                     x_agp6
-                                                     x_agp7
-                                                     x_agp8
-                                                     x_agp9
-                                                     x_agpa
-                                                     x_agpb
-                                                     x_agpc
-                                                     x_agpd
-                                                     x_agpe
-                                                     x_agpf
-                                                     x_agpg
-                                                     x_agph)
-    = (fmap
-         (\ y_agpi
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agp4) x_agp5) y_agpi) x_agp7) x_agp8) x_agp9) x_agpa) x_agpb)
-                      x_agpc)
-                     x_agpd)
-                    x_agpe)
-                   x_agpf)
-                  x_agpg)
-                 x_agph))
-        (f_agp3 x_agp6)
+    f_agMx
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agMy
+                                                     x_agMz
+                                                     x_agMA
+                                                     x_agMB
+                                                     x_agMC
+                                                     x_agMD
+                                                     x_agME
+                                                     x_agMF
+                                                     x_agMG
+                                                     x_agMH
+                                                     x_agMI
+                                                     x_agMJ
+                                                     x_agMK
+                                                     x_agML)
+    = fmap
+        (\ y_agMM
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agMy x_agMz y_agMM x_agMB x_agMC x_agMD x_agME x_agMF x_agMG x_agMH x_agMI x_agMJ x_agMK x_agML)
+        (f_agMx x_agMA)
 class HasRangeMax s a | s -> a where
   range_max :: Lens' s a
 instance HasRangeMax Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE range_max #-}
   range_max
-    f_agpj
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agpk
-                                                     x_agpl
-                                                     x_agpm
-                                                     x_agpn
-                                                     x_agpo
-                                                     x_agpp
-                                                     x_agpq
-                                                     x_agpr
-                                                     x_agps
-                                                     x_agpt
-                                                     x_agpu
-                                                     x_agpv
-                                                     x_agpw
-                                                     x_agpx)
-    = (fmap
-         (\ y_agpy
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agpk) x_agpl) x_agpm) x_agpn) x_agpo) y_agpy) x_agpq) x_agpr)
-                      x_agps)
-                     x_agpt)
-                    x_agpu)
-                   x_agpv)
-                  x_agpw)
-                 x_agpx))
-        (f_agpj x_agpp)
+    f_agMN
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agMO
+                                                     x_agMP
+                                                     x_agMQ
+                                                     x_agMR
+                                                     x_agMS
+                                                     x_agMT
+                                                     x_agMU
+                                                     x_agMV
+                                                     x_agMW
+                                                     x_agMX
+                                                     x_agMY
+                                                     x_agMZ
+                                                     x_agN0
+                                                     x_agN1)
+    = fmap
+        (\ y_agN2
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agMO x_agMP x_agMQ x_agMR x_agMS y_agN2 x_agMU x_agMV x_agMW x_agMX x_agMY x_agMZ x_agN0 x_agN1)
+        (f_agMN x_agMT)
 class HasRangeMin s a | s -> a where
   range_min :: Lens' s a
 instance HasRangeMin Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE range_min #-}
   range_min
-    f_agpz
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agpA
-                                                     x_agpB
-                                                     x_agpC
-                                                     x_agpD
-                                                     x_agpE
-                                                     x_agpF
-                                                     x_agpG
-                                                     x_agpH
-                                                     x_agpI
-                                                     x_agpJ
-                                                     x_agpK
-                                                     x_agpL
-                                                     x_agpM
-                                                     x_agpN)
-    = (fmap
-         (\ y_agpO
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agpA) x_agpB) x_agpC) x_agpD) y_agpO) x_agpF) x_agpG) x_agpH)
-                      x_agpI)
-                     x_agpJ)
-                    x_agpK)
-                   x_agpL)
-                  x_agpM)
-                 x_agpN))
-        (f_agpz x_agpE)
+    f_agN3
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agN4
+                                                     x_agN5
+                                                     x_agN6
+                                                     x_agN7
+                                                     x_agN8
+                                                     x_agN9
+                                                     x_agNa
+                                                     x_agNb
+                                                     x_agNc
+                                                     x_agNd
+                                                     x_agNe
+                                                     x_agNf
+                                                     x_agNg
+                                                     x_agNh)
+    = fmap
+        (\ y_agNi
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agN4 x_agN5 x_agN6 x_agN7 y_agNi x_agN9 x_agNa x_agNb x_agNc x_agNd x_agNe x_agNf x_agNg x_agNh)
+        (f_agN3 x_agN8)
 class HasReturnTerms s a | s -> a where
   return_terms :: Lens' s a
 instance HasReturnTerms Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe Bool) where
   {-# INLINE return_terms #-}
   return_terms
-    f_agpP
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agpQ
-                                                     x_agpR
-                                                     x_agpS
-                                                     x_agpT
-                                                     x_agpU
-                                                     x_agpV
-                                                     x_agpW
-                                                     x_agpX
-                                                     x_agpY
-                                                     x_agpZ
-                                                     x_agq0
-                                                     x_agq1
-                                                     x_agq2
-                                                     x_agq3)
-    = (fmap
-         (\ y_agq4
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agpQ) x_agpR) x_agpS) x_agpT) x_agpU) x_agpV) y_agq4) x_agpX)
-                      x_agpY)
-                     x_agpZ)
-                    x_agq0)
-                   x_agq1)
-                  x_agq2)
-                 x_agq3))
-        (f_agpP x_agpW)
+    f_agNj
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agNk
+                                                     x_agNl
+                                                     x_agNm
+                                                     x_agNn
+                                                     x_agNo
+                                                     x_agNp
+                                                     x_agNq
+                                                     x_agNr
+                                                     x_agNs
+                                                     x_agNt
+                                                     x_agNu
+                                                     x_agNv
+                                                     x_agNw
+                                                     x_agNx)
+    = fmap
+        (\ y_agNy
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agNk x_agNl x_agNm x_agNn x_agNo x_agNp y_agNy x_agNr x_agNs x_agNt x_agNu x_agNv x_agNw x_agNx)
+        (f_agNj x_agNq)
 class HasStream s a | s -> a where
   stream :: Lens' s a
 instance HasStream Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe Bool) where
   {-# INLINE stream #-}
   stream
-    f_agq5
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agq6
-                                                     x_agq7
-                                                     x_agq8
-                                                     x_agq9
-                                                     x_agqa
-                                                     x_agqb
-                                                     x_agqc
-                                                     x_agqd
-                                                     x_agqe
-                                                     x_agqf
-                                                     x_agqg
-                                                     x_agqh
-                                                     x_agqi
-                                                     x_agqj)
-    = (fmap
-         (\ y_agqk
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agq6) x_agq7) x_agq8) x_agq9) x_agqa) x_agqb) x_agqc) y_agqk)
-                      x_agqe)
-                     x_agqf)
-                    x_agqg)
-                   x_agqh)
-                  x_agqi)
-                 x_agqj))
-        (f_agq5 x_agqd)
+    f_agNz
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agNA
+                                                     x_agNB
+                                                     x_agNC
+                                                     x_agND
+                                                     x_agNE
+                                                     x_agNF
+                                                     x_agNG
+                                                     x_agNH
+                                                     x_agNI
+                                                     x_agNJ
+                                                     x_agNK
+                                                     x_agNL
+                                                     x_agNM
+                                                     x_agNN)
+    = fmap
+        (\ y_agNO
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agNA x_agNB x_agNC x_agND x_agNE x_agNF x_agNG y_agNO x_agNI x_agNJ x_agNK x_agNL x_agNM x_agNN)
+        (f_agNz x_agNH)
 class HasTermRegex s a | s -> a where
   term_regex :: Lens' s a
 instance HasTermRegex Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE term_regex #-}
   term_regex
-    f_agql
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agqm
-                                                     x_agqn
-                                                     x_agqo
-                                                     x_agqp
-                                                     x_agqq
-                                                     x_agqr
-                                                     x_agqs
-                                                     x_agqt
-                                                     x_agqu
-                                                     x_agqv
-                                                     x_agqw
-                                                     x_agqx
-                                                     x_agqy
-                                                     x_agqz)
-    = (fmap
-         (\ y_agqA
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agqm) x_agqn) x_agqo) x_agqp) x_agqq) x_agqr) x_agqs) x_agqt)
-                      x_agqu)
-                     x_agqv)
-                    x_agqw)
-                   x_agqx)
-                  y_agqA)
-                 x_agqz))
-        (f_agql x_agqy)
+    f_agNP
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agNQ
+                                                     x_agNR
+                                                     x_agNS
+                                                     x_agNT
+                                                     x_agNU
+                                                     x_agNV
+                                                     x_agNW
+                                                     x_agNX
+                                                     x_agNY
+                                                     x_agNZ
+                                                     x_agO0
+                                                     x_agO1
+                                                     x_agO2
+                                                     x_agO3)
+    = fmap
+        (\ y_agO4
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agNQ x_agNR x_agNS x_agNT x_agNU x_agNV x_agNW x_agNX x_agNY x_agNZ x_agO0 x_agO1 y_agO4 x_agO3)
+        (f_agNP x_agO2)
 instance HasTimeout Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_agqB
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agqC
-                                                     x_agqD
-                                                     x_agqE
-                                                     x_agqF
-                                                     x_agqG
-                                                     x_agqH
-                                                     x_agqI
-                                                     x_agqJ
-                                                     x_agqK
-                                                     x_agqL
-                                                     x_agqM
-                                                     x_agqN
-                                                     x_agqO
-                                                     x_agqP)
-    = (fmap
-         (\ y_agqQ
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agqC) x_agqD) x_agqE) x_agqF) x_agqG) x_agqH) x_agqI) x_agqJ)
-                      x_agqK)
-                     x_agqL)
-                    y_agqQ)
-                   x_agqN)
-                  x_agqO)
-                 x_agqP))
-        (f_agqB x_agqM)
+    f_agO5
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agO6
+                                                     x_agO7
+                                                     x_agO8
+                                                     x_agO9
+                                                     x_agOa
+                                                     x_agOb
+                                                     x_agOc
+                                                     x_agOd
+                                                     x_agOe
+                                                     x_agOf
+                                                     x_agOg
+                                                     x_agOh
+                                                     x_agOi
+                                                     x_agOj)
+    = fmap
+        (\ y_agOk
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agO6 x_agO7 x_agO8 x_agO9 x_agOa x_agOb x_agOc x_agOd x_agOe x_agOf y_agOk x_agOh x_agOi x_agOj)
+        (f_agO5 x_agOg)
 instance HasType' Network.Riak.Protocol.IndexRequest.IndexRequest (Maybe ByteString) where
   {-# INLINE type' #-}
   type'
-    f_agqR
-    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agqS
-                                                     x_agqT
-                                                     x_agqU
-                                                     x_agqV
-                                                     x_agqW
-                                                     x_agqX
-                                                     x_agqY
-                                                     x_agqZ
-                                                     x_agr0
-                                                     x_agr1
-                                                     x_agr2
-                                                     x_agr3
-                                                     x_agr4
-                                                     x_agr5)
-    = (fmap
-         (\ y_agr6
-            -> (((((((((((((Network.Riak.Protocol.IndexRequest.IndexRequest x_agqS) x_agqT) x_agqU) x_agqV) x_agqW) x_agqX) x_agqY) x_agqZ)
-                      x_agr0)
-                     x_agr1)
-                    x_agr2)
-                   y_agr6)
-                  x_agr4)
-                 x_agr5))
-        (f_agqR x_agr3)
+    f_agOl
+    (Network.Riak.Protocol.IndexRequest.IndexRequest x_agOm
+                                                     x_agOn
+                                                     x_agOo
+                                                     x_agOp
+                                                     x_agOq
+                                                     x_agOr
+                                                     x_agOs
+                                                     x_agOt
+                                                     x_agOu
+                                                     x_agOv
+                                                     x_agOw
+                                                     x_agOx
+                                                     x_agOy
+                                                     x_agOz)
+    = fmap
+        (\ y_agOA
+           -> Network.Riak.Protocol.IndexRequest.IndexRequest
+                x_agOm x_agOn x_agOo x_agOp x_agOq x_agOr x_agOs x_agOt x_agOu x_agOv x_agOw y_agOA x_agOy x_agOz)
+        (f_agOl x_agOx)
 instance HasContinuation Network.Riak.Protocol.IndexResponse.IndexResponse (Maybe ByteString) where
   {-# INLINE continuation #-}
-  continuation f_agzC (Network.Riak.Protocol.IndexResponse.IndexResponse x_agzD x_agzE x_agzF x_agzG)
-    = (fmap (\ y_agzH -> (((Network.Riak.Protocol.IndexResponse.IndexResponse x_agzD) x_agzE) y_agzH) x_agzG)) (f_agzC x_agzF)
+  continuation f_agVg (Network.Riak.Protocol.IndexResponse.IndexResponse x_agVh x_agVi x_agVj x_agVk)
+    = fmap (\ y_agVl -> Network.Riak.Protocol.IndexResponse.IndexResponse x_agVh x_agVi y_agVl x_agVk) (f_agVg x_agVj)
 instance HasDone Network.Riak.Protocol.IndexResponse.IndexResponse (Maybe Bool) where
   {-# INLINE done #-}
-  done f_agzI (Network.Riak.Protocol.IndexResponse.IndexResponse x_agzJ x_agzK x_agzL x_agzM)
-    = (fmap (\ y_agzN -> (((Network.Riak.Protocol.IndexResponse.IndexResponse x_agzJ) x_agzK) x_agzL) y_agzN)) (f_agzI x_agzM)
+  done f_agVm (Network.Riak.Protocol.IndexResponse.IndexResponse x_agVn x_agVo x_agVp x_agVq)
+    = fmap (\ y_agVr -> Network.Riak.Protocol.IndexResponse.IndexResponse x_agVn x_agVo x_agVp y_agVr) (f_agVm x_agVq)
 class HasKeys s a | s -> a where
   keys :: Lens' s a
 instance HasKeys Network.Riak.Protocol.IndexResponse.IndexResponse (Seq ByteString) where
   {-# INLINE keys #-}
-  keys f_agzO (Network.Riak.Protocol.IndexResponse.IndexResponse x_agzP x_agzQ x_agzR x_agzS)
-    = (fmap (\ y_agzT -> (((Network.Riak.Protocol.IndexResponse.IndexResponse y_agzT) x_agzQ) x_agzR) x_agzS)) (f_agzO x_agzP)
+  keys f_agVs (Network.Riak.Protocol.IndexResponse.IndexResponse x_agVt x_agVu x_agVv x_agVw)
+    = fmap (\ y_agVx -> Network.Riak.Protocol.IndexResponse.IndexResponse y_agVx x_agVu x_agVv x_agVw) (f_agVs x_agVt)
 class HasResults s a | s -> a where
   results :: Lens' s a
 instance HasResults Network.Riak.Protocol.IndexResponse.IndexResponse (Seq Network.Riak.Protocol.Pair.Pair) where
   {-# INLINE results #-}
-  results f_agzU (Network.Riak.Protocol.IndexResponse.IndexResponse x_agzV x_agzW x_agzX x_agzY)
-    = (fmap (\ y_agzZ -> (((Network.Riak.Protocol.IndexResponse.IndexResponse x_agzV) y_agzZ) x_agzX) x_agzY)) (f_agzU x_agzW)
+  results f_agVy (Network.Riak.Protocol.IndexResponse.IndexResponse x_agVz x_agVA x_agVB x_agVC)
+    = fmap (\ y_agVD -> Network.Riak.Protocol.IndexResponse.IndexResponse x_agVz y_agVD x_agVB x_agVC) (f_agVy x_agVA)
 instance HasBucket Network.Riak.Protocol.Link.Link (Maybe ByteString) where
   {-# INLINE bucket #-}
-  bucket f_agCn (Network.Riak.Protocol.Link.Link x_agCo x_agCp x_agCq)
-    = (fmap (\ y_agCr -> ((Network.Riak.Protocol.Link.Link y_agCr) x_agCp) x_agCq)) (f_agCn x_agCo)
+  bucket f_agXv (Network.Riak.Protocol.Link.Link x_agXw x_agXx x_agXy)
+    = fmap (\ y_agXz -> Network.Riak.Protocol.Link.Link y_agXz x_agXx x_agXy) (f_agXv x_agXw)
 instance HasKey Network.Riak.Protocol.Link.Link (Maybe ByteString) where
   {-# INLINE key #-}
-  key f_agCs (Network.Riak.Protocol.Link.Link x_agCt x_agCu x_agCv)
-    = (fmap (\ y_agCw -> ((Network.Riak.Protocol.Link.Link x_agCt) y_agCw) x_agCv)) (f_agCs x_agCu)
+  key f_agXA (Network.Riak.Protocol.Link.Link x_agXB x_agXC x_agXD)
+    = fmap (\ y_agXE -> Network.Riak.Protocol.Link.Link x_agXB y_agXE x_agXD) (f_agXA x_agXC)
 class HasTag s a | s -> a where
   tag :: Lens' s a
 instance HasTag Network.Riak.Protocol.Link.Link (Maybe ByteString) where
   {-# INLINE tag #-}
-  tag f_agCx (Network.Riak.Protocol.Link.Link x_agCy x_agCz x_agCA)
-    = (fmap (\ y_agCB -> ((Network.Riak.Protocol.Link.Link x_agCy) x_agCz) y_agCB)) (f_agCx x_agCA)
+  tag f_agXF (Network.Riak.Protocol.Link.Link x_agXG x_agXH x_agXI)
+    = fmap (\ y_agXJ -> Network.Riak.Protocol.Link.Link x_agXG x_agXH y_agXJ) (f_agXF x_agXI)
 instance HasStream Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest (Maybe Bool) where
   {-# INLINE stream #-}
-  stream f_agE9 (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agEa x_agEb x_agEc)
-    = (fmap (\ y_agEd -> ((Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agEa) y_agEd) x_agEc)) (f_agE9 x_agEb)
+  stream f_agYZ (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agZ0 x_agZ1 x_agZ2)
+    = fmap (\ y_agZ3 -> Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agZ0 y_agZ3 x_agZ2) (f_agYZ x_agZ1)
 instance HasTimeout Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest (Maybe Word32) where
   {-# INLINE timeout #-}
-  timeout f_agEe (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agEf x_agEg x_agEh)
-    = (fmap (\ y_agEi -> ((Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest y_agEi) x_agEg) x_agEh)) (f_agEe x_agEf)
+  timeout f_agZ4 (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agZ5 x_agZ6 x_agZ7)
+    = fmap (\ y_agZ8 -> Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest y_agZ8 x_agZ6 x_agZ7) (f_agZ4 x_agZ5)
 instance HasType' Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_agEj (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agEk x_agEl x_agEm)
-    = (fmap (\ y_agEn -> ((Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agEk) x_agEl) y_agEn)) (f_agEj x_agEm)
+  type' f_agZ9 (Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agZa x_agZb x_agZc)
+    = fmap (\ y_agZd -> Network.Riak.Protocol.ListBucketsRequest.ListBucketsRequest x_agZa x_agZb y_agZd) (f_agZ9 x_agZc)
 class HasBuckets s a | s -> a where
   buckets :: Lens' s a
 instance HasBuckets Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse (Seq ByteString) where
   {-# INLINE buckets #-}
-  buckets f_agFm (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_agFn x_agFo)
-    = (fmap (\ y_agFp -> (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse y_agFp) x_agFo)) (f_agFm x_agFn)
+  buckets f_ah03 (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_ah04 x_ah05)
+    = fmap (\ y_ah06 -> Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse y_ah06 x_ah05) (f_ah03 x_ah04)
 instance HasDone Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse (Maybe Bool) where
   {-# INLINE done #-}
-  done f_agFq (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_agFr x_agFs)
-    = (fmap (\ y_agFt -> (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_agFr) y_agFt)) (f_agFq x_agFs)
+  done f_ah07 (Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_ah08 x_ah09)
+    = fmap (\ y_ah0a -> Network.Riak.Protocol.ListBucketsResponse.ListBucketsResponse x_ah08 y_ah0a) (f_ah07 x_ah09)
 instance HasBucket Network.Riak.Protocol.ListKeysRequest.ListKeysRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_agGK (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_agGL x_agGM x_agGN)
-    = (fmap (\ y_agGO -> ((Network.Riak.Protocol.ListKeysRequest.ListKeysRequest y_agGO) x_agGM) x_agGN)) (f_agGK x_agGL)
+  bucket f_ah1c (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_ah1d x_ah1e x_ah1f)
+    = fmap (\ y_ah1g -> Network.Riak.Protocol.ListKeysRequest.ListKeysRequest y_ah1g x_ah1e x_ah1f) (f_ah1c x_ah1d)
 instance HasTimeout Network.Riak.Protocol.ListKeysRequest.ListKeysRequest (Maybe Word32) where
   {-# INLINE timeout #-}
-  timeout f_agGP (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_agGQ x_agGR x_agGS)
-    = (fmap (\ y_agGT -> ((Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_agGQ) y_agGT) x_agGS)) (f_agGP x_agGR)
+  timeout f_ah1h (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_ah1i x_ah1j x_ah1k)
+    = fmap (\ y_ah1l -> Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_ah1i y_ah1l x_ah1k) (f_ah1h x_ah1j)
 instance HasType' Network.Riak.Protocol.ListKeysRequest.ListKeysRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_agGU (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_agGV x_agGW x_agGX)
-    = (fmap (\ y_agGY -> ((Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_agGV) x_agGW) y_agGY)) (f_agGU x_agGX)
+  type' f_ah1m (Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_ah1n x_ah1o x_ah1p)
+    = fmap (\ y_ah1q -> Network.Riak.Protocol.ListKeysRequest.ListKeysRequest x_ah1n x_ah1o y_ah1q) (f_ah1m x_ah1p)
 instance HasDone Network.Riak.Protocol.ListKeysResponse.ListKeysResponse (Maybe Bool) where
   {-# INLINE done #-}
-  done f_agHX (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_agHY x_agHZ)
-    = (fmap (\ y_agI0 -> (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_agHY) y_agI0)) (f_agHX x_agHZ)
+  done f_ah2g (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_ah2h x_ah2i)
+    = fmap (\ y_ah2j -> Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_ah2h y_ah2j) (f_ah2g x_ah2i)
 instance HasKeys Network.Riak.Protocol.ListKeysResponse.ListKeysResponse (Seq ByteString) where
   {-# INLINE keys #-}
-  keys f_agI1 (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_agI2 x_agI3)
-    = (fmap (\ y_agI4 -> (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse y_agI4) x_agI3)) (f_agI1 x_agI2)
+  keys f_ah2k (Network.Riak.Protocol.ListKeysResponse.ListKeysResponse x_ah2l x_ah2m)
+    = fmap (\ y_ah2n -> Network.Riak.Protocol.ListKeysResponse.ListKeysResponse y_ah2n x_ah2m) (f_ah2k x_ah2l)
 instance HasCounterValue Network.Riak.Protocol.MapEntry.MapEntry (Maybe Int64) where
   {-# INLINE counter_value #-}
-  counter_value f_agIM (Network.Riak.Protocol.MapEntry.MapEntry x_agIN x_agIO x_agIP x_agIQ x_agIR x_agIS)
-    = (fmap (\ y_agIT -> (((((Network.Riak.Protocol.MapEntry.MapEntry x_agIN) y_agIT) x_agIP) x_agIQ) x_agIR) x_agIS)) (f_agIM x_agIO)
+  counter_value f_ah2Z (Network.Riak.Protocol.MapEntry.MapEntry x_ah30 x_ah31 x_ah32 x_ah33 x_ah34 x_ah35)
+    = fmap (\ y_ah36 -> Network.Riak.Protocol.MapEntry.MapEntry x_ah30 y_ah36 x_ah32 x_ah33 x_ah34 x_ah35) (f_ah2Z x_ah31)
 class HasField s a | s -> a where
   field :: Lens' s a
 instance HasField Network.Riak.Protocol.MapEntry.MapEntry Network.Riak.Protocol.MapField.MapField where
   {-# INLINE field #-}
-  field f_agIU (Network.Riak.Protocol.MapEntry.MapEntry x_agIV x_agIW x_agIX x_agIY x_agIZ x_agJ0)
-    = (fmap (\ y_agJ1 -> (((((Network.Riak.Protocol.MapEntry.MapEntry y_agJ1) x_agIW) x_agIX) x_agIY) x_agIZ) x_agJ0)) (f_agIU x_agIV)
+  field f_ah37 (Network.Riak.Protocol.MapEntry.MapEntry x_ah38 x_ah39 x_ah3a x_ah3b x_ah3c x_ah3d)
+    = fmap (\ y_ah3e -> Network.Riak.Protocol.MapEntry.MapEntry y_ah3e x_ah39 x_ah3a x_ah3b x_ah3c x_ah3d) (f_ah37 x_ah38)
 class HasFlagValue s a | s -> a where
   flag_value :: Lens' s a
 instance HasFlagValue Network.Riak.Protocol.MapEntry.MapEntry (Maybe Bool) where
   {-# INLINE flag_value #-}
-  flag_value f_agJ2 (Network.Riak.Protocol.MapEntry.MapEntry x_agJ3 x_agJ4 x_agJ5 x_agJ6 x_agJ7 x_agJ8)
-    = (fmap (\ y_agJ9 -> (((((Network.Riak.Protocol.MapEntry.MapEntry x_agJ3) x_agJ4) x_agJ5) x_agJ6) y_agJ9) x_agJ8)) (f_agJ2 x_agJ7)
+  flag_value f_ah3f (Network.Riak.Protocol.MapEntry.MapEntry x_ah3g x_ah3h x_ah3i x_ah3j x_ah3k x_ah3l)
+    = fmap (\ y_ah3m -> Network.Riak.Protocol.MapEntry.MapEntry x_ah3g x_ah3h x_ah3i x_ah3j y_ah3m x_ah3l) (f_ah3f x_ah3k)
 instance HasMapValue Network.Riak.Protocol.MapEntry.MapEntry (Seq Network.Riak.Protocol.MapEntry.MapEntry) where
   {-# INLINE map_value #-}
-  map_value f_agJa (Network.Riak.Protocol.MapEntry.MapEntry x_agJb x_agJc x_agJd x_agJe x_agJf x_agJg)
-    = (fmap (\ y_agJh -> (((((Network.Riak.Protocol.MapEntry.MapEntry x_agJb) x_agJc) x_agJd) x_agJe) x_agJf) y_agJh)) (f_agJa x_agJg)
+  map_value f_ah3n (Network.Riak.Protocol.MapEntry.MapEntry x_ah3o x_ah3p x_ah3q x_ah3r x_ah3s x_ah3t)
+    = fmap (\ y_ah3u -> Network.Riak.Protocol.MapEntry.MapEntry x_ah3o x_ah3p x_ah3q x_ah3r x_ah3s y_ah3u) (f_ah3n x_ah3t)
 class HasRegisterValue s a | s -> a where
   register_value :: Lens' s a
 instance HasRegisterValue Network.Riak.Protocol.MapEntry.MapEntry (Maybe ByteString) where
   {-# INLINE register_value #-}
-  register_value f_agJi (Network.Riak.Protocol.MapEntry.MapEntry x_agJj x_agJk x_agJl x_agJm x_agJn x_agJo)
-    = (fmap (\ y_agJp -> (((((Network.Riak.Protocol.MapEntry.MapEntry x_agJj) x_agJk) x_agJl) y_agJp) x_agJn) x_agJo)) (f_agJi x_agJm)
+  register_value f_ah3v (Network.Riak.Protocol.MapEntry.MapEntry x_ah3w x_ah3x x_ah3y x_ah3z x_ah3A x_ah3B)
+    = fmap (\ y_ah3C -> Network.Riak.Protocol.MapEntry.MapEntry x_ah3w x_ah3x x_ah3y y_ah3C x_ah3A x_ah3B) (f_ah3v x_ah3z)
 instance HasSetValue Network.Riak.Protocol.MapEntry.MapEntry (Seq ByteString) where
   {-# INLINE set_value #-}
-  set_value f_agJq (Network.Riak.Protocol.MapEntry.MapEntry x_agJr x_agJs x_agJt x_agJu x_agJv x_agJw)
-    = (fmap (\ y_agJx -> (((((Network.Riak.Protocol.MapEntry.MapEntry x_agJr) x_agJs) y_agJx) x_agJu) x_agJv) x_agJw)) (f_agJq x_agJt)
+  set_value f_ah3D (Network.Riak.Protocol.MapEntry.MapEntry x_ah3E x_ah3F x_ah3G x_ah3H x_ah3I x_ah3J)
+    = fmap (\ y_ah3K -> Network.Riak.Protocol.MapEntry.MapEntry x_ah3E x_ah3F y_ah3K x_ah3H x_ah3I x_ah3J) (f_ah3D x_ah3G)
 instance HasName Network.Riak.Protocol.MapField.MapField ByteString where
   {-# INLINE name #-}
-  name f_agN2 (Network.Riak.Protocol.MapField.MapField x_agN3 x_agN4)
-    = (fmap (\ y_agN5 -> (Network.Riak.Protocol.MapField.MapField y_agN5) x_agN4)) (f_agN2 x_agN3)
+  name f_ah6J (Network.Riak.Protocol.MapField.MapField x_ah6K x_ah6L)
+    = fmap (\ y_ah6M -> Network.Riak.Protocol.MapField.MapField y_ah6M x_ah6L) (f_ah6J x_ah6K)
 instance HasType' Network.Riak.Protocol.MapField.MapField Network.Riak.Protocol.MapField.MapFieldType.MapFieldType where
   {-# INLINE type' #-}
-  type' f_agN6 (Network.Riak.Protocol.MapField.MapField x_agN7 x_agN8)
-    = (fmap (\ y_agN9 -> (Network.Riak.Protocol.MapField.MapField x_agN7) y_agN9)) (f_agN6 x_agN8)
+  type' f_ah6N (Network.Riak.Protocol.MapField.MapField x_ah6O x_ah6P)
+    = fmap (\ y_ah6Q -> Network.Riak.Protocol.MapField.MapField x_ah6O y_ah6Q) (f_ah6N x_ah6P)
 class HasRemoves s a | s -> a where
   removes :: Lens' s a
 instance HasRemoves Network.Riak.Protocol.MapOp.MapOp (Seq Network.Riak.Protocol.MapField.MapField) where
   {-# INLINE removes #-}
-  removes f_agNY (Network.Riak.Protocol.MapOp.MapOp x_agNZ x_agO0)
-    = (fmap (\ y_agO1 -> (Network.Riak.Protocol.MapOp.MapOp y_agO1) x_agO0)) (f_agNY x_agNZ)
+  removes f_ah7z (Network.Riak.Protocol.MapOp.MapOp x_ah7A x_ah7B)
+    = fmap (\ y_ah7C -> Network.Riak.Protocol.MapOp.MapOp y_ah7C x_ah7B) (f_ah7z x_ah7A)
 class HasUpdates s a | s -> a where
   updates :: Lens' s a
 instance HasUpdates Network.Riak.Protocol.MapOp.MapOp (Seq Network.Riak.Protocol.MapUpdate.MapUpdate) where
   {-# INLINE updates #-}
-  updates f_agO2 (Network.Riak.Protocol.MapOp.MapOp x_agO3 x_agO4)
-    = (fmap (\ y_agO5 -> (Network.Riak.Protocol.MapOp.MapOp x_agO3) y_agO5)) (f_agO2 x_agO4)
+  updates f_ah7D (Network.Riak.Protocol.MapOp.MapOp x_ah7E x_ah7F)
+    = fmap (\ y_ah7G -> Network.Riak.Protocol.MapOp.MapOp x_ah7E y_ah7G) (f_ah7D x_ah7F)
 instance HasDone Network.Riak.Protocol.MapReduce.MapReduce (Maybe Bool) where
   {-# INLINE done #-}
-  done f_agPT (Network.Riak.Protocol.MapReduce.MapReduce x_agPU x_agPV x_agPW)
-    = (fmap (\ y_agPX -> ((Network.Riak.Protocol.MapReduce.MapReduce x_agPU) x_agPV) y_agPX)) (f_agPT x_agPW)
+  done f_ah98 (Network.Riak.Protocol.MapReduce.MapReduce x_ah99 x_ah9a x_ah9b)
+    = fmap (\ y_ah9c -> Network.Riak.Protocol.MapReduce.MapReduce x_ah99 x_ah9a y_ah9c) (f_ah98 x_ah9b)
 class HasPhase s a | s -> a where
   phase :: Lens' s a
 instance HasPhase Network.Riak.Protocol.MapReduce.MapReduce (Maybe Word32) where
   {-# INLINE phase #-}
-  phase f_agPY (Network.Riak.Protocol.MapReduce.MapReduce x_agPZ x_agQ0 x_agQ1)
-    = (fmap (\ y_agQ2 -> ((Network.Riak.Protocol.MapReduce.MapReduce y_agQ2) x_agQ0) x_agQ1)) (f_agPY x_agPZ)
+  phase f_ah9d (Network.Riak.Protocol.MapReduce.MapReduce x_ah9e x_ah9f x_ah9g)
+    = fmap (\ y_ah9h -> Network.Riak.Protocol.MapReduce.MapReduce y_ah9h x_ah9f x_ah9g) (f_ah9d x_ah9e)
 class HasResponse s a | s -> a where
   response :: Lens' s a
 instance HasResponse Network.Riak.Protocol.MapReduce.MapReduce (Maybe ByteString) where
   {-# INLINE response #-}
-  response f_agQ3 (Network.Riak.Protocol.MapReduce.MapReduce x_agQ4 x_agQ5 x_agQ6)
-    = (fmap (\ y_agQ7 -> ((Network.Riak.Protocol.MapReduce.MapReduce x_agQ4) y_agQ7) x_agQ6)) (f_agQ3 x_agQ5)
+  response f_ah9i (Network.Riak.Protocol.MapReduce.MapReduce x_ah9j x_ah9k x_ah9l)
+    = fmap (\ y_ah9m -> Network.Riak.Protocol.MapReduce.MapReduce x_ah9j y_ah9m x_ah9l) (f_ah9i x_ah9k)
 instance HasContentType Network.Riak.Protocol.MapReduceRequest.MapReduceRequest ByteString where
   {-# INLINE content_type #-}
-  content_type f_agSe (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_agSf x_agSg)
-    = (fmap (\ y_agSh -> (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_agSf) y_agSh)) (f_agSe x_agSg)
+  content_type f_ahb2 (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_ahb3 x_ahb4)
+    = fmap (\ y_ahb5 -> Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_ahb3 y_ahb5) (f_ahb2 x_ahb4)
 class HasRequest s a | s -> a where
   request :: Lens' s a
 instance HasRequest Network.Riak.Protocol.MapReduceRequest.MapReduceRequest ByteString where
   {-# INLINE request #-}
-  request f_agSi (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_agSj x_agSk)
-    = (fmap (\ y_agSl -> (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest y_agSl) x_agSk)) (f_agSi x_agSj)
+  request f_ahb6 (Network.Riak.Protocol.MapReduceRequest.MapReduceRequest x_ahb7 x_ahb8)
+    = fmap (\ y_ahb9 -> Network.Riak.Protocol.MapReduceRequest.MapReduceRequest y_ahb9 x_ahb8) (f_ahb6 x_ahb7)
 instance HasCounterOp Network.Riak.Protocol.MapUpdate.MapUpdate (Maybe Network.Riak.Protocol.CounterOp.CounterOp) where
   {-# INLINE counter_op #-}
-  counter_op f_agTC (Network.Riak.Protocol.MapUpdate.MapUpdate x_agTD x_agTE x_agTF x_agTG x_agTH x_agTI)
-    = (fmap (\ y_agTJ -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate x_agTD) y_agTJ) x_agTF) x_agTG) x_agTH) x_agTI)) (f_agTC x_agTE)
+  counter_op f_ahcf (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcg x_ahch x_ahci x_ahcj x_ahck x_ahcl)
+    = fmap (\ y_ahcm -> Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcg y_ahcm x_ahci x_ahcj x_ahck x_ahcl) (f_ahcf x_ahch)
 instance HasField Network.Riak.Protocol.MapUpdate.MapUpdate Network.Riak.Protocol.MapField.MapField where
   {-# INLINE field #-}
-  field f_agTK (Network.Riak.Protocol.MapUpdate.MapUpdate x_agTL x_agTM x_agTN x_agTO x_agTP x_agTQ)
-    = (fmap (\ y_agTR -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate y_agTR) x_agTM) x_agTN) x_agTO) x_agTP) x_agTQ)) (f_agTK x_agTL)
+  field f_ahcn (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahco x_ahcp x_ahcq x_ahcr x_ahcs x_ahct)
+    = fmap (\ y_ahcu -> Network.Riak.Protocol.MapUpdate.MapUpdate y_ahcu x_ahcp x_ahcq x_ahcr x_ahcs x_ahct) (f_ahcn x_ahco)
 class HasFlagOp s a | s -> a where
   flag_op :: Lens' s a
 instance HasFlagOp Network.Riak.Protocol.MapUpdate.MapUpdate (Maybe Network.Riak.Protocol.MapUpdate.FlagOp.FlagOp) where
   {-# INLINE flag_op #-}
-  flag_op f_agTS (Network.Riak.Protocol.MapUpdate.MapUpdate x_agTT x_agTU x_agTV x_agTW x_agTX x_agTY)
-    = (fmap (\ y_agTZ -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate x_agTT) x_agTU) x_agTV) x_agTW) y_agTZ) x_agTY)) (f_agTS x_agTX)
+  flag_op f_ahcv (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcw x_ahcx x_ahcy x_ahcz x_ahcA x_ahcB)
+    = fmap (\ y_ahcC -> Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcw x_ahcx x_ahcy x_ahcz y_ahcC x_ahcB) (f_ahcv x_ahcA)
 instance HasMapOp Network.Riak.Protocol.MapUpdate.MapUpdate (Maybe Network.Riak.Protocol.MapOp.MapOp) where
   {-# INLINE map_op #-}
-  map_op f_agU0 (Network.Riak.Protocol.MapUpdate.MapUpdate x_agU1 x_agU2 x_agU3 x_agU4 x_agU5 x_agU6)
-    = (fmap (\ y_agU7 -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate x_agU1) x_agU2) x_agU3) x_agU4) x_agU5) y_agU7)) (f_agU0 x_agU6)
+  map_op f_ahcD (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcE x_ahcF x_ahcG x_ahcH x_ahcI x_ahcJ)
+    = fmap (\ y_ahcK -> Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcE x_ahcF x_ahcG x_ahcH x_ahcI y_ahcK) (f_ahcD x_ahcJ)
 class HasRegisterOp s a | s -> a where
   register_op :: Lens' s a
 instance HasRegisterOp Network.Riak.Protocol.MapUpdate.MapUpdate (Maybe ByteString) where
   {-# INLINE register_op #-}
-  register_op f_agU8 (Network.Riak.Protocol.MapUpdate.MapUpdate x_agU9 x_agUa x_agUb x_agUc x_agUd x_agUe)
-    = (fmap (\ y_agUf -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate x_agU9) x_agUa) x_agUb) y_agUf) x_agUd) x_agUe)) (f_agU8 x_agUc)
+  register_op f_ahcL (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcM x_ahcN x_ahcO x_ahcP x_ahcQ x_ahcR)
+    = fmap (\ y_ahcS -> Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcM x_ahcN x_ahcO y_ahcS x_ahcQ x_ahcR) (f_ahcL x_ahcP)
 instance HasSetOp Network.Riak.Protocol.MapUpdate.MapUpdate (Maybe Network.Riak.Protocol.SetOp.SetOp) where
   {-# INLINE set_op #-}
-  set_op f_agUg (Network.Riak.Protocol.MapUpdate.MapUpdate x_agUh x_agUi x_agUj x_agUk x_agUl x_agUm)
-    = (fmap (\ y_agUn -> (((((Network.Riak.Protocol.MapUpdate.MapUpdate x_agUh) x_agUi) y_agUn) x_agUk) x_agUl) x_agUm)) (f_agUg x_agUj)
+  set_op f_ahcT (Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcU x_ahcV x_ahcW x_ahcX x_ahcY x_ahcZ)
+    = fmap (\ y_ahd0 -> Network.Riak.Protocol.MapUpdate.MapUpdate x_ahcU x_ahcV y_ahd0 x_ahcX x_ahcY x_ahcZ) (f_ahcT x_ahcW)
 class HasFunction s a | s -> a where
   function :: Lens' s a
 instance HasFunction Network.Riak.Protocol.ModFun.ModFun ByteString where
   {-# INLINE function #-}
-  function f_agXq (Network.Riak.Protocol.ModFun.ModFun x_agXr x_agXs)
-    = (fmap (\ y_agXt -> (Network.Riak.Protocol.ModFun.ModFun x_agXr) y_agXt)) (f_agXq x_agXs)
+  function f_ahfr (Network.Riak.Protocol.ModFun.ModFun x_ahfs x_ahft)
+    = fmap (\ y_ahfu -> Network.Riak.Protocol.ModFun.ModFun x_ahfs y_ahfu) (f_ahfr x_ahft)
 class HasModule' s a | s -> a where
   module' :: Lens' s a
 instance HasModule' Network.Riak.Protocol.ModFun.ModFun ByteString where
   {-# INLINE module' #-}
-  module' f_agXu (Network.Riak.Protocol.ModFun.ModFun x_agXv x_agXw)
-    = (fmap (\ y_agXx -> (Network.Riak.Protocol.ModFun.ModFun y_agXx) x_agXw)) (f_agXu x_agXv)
+  module' f_ahfv (Network.Riak.Protocol.ModFun.ModFun x_ahfw x_ahfx)
+    = fmap (\ y_ahfy -> Network.Riak.Protocol.ModFun.ModFun y_ahfy x_ahfx) (f_ahfv x_ahfw)
 instance HasKey Network.Riak.Protocol.Pair.Pair ByteString where
   {-# INLINE key #-}
-  key f_agZl (Network.Riak.Protocol.Pair.Pair x_agZm x_agZn)
-    = (fmap (\ y_agZo -> (Network.Riak.Protocol.Pair.Pair y_agZo) x_agZn)) (f_agZl x_agZm)
+  key f_ahgY (Network.Riak.Protocol.Pair.Pair x_ahgZ x_ahh0)
+    = fmap (\ y_ahh1 -> Network.Riak.Protocol.Pair.Pair y_ahh1 x_ahh0) (f_ahgY x_ahgZ)
 instance HasValue Network.Riak.Protocol.Pair.Pair (Maybe ByteString) where
   {-# INLINE value #-}
-  value f_agZp (Network.Riak.Protocol.Pair.Pair x_agZq x_agZr)
-    = (fmap (\ y_agZs -> (Network.Riak.Protocol.Pair.Pair x_agZq) y_agZs)) (f_agZp x_agZr)
+  value f_ahh2 (Network.Riak.Protocol.Pair.Pair x_ahh3 x_ahh4)
+    = fmap (\ y_ahh5 -> Network.Riak.Protocol.Pair.Pair x_ahh3 y_ahh5) (f_ahh2 x_ahh4)
 class HasAsis s a | s -> a where
   asis :: Lens' s a
 instance HasAsis Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE asis #-}
   asis
-    f_ah0h
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah0i
-                                                 x_ah0j
-                                                 x_ah0k
-                                                 x_ah0l
-                                                 x_ah0m
-                                                 x_ah0n
-                                                 x_ah0o
-                                                 x_ah0p
-                                                 x_ah0q
-                                                 x_ah0r
-                                                 x_ah0s
-                                                 x_ah0t
-                                                 x_ah0u
-                                                 x_ah0v
-                                                 x_ah0w
-                                                 x_ah0x)
-    = (fmap
-         (\ y_ah0y
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah0i) x_ah0j) x_ah0k) x_ah0l) x_ah0m) x_ah0n) x_ah0o) x_ah0p) x_ah0q)
-                       x_ah0r)
-                      x_ah0s)
-                     x_ah0t)
-                    y_ah0y)
-                   x_ah0v)
-                  x_ah0w)
-                 x_ah0x))
-        (f_ah0h x_ah0u)
+    f_ahhR
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahhS
+                                                 x_ahhT
+                                                 x_ahhU
+                                                 x_ahhV
+                                                 x_ahhW
+                                                 x_ahhX
+                                                 x_ahhY
+                                                 x_ahhZ
+                                                 x_ahi0
+                                                 x_ahi1
+                                                 x_ahi2
+                                                 x_ahi3
+                                                 x_ahi4
+                                                 x_ahi5
+                                                 x_ahi6
+                                                 x_ahi7)
+    = fmap
+        (\ y_ahi8
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahhS x_ahhT x_ahhU x_ahhV x_ahhW x_ahhX x_ahhY x_ahhZ x_ahi0 x_ahi1 x_ahi2 x_ahi3 y_ahi8 x_ahi5 x_ahi6 x_ahi7)
+        (f_ahhR x_ahi4)
 instance HasBucket Network.Riak.Protocol.PutRequest.PutRequest ByteString where
   {-# INLINE bucket #-}
   bucket
-    f_ah0z
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah0A
-                                                 x_ah0B
-                                                 x_ah0C
-                                                 x_ah0D
-                                                 x_ah0E
-                                                 x_ah0F
-                                                 x_ah0G
-                                                 x_ah0H
-                                                 x_ah0I
-                                                 x_ah0J
-                                                 x_ah0K
-                                                 x_ah0L
-                                                 x_ah0M
-                                                 x_ah0N
-                                                 x_ah0O
-                                                 x_ah0P)
-    = (fmap
-         (\ y_ah0Q
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest y_ah0Q) x_ah0B) x_ah0C) x_ah0D) x_ah0E) x_ah0F) x_ah0G) x_ah0H) x_ah0I)
-                       x_ah0J)
-                      x_ah0K)
-                     x_ah0L)
-                    x_ah0M)
-                   x_ah0N)
-                  x_ah0O)
-                 x_ah0P))
-        (f_ah0z x_ah0A)
+    f_ahi9
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahia
+                                                 x_ahib
+                                                 x_ahic
+                                                 x_ahid
+                                                 x_ahie
+                                                 x_ahif
+                                                 x_ahig
+                                                 x_ahih
+                                                 x_ahii
+                                                 x_ahij
+                                                 x_ahik
+                                                 x_ahil
+                                                 x_ahim
+                                                 x_ahin
+                                                 x_ahio
+                                                 x_ahip)
+    = fmap
+        (\ y_ahiq
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                y_ahiq x_ahib x_ahic x_ahid x_ahie x_ahif x_ahig x_ahih x_ahii x_ahij x_ahik x_ahil x_ahim x_ahin x_ahio x_ahip)
+        (f_ahi9 x_ahia)
 instance HasContent Network.Riak.Protocol.PutRequest.PutRequest Network.Riak.Protocol.Content.Content where
   {-# INLINE content #-}
   content
-    f_ah0R
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah0S
-                                                 x_ah0T
-                                                 x_ah0U
-                                                 x_ah0V
-                                                 x_ah0W
-                                                 x_ah0X
-                                                 x_ah0Y
-                                                 x_ah0Z
-                                                 x_ah10
-                                                 x_ah11
-                                                 x_ah12
-                                                 x_ah13
-                                                 x_ah14
-                                                 x_ah15
-                                                 x_ah16
-                                                 x_ah17)
-    = (fmap
-         (\ y_ah18
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah0S) x_ah0T) x_ah0U) y_ah18) x_ah0W) x_ah0X) x_ah0Y) x_ah0Z) x_ah10)
-                       x_ah11)
-                      x_ah12)
-                     x_ah13)
-                    x_ah14)
-                   x_ah15)
-                  x_ah16)
-                 x_ah17))
-        (f_ah0R x_ah0V)
+    f_ahir
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahis
+                                                 x_ahit
+                                                 x_ahiu
+                                                 x_ahiv
+                                                 x_ahiw
+                                                 x_ahix
+                                                 x_ahiy
+                                                 x_ahiz
+                                                 x_ahiA
+                                                 x_ahiB
+                                                 x_ahiC
+                                                 x_ahiD
+                                                 x_ahiE
+                                                 x_ahiF
+                                                 x_ahiG
+                                                 x_ahiH)
+    = fmap
+        (\ y_ahiI
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahis x_ahit x_ahiu y_ahiI x_ahiw x_ahix x_ahiy x_ahiz x_ahiA x_ahiB x_ahiC x_ahiD x_ahiE x_ahiF x_ahiG x_ahiH)
+        (f_ahir x_ahiv)
 instance HasDw Network.Riak.Protocol.PutRequest.PutRequest (Maybe Word32) where
   {-# INLINE dw #-}
   dw
-    f_ah19
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah1a
-                                                 x_ah1b
-                                                 x_ah1c
-                                                 x_ah1d
-                                                 x_ah1e
-                                                 x_ah1f
-                                                 x_ah1g
-                                                 x_ah1h
-                                                 x_ah1i
-                                                 x_ah1j
-                                                 x_ah1k
-                                                 x_ah1l
-                                                 x_ah1m
-                                                 x_ah1n
-                                                 x_ah1o
-                                                 x_ah1p)
-    = (fmap
-         (\ y_ah1q
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah1a) x_ah1b) x_ah1c) x_ah1d) x_ah1e) y_ah1q) x_ah1g) x_ah1h) x_ah1i)
-                       x_ah1j)
-                      x_ah1k)
-                     x_ah1l)
-                    x_ah1m)
-                   x_ah1n)
-                  x_ah1o)
-                 x_ah1p))
-        (f_ah19 x_ah1f)
+    f_ahiJ
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahiK
+                                                 x_ahiL
+                                                 x_ahiM
+                                                 x_ahiN
+                                                 x_ahiO
+                                                 x_ahiP
+                                                 x_ahiQ
+                                                 x_ahiR
+                                                 x_ahiS
+                                                 x_ahiT
+                                                 x_ahiU
+                                                 x_ahiV
+                                                 x_ahiW
+                                                 x_ahiX
+                                                 x_ahiY
+                                                 x_ahiZ)
+    = fmap
+        (\ y_ahj0
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahiK x_ahiL x_ahiM x_ahiN x_ahiO y_ahj0 x_ahiQ x_ahiR x_ahiS x_ahiT x_ahiU x_ahiV x_ahiW x_ahiX x_ahiY x_ahiZ)
+        (f_ahiJ x_ahiP)
 class HasIfNoneMatch s a | s -> a where
   if_none_match :: Lens' s a
 instance HasIfNoneMatch Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE if_none_match #-}
   if_none_match
-    f_ah1r
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah1s
-                                                 x_ah1t
-                                                 x_ah1u
-                                                 x_ah1v
-                                                 x_ah1w
-                                                 x_ah1x
-                                                 x_ah1y
-                                                 x_ah1z
-                                                 x_ah1A
-                                                 x_ah1B
-                                                 x_ah1C
-                                                 x_ah1D
-                                                 x_ah1E
-                                                 x_ah1F
-                                                 x_ah1G
-                                                 x_ah1H)
-    = (fmap
-         (\ y_ah1I
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah1s) x_ah1t) x_ah1u) x_ah1v) x_ah1w) x_ah1x) x_ah1y) x_ah1z) x_ah1A)
-                       y_ah1I)
-                      x_ah1C)
-                     x_ah1D)
-                    x_ah1E)
-                   x_ah1F)
-                  x_ah1G)
-                 x_ah1H))
-        (f_ah1r x_ah1B)
+    f_ahj1
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahj2
+                                                 x_ahj3
+                                                 x_ahj4
+                                                 x_ahj5
+                                                 x_ahj6
+                                                 x_ahj7
+                                                 x_ahj8
+                                                 x_ahj9
+                                                 x_ahja
+                                                 x_ahjb
+                                                 x_ahjc
+                                                 x_ahjd
+                                                 x_ahje
+                                                 x_ahjf
+                                                 x_ahjg
+                                                 x_ahjh)
+    = fmap
+        (\ y_ahji
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahj2 x_ahj3 x_ahj4 x_ahj5 x_ahj6 x_ahj7 x_ahj8 x_ahj9 x_ahja y_ahji x_ahjc x_ahjd x_ahje x_ahjf x_ahjg x_ahjh)
+        (f_ahj1 x_ahjb)
 class HasIfNotModified s a | s -> a where
   if_not_modified :: Lens' s a
 instance HasIfNotModified Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE if_not_modified #-}
   if_not_modified
-    f_ah1J
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah1K
-                                                 x_ah1L
-                                                 x_ah1M
-                                                 x_ah1N
-                                                 x_ah1O
-                                                 x_ah1P
-                                                 x_ah1Q
-                                                 x_ah1R
-                                                 x_ah1S
-                                                 x_ah1T
-                                                 x_ah1U
-                                                 x_ah1V
-                                                 x_ah1W
-                                                 x_ah1X
-                                                 x_ah1Y
-                                                 x_ah1Z)
-    = (fmap
-         (\ y_ah20
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah1K) x_ah1L) x_ah1M) x_ah1N) x_ah1O) x_ah1P) x_ah1Q) x_ah1R) y_ah20)
-                       x_ah1T)
-                      x_ah1U)
-                     x_ah1V)
-                    x_ah1W)
-                   x_ah1X)
-                  x_ah1Y)
-                 x_ah1Z))
-        (f_ah1J x_ah1S)
+    f_ahjj
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahjk
+                                                 x_ahjl
+                                                 x_ahjm
+                                                 x_ahjn
+                                                 x_ahjo
+                                                 x_ahjp
+                                                 x_ahjq
+                                                 x_ahjr
+                                                 x_ahjs
+                                                 x_ahjt
+                                                 x_ahju
+                                                 x_ahjv
+                                                 x_ahjw
+                                                 x_ahjx
+                                                 x_ahjy
+                                                 x_ahjz)
+    = fmap
+        (\ y_ahjA
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahjk x_ahjl x_ahjm x_ahjn x_ahjo x_ahjp x_ahjq x_ahjr y_ahjA x_ahjt x_ahju x_ahjv x_ahjw x_ahjx x_ahjy x_ahjz)
+        (f_ahjj x_ahjs)
 instance HasKey Network.Riak.Protocol.PutRequest.PutRequest (Maybe ByteString) where
   {-# INLINE key #-}
   key
-    f_ah21
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah22
-                                                 x_ah23
-                                                 x_ah24
-                                                 x_ah25
-                                                 x_ah26
-                                                 x_ah27
-                                                 x_ah28
-                                                 x_ah29
-                                                 x_ah2a
-                                                 x_ah2b
-                                                 x_ah2c
-                                                 x_ah2d
-                                                 x_ah2e
-                                                 x_ah2f
-                                                 x_ah2g
-                                                 x_ah2h)
-    = (fmap
-         (\ y_ah2i
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah22) y_ah2i) x_ah24) x_ah25) x_ah26) x_ah27) x_ah28) x_ah29) x_ah2a)
-                       x_ah2b)
-                      x_ah2c)
-                     x_ah2d)
-                    x_ah2e)
-                   x_ah2f)
-                  x_ah2g)
-                 x_ah2h))
-        (f_ah21 x_ah23)
+    f_ahjB
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahjC
+                                                 x_ahjD
+                                                 x_ahjE
+                                                 x_ahjF
+                                                 x_ahjG
+                                                 x_ahjH
+                                                 x_ahjI
+                                                 x_ahjJ
+                                                 x_ahjK
+                                                 x_ahjL
+                                                 x_ahjM
+                                                 x_ahjN
+                                                 x_ahjO
+                                                 x_ahjP
+                                                 x_ahjQ
+                                                 x_ahjR)
+    = fmap
+        (\ y_ahjS
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahjC y_ahjS x_ahjE x_ahjF x_ahjG x_ahjH x_ahjI x_ahjJ x_ahjK x_ahjL x_ahjM x_ahjN x_ahjO x_ahjP x_ahjQ x_ahjR)
+        (f_ahjB x_ahjD)
 instance HasNVal Network.Riak.Protocol.PutRequest.PutRequest (Maybe Word32) where
   {-# INLINE n_val #-}
   n_val
-    f_ah2j
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah2k
-                                                 x_ah2l
-                                                 x_ah2m
-                                                 x_ah2n
-                                                 x_ah2o
-                                                 x_ah2p
-                                                 x_ah2q
-                                                 x_ah2r
-                                                 x_ah2s
-                                                 x_ah2t
-                                                 x_ah2u
-                                                 x_ah2v
-                                                 x_ah2w
-                                                 x_ah2x
-                                                 x_ah2y
-                                                 x_ah2z)
-    = (fmap
-         (\ y_ah2A
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah2k) x_ah2l) x_ah2m) x_ah2n) x_ah2o) x_ah2p) x_ah2q) x_ah2r) x_ah2s)
-                       x_ah2t)
-                      x_ah2u)
-                     x_ah2v)
-                    x_ah2w)
-                   x_ah2x)
-                  y_ah2A)
-                 x_ah2z))
-        (f_ah2j x_ah2y)
+    f_ahjT
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahjU
+                                                 x_ahjV
+                                                 x_ahjW
+                                                 x_ahjX
+                                                 x_ahjY
+                                                 x_ahjZ
+                                                 x_ahk0
+                                                 x_ahk1
+                                                 x_ahk2
+                                                 x_ahk3
+                                                 x_ahk4
+                                                 x_ahk5
+                                                 x_ahk6
+                                                 x_ahk7
+                                                 x_ahk8
+                                                 x_ahk9)
+    = fmap
+        (\ y_ahka
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahjU x_ahjV x_ahjW x_ahjX x_ahjY x_ahjZ x_ahk0 x_ahk1 x_ahk2 x_ahk3 x_ahk4 x_ahk5 x_ahk6 x_ahk7 y_ahka x_ahk9)
+        (f_ahjT x_ahk8)
 instance HasPw Network.Riak.Protocol.PutRequest.PutRequest (Maybe Word32) where
   {-# INLINE pw #-}
   pw
-    f_ah2B
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah2C
-                                                 x_ah2D
-                                                 x_ah2E
-                                                 x_ah2F
-                                                 x_ah2G
-                                                 x_ah2H
-                                                 x_ah2I
-                                                 x_ah2J
-                                                 x_ah2K
-                                                 x_ah2L
-                                                 x_ah2M
-                                                 x_ah2N
-                                                 x_ah2O
-                                                 x_ah2P
-                                                 x_ah2Q
-                                                 x_ah2R)
-    = (fmap
-         (\ y_ah2S
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah2C) x_ah2D) x_ah2E) x_ah2F) x_ah2G) x_ah2H) x_ah2I) y_ah2S) x_ah2K)
-                       x_ah2L)
-                      x_ah2M)
-                     x_ah2N)
-                    x_ah2O)
-                   x_ah2P)
-                  x_ah2Q)
-                 x_ah2R))
-        (f_ah2B x_ah2J)
+    f_ahkb
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahkc
+                                                 x_ahkd
+                                                 x_ahke
+                                                 x_ahkf
+                                                 x_ahkg
+                                                 x_ahkh
+                                                 x_ahki
+                                                 x_ahkj
+                                                 x_ahkk
+                                                 x_ahkl
+                                                 x_ahkm
+                                                 x_ahkn
+                                                 x_ahko
+                                                 x_ahkp
+                                                 x_ahkq
+                                                 x_ahkr)
+    = fmap
+        (\ y_ahks
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahkc x_ahkd x_ahke x_ahkf x_ahkg x_ahkh x_ahki y_ahks x_ahkk x_ahkl x_ahkm x_ahkn x_ahko x_ahkp x_ahkq x_ahkr)
+        (f_ahkb x_ahkj)
 instance HasReturnBody Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE return_body #-}
   return_body
-    f_ah2T
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah2U
-                                                 x_ah2V
-                                                 x_ah2W
-                                                 x_ah2X
-                                                 x_ah2Y
-                                                 x_ah2Z
-                                                 x_ah30
-                                                 x_ah31
-                                                 x_ah32
-                                                 x_ah33
-                                                 x_ah34
-                                                 x_ah35
-                                                 x_ah36
-                                                 x_ah37
-                                                 x_ah38
-                                                 x_ah39)
-    = (fmap
-         (\ y_ah3a
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah2U) x_ah2V) x_ah2W) x_ah2X) x_ah2Y) x_ah2Z) y_ah3a) x_ah31) x_ah32)
-                       x_ah33)
-                      x_ah34)
-                     x_ah35)
-                    x_ah36)
-                   x_ah37)
-                  x_ah38)
-                 x_ah39))
-        (f_ah2T x_ah30)
+    f_ahkt
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahku
+                                                 x_ahkv
+                                                 x_ahkw
+                                                 x_ahkx
+                                                 x_ahky
+                                                 x_ahkz
+                                                 x_ahkA
+                                                 x_ahkB
+                                                 x_ahkC
+                                                 x_ahkD
+                                                 x_ahkE
+                                                 x_ahkF
+                                                 x_ahkG
+                                                 x_ahkH
+                                                 x_ahkI
+                                                 x_ahkJ)
+    = fmap
+        (\ y_ahkK
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahku x_ahkv x_ahkw x_ahkx x_ahky x_ahkz y_ahkK x_ahkB x_ahkC x_ahkD x_ahkE x_ahkF x_ahkG x_ahkH x_ahkI x_ahkJ)
+        (f_ahkt x_ahkA)
 class HasReturnHead s a | s -> a where
   return_head :: Lens' s a
 instance HasReturnHead Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE return_head #-}
   return_head
-    f_ah3b
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah3c
-                                                 x_ah3d
-                                                 x_ah3e
-                                                 x_ah3f
-                                                 x_ah3g
-                                                 x_ah3h
-                                                 x_ah3i
-                                                 x_ah3j
-                                                 x_ah3k
-                                                 x_ah3l
-                                                 x_ah3m
-                                                 x_ah3n
-                                                 x_ah3o
-                                                 x_ah3p
-                                                 x_ah3q
-                                                 x_ah3r)
-    = (fmap
-         (\ y_ah3s
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah3c) x_ah3d) x_ah3e) x_ah3f) x_ah3g) x_ah3h) x_ah3i) x_ah3j) x_ah3k)
-                       x_ah3l)
-                      y_ah3s)
-                     x_ah3n)
-                    x_ah3o)
-                   x_ah3p)
-                  x_ah3q)
-                 x_ah3r))
-        (f_ah3b x_ah3m)
+    f_ahkL
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahkM
+                                                 x_ahkN
+                                                 x_ahkO
+                                                 x_ahkP
+                                                 x_ahkQ
+                                                 x_ahkR
+                                                 x_ahkS
+                                                 x_ahkT
+                                                 x_ahkU
+                                                 x_ahkV
+                                                 x_ahkW
+                                                 x_ahkX
+                                                 x_ahkY
+                                                 x_ahkZ
+                                                 x_ahl0
+                                                 x_ahl1)
+    = fmap
+        (\ y_ahl2
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahkM x_ahkN x_ahkO x_ahkP x_ahkQ x_ahkR x_ahkS x_ahkT x_ahkU x_ahkV y_ahl2 x_ahkX x_ahkY x_ahkZ x_ahl0 x_ahl1)
+        (f_ahkL x_ahkW)
 instance HasSloppyQuorum Network.Riak.Protocol.PutRequest.PutRequest (Maybe Bool) where
   {-# INLINE sloppy_quorum #-}
   sloppy_quorum
-    f_ah3t
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah3u
-                                                 x_ah3v
-                                                 x_ah3w
-                                                 x_ah3x
-                                                 x_ah3y
-                                                 x_ah3z
-                                                 x_ah3A
-                                                 x_ah3B
-                                                 x_ah3C
-                                                 x_ah3D
-                                                 x_ah3E
-                                                 x_ah3F
-                                                 x_ah3G
-                                                 x_ah3H
-                                                 x_ah3I
-                                                 x_ah3J)
-    = (fmap
-         (\ y_ah3K
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah3u) x_ah3v) x_ah3w) x_ah3x) x_ah3y) x_ah3z) x_ah3A) x_ah3B) x_ah3C)
-                       x_ah3D)
-                      x_ah3E)
-                     x_ah3F)
-                    x_ah3G)
-                   y_ah3K)
-                  x_ah3I)
-                 x_ah3J))
-        (f_ah3t x_ah3H)
+    f_ahl3
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahl4
+                                                 x_ahl5
+                                                 x_ahl6
+                                                 x_ahl7
+                                                 x_ahl8
+                                                 x_ahl9
+                                                 x_ahla
+                                                 x_ahlb
+                                                 x_ahlc
+                                                 x_ahld
+                                                 x_ahle
+                                                 x_ahlf
+                                                 x_ahlg
+                                                 x_ahlh
+                                                 x_ahli
+                                                 x_ahlj)
+    = fmap
+        (\ y_ahlk
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahl4 x_ahl5 x_ahl6 x_ahl7 x_ahl8 x_ahl9 x_ahla x_ahlb x_ahlc x_ahld x_ahle x_ahlf x_ahlg y_ahlk x_ahli x_ahlj)
+        (f_ahl3 x_ahlh)
 instance HasTimeout Network.Riak.Protocol.PutRequest.PutRequest (Maybe Word32) where
   {-# INLINE timeout #-}
   timeout
-    f_ah3L
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah3M
-                                                 x_ah3N
-                                                 x_ah3O
-                                                 x_ah3P
-                                                 x_ah3Q
-                                                 x_ah3R
-                                                 x_ah3S
-                                                 x_ah3T
-                                                 x_ah3U
-                                                 x_ah3V
-                                                 x_ah3W
-                                                 x_ah3X
-                                                 x_ah3Y
-                                                 x_ah3Z
-                                                 x_ah40
-                                                 x_ah41)
-    = (fmap
-         (\ y_ah42
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah3M) x_ah3N) x_ah3O) x_ah3P) x_ah3Q) x_ah3R) x_ah3S) x_ah3T) x_ah3U)
-                       x_ah3V)
-                      x_ah3W)
-                     y_ah42)
-                    x_ah3Y)
-                   x_ah3Z)
-                  x_ah40)
-                 x_ah41))
-        (f_ah3L x_ah3X)
+    f_ahll
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahlm
+                                                 x_ahln
+                                                 x_ahlo
+                                                 x_ahlp
+                                                 x_ahlq
+                                                 x_ahlr
+                                                 x_ahls
+                                                 x_ahlt
+                                                 x_ahlu
+                                                 x_ahlv
+                                                 x_ahlw
+                                                 x_ahlx
+                                                 x_ahly
+                                                 x_ahlz
+                                                 x_ahlA
+                                                 x_ahlB)
+    = fmap
+        (\ y_ahlC
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahlm x_ahln x_ahlo x_ahlp x_ahlq x_ahlr x_ahls x_ahlt x_ahlu x_ahlv x_ahlw y_ahlC x_ahly x_ahlz x_ahlA x_ahlB)
+        (f_ahll x_ahlx)
 instance HasType' Network.Riak.Protocol.PutRequest.PutRequest (Maybe ByteString) where
   {-# INLINE type' #-}
   type'
-    f_ah43
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah44
-                                                 x_ah45
-                                                 x_ah46
-                                                 x_ah47
-                                                 x_ah48
-                                                 x_ah49
-                                                 x_ah4a
-                                                 x_ah4b
-                                                 x_ah4c
-                                                 x_ah4d
-                                                 x_ah4e
-                                                 x_ah4f
-                                                 x_ah4g
-                                                 x_ah4h
-                                                 x_ah4i
-                                                 x_ah4j)
-    = (fmap
-         (\ y_ah4k
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah44) x_ah45) x_ah46) x_ah47) x_ah48) x_ah49) x_ah4a) x_ah4b) x_ah4c)
-                       x_ah4d)
-                      x_ah4e)
-                     x_ah4f)
-                    x_ah4g)
-                   x_ah4h)
-                  x_ah4i)
-                 y_ah4k))
-        (f_ah43 x_ah4j)
+    f_ahlD
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahlE
+                                                 x_ahlF
+                                                 x_ahlG
+                                                 x_ahlH
+                                                 x_ahlI
+                                                 x_ahlJ
+                                                 x_ahlK
+                                                 x_ahlL
+                                                 x_ahlM
+                                                 x_ahlN
+                                                 x_ahlO
+                                                 x_ahlP
+                                                 x_ahlQ
+                                                 x_ahlR
+                                                 x_ahlS
+                                                 x_ahlT)
+    = fmap
+        (\ y_ahlU
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahlE x_ahlF x_ahlG x_ahlH x_ahlI x_ahlJ x_ahlK x_ahlL x_ahlM x_ahlN x_ahlO x_ahlP x_ahlQ x_ahlR x_ahlS y_ahlU)
+        (f_ahlD x_ahlT)
 instance HasVclock Network.Riak.Protocol.PutRequest.PutRequest (Maybe ByteString) where
   {-# INLINE vclock #-}
   vclock
-    f_ah4l
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah4m
-                                                 x_ah4n
-                                                 x_ah4o
-                                                 x_ah4p
-                                                 x_ah4q
-                                                 x_ah4r
-                                                 x_ah4s
-                                                 x_ah4t
-                                                 x_ah4u
-                                                 x_ah4v
-                                                 x_ah4w
-                                                 x_ah4x
-                                                 x_ah4y
-                                                 x_ah4z
-                                                 x_ah4A
-                                                 x_ah4B)
-    = (fmap
-         (\ y_ah4C
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah4m) x_ah4n) y_ah4C) x_ah4p) x_ah4q) x_ah4r) x_ah4s) x_ah4t) x_ah4u)
-                       x_ah4v)
-                      x_ah4w)
-                     x_ah4x)
-                    x_ah4y)
-                   x_ah4z)
-                  x_ah4A)
-                 x_ah4B))
-        (f_ah4l x_ah4o)
+    f_ahlV
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahlW
+                                                 x_ahlX
+                                                 x_ahlY
+                                                 x_ahlZ
+                                                 x_ahm0
+                                                 x_ahm1
+                                                 x_ahm2
+                                                 x_ahm3
+                                                 x_ahm4
+                                                 x_ahm5
+                                                 x_ahm6
+                                                 x_ahm7
+                                                 x_ahm8
+                                                 x_ahm9
+                                                 x_ahma
+                                                 x_ahmb)
+    = fmap
+        (\ y_ahmc
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahlW x_ahlX y_ahmc x_ahlZ x_ahm0 x_ahm1 x_ahm2 x_ahm3 x_ahm4 x_ahm5 x_ahm6 x_ahm7 x_ahm8 x_ahm9 x_ahma x_ahmb)
+        (f_ahlV x_ahlY)
 instance HasW Network.Riak.Protocol.PutRequest.PutRequest (Maybe Word32) where
   {-# INLINE w #-}
-  w f_ah4D
-    (Network.Riak.Protocol.PutRequest.PutRequest x_ah4E
-                                                 x_ah4F
-                                                 x_ah4G
-                                                 x_ah4H
-                                                 x_ah4I
-                                                 x_ah4J
-                                                 x_ah4K
-                                                 x_ah4L
-                                                 x_ah4M
-                                                 x_ah4N
-                                                 x_ah4O
-                                                 x_ah4P
-                                                 x_ah4Q
-                                                 x_ah4R
-                                                 x_ah4S
-                                                 x_ah4T)
-    = (fmap
-         (\ y_ah4U
-            -> (((((((((((((((Network.Riak.Protocol.PutRequest.PutRequest x_ah4E) x_ah4F) x_ah4G) x_ah4H) y_ah4U) x_ah4J) x_ah4K) x_ah4L) x_ah4M)
-                       x_ah4N)
-                      x_ah4O)
-                     x_ah4P)
-                    x_ah4Q)
-                   x_ah4R)
-                  x_ah4S)
-                 x_ah4T))
-        (f_ah4D x_ah4I)
+  w f_ahmd
+    (Network.Riak.Protocol.PutRequest.PutRequest x_ahme
+                                                 x_ahmf
+                                                 x_ahmg
+                                                 x_ahmh
+                                                 x_ahmi
+                                                 x_ahmj
+                                                 x_ahmk
+                                                 x_ahml
+                                                 x_ahmm
+                                                 x_ahmn
+                                                 x_ahmo
+                                                 x_ahmp
+                                                 x_ahmq
+                                                 x_ahmr
+                                                 x_ahms
+                                                 x_ahmt)
+    = fmap
+        (\ y_ahmu
+           -> Network.Riak.Protocol.PutRequest.PutRequest
+                x_ahme x_ahmf x_ahmg x_ahmh y_ahmu x_ahmj x_ahmk x_ahml x_ahmm x_ahmn x_ahmo x_ahmp x_ahmq x_ahmr x_ahms x_ahmt)
+        (f_ahmd x_ahmi)
 instance HasContent Network.Riak.Protocol.PutResponse.PutResponse (Seq Network.Riak.Protocol.Content.Content) where
   {-# INLINE content #-}
-  content f_ahbI (Network.Riak.Protocol.PutResponse.PutResponse x_ahbJ x_ahbK x_ahbL)
-    = (fmap (\ y_ahbM -> ((Network.Riak.Protocol.PutResponse.PutResponse y_ahbM) x_ahbK) x_ahbL)) (f_ahbI x_ahbJ)
+  content f_ahrW (Network.Riak.Protocol.PutResponse.PutResponse x_ahrX x_ahrY x_ahrZ)
+    = fmap (\ y_ahs0 -> Network.Riak.Protocol.PutResponse.PutResponse y_ahs0 x_ahrY x_ahrZ) (f_ahrW x_ahrX)
 instance HasKey Network.Riak.Protocol.PutResponse.PutResponse (Maybe ByteString) where
   {-# INLINE key #-}
-  key f_ahbN (Network.Riak.Protocol.PutResponse.PutResponse x_ahbO x_ahbP x_ahbQ)
-    = (fmap (\ y_ahbR -> ((Network.Riak.Protocol.PutResponse.PutResponse x_ahbO) x_ahbP) y_ahbR)) (f_ahbN x_ahbQ)
+  key f_ahs1 (Network.Riak.Protocol.PutResponse.PutResponse x_ahs2 x_ahs3 x_ahs4)
+    = fmap (\ y_ahs5 -> Network.Riak.Protocol.PutResponse.PutResponse x_ahs2 x_ahs3 y_ahs5) (f_ahs1 x_ahs4)
 instance HasVclock Network.Riak.Protocol.PutResponse.PutResponse (Maybe ByteString) where
   {-# INLINE vclock #-}
-  vclock f_ahbS (Network.Riak.Protocol.PutResponse.PutResponse x_ahbT x_ahbU x_ahbV)
-    = (fmap (\ y_ahbW -> ((Network.Riak.Protocol.PutResponse.PutResponse x_ahbT) y_ahbW) x_ahbV)) (f_ahbS x_ahbU)
+  vclock f_ahs6 (Network.Riak.Protocol.PutResponse.PutResponse x_ahs7 x_ahs8 x_ahs9)
+    = fmap (\ y_ahsa -> Network.Riak.Protocol.PutResponse.PutResponse x_ahs7 y_ahsa x_ahs9) (f_ahs6 x_ahs8)
 instance HasBucket Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_ahcV (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_ahcW x_ahcX)
-    = (fmap (\ y_ahcY -> (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest y_ahcY) x_ahcX)) (f_ahcV x_ahcW)
+  bucket f_aht0 (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_aht1 x_aht2)
+    = fmap (\ y_aht3 -> Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest y_aht3 x_aht2) (f_aht0 x_aht1)
 instance HasType' Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_ahcZ (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_ahd0 x_ahd1)
-    = (fmap (\ y_ahd2 -> (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_ahd0) y_ahd2)) (f_ahcZ x_ahd1)
+  type' f_aht4 (Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_aht5 x_aht6)
+    = fmap (\ y_aht7 -> Network.Riak.Protocol.ResetBucketRequest.ResetBucketRequest x_aht5 y_aht7) (f_aht4 x_aht6)
 class HasFields s a | s -> a where
   fields :: Lens' s a
 instance HasFields Network.Riak.Protocol.SearchDoc.SearchDoc (Seq Network.Riak.Protocol.Pair.Pair) where
   {-# INLINE fields #-}
-  fields f_ahdK (Network.Riak.Protocol.SearchDoc.SearchDoc x_ahdL)
-    = (fmap (\ y_ahdM -> Network.Riak.Protocol.SearchDoc.SearchDoc y_ahdM)) (f_ahdK x_ahdL)
+  fields f_ahtJ (Network.Riak.Protocol.SearchDoc.SearchDoc x_ahtK)
+    = fmap (\ y_ahtL -> Network.Riak.Protocol.SearchDoc.SearchDoc y_ahtL) (f_ahtJ x_ahtK)
 class HasDf s a | s -> a where
   df :: Lens' s a
 instance HasDf Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe ByteString) where
   {-# INLINE df #-}
   df
-    f_aheK
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_aheL x_aheM x_aheN x_aheO x_aheP x_aheQ x_aheR x_aheS x_aheT x_aheU)
-    = (fmap
-         (\ y_aheV
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_aheL) x_aheM) x_aheN) x_aheO) x_aheP) x_aheQ) y_aheV)
-                   x_aheS)
-                  x_aheT)
-                 x_aheU))
-        (f_aheK x_aheR)
+    f_ahuz
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuA x_ahuB x_ahuC x_ahuD x_ahuE x_ahuF x_ahuG x_ahuH x_ahuI x_ahuJ)
+    = fmap
+        (\ y_ahuK
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuA x_ahuB x_ahuC x_ahuD x_ahuE x_ahuF y_ahuK x_ahuH x_ahuI x_ahuJ)
+        (f_ahuz x_ahuG)
 class HasFilter s a | s -> a where
   filter :: Lens' s a
 instance HasFilter Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe ByteString) where
   {-# INLINE filter #-}
   filter
-    f_aheW
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_aheX x_aheY x_aheZ x_ahf0 x_ahf1 x_ahf2 x_ahf3 x_ahf4 x_ahf5 x_ahf6)
-    = (fmap
-         (\ y_ahf7
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_aheX) x_aheY) x_aheZ) x_ahf0) x_ahf1) y_ahf7) x_ahf3)
-                   x_ahf4)
-                  x_ahf5)
-                 x_ahf6))
-        (f_aheW x_ahf2)
+    f_ahuL
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuM x_ahuN x_ahuO x_ahuP x_ahuQ x_ahuR x_ahuS x_ahuT x_ahuU x_ahuV)
+    = fmap
+        (\ y_ahuW
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuM x_ahuN x_ahuO x_ahuP x_ahuQ y_ahuW x_ahuS x_ahuT x_ahuU x_ahuV)
+        (f_ahuL x_ahuR)
 class HasFl s a | s -> a where
   fl :: Lens' s a
 instance HasFl Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Seq ByteString) where
   {-# INLINE fl #-}
   fl
-    f_ahf8
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahf9 x_ahfa x_ahfb x_ahfc x_ahfd x_ahfe x_ahff x_ahfg x_ahfh x_ahfi)
-    = (fmap
-         (\ y_ahfj
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahf9) x_ahfa) x_ahfb) x_ahfc) x_ahfd) x_ahfe) x_ahff)
-                   x_ahfg)
-                  y_ahfj)
-                 x_ahfi))
-        (f_ahf8 x_ahfh)
+    f_ahuX
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuY x_ahuZ x_ahv0 x_ahv1 x_ahv2 x_ahv3 x_ahv4 x_ahv5 x_ahv6 x_ahv7)
+    = fmap
+        (\ y_ahv8
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahuY x_ahuZ x_ahv0 x_ahv1 x_ahv2 x_ahv3 x_ahv4 x_ahv5 y_ahv8 x_ahv7)
+        (f_ahuX x_ahv6)
 instance HasIndex Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest ByteString where
   {-# INLINE index #-}
   index
-    f_ahfk
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfl x_ahfm x_ahfn x_ahfo x_ahfp x_ahfq x_ahfr x_ahfs x_ahft x_ahfu)
-    = (fmap
-         (\ y_ahfv
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfl) y_ahfv) x_ahfn) x_ahfo) x_ahfp) x_ahfq) x_ahfr)
-                   x_ahfs)
-                  x_ahft)
-                 x_ahfu))
-        (f_ahfk x_ahfm)
+    f_ahv9
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahva x_ahvb x_ahvc x_ahvd x_ahve x_ahvf x_ahvg x_ahvh x_ahvi x_ahvj)
+    = fmap
+        (\ y_ahvk
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahva y_ahvk x_ahvc x_ahvd x_ahve x_ahvf x_ahvg x_ahvh x_ahvi x_ahvj)
+        (f_ahv9 x_ahvb)
 instance HasOp Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe ByteString) where
   {-# INLINE op #-}
   op
-    f_ahfw
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfx x_ahfy x_ahfz x_ahfA x_ahfB x_ahfC x_ahfD x_ahfE x_ahfF x_ahfG)
-    = (fmap
-         (\ y_ahfH
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfx) x_ahfy) x_ahfz) x_ahfA) x_ahfB) x_ahfC) x_ahfD)
-                   y_ahfH)
-                  x_ahfF)
-                 x_ahfG))
-        (f_ahfw x_ahfE)
+    f_ahvl
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvm x_ahvn x_ahvo x_ahvp x_ahvq x_ahvr x_ahvs x_ahvt x_ahvu x_ahvv)
+    = fmap
+        (\ y_ahvw
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvm x_ahvn x_ahvo x_ahvp x_ahvq x_ahvr x_ahvs y_ahvw x_ahvu x_ahvv)
+        (f_ahvl x_ahvt)
 class HasPresort s a | s -> a where
   presort :: Lens' s a
 instance HasPresort Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe ByteString) where
   {-# INLINE presort #-}
   presort
-    f_ahfI
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfJ x_ahfK x_ahfL x_ahfM x_ahfN x_ahfO x_ahfP x_ahfQ x_ahfR x_ahfS)
-    = (fmap
-         (\ y_ahfT
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfJ) x_ahfK) x_ahfL) x_ahfM) x_ahfN) x_ahfO) x_ahfP)
-                   x_ahfQ)
-                  x_ahfR)
-                 y_ahfT))
-        (f_ahfI x_ahfS)
+    f_ahvx
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvy x_ahvz x_ahvA x_ahvB x_ahvC x_ahvD x_ahvE x_ahvF x_ahvG x_ahvH)
+    = fmap
+        (\ y_ahvI
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvy x_ahvz x_ahvA x_ahvB x_ahvC x_ahvD x_ahvE x_ahvF x_ahvG y_ahvI)
+        (f_ahvx x_ahvH)
 class HasQ s a | s -> a where
   q :: Lens' s a
 instance HasQ Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest ByteString where
   {-# INLINE q #-}
-  q f_ahfU
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahfV x_ahfW x_ahfX x_ahfY x_ahfZ x_ahg0 x_ahg1 x_ahg2 x_ahg3 x_ahg4)
-    = (fmap
-         (\ y_ahg5
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest y_ahg5) x_ahfW) x_ahfX) x_ahfY) x_ahfZ) x_ahg0) x_ahg1)
-                   x_ahg2)
-                  x_ahg3)
-                 x_ahg4))
-        (f_ahfU x_ahfV)
+  q f_ahvJ
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvK x_ahvL x_ahvM x_ahvN x_ahvO x_ahvP x_ahvQ x_ahvR x_ahvS x_ahvT)
+    = fmap
+        (\ y_ahvU
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest y_ahvU x_ahvL x_ahvM x_ahvN x_ahvO x_ahvP x_ahvQ x_ahvR x_ahvS x_ahvT)
+        (f_ahvJ x_ahvK)
 class HasRows s a | s -> a where
   rows :: Lens' s a
 instance HasRows Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe Word32) where
   {-# INLINE rows #-}
   rows
-    f_ahg6
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahg7 x_ahg8 x_ahg9 x_ahga x_ahgb x_ahgc x_ahgd x_ahge x_ahgf x_ahgg)
-    = (fmap
-         (\ y_ahgh
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahg7) x_ahg8) y_ahgh) x_ahga) x_ahgb) x_ahgc) x_ahgd)
-                   x_ahge)
-                  x_ahgf)
-                 x_ahgg))
-        (f_ahg6 x_ahg9)
+    f_ahvV
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvW x_ahvX x_ahvY x_ahvZ x_ahw0 x_ahw1 x_ahw2 x_ahw3 x_ahw4 x_ahw5)
+    = fmap
+        (\ y_ahw6
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahvW x_ahvX y_ahw6 x_ahvZ x_ahw0 x_ahw1 x_ahw2 x_ahw3 x_ahw4 x_ahw5)
+        (f_ahvV x_ahvY)
 class HasSort s a | s -> a where
   sort :: Lens' s a
 instance HasSort Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe ByteString) where
   {-# INLINE sort #-}
   sort
-    f_ahgi
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahgj x_ahgk x_ahgl x_ahgm x_ahgn x_ahgo x_ahgp x_ahgq x_ahgr x_ahgs)
-    = (fmap
-         (\ y_ahgt
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahgj) x_ahgk) x_ahgl) x_ahgm) y_ahgt) x_ahgo) x_ahgp)
-                   x_ahgq)
-                  x_ahgr)
-                 x_ahgs))
-        (f_ahgi x_ahgn)
+    f_ahw7
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahw8 x_ahw9 x_ahwa x_ahwb x_ahwc x_ahwd x_ahwe x_ahwf x_ahwg x_ahwh)
+    = fmap
+        (\ y_ahwi
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahw8 x_ahw9 x_ahwa x_ahwb y_ahwi x_ahwd x_ahwe x_ahwf x_ahwg x_ahwh)
+        (f_ahw7 x_ahwc)
 class HasStart s a | s -> a where
   start :: Lens' s a
 instance HasStart Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest (Maybe Word32) where
   {-# INLINE start #-}
   start
-    f_ahgu
-    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahgv x_ahgw x_ahgx x_ahgy x_ahgz x_ahgA x_ahgB x_ahgC x_ahgD x_ahgE)
-    = (fmap
-         (\ y_ahgF
-            -> (((((((((Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahgv) x_ahgw) x_ahgx) y_ahgF) x_ahgz) x_ahgA) x_ahgB)
-                   x_ahgC)
-                  x_ahgD)
-                 x_ahgE))
-        (f_ahgu x_ahgy)
+    f_ahwj
+    (Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahwk x_ahwl x_ahwm x_ahwn x_ahwo x_ahwp x_ahwq x_ahwr x_ahws x_ahwt)
+    = fmap
+        (\ y_ahwu
+           -> Network.Riak.Protocol.SearchQueryRequest.SearchQueryRequest x_ahwk x_ahwl x_ahwm y_ahwu x_ahwo x_ahwp x_ahwq x_ahwr x_ahws x_ahwt)
+        (f_ahwj x_ahwn)
 class HasDocs s a | s -> a where
   docs :: Lens' s a
 instance HasDocs Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse (Seq Network.Riak.Protocol.SearchDoc.SearchDoc) where
   {-# INLINE docs #-}
-  docs f_aho5 (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_aho6 x_aho7 x_aho8)
-    = (fmap (\ y_aho9 -> ((Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse y_aho9) x_aho7) x_aho8)) (f_aho5 x_aho6)
+  docs f_ahCg (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahCh x_ahCi x_ahCj)
+    = fmap (\ y_ahCk -> Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse y_ahCk x_ahCi x_ahCj) (f_ahCg x_ahCh)
 class HasMaxScore s a | s -> a where
   max_score :: Lens' s a
 instance HasMaxScore Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse (Maybe Float) where
   {-# INLINE max_score #-}
-  max_score f_ahoa (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahob x_ahoc x_ahod)
-    = (fmap (\ y_ahoe -> ((Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahob) y_ahoe) x_ahod)) (f_ahoa x_ahoc)
+  max_score f_ahCl (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahCm x_ahCn x_ahCo)
+    = fmap (\ y_ahCp -> Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahCm y_ahCp x_ahCo) (f_ahCl x_ahCn)
 class HasNumFound s a | s -> a where
   num_found :: Lens' s a
 instance HasNumFound Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse (Maybe Word32) where
   {-# INLINE num_found #-}
-  num_found f_ahof (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahog x_ahoh x_ahoi)
-    = (fmap (\ y_ahoj -> ((Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahog) x_ahoh) y_ahoj)) (f_ahof x_ahoi)
+  num_found f_ahCq (Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahCr x_ahCs x_ahCt)
+    = fmap (\ y_ahCu -> Network.Riak.Protocol.SearchQueryResponse.SearchQueryResponse x_ahCr x_ahCs y_ahCu) (f_ahCq x_ahCt)
 instance HasNode Network.Riak.Protocol.ServerInfo.ServerInfo (Maybe ByteString) where
   {-# INLINE node #-}
-  node f_ahqX (Network.Riak.Protocol.ServerInfo.ServerInfo x_ahqY x_ahqZ)
-    = (fmap (\ y_ahr0 -> (Network.Riak.Protocol.ServerInfo.ServerInfo y_ahr0) x_ahqZ)) (f_ahqX x_ahqY)
+  node f_ahEA (Network.Riak.Protocol.ServerInfo.ServerInfo x_ahEB x_ahEC)
+    = fmap (\ y_ahED -> Network.Riak.Protocol.ServerInfo.ServerInfo y_ahED x_ahEC) (f_ahEA x_ahEB)
 class HasServerVersion s a | s -> a where
   server_version :: Lens' s a
 instance HasServerVersion Network.Riak.Protocol.ServerInfo.ServerInfo (Maybe ByteString) where
   {-# INLINE server_version #-}
-  server_version f_ahr1 (Network.Riak.Protocol.ServerInfo.ServerInfo x_ahr2 x_ahr3)
-    = (fmap (\ y_ahr4 -> (Network.Riak.Protocol.ServerInfo.ServerInfo x_ahr2) y_ahr4)) (f_ahr1 x_ahr3)
+  server_version f_ahEE (Network.Riak.Protocol.ServerInfo.ServerInfo x_ahEF x_ahEG)
+    = fmap (\ y_ahEH -> Network.Riak.Protocol.ServerInfo.ServerInfo x_ahEF y_ahEH) (f_ahEE x_ahEG)
 instance HasBucket Network.Riak.Protocol.SetBucketRequest.SetBucketRequest ByteString where
   {-# INLINE bucket #-}
-  bucket f_ahsl (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahsm x_ahsn x_ahso)
-    = (fmap (\ y_ahsp -> ((Network.Riak.Protocol.SetBucketRequest.SetBucketRequest y_ahsp) x_ahsn) x_ahso)) (f_ahsl x_ahsm)
+  bucket f_ahFJ (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahFK x_ahFL x_ahFM)
+    = fmap (\ y_ahFN -> Network.Riak.Protocol.SetBucketRequest.SetBucketRequest y_ahFN x_ahFL x_ahFM) (f_ahFJ x_ahFK)
 instance HasProps Network.Riak.Protocol.SetBucketRequest.SetBucketRequest Network.Riak.Protocol.BucketProps.BucketProps where
   {-# INLINE props #-}
-  props f_ahsq (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahsr x_ahss x_ahst)
-    = (fmap (\ y_ahsu -> ((Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahsr) y_ahsu) x_ahst)) (f_ahsq x_ahss)
+  props f_ahFO (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahFP x_ahFQ x_ahFR)
+    = fmap (\ y_ahFS -> Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahFP y_ahFS x_ahFR) (f_ahFO x_ahFQ)
 instance HasType' Network.Riak.Protocol.SetBucketRequest.SetBucketRequest (Maybe ByteString) where
   {-# INLINE type' #-}
-  type' f_ahsv (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahsw x_ahsx x_ahsy)
-    = (fmap (\ y_ahsz -> ((Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahsw) x_ahsx) y_ahsz)) (f_ahsv x_ahsy)
+  type' f_ahFT (Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahFU x_ahFV x_ahFW)
+    = fmap (\ y_ahFX -> Network.Riak.Protocol.SetBucketRequest.SetBucketRequest x_ahFU x_ahFV y_ahFX) (f_ahFT x_ahFW)
 instance HasProps Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest Network.Riak.Protocol.BucketProps.BucketProps where
   {-# INLINE props #-}
-  props f_ahty (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahtz x_ahtA)
-    = (fmap (\ y_ahtB -> (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahtz) y_ahtB)) (f_ahty x_ahtA)
+  props f_ahGN (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahGO x_ahGP)
+    = fmap (\ y_ahGQ -> Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahGO y_ahGQ) (f_ahGN x_ahGP)
 instance HasType' Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest ByteString where
   {-# INLINE type' #-}
-  type' f_ahtC (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahtD x_ahtE)
-    = (fmap (\ y_ahtF -> (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest y_ahtF) x_ahtE)) (f_ahtC x_ahtD)
+  type' f_ahGR (Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest x_ahGS x_ahGT)
+    = fmap (\ y_ahGU -> Network.Riak.Protocol.SetBucketTypeRequest.SetBucketTypeRequest y_ahGU x_ahGT) (f_ahGR x_ahGS)
 instance HasClientId Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest ByteString where
   {-# INLINE client_id #-}
-  client_id f_ahun (Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest x_ahuo)
-    = (fmap (\ y_ahup -> Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest y_ahup)) (f_ahun x_ahuo)
+  client_id f_ahHw (Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest x_ahHx)
+    = fmap (\ y_ahHy -> Network.Riak.Protocol.SetClientIDRequest.SetClientIDRequest y_ahHy) (f_ahHw x_ahHx)
 class HasAdds s a | s -> a where
   adds :: Lens' s a
 instance HasAdds Network.Riak.Protocol.SetOp.SetOp (Seq ByteString) where
   {-# INLINE adds #-}
-  adds f_ahuQ (Network.Riak.Protocol.SetOp.SetOp x_ahuR x_ahuS)
-    = (fmap (\ y_ahuT -> (Network.Riak.Protocol.SetOp.SetOp y_ahuT) x_ahuS)) (f_ahuQ x_ahuR)
+  adds f_ahHU (Network.Riak.Protocol.SetOp.SetOp x_ahHV x_ahHW)
+    = fmap (\ y_ahHX -> Network.Riak.Protocol.SetOp.SetOp y_ahHX x_ahHW) (f_ahHU x_ahHV)
 instance HasRemoves Network.Riak.Protocol.SetOp.SetOp (Seq ByteString) where
   {-# INLINE removes #-}
-  removes f_ahuU (Network.Riak.Protocol.SetOp.SetOp x_ahuV x_ahuW)
-    = (fmap (\ y_ahuX -> (Network.Riak.Protocol.SetOp.SetOp x_ahuV) y_ahuX)) (f_ahuU x_ahuW)
+  removes f_ahHY (Network.Riak.Protocol.SetOp.SetOp x_ahHZ x_ahI0)
+    = fmap (\ y_ahI1 -> Network.Riak.Protocol.SetOp.SetOp x_ahHZ y_ahI1) (f_ahHY x_ahI0)
+class HasBooleanValue s a | s -> a where
+  boolean_value :: Lens' s a
+instance HasBooleanValue Network.Riak.Protocol.TsCell.TsCell (Maybe Bool) where
+  {-# INLINE boolean_value #-}
+  boolean_value f_ahJ3 (Network.Riak.Protocol.TsCell.TsCell x_ahJ4 x_ahJ5 x_ahJ6 x_ahJ7 x_ahJ8)
+    = fmap (\ y_ahJ9 -> Network.Riak.Protocol.TsCell.TsCell x_ahJ4 x_ahJ5 x_ahJ6 y_ahJ9 x_ahJ8) (f_ahJ3 x_ahJ7)
+class HasDoubleValue s a | s -> a where
+  double_value :: Lens' s a
+instance HasDoubleValue Network.Riak.Protocol.TsCell.TsCell (Maybe Double) where
+  {-# INLINE double_value #-}
+  double_value f_ahJa (Network.Riak.Protocol.TsCell.TsCell x_ahJb x_ahJc x_ahJd x_ahJe x_ahJf)
+    = fmap (\ y_ahJg -> Network.Riak.Protocol.TsCell.TsCell x_ahJb x_ahJc x_ahJd x_ahJe y_ahJg) (f_ahJa x_ahJf)
+class HasSint64Value s a | s -> a where
+  sint64_value :: Lens' s a
+instance HasSint64Value Network.Riak.Protocol.TsCell.TsCell (Maybe Int64) where
+  {-# INLINE sint64_value #-}
+  sint64_value f_ahJh (Network.Riak.Protocol.TsCell.TsCell x_ahJi x_ahJj x_ahJk x_ahJl x_ahJm)
+    = fmap (\ y_ahJn -> Network.Riak.Protocol.TsCell.TsCell x_ahJi y_ahJn x_ahJk x_ahJl x_ahJm) (f_ahJh x_ahJj)
+class HasTimestampValue s a | s -> a where
+  timestamp_value :: Lens' s a
+instance HasTimestampValue Network.Riak.Protocol.TsCell.TsCell (Maybe Int64) where
+  {-# INLINE timestamp_value #-}
+  timestamp_value f_ahJo (Network.Riak.Protocol.TsCell.TsCell x_ahJp x_ahJq x_ahJr x_ahJs x_ahJt)
+    = fmap (\ y_ahJu -> Network.Riak.Protocol.TsCell.TsCell x_ahJp x_ahJq y_ahJu x_ahJs x_ahJt) (f_ahJo x_ahJr)
+class HasVarcharValue s a | s -> a where
+  varchar_value :: Lens' s a
+instance HasVarcharValue Network.Riak.Protocol.TsCell.TsCell (Maybe ByteString) where
+  {-# INLINE varchar_value #-}
+  varchar_value f_ahJv (Network.Riak.Protocol.TsCell.TsCell x_ahJw x_ahJx x_ahJy x_ahJz x_ahJA)
+    = fmap (\ y_ahJB -> Network.Riak.Protocol.TsCell.TsCell y_ahJB x_ahJx x_ahJy x_ahJz x_ahJA) (f_ahJv x_ahJw)
+instance HasName Network.Riak.Protocol.TsColumnDescription.TsColumnDescription ByteString where
+  {-# INLINE name #-}
+  name f_ahNh (Network.Riak.Protocol.TsColumnDescription.TsColumnDescription x_ahNi x_ahNj)
+    = fmap (\ y_ahNk -> Network.Riak.Protocol.TsColumnDescription.TsColumnDescription y_ahNk x_ahNj) (f_ahNh x_ahNi)
+instance HasType' Network.Riak.Protocol.TsColumnDescription.TsColumnDescription Network.Riak.Protocol.TsColumnType.TsColumnType where
+  {-# INLINE type' #-}
+  type' f_ahNl (Network.Riak.Protocol.TsColumnDescription.TsColumnDescription x_ahNm x_ahNn)
+    = fmap (\ y_ahNo -> Network.Riak.Protocol.TsColumnDescription.TsColumnDescription x_ahNm y_ahNo) (f_ahNl x_ahNn)
+class HasCoverContext s a | s -> a where
+  cover_context :: Lens' s a
+instance HasCoverContext Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry ByteString where
+  {-# INLINE cover_context #-}
+  cover_context f_ahO9 (Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOa x_ahOb x_ahOc x_ahOd)
+    = fmap (\ y_ahOe -> Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOa x_ahOb y_ahOe x_ahOd) (f_ahO9 x_ahOc)
+class HasIp s a | s -> a where
+  ip :: Lens' s a
+instance HasIp Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry ByteString where
+  {-# INLINE ip #-}
+  ip f_ahOf (Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOg x_ahOh x_ahOi x_ahOj)
+    = fmap (\ y_ahOk -> Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry y_ahOk x_ahOh x_ahOi x_ahOj) (f_ahOf x_ahOg)
+class HasPort s a | s -> a where
+  port :: Lens' s a
+instance HasPort Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry Word32 where
+  {-# INLINE port #-}
+  port f_ahOl (Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOm x_ahOn x_ahOo x_ahOp)
+    = fmap (\ y_ahOq -> Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOm y_ahOq x_ahOo x_ahOp) (f_ahOl x_ahOn)
+class HasRange s a | s -> a where
+  range :: Lens' s a
+instance HasRange Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry (Maybe Network.Riak.Protocol.TsRange.TsRange) where
+  {-# INLINE range #-}
+  range f_ahOr (Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOs x_ahOt x_ahOu x_ahOv)
+    = fmap (\ y_ahOw -> Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry x_ahOs x_ahOt x_ahOu y_ahOw) (f_ahOr x_ahOv)
+class HasQuery s a | s -> a where
+  query :: Lens' s a
+instance HasQuery Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest (Maybe Network.Riak.Protocol.TsInterpolation.TsInterpolation) where
+  {-# INLINE query #-}
+  query f_ahRj (Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRk x_ahRl x_ahRm x_ahRn)
+    = fmap (\ y_ahRo -> Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest y_ahRo x_ahRl x_ahRm x_ahRn) (f_ahRj x_ahRk)
+class HasReplaceCover s a | s -> a where
+  replace_cover :: Lens' s a
+instance HasReplaceCover Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest (Maybe ByteString) where
+  {-# INLINE replace_cover #-}
+  replace_cover f_ahRp (Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRq x_ahRr x_ahRs x_ahRt)
+    = fmap (\ y_ahRu -> Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRq x_ahRr y_ahRu x_ahRt) (f_ahRp x_ahRs)
+class HasTable s a | s -> a where
+  table :: Lens' s a
+instance HasTable Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest ByteString where
+  {-# INLINE table #-}
+  table f_ahRv (Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRw x_ahRx x_ahRy x_ahRz)
+    = fmap (\ y_ahRA -> Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRw y_ahRA x_ahRy x_ahRz) (f_ahRv x_ahRx)
+class HasUnavailableCover s a | s -> a where
+  unavailable_cover :: Lens' s a
+instance HasUnavailableCover Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest (Seq ByteString) where
+  {-# INLINE unavailable_cover #-}
+  unavailable_cover f_ahRB (Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRC x_ahRD x_ahRE x_ahRF)
+    = fmap (\ y_ahRG -> Network.Riak.Protocol.TsCoverageRequest.TsCoverageRequest x_ahRC x_ahRD x_ahRE y_ahRG) (f_ahRB x_ahRF)
+class HasEntries s a | s -> a where
+  entries :: Lens' s a
+instance HasEntries Network.Riak.Protocol.TsCoverageResponse.TsCoverageResponse (Seq Network.Riak.Protocol.TsCoverageEntry.TsCoverageEntry) where
+  {-# INLINE entries #-}
+  entries f_ahUq (Network.Riak.Protocol.TsCoverageResponse.TsCoverageResponse x_ahUr)
+    = fmap (\ y_ahUs -> Network.Riak.Protocol.TsCoverageResponse.TsCoverageResponse y_ahUs) (f_ahUq x_ahUr)
+instance HasKey Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest (Seq Network.Riak.Protocol.TsCell.TsCell) where
+  {-# INLINE key #-}
+  key f_ahVg (Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVh x_ahVi x_ahVj x_ahVk)
+    = fmap (\ y_ahVl -> Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVh y_ahVl x_ahVj x_ahVk) (f_ahVg x_ahVi)
+instance HasTable Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest ByteString where
+  {-# INLINE table #-}
+  table f_ahVm (Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVn x_ahVo x_ahVp x_ahVq)
+    = fmap (\ y_ahVr -> Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest y_ahVr x_ahVo x_ahVp x_ahVq) (f_ahVm x_ahVn)
+instance HasTimeout Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest (Maybe Word32) where
+  {-# INLINE timeout #-}
+  timeout f_ahVs (Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVt x_ahVu x_ahVv x_ahVw)
+    = fmap (\ y_ahVx -> Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVt x_ahVu x_ahVv y_ahVx) (f_ahVs x_ahVw)
+instance HasVclock Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest (Maybe ByteString) where
+  {-# INLINE vclock #-}
+  vclock f_ahVy (Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVz x_ahVA x_ahVB x_ahVC)
+    = fmap (\ y_ahVD -> Network.Riak.Protocol.TsDeleteRequest.TsDeleteRequest x_ahVz x_ahVA y_ahVD x_ahVC) (f_ahVy x_ahVB)
+instance HasKey Network.Riak.Protocol.TsGetRequest.TsGetRequest (Seq Network.Riak.Protocol.TsCell.TsCell) where
+  {-# INLINE key #-}
+  key f_ahWR (Network.Riak.Protocol.TsGetRequest.TsGetRequest x_ahWS x_ahWT x_ahWU)
+    = fmap (\ y_ahWV -> Network.Riak.Protocol.TsGetRequest.TsGetRequest x_ahWS y_ahWV x_ahWU) (f_ahWR x_ahWT)
+instance HasTable Network.Riak.Protocol.TsGetRequest.TsGetRequest ByteString where
+  {-# INLINE table #-}
+  table f_ahWW (Network.Riak.Protocol.TsGetRequest.TsGetRequest x_ahWX x_ahWY x_ahWZ)
+    = fmap (\ y_ahX0 -> Network.Riak.Protocol.TsGetRequest.TsGetRequest y_ahX0 x_ahWY x_ahWZ) (f_ahWW x_ahWX)
+instance HasTimeout Network.Riak.Protocol.TsGetRequest.TsGetRequest (Maybe Word32) where
+  {-# INLINE timeout #-}
+  timeout f_ahX1 (Network.Riak.Protocol.TsGetRequest.TsGetRequest x_ahX2 x_ahX3 x_ahX4)
+    = fmap (\ y_ahX5 -> Network.Riak.Protocol.TsGetRequest.TsGetRequest x_ahX2 x_ahX3 y_ahX5) (f_ahX1 x_ahX4)
+class HasColumns s a | s -> a where
+  columns :: Lens' s a
+instance HasColumns Network.Riak.Protocol.TsGetResponse.TsGetResponse (Seq Network.Riak.Protocol.TsColumnDescription.TsColumnDescription) where
+  {-# INLINE columns #-}
+  columns f_ahXX (Network.Riak.Protocol.TsGetResponse.TsGetResponse x_ahXY x_ahXZ)
+    = fmap (\ y_ahY0 -> Network.Riak.Protocol.TsGetResponse.TsGetResponse y_ahY0 x_ahXZ) (f_ahXX x_ahXY)
+instance HasRows Network.Riak.Protocol.TsGetResponse.TsGetResponse (Seq Network.Riak.Protocol.TsRow.TsRow) where
+  {-# INLINE rows #-}
+  rows f_ahY1 (Network.Riak.Protocol.TsGetResponse.TsGetResponse x_ahY2 x_ahY3)
+    = fmap (\ y_ahY4 -> Network.Riak.Protocol.TsGetResponse.TsGetResponse x_ahY2 y_ahY4) (f_ahY1 x_ahY3)
+class HasBase s a | s -> a where
+  base :: Lens' s a
+instance HasBase Network.Riak.Protocol.TsInterpolation.TsInterpolation ByteString where
+  {-# INLINE base #-}
+  base f_ahZ4 (Network.Riak.Protocol.TsInterpolation.TsInterpolation x_ahZ5 x_ahZ6)
+    = fmap (\ y_ahZ7 -> Network.Riak.Protocol.TsInterpolation.TsInterpolation y_ahZ7 x_ahZ6) (f_ahZ4 x_ahZ5)
+class HasInterpolations s a | s -> a where
+  interpolations :: Lens' s a
+instance HasInterpolations Network.Riak.Protocol.TsInterpolation.TsInterpolation (Seq Network.Riak.Protocol.Pair.Pair) where
+  {-# INLINE interpolations #-}
+  interpolations f_ahZ8 (Network.Riak.Protocol.TsInterpolation.TsInterpolation x_ahZ9 x_ahZa)
+    = fmap (\ y_ahZb -> Network.Riak.Protocol.TsInterpolation.TsInterpolation x_ahZ9 y_ahZb) (f_ahZ8 x_ahZa)
+instance HasTable Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest ByteString where
+  {-# INLINE table #-}
+  table f_ai0D (Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest x_ai0E x_ai0F)
+    = fmap (\ y_ai0G -> Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest y_ai0G x_ai0F) (f_ai0D x_ai0E)
+instance HasTimeout Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest (Maybe Word32) where
+  {-# INLINE timeout #-}
+  timeout f_ai0H (Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest x_ai0I x_ai0J)
+    = fmap (\ y_ai0K -> Network.Riak.Protocol.TsListKeysRequest.TsListKeysRequest x_ai0I y_ai0K) (f_ai0H x_ai0J)
+instance HasDone Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse (Maybe Bool) where
+  {-# INLINE done #-}
+  done f_ai1m (Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse x_ai1n x_ai1o)
+    = fmap (\ y_ai1p -> Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse x_ai1n y_ai1p) (f_ai1m x_ai1o)
+instance HasKeys Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse (Seq Network.Riak.Protocol.TsRow.TsRow) where
+  {-# INLINE keys #-}
+  keys f_ai1q (Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse x_ai1r x_ai1s)
+    = fmap (\ y_ai1t -> Network.Riak.Protocol.TsListKeysResponse.TsListKeysResponse y_ai1t x_ai1s) (f_ai1q x_ai1r)
+instance HasColumns Network.Riak.Protocol.TsPutRequest.TsPutRequest (Seq Network.Riak.Protocol.TsColumnDescription.TsColumnDescription) where
+  {-# INLINE columns #-}
+  columns f_ai25 (Network.Riak.Protocol.TsPutRequest.TsPutRequest x_ai26 x_ai27 x_ai28)
+    = fmap (\ y_ai29 -> Network.Riak.Protocol.TsPutRequest.TsPutRequest x_ai26 y_ai29 x_ai28) (f_ai25 x_ai27)
+instance HasRows Network.Riak.Protocol.TsPutRequest.TsPutRequest (Seq Network.Riak.Protocol.TsRow.TsRow) where
+  {-# INLINE rows #-}
+  rows f_ai2a (Network.Riak.Protocol.TsPutRequest.TsPutRequest x_ai2b x_ai2c x_ai2d)
+    = fmap (\ y_ai2e -> Network.Riak.Protocol.TsPutRequest.TsPutRequest x_ai2b x_ai2c y_ai2e) (f_ai2a x_ai2d)
+instance HasTable Network.Riak.Protocol.TsPutRequest.TsPutRequest ByteString where
+  {-# INLINE table #-}
+  table f_ai2f (Network.Riak.Protocol.TsPutRequest.TsPutRequest x_ai2g x_ai2h x_ai2i)
+    = fmap (\ y_ai2j -> Network.Riak.Protocol.TsPutRequest.TsPutRequest y_ai2j x_ai2h x_ai2i) (f_ai2f x_ai2g)
+instance HasCoverContext Network.Riak.Protocol.TsQueryRequest.TsQueryRequest (Maybe ByteString) where
+  {-# INLINE cover_context #-}
+  cover_context f_ai3j (Network.Riak.Protocol.TsQueryRequest.TsQueryRequest x_ai3k x_ai3l x_ai3m)
+    = fmap (\ y_ai3n -> Network.Riak.Protocol.TsQueryRequest.TsQueryRequest x_ai3k x_ai3l y_ai3n) (f_ai3j x_ai3m)
+instance HasQuery Network.Riak.Protocol.TsQueryRequest.TsQueryRequest (Maybe Network.Riak.Protocol.TsInterpolation.TsInterpolation) where
+  {-# INLINE query #-}
+  query f_ai3o (Network.Riak.Protocol.TsQueryRequest.TsQueryRequest x_ai3p x_ai3q x_ai3r)
+    = fmap (\ y_ai3s -> Network.Riak.Protocol.TsQueryRequest.TsQueryRequest y_ai3s x_ai3q x_ai3r) (f_ai3o x_ai3p)
+instance HasStream Network.Riak.Protocol.TsQueryRequest.TsQueryRequest (Maybe Bool) where
+  {-# INLINE stream #-}
+  stream f_ai3t (Network.Riak.Protocol.TsQueryRequest.TsQueryRequest x_ai3u x_ai3v x_ai3w)
+    = fmap (\ y_ai3x -> Network.Riak.Protocol.TsQueryRequest.TsQueryRequest x_ai3u y_ai3x x_ai3w) (f_ai3t x_ai3v)
+instance HasColumns Network.Riak.Protocol.TsQueryResponse.TsQueryResponse (Seq Network.Riak.Protocol.TsColumnDescription.TsColumnDescription) where
+  {-# INLINE columns #-}
+  columns f_ai4n (Network.Riak.Protocol.TsQueryResponse.TsQueryResponse x_ai4o x_ai4p x_ai4q)
+    = fmap (\ y_ai4r -> Network.Riak.Protocol.TsQueryResponse.TsQueryResponse y_ai4r x_ai4p x_ai4q) (f_ai4n x_ai4o)
+instance HasDone Network.Riak.Protocol.TsQueryResponse.TsQueryResponse (Maybe Bool) where
+  {-# INLINE done #-}
+  done f_ai4s (Network.Riak.Protocol.TsQueryResponse.TsQueryResponse x_ai4t x_ai4u x_ai4v)
+    = fmap (\ y_ai4w -> Network.Riak.Protocol.TsQueryResponse.TsQueryResponse x_ai4t x_ai4u y_ai4w) (f_ai4s x_ai4v)
+instance HasRows Network.Riak.Protocol.TsQueryResponse.TsQueryResponse (Seq Network.Riak.Protocol.TsRow.TsRow) where
+  {-# INLINE rows #-}
+  rows f_ai4x (Network.Riak.Protocol.TsQueryResponse.TsQueryResponse x_ai4y x_ai4z x_ai4A)
+    = fmap (\ y_ai4B -> Network.Riak.Protocol.TsQueryResponse.TsQueryResponse x_ai4y y_ai4B x_ai4A) (f_ai4x x_ai4z)
+class HasDesc s a | s -> a where
+  desc :: Lens' s a
+instance HasDesc Network.Riak.Protocol.TsRange.TsRange ByteString where
+  {-# INLINE desc #-}
+  desc f_ai5p (Network.Riak.Protocol.TsRange.TsRange x_ai5q x_ai5r x_ai5s x_ai5t x_ai5u x_ai5v)
+    = fmap (\ y_ai5w -> Network.Riak.Protocol.TsRange.TsRange x_ai5q x_ai5r x_ai5s x_ai5t x_ai5u y_ai5w) (f_ai5p x_ai5v)
+class HasFieldName s a | s -> a where
+  field_name :: Lens' s a
+instance HasFieldName Network.Riak.Protocol.TsRange.TsRange ByteString where
+  {-# INLINE field_name #-}
+  field_name f_ai5x (Network.Riak.Protocol.TsRange.TsRange x_ai5y x_ai5z x_ai5A x_ai5B x_ai5C x_ai5D)
+    = fmap (\ y_ai5E -> Network.Riak.Protocol.TsRange.TsRange y_ai5E x_ai5z x_ai5A x_ai5B x_ai5C x_ai5D) (f_ai5x x_ai5y)
+class HasLowerBound s a | s -> a where
+  lower_bound :: Lens' s a
+instance HasLowerBound Network.Riak.Protocol.TsRange.TsRange Int64 where
+  {-# INLINE lower_bound #-}
+  lower_bound f_ai5F (Network.Riak.Protocol.TsRange.TsRange x_ai5G x_ai5H x_ai5I x_ai5J x_ai5K x_ai5L)
+    = fmap (\ y_ai5M -> Network.Riak.Protocol.TsRange.TsRange x_ai5G y_ai5M x_ai5I x_ai5J x_ai5K x_ai5L) (f_ai5F x_ai5H)
+class HasLowerBoundInclusive s a | s -> a where
+  lower_bound_inclusive :: Lens' s a
+instance HasLowerBoundInclusive Network.Riak.Protocol.TsRange.TsRange Bool where
+  {-# INLINE lower_bound_inclusive #-}
+  lower_bound_inclusive f_ai5N (Network.Riak.Protocol.TsRange.TsRange x_ai5O x_ai5P x_ai5Q x_ai5R x_ai5S x_ai5T)
+    = fmap (\ y_ai5U -> Network.Riak.Protocol.TsRange.TsRange x_ai5O x_ai5P y_ai5U x_ai5R x_ai5S x_ai5T) (f_ai5N x_ai5Q)
+class HasUpperBound s a | s -> a where
+  upper_bound :: Lens' s a
+instance HasUpperBound Network.Riak.Protocol.TsRange.TsRange Int64 where
+  {-# INLINE upper_bound #-}
+  upper_bound f_ai5V (Network.Riak.Protocol.TsRange.TsRange x_ai5W x_ai5X x_ai5Y x_ai5Z x_ai60 x_ai61)
+    = fmap (\ y_ai62 -> Network.Riak.Protocol.TsRange.TsRange x_ai5W x_ai5X x_ai5Y y_ai62 x_ai60 x_ai61) (f_ai5V x_ai5Z)
+class HasUpperBoundInclusive s a | s -> a where
+  upper_bound_inclusive :: Lens' s a
+instance HasUpperBoundInclusive Network.Riak.Protocol.TsRange.TsRange Bool where
+  {-# INLINE upper_bound_inclusive #-}
+  upper_bound_inclusive f_ai63 (Network.Riak.Protocol.TsRange.TsRange x_ai64 x_ai65 x_ai66 x_ai67 x_ai68 x_ai69)
+    = fmap (\ y_ai6a -> Network.Riak.Protocol.TsRange.TsRange x_ai64 x_ai65 x_ai66 x_ai67 y_ai6a x_ai69) (f_ai63 x_ai68)
+class HasCells s a | s -> a where
+  cells :: Lens' s a
+instance HasCells Network.Riak.Protocol.TsRow.TsRow (Seq Network.Riak.Protocol.TsCell.TsCell) where
+  {-# INLINE cells #-}
+  cells f_aiac (Network.Riak.Protocol.TsRow.TsRow x_aiad) = fmap (\ y_aiae -> Network.Riak.Protocol.TsRow.TsRow y_aiae) (f_aiac x_aiad)
 instance HasNVal Network.Riak.Protocol.YzIndex.YzIndex (Maybe Word32) where
   {-# INLINE n_val #-}
-  n_val f_ahwe (Network.Riak.Protocol.YzIndex.YzIndex x_ahwf x_ahwg x_ahwh)
-    = (fmap (\ y_ahwi -> ((Network.Riak.Protocol.YzIndex.YzIndex x_ahwf) x_ahwg) y_ahwi)) (f_ahwe x_ahwh)
+  n_val f_aib2 (Network.Riak.Protocol.YzIndex.YzIndex x_aib3 x_aib4 x_aib5)
+    = fmap (\ y_aib6 -> Network.Riak.Protocol.YzIndex.YzIndex x_aib3 x_aib4 y_aib6) (f_aib2 x_aib5)
 instance HasName Network.Riak.Protocol.YzIndex.YzIndex ByteString where
   {-# INLINE name #-}
-  name f_ahwj (Network.Riak.Protocol.YzIndex.YzIndex x_ahwk x_ahwl x_ahwm)
-    = (fmap (\ y_ahwn -> ((Network.Riak.Protocol.YzIndex.YzIndex y_ahwn) x_ahwl) x_ahwm)) (f_ahwj x_ahwk)
+  name f_aib7 (Network.Riak.Protocol.YzIndex.YzIndex x_aib8 x_aib9 x_aiba)
+    = fmap (\ y_aibb -> Network.Riak.Protocol.YzIndex.YzIndex y_aibb x_aib9 x_aiba) (f_aib7 x_aib8)
 class HasSchema s a | s -> a where
   schema :: Lens' s a
 instance HasSchema Network.Riak.Protocol.YzIndex.YzIndex (Maybe ByteString) where
   {-# INLINE schema #-}
-  schema f_ahwo (Network.Riak.Protocol.YzIndex.YzIndex x_ahwp x_ahwq x_ahwr)
-    = (fmap (\ y_ahws -> ((Network.Riak.Protocol.YzIndex.YzIndex x_ahwp) y_ahws) x_ahwr)) (f_ahwo x_ahwq)
+  schema f_aibc (Network.Riak.Protocol.YzIndex.YzIndex x_aibd x_aibe x_aibf)
+    = fmap (\ y_aibg -> Network.Riak.Protocol.YzIndex.YzIndex x_aibd y_aibg x_aibf) (f_aibc x_aibe)
 instance HasName Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest ByteString where
   {-# INLINE name #-}
-  name f_ahy0 (Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest x_ahy1)
-    = (fmap (\ y_ahy2 -> Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest y_ahy2)) (f_ahy0 x_ahy1)
+  name f_aicw (Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest x_aicx)
+    = fmap (\ y_aicy -> Network.Riak.Protocol.YzIndexDeleteRequest.YzIndexDeleteRequest y_aicy) (f_aicw x_aicx)
 instance HasName Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest (Maybe ByteString) where
   {-# INLINE name #-}
-  name f_ahyt (Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest x_ahyu)
-    = (fmap (\ y_ahyv -> Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest y_ahyv)) (f_ahyt x_ahyu)
+  name f_aicW (Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest x_aicX)
+    = fmap (\ y_aicY -> Network.Riak.Protocol.YzIndexGetRequest.YzIndexGetRequest y_aicY) (f_aicW x_aicX)
 instance HasIndex Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse (Seq Network.Riak.Protocol.YzIndex.YzIndex) where
   {-# INLINE index #-}
-  index f_ahyW (Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse x_ahyX)
-    = (fmap (\ y_ahyY -> Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse y_ahyY)) (f_ahyW x_ahyX)
+  index f_aidm (Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse x_aidn)
+    = fmap (\ y_aido -> Network.Riak.Protocol.YzIndexGetResponse.YzIndexGetResponse y_aido) (f_aidm x_aidn)
 instance HasIndex Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest Network.Riak.Protocol.YzIndex.YzIndex where
   {-# INLINE index #-}
-  index f_ahzp (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_ahzq x_ahzr)
-    = (fmap (\ y_ahzs -> (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest y_ahzs) x_ahzr)) (f_ahzp x_ahzq)
+  index f_aidM (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_aidN x_aidO)
+    = fmap (\ y_aidP -> Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest y_aidP x_aidO) (f_aidM x_aidN)
 instance HasTimeout Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest (Maybe Word32) where
   {-# INLINE timeout #-}
-  timeout f_ahzt (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_ahzu x_ahzv)
-    = (fmap (\ y_ahzw -> (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_ahzu) y_ahzw)) (f_ahzt x_ahzv)
+  timeout f_aidQ (Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_aidR x_aidS)
+    = fmap (\ y_aidT -> Network.Riak.Protocol.YzIndexPutRequest.YzIndexPutRequest x_aidR y_aidT) (f_aidQ x_aidS)
 instance HasContent Network.Riak.Protocol.YzSchema.YzSchema (Maybe ByteString) where
   {-# INLINE content #-}
-  content f_ahAe (Network.Riak.Protocol.YzSchema.YzSchema x_ahAf x_ahAg)
-    = (fmap (\ y_ahAh -> (Network.Riak.Protocol.YzSchema.YzSchema x_ahAf) y_ahAh)) (f_ahAe x_ahAg)
+  content f_aiev (Network.Riak.Protocol.YzSchema.YzSchema x_aiew x_aiex)
+    = fmap (\ y_aiey -> Network.Riak.Protocol.YzSchema.YzSchema x_aiew y_aiey) (f_aiev x_aiex)
 instance HasName Network.Riak.Protocol.YzSchema.YzSchema ByteString where
   {-# INLINE name #-}
-  name f_ahAi (Network.Riak.Protocol.YzSchema.YzSchema x_ahAj x_ahAk)
-    = (fmap (\ y_ahAl -> (Network.Riak.Protocol.YzSchema.YzSchema y_ahAl) x_ahAk)) (f_ahAi x_ahAj)
+  name f_aiez (Network.Riak.Protocol.YzSchema.YzSchema x_aieA x_aieB)
+    = fmap (\ y_aieC -> Network.Riak.Protocol.YzSchema.YzSchema y_aieC x_aieB) (f_aiez x_aieA)
 instance HasName Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest ByteString where
   {-# INLINE name #-}
-  name f_ahB3 (Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest x_ahB4)
-    = (fmap (\ y_ahB5 -> Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest y_ahB5)) (f_ahB3 x_ahB4)
+  name f_aife (Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest x_aiff)
+    = fmap (\ y_aifg -> Network.Riak.Protocol.YzSchemaGetRequest.YzSchemaGetRequest y_aifg) (f_aife x_aiff)
 instance HasSchema Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse Network.Riak.Protocol.YzSchema.YzSchema where
   {-# INLINE schema #-}
-  schema f_ahBw (Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse x_ahBx)
-    = (fmap (\ y_ahBy -> Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse y_ahBy)) (f_ahBw x_ahBx)
+  schema f_aifE (Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse x_aifF)
+    = fmap (\ y_aifG -> Network.Riak.Protocol.YzSchemaGetResponse.YzSchemaGetResponse y_aifG) (f_aifE x_aifF)
 instance HasSchema Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest Network.Riak.Protocol.YzSchema.YzSchema where
   {-# INLINE schema #-}
-  schema f_ahBZ (Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest x_ahC0)
-    = (fmap (\ y_ahC1 -> Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest y_ahC1)) (f_ahBZ x_ahC0)
+  schema f_aig4 (Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest x_aig5)
+    = fmap (\ y_aig6 -> Network.Riak.Protocol.YzSchemaPutRequest.YzSchemaPutRequest y_aig6) (f_aig4 x_aig5)

@@ -1,31 +1,41 @@
--- |   module:    Network.Riak.CRDT.Riak
---     copyright: (c) 2016 Sentenai
---     author:    Antonio Nikishaev <me@lelf.lu>
---     license:   Apache
+-- |
+-- Module:      Network.Riak.CRDT.Riak
+-- Copyright:   (c) 2016 Sentenai
+-- Author:      Antonio Nikishaev <me@lelf.lu>
+-- License:     Apache
+-- Maintainer:  Tim McGilchrist <timmcgil@gmail.com>, Mark Hibberd <mark@hibberd.id.au>
+-- Stability:   experimental
+-- Portability: portable
 --
 -- CRDT operations
+--
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE CPP #-}
 
-module Network.Riak.CRDT.Riak (counterSendUpdate,
-                               setSendUpdate,
-                               mapSendUpdate,
-                               get)
-    where
+module Network.Riak.CRDT.Riak (
+    counterSendUpdate
+  , setSendUpdate
+  , mapSendUpdate
+  , get
+  ) where
+
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
 import           Data.Int
 #endif
-import qualified Network.Riak.CRDT.Types as CRDT
-import qualified Network.Riak.Connection as Conn
-import           Network.Riak.Types
-import qualified Network.Riak.Protocol.ErrorResponse as ER
+
 import           Control.Exception (catchJust)
+
 import qualified Data.ByteString.Lazy as BS
+
 import qualified Network.Riak.CRDT.Request as Req
 import qualified Network.Riak.CRDT.Response as Resp
+import qualified Network.Riak.CRDT.Types as CRDT
+import qualified Network.Riak.Connection as Conn
+import qualified Network.Riak.Protocol.ErrorResponse as ER
+import           Network.Riak.Types
 
 
 counterSendUpdate :: Connection -> BucketType -> Bucket -> Key
