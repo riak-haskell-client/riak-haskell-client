@@ -18,20 +18,20 @@ module Network.Riak.CRDT.Ops (
   , mapUpdateOp
   ) where
 
-import           Data.ByteString.Lazy (ByteString)
-import           Data.Semigroup (Semigroup((<>)))
-import qualified Data.Sequence as Seq
-import qualified Data.Set as S
+import           Data.ByteString.Lazy                        (ByteString)
+import           Data.Semigroup                              (Semigroup ((<>)))
+import qualified Data.Sequence                               as Seq
+import qualified Data.Set                                    as S
 
 import           Network.Riak.CRDT.Types
-import qualified Network.Riak.Protocol.CounterOp as PB
-import qualified Network.Riak.Protocol.DtOp as PB
-import qualified Network.Riak.Protocol.MapField as PBMap
+import qualified Network.Riak.Protocol.CounterOp             as PB
+import qualified Network.Riak.Protocol.DtOp                  as PB
+import qualified Network.Riak.Protocol.MapField              as PBMap
 import qualified Network.Riak.Protocol.MapField.MapFieldType as PBMap
-import qualified Network.Riak.Protocol.MapOp as PBMap
-import qualified Network.Riak.Protocol.MapUpdate as PBMap
-import qualified Network.Riak.Protocol.MapUpdate.FlagOp as PBFlag
-import qualified Network.Riak.Protocol.SetOp as PBSet
+import qualified Network.Riak.Protocol.MapOp                 as PBMap
+import qualified Network.Riak.Protocol.MapUpdate             as PBMap
+import qualified Network.Riak.Protocol.MapUpdate.FlagOp      as PBFlag
+import qualified Network.Riak.Protocol.SetOp                 as PBSet
 
 counterUpdateOp :: [CounterOp] -> PB.DtOp
 counterUpdateOp ops = PB.DtOp { PB.counter_op = Just $ counterOpPB ops,
@@ -44,7 +44,7 @@ counterOpPB ops = PB.CounterOp (Just i)
     where CounterInc i = mconcat ops
 
 
-data SetOpsComb = SetOpsComb { setAdds :: S.Set ByteString,
+data SetOpsComb = SetOpsComb { setAdds    :: S.Set ByteString,
                                setRemoves :: S.Set ByteString }
              deriving (Show)
 
@@ -56,7 +56,7 @@ instance Monoid SetOpsComb where
     (SetOpsComb a b) `mappend` (SetOpsComb x y) = SetOpsComb (a<>x) (b<>y)
 
 toOpsComb :: SetOp -> SetOpsComb
-toOpsComb (SetAdd s) = SetOpsComb (S.singleton s) S.empty
+toOpsComb (SetAdd s)    = SetOpsComb (S.singleton s) S.empty
 toOpsComb (SetRemove s) = SetOpsComb S.empty (S.singleton s)
 
 

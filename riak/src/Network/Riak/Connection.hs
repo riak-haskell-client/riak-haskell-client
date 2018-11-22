@@ -27,4 +27,4 @@ module Network.Riak.Connection
     , pipeline_
     ) where
 
-import Network.Riak.Connection.Internal
+import           Network.Riak.Connection.Internal
