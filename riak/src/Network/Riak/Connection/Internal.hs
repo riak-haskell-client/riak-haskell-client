@@ -40,23 +40,25 @@ module Network.Riak.Connection.Internal
 import Control.Concurrent.Async (async, waitBoth)
 import Control.Exception (Exception, IOException, throwIO, bracketOnError)
 import Control.Monad (forM_, replicateM)
-import Data.Binary.Put (Put, putWord32be, runPut)
+import Data.Binary.Get (Get, Decoder(..), getWord32be, runGetIncremental)
+import Data.Binary.Put (Put, putWord32be, runPut, putLazyByteString)
+import Data.ByteString (ByteString)
 import Data.IORef (newIORef, readIORef, writeIORef)
-import Data.Int (Int64)
 import Network.Riak.Connection.NoPush (setNoPush)
 import Network.Riak.Debug as Debug
-import Network.Riak.Protocol.ErrorResponse
-import Network.Riak.Protocol.SetClientIDRequest
+import Network.Riak.Lens
 import Network.Riak.Tag (getTag, putTag)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
 import Network.Socket as Socket
 import Numeric (showHex)
+import Data.ProtoLens (buildMessage)
 import System.Random (randomIO)
-import Text.ProtocolBuffers (messageGetM, messagePutM, messageSize)
-import Text.ProtocolBuffers.Get (Get, Result(..), getWord32be, runGet)
 import qualified Control.Exception as E
 import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as B8
+import qualified Data.ByteString.Builder as BB
 import qualified Data.ByteString.Lazy.Char8 as L
+import qualified Data.Riak.Proto as Proto
 import qualified Network.Riak.Types.Internal as T
 import qualified Network.Socket.ByteString as B
 import qualified Network.Socket.ByteString.Lazy as L
@@ -67,26 +69,26 @@ defaultClient :: Client
 defaultClient = Client {
                   host = "127.0.0.1"
                 , port = "8087"
-                , clientID = L.empty
+                , clientID = B.empty
                 }
 
 -- | Tell the server our client ID.
 setClientID :: Connection -> ClientID -> IO ()
 setClientID conn i = do
-  sendRequest conn $ SetClientIDRequest i
+  sendRequest conn $ (Proto.defMessage & Proto.clientId .~ i :: Proto.RpbSetClientIdReq)
   recvResponse_ conn T.SetClientIDResponse
 
 -- | Generate a random client ID.
 makeClientID :: IO ClientID
 makeClientID = do
   r <- randomIO :: IO Int
-  return . L.append "hs_" . L.pack . showHex (abs r) $ ""
+  return . B.append "hs_" . B8.pack . showHex (abs r) $ ""
 
 -- | Add a random 'ClientID' to a 'Client' if the 'Client' doesn't
 -- already have one.
 addClientID :: Client -> IO Client
 addClientID client
-  | L.null (clientID client) = do
+  | B.null (clientID client) = do
     i <- makeClientID
     return client { clientID = i }
   | otherwise = return client
@@ -100,7 +102,7 @@ connect cli0 = do
               , addrSocketType = Stream
               }
   debug "connect" $ "server " ++ host ++ ":" ++ port ++ ", client ID " ++
-                    L.unpack clientID
+                    B8.unpack clientID
   ais <- getAddrInfo (Just hints) (Just host) (Just port)
   let ai = case ais of
              (a:_) -> a
@@ -112,7 +114,7 @@ connect cli0 = do
       close $
       \sock -> do
           Socket.connect sock (addrAddress ai)
-          buf <- newIORef L.empty
+          buf <- newIORef B.empty
           let conn = Connection sock client buf
           setClientID conn clientID
           return conn
@@ -121,9 +123,9 @@ connect cli0 = do
 disconnect :: Connection -> IO ()
 disconnect Connection{..} = onIOException "disconnect" $ do
   debug "disconnect" $ "server " ++ host connClient ++ ":" ++ port connClient ++
-                       ", client ID " ++ L.unpack (clientID connClient)
+                       ", client ID " ++ B8.unpack (clientID connClient)
   close connSock
-  writeIORef connBuffer L.empty
+  writeIORef connBuffer B.empty
 
 -- | We use a larger receive buffer than we usually need, and
 -- generally ask to receive more data than we know we'll need, in the
@@ -133,27 +135,27 @@ recvBufferSize :: Integral a => a
 recvBufferSize = 16384
 {-# INLINE recvBufferSize #-}
 
-recvExactly :: Connection -> Int64 -> IO L.ByteString
+recvExactly :: Connection -> Int -> IO ByteString
 recvExactly Connection{..} n0
-    | n0 <= 0 = return L.empty
+    | n0 <= 0 = return B.empty
     | otherwise = do
   bs <- readIORef connBuffer
-  let (h,t) = L.splitAt n0 bs
-      len = L.length h
+  let (h,t) = B.splitAt n0 bs
+      len = B.length h
   if len == n0
     then writeIORef connBuffer t >> return h
-    else go (reverse (L.toChunks h)) (n0-len)
+    else go [h] (n0-len)
   where
     maxInt = fromIntegral (maxBound :: Int)
     go (s:acc) n
       | n < 0 = do
         let (h,t) = B.splitAt (B.length s + fromIntegral n) s
-        writeIORef connBuffer $! L.fromChunks [t]
-        return $ L.fromChunks (reverse (h:acc))
+        writeIORef connBuffer $! t
+        return $ B.concat (reverse (h:acc))
     go acc n
       | n == 0 = do
-        writeIORef connBuffer L.empty
-        return $ L.fromChunks (reverse acc)
+        writeIORef connBuffer B.empty
+        return $ B.concat (reverse acc)
       | otherwise = do
         let n' = max recvBufferSize $ min n maxInt
         bs <- B.recv connSock (fromIntegral n')
@@ -164,51 +166,55 @@ recvExactly Connection{..} n0
 
 recvGet :: Connection -> Get a -> IO a
 recvGet Connection{..} get = do
-  let refill = do
-        bs <- L.recv connSock recvBufferSize
-        if L.null bs
+  let refill :: IO (Maybe ByteString)
+      refill = do
+        bs <- B.recv connSock recvBufferSize
+        if B.null bs
           then shutdown connSock ShutdownReceive >> return Nothing
           else return (Just bs)
-      step (Failed _ err)    = moduleError "recvGet" err
-      step (Finished bs _ r) = writeIORef connBuffer bs >> return r
-      step (Partial k)       = (step . k) =<< refill
+      -- step :: Decoder a -> IO a
+      step (Fail _ _ err) = moduleError "recvGet" err
+      step (Done bs _ r)  = writeIORef connBuffer bs >> return r
+      step (Partial k)    = (step . k) =<< refill
   mbs <- do
     buf <- readIORef connBuffer
-    if L.null buf
+    if B.null buf
       then refill
       else return (Just buf)
   case mbs of
-    Just bs -> step $ runGet get bs
+    Just bs ->
+      case runGetIncremental get of
+        Fail _ _ err -> moduleError "recvGet" err
+        Done bs' _ r -> writeIORef connBuffer bs' >> return r
+        Partial k -> step (k (Just bs))
     Nothing -> moduleError "recvGet" "socket closed"
 
-recvGetN :: Connection -> Int64 -> Get a -> IO a
-recvGetN conn n get = do
+recvGetN :: Proto.Message a => Connection -> Int -> IO a
+recvGetN conn n = do
   bs <- recvExactly conn n
-  case runGet get bs of
-    Finished _ _ r -> return r
-    Partial k    -> case k Nothing of
-                      Finished _ _ r -> return r
-                      Failed _ err -> moduleError "recvGetN" err
-                      Partial _    -> moduleError "recvGetN"
-                                      "parser wants more input!?"
-    Failed _ err -> moduleError "recvGetN" err
+  case Proto.decodeMessage bs of
+    Left err -> moduleError "recvGetN" err
+    Right r -> return r
 
 putRequest :: (Request req) => req -> Put
 putRequest req = do
-  putWord32be (fromIntegral (1 + messageSize req))
+  putWord32be (fromIntegral (1 + L.length bytes))
   putTag (messageTag req)
-  messagePutM req
+  putLazyByteString bytes
+  where
+    bytes :: L.ByteString
+    bytes = BB.toLazyByteString (buildMessage req)
 
-instance Exception ErrorResponse
+instance Exception Proto.RpbErrorResp
 
-throwError :: ErrorResponse -> IO a
+throwError :: Proto.RpbErrorResp -> IO a
 throwError = throwIO
 
-getResponse :: Response a => Connection -> Int64 -> a -> T.MessageTag -> IO a
+getResponse :: Response a => Connection -> Int -> a -> T.MessageTag -> IO a
 getResponse conn len _ expected = do
   tag <- recvGet conn getTag
-  if | tag == expected        -> recvGetN conn (len-1) messageGetM
-     | tag == T.ErrorResponse -> throwError =<< recvGetN conn (len-1) messageGetM
+  if | tag == expected        -> recvGetN conn (len-1)
+     | tag == T.ErrorResponse -> throwError =<< recvGetN conn (len-1)
      | otherwise ->
          moduleError "getResponse" $ "received unexpected response: expected " ++
                                      show expected ++ ", received " ++ show tag
@@ -271,11 +277,11 @@ recvMaybeResponse conn = debugRecv (maybe "Nothing" (("Just " ++) . showM)) $
       then recvCorrectTag "recvMaybeResponse" conn tag 1 Nothing
       else Just `fmap` getResponse conn len dummy tag
 
-recvCorrectTag :: String -> Connection -> T.MessageTag -> Int64 -> a -> IO a
+recvCorrectTag :: String -> Connection -> T.MessageTag -> Int -> a -> IO a
 recvCorrectTag func conn expected len v = do
   tag <- recvGet conn getTag
   if | tag == expected -> recvExactly conn (len-1) >> return v
-     | tag == T.ErrorResponse -> throwError =<< recvGetN conn len messageGetM
+     | tag == T.ErrorResponse -> throwError =<< recvGetN conn len
      | otherwise -> moduleError func $
                     "received unexpected response: expected " ++
                     show expected ++ ", received " ++ show tag

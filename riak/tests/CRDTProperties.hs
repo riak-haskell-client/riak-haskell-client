@@ -20,7 +20,8 @@ module CRDTProperties (prop_counters,
 import Control.Applicative
 #endif
 import Control.Monad.RWS
-import Data.ByteString.Lazy (ByteString)
+import Control.Monad.Fail
+import Data.ByteString (ByteString)
 import Data.Default.Class
 import Data.List.NonEmpty
 import qualified Data.Map as Map
@@ -188,7 +189,8 @@ instance Arbitrary C.Map where
 
 -- | Abstract machine.
 -- Yields a value on 'Get', modifies state on 'Update'.
-machine :: (MonadWriter [Maybe C.DataType] m,
+machine :: (MonadFail m,
+            MonadWriter [Maybe C.DataType] m,
             MonadState s m,
             Applicative m,
             Action t op)
@@ -213,7 +215,8 @@ machine p (a@Update{} : as) onAct = do
 
 -- | Riak version of the 'machine'.
 -- State is 'B.Connection', get/update are IO-requests to riak.
-riak :: (MonadWriter [Maybe C.DataType] m,
+riak :: (MonadFail m,
+         MonadWriter [Maybe C.DataType] m,
          MonadState B.Connection m,
          Applicative m, MonadIO m,
          Action t op)
@@ -231,7 +234,8 @@ riak p ops = machine p ops onAct
 
 -- | Haskell emulation version of the 'machine'.
 -- State is 'RiakState', get/update try to match riak's behaviour.
-pure_ :: (MonadWriter [Maybe C.DataType] m,
+pure_ :: (MonadFail m,
+          MonadWriter [Maybe C.DataType] m,
           MonadState RiakState m,
           Applicative m,
           Action t op)

@@ -8,7 +8,8 @@ module Properties where
 #if __GLASGOW_HASKELL__ < 710
 import           Control.Applicative          ((<$>))
 #endif
-import qualified Data.ByteString.Lazy         as L
+import           Data.ByteString              (ByteString)
+import qualified Data.ByteString              as BS
 import           Data.Maybe
 import qualified Network.Riak.Basic           as B
 import           Network.Riak.Content         (binary)
@@ -18,21 +19,21 @@ import           Test.Tasty
 import           Test.Tasty.QuickCheck
 import           Utils
 
-instance Arbitrary L.ByteString where
-    arbitrary     = L.pack `fmap` arbitrary
+instance Arbitrary ByteString where
+    arbitrary     = BS.pack `fmap` arbitrary
 
 newtype QCBucket = QCBucket Riak.Bucket deriving Show
 
 instance Arbitrary QCBucket where
-    arbitrary = QCBucket <$> arbitrary `suchThat` (not . L.null)
+    arbitrary = QCBucket <$> arbitrary `suchThat` (not . BS.null)
 
 newtype QCKey = QCKey Riak.Key deriving Show
 
 instance Arbitrary QCKey where
-    arbitrary = QCKey <$> arbitrary `suchThat` (not . L.null)
+    arbitrary = QCKey <$> arbitrary `suchThat` (not . BS.null)
 
 
-t_put_get :: QCBucket -> QCKey -> L.ByteString -> Property
+t_put_get :: QCBucket -> QCKey -> ByteString -> Property
 t_put_get (QCBucket b) (QCKey k) v =
     monadicIO $ assert . uncurry (==) =<< run act
   where
@@ -42,7 +43,7 @@ t_put_get (QCBucket b) (QCKey k) v =
             return (p,r)
     btype = Nothing
 
-put_delete_get :: QCBucket -> QCKey -> L.ByteString -> Property
+put_delete_get :: QCBucket -> QCKey -> ByteString -> Property
 put_delete_get (QCBucket b) (QCKey k) v
     = monadicIO $ do
         r <- run act

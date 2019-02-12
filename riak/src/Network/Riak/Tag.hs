@@ -18,312 +18,279 @@ module Network.Riak.Tag
     , getTag
     ) where
 
+import Data.Binary.Get (Get, getWord8)
 import Data.Binary.Put (Put, putWord8)
 import Data.Word (Word8)
 import qualified Data.HashMap.Strict as HM
 #if __GLASGOW_HASKELL__ <= 708
 import Control.Applicative
 #endif
+import Data.Riak.Proto
 import Data.Tuple (swap)
-import Network.Riak.Protocol.DeleteRequest
-import Network.Riak.Protocol.ErrorResponse
-import Network.Riak.Protocol.GetBucketRequest
-import Network.Riak.Protocol.GetBucketTypeRequest
-import Network.Riak.Protocol.GetBucketResponse
-import Network.Riak.Protocol.GetClientIDRequest
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.GetRequest
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.IndexRequest
-import Network.Riak.Protocol.IndexResponse
-import Network.Riak.Protocol.GetServerInfoRequest
-import Network.Riak.Protocol.ListBucketsRequest
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.ListKeysRequest
-import Network.Riak.Protocol.ListKeysResponse
-import Network.Riak.Protocol.MapReduce
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.PingRequest
-import Network.Riak.Protocol.PutRequest
-import Network.Riak.Protocol.PutResponse
-import Network.Riak.Protocol.ServerInfo
-import Network.Riak.Protocol.SetBucketRequest
-import Network.Riak.Protocol.SetClientIDRequest
-import Network.Riak.Protocol.DtFetchRequest
-import Network.Riak.Protocol.DtFetchResponse
-import Network.Riak.Protocol.DtUpdateRequest
-import Network.Riak.Protocol.DtUpdateResponse
-import Network.Riak.Protocol.SearchQueryRequest
-import Network.Riak.Protocol.SearchQueryResponse
-import Network.Riak.Protocol.YzIndexGetRequest
-import Network.Riak.Protocol.YzIndexGetResponse
-import Network.Riak.Protocol.YzIndexPutRequest
-import Network.Riak.Protocol.YzIndexDeleteRequest
 import Network.Riak.Types.Internal as Types
-import Text.ProtocolBuffers.Get (Get, getWord8)
 
-instance Tagged ErrorResponse where
+instance Tagged RpbErrorResp where
     messageTag _ = Types.ErrorResponse
     {-# INLINE messageTag #-}
 
-instance Response ErrorResponse
+instance Response RpbErrorResp
 
-instance Tagged PingRequest where
+instance Tagged RpbPingReq where
     messageTag _ = Types.PingRequest
     {-# INLINE messageTag #-}
 
-instance Request PingRequest where
+instance Request RpbPingReq where
     expectedResponse _ = Types.PingResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged GetClientIDRequest where
+instance Tagged RpbGetClientIdReq where
     messageTag _ = Types.GetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request GetClientIDRequest where
+instance Request RpbGetClientIdReq where
     expectedResponse _ = Types.GetClientIDResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged GetClientIDResponse where
+instance Tagged RpbGetClientIdResp where
     messageTag _ = Types.GetClientIDResponse
     {-# INLINE messageTag #-}
 
-instance Response GetClientIDResponse
+instance Response RpbGetClientIdResp
 
-instance Exchange GetClientIDRequest GetClientIDResponse
+instance Exchange RpbGetClientIdReq RpbGetClientIdResp
 
-instance Tagged SetClientIDRequest where
+instance Tagged RpbSetClientIdReq where
     messageTag _ = Types.SetClientIDRequest
     {-# INLINE messageTag #-}
 
-instance Request SetClientIDRequest where
+instance Request RpbSetClientIdReq where
     expectedResponse _ = Types.SetClientIDResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged GetServerInfoRequest where
+instance Tagged RpbGetServerInfoReq where
     messageTag _ = Types.GetServerInfoRequest
     {-# INLINE messageTag #-}
 
-instance Request GetServerInfoRequest where
+instance Request RpbGetServerInfoReq where
     expectedResponse _ = Types.GetServerInfoResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged ServerInfo where
+instance Tagged RpbGetServerInfoResp where
     messageTag _ = Types.GetServerInfoResponse
     {-# INLINE messageTag #-}
 
-instance Response ServerInfo
+instance Response RpbGetServerInfoResp
 
-instance Exchange GetServerInfoRequest ServerInfo
+instance Exchange RpbGetServerInfoReq RpbGetServerInfoResp
 
-instance Tagged GetRequest where
+instance Tagged RpbGetReq where
     messageTag _ = Types.GetRequest
     {-# INLINE messageTag #-}
 
-instance Tagged IndexRequest where
+instance Tagged RpbIndexReq where
     messageTag _ = Types.IndexRequest
     {-# INLINE messageTag #-}
 
-instance Request GetRequest where
+instance Request RpbGetReq where
     expectedResponse _ = Types.GetResponse
     {-# INLINE expectedResponse #-}
 
-instance Request IndexRequest where
+instance Request RpbIndexReq where
     expectedResponse _ = Types.IndexResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged GetResponse where
+instance Tagged RpbGetResp where
     messageTag _ = Types.GetResponse
     {-# INLINE messageTag #-}
 
-instance Tagged IndexResponse where
+instance Tagged RpbIndexResp where
     messageTag _ = Types.IndexResponse
     {-# INLINE messageTag #-}
 
-instance Response GetResponse
+instance Response RpbGetResp
 
-instance Response IndexResponse
+instance Response RpbIndexResp
 
-instance Exchange GetRequest GetResponse
+instance Exchange RpbGetReq RpbGetResp
 
-instance Exchange IndexRequest IndexResponse
+instance Exchange RpbIndexReq RpbIndexResp
 
-instance Tagged PutRequest where
+instance Tagged RpbPutReq where
     messageTag _ = Types.PutRequest
     {-# INLINE messageTag #-}
 
-instance Request PutRequest where
+instance Request RpbPutReq where
     expectedResponse _ = Types.PutResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged PutResponse where
+instance Tagged RpbPutResp where
     messageTag _ = Types.PutResponse
     {-# INLINE messageTag #-}
 
-instance Response PutResponse
+instance Response RpbPutResp
 
-instance Exchange PutRequest PutResponse
+instance Exchange RpbPutReq RpbPutResp
 
-instance Tagged DeleteRequest where
+instance Tagged RpbDelReq where
     messageTag _ = Types.DeleteRequest
     {-# INLINE messageTag #-}
 
-instance Request DeleteRequest where
+instance Request RpbDelReq where
     expectedResponse _ = Types.DeleteResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged ListBucketsRequest where
+instance Tagged RpbListBucketsReq where
     messageTag _ = Types.ListBucketsRequest
     {-# INLINE messageTag #-}
 
-instance Request ListBucketsRequest where
+instance Request RpbListBucketsReq where
     expectedResponse _ = Types.ListBucketsResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged ListBucketsResponse where
+instance Tagged RpbListBucketsResp where
     messageTag _ = Types.ListBucketsResponse
     {-# INLINE messageTag #-}
 
-instance Response ListBucketsResponse
+instance Response RpbListBucketsResp
 
-instance Exchange ListBucketsRequest ListBucketsResponse
+instance Exchange RpbListBucketsReq RpbListBucketsResp
 
-instance Tagged ListKeysRequest where
+instance Tagged RpbListKeysReq where
     messageTag _ = Types.ListKeysRequest
     {-# INLINE messageTag #-}
 
-instance Request ListKeysRequest where
+instance Request RpbListKeysReq where
     expectedResponse _ = Types.ListKeysResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged ListKeysResponse where
+instance Tagged RpbListKeysResp where
     messageTag _ = Types.ListKeysResponse
     {-# INLINE messageTag #-}
 
-instance Response ListKeysResponse
+instance Response RpbListKeysResp
 
-instance Tagged GetBucketRequest where
+instance Tagged RpbGetBucketReq where
     messageTag _ = Types.GetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request GetBucketRequest where
+instance Request RpbGetBucketReq where
     expectedResponse _ = Types.GetBucketResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged GetBucketResponse where
+instance Tagged RpbGetBucketResp where
     messageTag _ = Types.GetBucketResponse
     {-# INLINE messageTag #-}
 
-instance Response GetBucketResponse
+instance Response RpbGetBucketResp
 
-instance Exchange GetBucketRequest GetBucketResponse
+instance Exchange RpbGetBucketReq RpbGetBucketResp
 
-instance Tagged SetBucketRequest where
+instance Tagged RpbSetBucketReq where
     messageTag _ = Types.SetBucketRequest
     {-# INLINE messageTag #-}
 
-instance Request SetBucketRequest where
+instance Request RpbSetBucketReq where
     expectedResponse _ = Types.SetBucketResponse
     {-# INLINE expectedResponse #-}
 
-instance Request GetBucketTypeRequest where
+instance Request RpbGetBucketTypeReq where
     expectedResponse _ = Types.GetBucketResponse
 
-instance Tagged GetBucketTypeRequest where
+instance Tagged RpbGetBucketTypeReq where
     messageTag _ = Types.GetBucketTypeRequest
 
-instance Exchange GetBucketTypeRequest GetBucketResponse
+instance Exchange RpbGetBucketTypeReq RpbGetBucketResp
 
-instance Tagged MapReduceRequest where
+instance Tagged RpbMapRedReq where
     messageTag _ = Types.MapReduceRequest
     {-# INLINE messageTag #-}
 
-instance Request MapReduceRequest where
+instance Request RpbMapRedReq where
     expectedResponse _ = Types.MapReduceResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged MapReduce where
+instance Tagged RpbMapRedResp where
     messageTag _ = Types.MapReduceResponse
     {-# INLINE messageTag #-}
 
 
-instance Response MapReduce
+instance Response RpbMapRedResp
 
-instance Exchange MapReduceRequest MapReduce
+instance Exchange RpbMapRedReq RpbMapRedResp
 
-instance Tagged DtFetchRequest where
+instance Tagged DtFetchReq where
     messageTag _ = Types.DtFetchRequest
     {-# INLINE messageTag #-}
 
-instance Tagged DtFetchResponse where
+instance Tagged DtFetchResp where
     messageTag _ = Types.DtFetchResponse
     {-# INLINE messageTag #-}
 
-instance Request DtFetchRequest where
+instance Request DtFetchReq where
     expectedResponse _ = Types.DtFetchResponse
     {-# INLINE expectedResponse #-}
 
-instance Response DtFetchResponse
+instance Response DtFetchResp
 
-instance Exchange DtFetchRequest DtFetchResponse
+instance Exchange DtFetchReq DtFetchResp
 
-instance Tagged DtUpdateRequest where
+instance Tagged DtUpdateReq where
     messageTag _ = Types.DtUpdateRequest
     {-# INLINE messageTag #-}
 
-instance Tagged DtUpdateResponse where
+instance Tagged DtUpdateResp where
     messageTag _ = Types.DtUpdateResponse
     {-# INLINE messageTag #-}
 
-instance Request DtUpdateRequest where
+instance Request DtUpdateReq where
     expectedResponse _ = Types.DtUpdateResponse
     {-# INLINE expectedResponse #-}
 
-instance Response DtUpdateResponse
+instance Response DtUpdateResp
 
-instance Exchange DtUpdateRequest DtUpdateResponse
+instance Exchange DtUpdateReq DtUpdateResp
 
-instance Tagged SearchQueryRequest where
+instance Tagged RpbSearchQueryReq where
     messageTag _ = Types.SearchQueryRequest
     {-# INLINE messageTag #-}
 
-instance Request SearchQueryRequest where
+instance Request RpbSearchQueryReq where
     expectedResponse _ = Types.SearchQueryResponse
     {-# INLINE expectedResponse #-}
 
-instance Tagged SearchQueryResponse where
+instance Tagged RpbSearchQueryResp where
     messageTag _ = Types.SearchQueryResponse
     {-# INLINE messageTag #-}
 
-instance Response SearchQueryResponse
+instance Response RpbSearchQueryResp
 
-instance Exchange SearchQueryRequest SearchQueryResponse
+instance Exchange RpbSearchQueryReq RpbSearchQueryResp
 
-instance Tagged YzIndexGetRequest where
+instance Tagged RpbYokozunaIndexGetReq where
     messageTag _ = Types.YokozunaIndexGetRequest
 
-instance Request YzIndexGetRequest where
+instance Request RpbYokozunaIndexGetReq where
     expectedResponse _ = Types.YokozunaIndexGetResponse
 
-instance Tagged YzIndexGetResponse where
+instance Tagged RpbYokozunaIndexGetResp where
     messageTag _ = Types.YokozunaIndexGetResponse
 
-instance Response YzIndexGetResponse
+instance Response RpbYokozunaIndexGetResp
 
-instance Exchange YzIndexGetRequest YzIndexGetResponse
+instance Exchange RpbYokozunaIndexGetReq RpbYokozunaIndexGetResp
 
-instance Request YzIndexPutRequest where
+instance Request RpbYokozunaIndexPutReq where
   expectedResponse _ = Types.YokozunaIndexPutRequest
 
-instance Tagged YzIndexPutRequest where
+instance Tagged RpbYokozunaIndexPutReq where
   messageTag _ = Types.YokozunaIndexPutRequest
 
-instance Exchange YzIndexPutRequest PutResponse
+instance Exchange RpbYokozunaIndexPutReq RpbPutResp
 
-instance Tagged YzIndexDeleteRequest where
+instance Tagged RpbYokozunaIndexDeleteReq where
     messageTag _ = Types.YokozunaIndexDeleteRequest
 
-instance Request YzIndexDeleteRequest where
+instance Request RpbYokozunaIndexDeleteReq where
     expectedResponse _ = Types.DeleteResponse
 
 putTag :: MessageTag -> Put

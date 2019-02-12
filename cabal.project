@@ -1,5 +1,3 @@
 packages:
   riak
   protobuf
-  protobuf-lens
-

@@ -34,71 +34,64 @@ import Data.Semigroup
 import Control.Arrow ((&&&))
 import Control.Monad (join)
 #endif
+import qualified Data.Riak.Proto as Proto
 import Network.Riak.Escape (unescape)
-import Network.Riak.Protocol.BucketProps (BucketProps)
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetBucketResponse
-import Network.Riak.Protocol.GetClientIDResponse
-import Network.Riak.Protocol.GetResponse
-import Network.Riak.Protocol.ListBucketsResponse
-import Network.Riak.Protocol.PutResponse
-import qualified Network.Riak.Protocol.SearchQueryResponse as Q
-import qualified Network.Riak.Protocol.SearchDoc as Q
-import qualified Network.Riak.Protocol.YzIndexGetResponse as Yz
+import Network.Riak.Lens
 import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Network.Riak.Protocol.Link as Link
-import qualified Network.Riak.Protocol.Pair as Pair
 
-import qualified Data.ByteString.Lazy as L
-import qualified Data.Sequence as Seq
-import Data.Maybe (fromMaybe)
+import Data.ByteString (ByteString)
 import Data.Foldable (toList)
 
-getClientID :: GetClientIDResponse -> ClientID
-getClientID = client_id
+getClientID :: Proto.RpbGetClientIdResp -> ClientID
+getClientID = (^. Proto.clientId)
 {-# INLINE getClientID #-}
 
 -- | Construct a get response.  Bucket and key names in links are
 -- URL-unescaped.
-get :: Maybe GetResponse -> Maybe (Seq.Seq Content, VClock)
-get (Just (GetResponse content (Just vclock) _))
-      = Just (unescapeLinks <$> content, VClock vclock)
-get _ = Nothing
+get :: Maybe Proto.RpbGetResp -> Maybe ([Proto.RpbContent], VClock)
+get mresponse = do
+  response <- mresponse
+  let content = response ^. Proto.content
+  vclock <- response ^. Proto.maybe'vclock
+  Just (unescapeLinks <$> content, VClock vclock)
 {-# INLINE get #-}
 
 -- | Construct a put response.  Bucket and key names in links are
 -- URL-unescaped.
-put :: PutResponse -> (Seq.Seq Content, VClock)
-put PutResponse{..} = (unescapeLinks <$> content,
-                       VClock (fromMaybe L.empty vclock))
+put :: Proto.RpbPutResp -> ([Proto.RpbContent], VClock)
+put response =
+  ( unescapeLinks <$> (response ^. Proto.content)
+  , VClock (response ^. Proto.vclock)
+  )
 {-# INLINE put #-}
 
 -- | Construct a list-buckets response.  Bucket names are unescaped.
-listBuckets :: ListBucketsResponse -> Seq.Seq Bucket
-listBuckets = fmap unescape . buckets
+listBuckets :: Proto.RpbListBucketsResp -> [Bucket]
+listBuckets = fmap unescape . (^. Proto.buckets)
 {-# INLINE listBuckets #-}
 
-getBucket :: GetBucketResponse -> BucketProps
-getBucket = props
+getBucket :: Proto.RpbGetBucketResp -> Proto.RpbBucketProps
+getBucket = (^. Proto.props)
 {-# INLINE getBucket #-}
 
 -- | URL-unescape the names of keys and buckets in the links of a
 -- 'Content' value.
-unescapeLinks :: Content -> Content
-unescapeLinks c = c { links = go <$> links c }
-  where go l = l { Link.bucket = unescape <$> Link.bucket l
-                 , Link.key = unescape <$> Link.key l }
+unescapeLinks :: Proto.RpbContent -> Proto.RpbContent
+unescapeLinks = Proto.links . mapped %~ go
+  where go :: Proto.RpbLink -> Proto.RpbLink
+        go l = l & Proto.bucket %~ unescape
+                 & Proto.key %~ unescape
 
-search :: Q.SearchQueryResponse -> SearchResult
+search :: Proto.RpbSearchQueryResp -> SearchResult
 search resp =
   SearchResult
-    { docs     = fmap (fmap unpair . Q.fields) (Q.docs resp)
-    , maxScore = Q.max_score resp
-    , numFound = Q.num_found resp
+    { docs     = fmap (fmap unpair . (^. Proto.fields)) (resp ^. Proto.docs)
+    , maxScore = resp ^. Proto.maybe'maxScore
+    , numFound = resp ^. Proto.maybe'numFound
     }
   where
-    unpair :: Pair.Pair -> (L.ByteString, Maybe L.ByteString)
-    unpair Pair.Pair{Pair.key, Pair.value} = (key, value)
+    unpair :: Proto.RpbPair -> (ByteString, Maybe ByteString)
+    unpair pair = (pair ^. Proto.key, pair ^. Proto.maybe'value)
 
-getIndex :: Yz.YzIndexGetResponse -> [IndexInfo]
-getIndex = toList . Yz.index
+getIndex :: Proto.RpbYokozunaIndexGetResp -> [IndexInfo]
+getIndex = toList . (^. Proto.index)

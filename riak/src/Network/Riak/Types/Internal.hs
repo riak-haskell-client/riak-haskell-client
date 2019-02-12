@@ -57,17 +57,16 @@ module Network.Riak.Types.Internal
     ) where
 
 import           Control.Exception (Exception, throw)
-import           Data.ByteString.Lazy (ByteString)
+import           Data.ByteString (ByteString)
+import qualified Data.ByteString.Lazy as LazyByteString
 import           Data.Digest.Pure.MD5 (md5)
 import           Data.Hashable (Hashable)
 import           Data.IORef (IORef)
-import           Data.Sequence (Seq)
+import qualified Data.Riak.Proto as Proto
 import           Data.Typeable (Typeable)
 import           Data.Word (Word32)
 import           GHC.Generics (Generic)
-import qualified Network.Riak.Protocol.YzIndex as YzIndex
 import           Network.Socket (HostName, ServiceName, Socket)
-import           Text.ProtocolBuffers (ReflectDescriptor, Wire)
 
 
 -- | A client identifier.  This is used by the Riak cluster when
@@ -186,7 +185,7 @@ type SearchQuery = ByteString
 type Score = Double
 
 -- | Search index info
-type IndexInfo = YzIndex.YzIndex
+type IndexInfo = Proto.RpbYokozunaIndex
 
 -- | N value
 --
@@ -198,7 +197,7 @@ type Timeout = Word32
 
 -- | Solr search result
 data SearchResult = SearchResult
-  { docs     :: !(Seq (Seq (ByteString, Maybe ByteString)))
+  { docs     :: ![[(ByteString, Maybe ByteString)]]
   , maxScore :: !(Maybe Float)
   , numFound :: !(Maybe Word32)
   } deriving (Eq, Ord, Show)
@@ -255,11 +254,11 @@ instance Tagged MessageTag where
     {-# INLINE messageTag #-}
 
 -- | A message representing a request from client to server.
-class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Request msg
+class (Proto.Message msg, Show msg, Tagged msg) => Request msg
     where expectedResponse :: msg -> MessageTag
 
 -- | A message representing a response from server to client.
-class (Tagged msg, ReflectDescriptor msg, Show msg, Wire msg) => Response msg
+class (Proto.Message msg, Show msg, Tagged msg) => Response msg
 
 class (Request req, Response resp) => Exchange req resp
     | req -> resp
@@ -272,7 +271,7 @@ newtype VClock = VClock {
     } deriving (Eq, Typeable)
 
 instance Show VClock where
-    show (VClock s) = "VClock " ++ show (md5 s)
+    show (VClock s) = "VClock " ++ show (md5 (LazyByteString.fromStrict s))
 
 -- | A read/write quorum.  The quantity of replicas that must respond
 -- to a read or write request before it is considered successful. This

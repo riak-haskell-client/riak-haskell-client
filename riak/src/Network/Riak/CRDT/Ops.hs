@@ -18,29 +18,19 @@ module Network.Riak.CRDT.Ops (
   , mapUpdateOp
   ) where
 
-import           Data.ByteString.Lazy                        (ByteString)
-import           Data.Semigroup                              (Semigroup ((<>)))
-import qualified Data.Sequence                               as Seq
-import qualified Data.Set                                    as S
+import           Data.ByteString (ByteString)
+import           Data.Semigroup (Semigroup((<>)))
+import qualified Data.Set as S
 
+import qualified Data.Riak.Proto as Proto
 import           Network.Riak.CRDT.Types
-import qualified Network.Riak.Protocol.CounterOp             as PB
-import qualified Network.Riak.Protocol.DtOp                  as PB
-import qualified Network.Riak.Protocol.MapField              as PBMap
-import qualified Network.Riak.Protocol.MapField.MapFieldType as PBMap
-import qualified Network.Riak.Protocol.MapOp                 as PBMap
-import qualified Network.Riak.Protocol.MapUpdate             as PBMap
-import qualified Network.Riak.Protocol.MapUpdate.FlagOp      as PBFlag
-import qualified Network.Riak.Protocol.SetOp                 as PBSet
+import           Network.Riak.Lens
 
-counterUpdateOp :: [CounterOp] -> PB.DtOp
-counterUpdateOp ops = PB.DtOp { PB.counter_op = Just $ counterOpPB ops,
-                                PB.set_op = Nothing,
-                                PB.map_op = Nothing
-                              }
+counterUpdateOp :: [CounterOp] -> Proto.DtOp
+counterUpdateOp ops = Proto.defMessage & Proto.counterOp .~ counterOpPB ops
 
-counterOpPB :: [CounterOp] -> PB.CounterOp
-counterOpPB ops = PB.CounterOp (Just i)
+counterOpPB :: [CounterOp] -> Proto.CounterOp
+counterOpPB ops = Proto.defMessage & Proto.increment .~ i
     where CounterInc i = mconcat ops
 
 
@@ -61,66 +51,57 @@ toOpsComb (SetRemove s) = SetOpsComb S.empty (S.singleton s)
 
 
 
-setUpdateOp :: [SetOp] -> PB.DtOp
-setUpdateOp ops = PB.DtOp { PB.counter_op = Nothing,
-                            PB.set_op = Just $ setOpPB ops,
-                            PB.map_op = Nothing
-                          }
+setUpdateOp :: [SetOp] -> Proto.DtOp
+setUpdateOp ops = Proto.defMessage & Proto.setOp .~ setOpPB ops
 
-setOpPB :: [SetOp] -> PBSet.SetOp
-setOpPB ops = PBSet.SetOp (toSeq adds) (toSeq rems)
+setOpPB :: [SetOp] -> Proto.SetOp
+setOpPB ops = Proto.defMessage & Proto.adds .~ S.toList adds
+                               & Proto.removes .~ S.toList rems
     where SetOpsComb adds rems = mconcat . map toOpsComb $ ops
-          toSeq = Seq.fromList . S.toList
 
-flagOpPB :: FlagOp -> PBFlag.FlagOp
-flagOpPB (FlagSet True)  = PBFlag.ENABLE
-flagOpPB (FlagSet False) = PBFlag.DISABLE
+flagOpPB :: FlagOp -> Proto.MapUpdate'FlagOp
+flagOpPB (FlagSet True)  = Proto.MapUpdate'ENABLE
+flagOpPB (FlagSet False) = Proto.MapUpdate'DISABLE
 
 registerOpPB :: RegisterOp -> ByteString
 registerOpPB (RegisterSet x) = x
 
-mapUpdateOp :: [MapOp] -> PB.DtOp
-mapUpdateOp ops = PB.DtOp { PB.counter_op = Nothing,
-                            PB.set_op = Nothing,
-                            PB.map_op = Just $ mapOpPB ops }
+mapUpdateOp :: [MapOp] -> Proto.DtOp
+mapUpdateOp ops = Proto.defMessage & Proto.mapOp .~ mapOpPB ops
 
-mapOpPB :: [MapOp] -> PBMap.MapOp
-mapOpPB ops = PBMap.MapOp rems updates
-    where rems    = Seq.fromList [ toRemove f   | MapRemove f <- ops ]
-          updates = Seq.fromList [ toUpdate f u | MapUpdate f u <- ops ]
+mapOpPB :: [MapOp] -> Proto.MapOp
+mapOpPB ops = Proto.defMessage & Proto.removes .~ rems
+                               & Proto.updates .~ updates
+    where rems    = [ toRemove f   | MapRemove f <- ops ]
+          updates = [ toUpdate f u | MapUpdate f u <- ops ]
 
-toRemove :: MapField -> PBMap.MapField
+toRemove :: MapField -> Proto.MapField
 toRemove (MapField t name) = toField name t
 
-toUpdate :: MapPath -> MapValueOp -> PBMap.MapUpdate
+toUpdate :: MapPath -> MapValueOp -> Proto.MapUpdate
 toUpdate (MapPath (e :| [])) op     = toUpdate' e (mapEntryTag op) op
 toUpdate (MapPath (e :| (r:rs))) op = toUpdate' e MapMapTag op'
     where op' = MapMapOp (MapUpdate (MapPath (r:|rs)) op)
 
-toUpdate' :: ByteString -> MapEntryTag -> MapValueOp -> PBMap.MapUpdate
+toUpdate' :: ByteString -> MapEntryTag -> MapValueOp -> Proto.MapUpdate
 toUpdate' f t op = setSpecificOp op (updateNothing f t)
 
-setSpecificOp :: MapValueOp -> PBMap.MapUpdate -> PBMap.MapUpdate
-setSpecificOp (MapCounterOp cop) u  = u { PBMap.counter_op  = Just $ counterOpPB [cop] }
-setSpecificOp (MapSetOp sop) u      = u { PBMap.set_op      = Just $ setOpPB [sop] }
-setSpecificOp (MapRegisterOp rop) u = u { PBMap.register_op = Just $ registerOpPB rop }
-setSpecificOp (MapFlagOp fop) u     = u { PBMap.flag_op     = Just $ flagOpPB fop }
-setSpecificOp (MapMapOp mop) u      = u { PBMap.map_op      = Just $ mapOpPB [mop] }
+setSpecificOp :: MapValueOp -> Proto.MapUpdate -> Proto.MapUpdate
+setSpecificOp (MapCounterOp cop)   = Proto.counterOp .~ counterOpPB [cop]
+setSpecificOp (MapSetOp sop)       = Proto.setOp .~ setOpPB [sop]
+setSpecificOp (MapRegisterOp rop)  = Proto.registerOp .~ registerOpPB rop
+setSpecificOp (MapFlagOp fop)      = Proto.flagOp .~ flagOpPB fop
+setSpecificOp (MapMapOp mop)       = Proto.mapOp .~ mapOpPB [mop]
 
 
-updateNothing :: ByteString -> MapEntryTag -> PBMap.MapUpdate
-updateNothing f t = PBMap.MapUpdate { PBMap.field = toField f t,
-                                    PBMap.counter_op = Nothing,
-                                    PBMap.set_op = Nothing,
-                                    PBMap.register_op = Nothing,
-                                    PBMap.flag_op = Nothing,
-                                    PBMap.map_op = Nothing }
+updateNothing :: ByteString -> MapEntryTag -> Proto.MapUpdate
+updateNothing f t = Proto.defMessage & Proto.field .~ toField f t
 
-toField :: ByteString -> MapEntryTag -> PBMap.MapField
-toField name t = PBMap.MapField { PBMap.name = name,
-                                  PBMap.type' = typ t }
-    where typ MapCounterTag  = PBMap.COUNTER
-          typ MapSetTag      = PBMap.SET
-          typ MapRegisterTag = PBMap.REGISTER
-          typ MapFlagTag     = PBMap.FLAG
-          typ MapMapTag      = PBMap.MAP
+toField :: ByteString -> MapEntryTag -> Proto.MapField
+toField name t = Proto.defMessage & Proto.name .~ name
+                                  & Proto.type' .~ typ t
+    where typ MapCounterTag  = Proto.MapField'COUNTER
+          typ MapSetTag      = Proto.MapField'SET
+          typ MapRegisterTag = Proto.MapField'REGISTER
+          typ MapFlagTag     = Proto.MapField'FLAG
+          typ MapMapTag      = Proto.MapField'MAP

@@ -28,7 +28,6 @@ import Blaze.ByteString.Builder.Word (fromWord8)
 import Control.Applicative ((<$>))
 #endif
 import Data.Attoparsec.ByteString as A
-import Data.Attoparsec.Lazy as AL
 import Data.Bits ((.|.), (.&.), shiftL, shiftR)
 import Data.ByteString (ByteString)
 #if __GLASGOW_HASKELL__ < 710
@@ -49,45 +48,41 @@ import qualified Data.Text.Lazy.Encoding as TL
 -- unescaped.
 class Escape e where
     -- | URL-escape a string.
-    escape :: e -> L.ByteString
+    escape :: e -> ByteString
     -- | URL-unescape a string.
-    unescape' :: L.ByteString -> Either String e
+    unescape' :: ByteString -> Either String e
 
 -- | URL-unescape a string that is presumed to be properly escaped.
 -- If the string is invalid, an error will be thrown that cannot be
 -- caught from pure code.
-unescape :: Escape e => L.ByteString -> e
+unescape :: Escape e => ByteString -> e
 unescape bs = case unescape' bs of
                 Left err -> error $ "Network.Riak.Escape.unescape: " ++ err
                 Right v  -> v
 {-# INLINE unescape #-}
 
 instance Escape ByteString where
-    escape = toLazyByteString . B.foldl escapeWord8 mempty
+    escape = L.toStrict . toLazyByteString . B.foldl escapeWord8 mempty
     {-# INLINE escape #-}
-    unescape' = AL.eitherResult . AL.parse (toByteString <$> unescapeBS)
+    unescape' = A.eitherResult . A.parse (toByteString <$> unescapeBS)
     {-# INLINE unescape' #-}
 
 instance Escape L.ByteString where
-    escape = toLazyByteString . L.foldl escapeWord8 mempty
+    escape = L.toStrict . toLazyByteString . L.foldl escapeWord8 mempty
     {-# INLINE escape #-}
-    unescape' = AL.eitherResult . AL.parse (toLazyByteString <$> unescapeBS)
+    unescape' = A.eitherResult . A.parse (toLazyByteString <$> unescapeBS)
     {-# INLINE unescape' #-}
 
 instance Escape Text where
     escape = escape . T.encodeUtf8
     {-# INLINE escape #-}
-    unescape' lbs = case AL.parse (toByteString <$> unescapeBS) lbs of
-                     AL.Done _ bs    -> first show $ T.decodeUtf8' bs
-                     AL.Fail _ _ err -> Left err
+    unescape' = (>>= first show . T.decodeUtf8') . A.eitherResult . A.parse (toByteString <$> unescapeBS)
     {-# INLINE unescape' #-}
 
 instance Escape TL.Text where
     escape = escape . TL.encodeUtf8
     {-# INLINE escape #-}
-    unescape' lbs = case AL.parse (toLazyByteString <$> unescapeBS) lbs of
-                     AL.Done _ bs    -> first show $ TL.decodeUtf8' bs
-                     AL.Fail _ _ err -> Left err
+    unescape' = (>>= first show . TL.decodeUtf8') . A.eitherResult . A.parse (toLazyByteString <$> unescapeBS)
     {-# INLINE unescape' #-}
 
 instance Escape [Char] where

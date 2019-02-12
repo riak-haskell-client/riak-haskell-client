@@ -1,0 +1,43 @@
+/* -------------------------------------------------------------------
+ * riak_search.proto: Protocol buffers for Riak Search (Legacy Search)
+ * -------------------------------------------------------------------
+ *
+ * NOTE: IMPORTANT
+ * Any change to the definitions in this file REQUIRES the following
+ * steps after:
+ *
+ * # Re-generate erlang source from changed .proto files:
+ * make erl_protogen
+ *
+ * # Commit changed files:
+ * git add -A; git commit -m 'Update erlang code from .proto files'
+ */
+
+// import "riak.proto";
+
+// java package specifiers
+// option java_package = "com.basho.riak.protobuf";
+// option java_outer_classname = "RiakSearchPB";
+
+message RpbSearchDoc {
+  repeated RpbPair fields = 1;
+}
+
+message RpbSearchQueryReq {
+  required bytes  q      =  1;  // Query string
+  required bytes  index  =  2;  // Index
+  optional uint32 rows   =  3;  // Limit rows
+  optional uint32 start  =  4;  // Starting offset
+  optional bytes  sort   =  5;  // Sort order
+  optional bytes  filter =  6;  // Inline fields filtering query
+  optional bytes  df     =  7;  // Default field
+  optional bytes  op     =  8;  // Default op
+  repeated bytes  fl     =  9;  // Return fields limit (for ids only, generally)
+  optional bytes  presort = 10; // Presort (key / score)
+}
+
+message RpbSearchQueryResp {
+  repeated RpbSearchDoc docs      = 1; // Result documents
+  optional float        max_score = 2; // Maximum score
+  optional uint32       num_found = 3; // Number of results
+}

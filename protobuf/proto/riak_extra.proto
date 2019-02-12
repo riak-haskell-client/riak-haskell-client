@@ -1,0 +1,10 @@
+// Extra protobuf messages for payloads that consist only of a message code
+
+message RpbAuthResp { }
+message RpbDelResp { }
+message RpbGetClientIdReq { }
+message RpbGetServerInfoReq { }
+message RpbPingReq { }
+message RpbPingResp { }
+message RpbResetBucketResp { }
+message RpbSetBucketResp { }

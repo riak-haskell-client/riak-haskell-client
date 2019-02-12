@@ -21,10 +21,9 @@ module Network.Riak.Search
 #if __GLASGOW_HASKELL__ <= 708
 import           Control.Applicative
 #endif
-import           Data.Sequence (Seq)
+import qualified Data.Riak.Proto as Proto
 import           Network.Riak.Connection.Internal
-import           Network.Riak.Protocol.Content (Content)
-import           Network.Riak.Protocol.YzIndex (YzIndex(YzIndex))
+import           Network.Riak.Lens
 import qualified Network.Riak.Request as Req
 import qualified Network.Riak.Response as Resp
 import           Network.Riak.Types.Internal
@@ -37,7 +36,9 @@ import           Network.Riak.Types.Internal
 -- explicitly set the property. In the default installation of @riak@, this is
 -- 3 (see https://github.com/basho/riak_core/blob/develop/priv/riak_core.schema).
 indexInfo :: Index -> Maybe Schema -> Maybe N -> IndexInfo
-indexInfo = YzIndex
+indexInfo ix schema nval = Proto.defMessage & Proto.name .~ ix
+                                            & Proto.maybe'schema .~ schema
+                                            & Proto.maybe'nVal .~ nval
 
 -- | Get an index info for @Just index@, or get all indexes for @Nothing@.
 --
@@ -48,7 +49,7 @@ getIndex conn ix = Resp.getIndex <$> exchange conn (Req.getIndex ix)
 -- | Create a new index or modify an existing index.
 --
 -- https://docs.basho.com/riak/kv/2.1.4/developing/api/protocol-buffers/yz-index-put/
-putIndex :: Connection -> IndexInfo -> Maybe Timeout -> IO (Seq Content, VClock)
+putIndex :: Connection -> IndexInfo -> Maybe Timeout -> IO ([Proto.RpbContent], VClock)
 putIndex conn info timeout = Resp.put <$> exchange conn (Req.putIndex info timeout)
 
 -- | Delete an index.

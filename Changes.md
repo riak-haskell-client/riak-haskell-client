@@ -1,3 +1,12 @@
+* 1.2.0.0
+  - Bump `riak-protobuf` to `1.0.0`, which:
+    - Switches the protocol buffer library from `protocol-buffers` to `proto-lens`
+    - Retains the original protobuf message names that Basho defined, e.g.
+      `Content` is now named `RpbContent`.
+    - Uses strict `ByteString`s instead of lazy ones
+    - Uses lists instead of `Seq`s
+  - Bump `stm` upper bound.
+  - Add `network >= 3.0` lower bound.
 * 1.1.2.6
   - Regenerate protobuf for protocol-buffers 2.4.12. (https://github.com/riak-haskell-client/riak-haskell-client/issues/115)
   - Bump riak-protobuf version to 0.24.0.0.
@@ -23,8 +32,7 @@
   - Bugfix for exceptions being ignored (https://github.com/markhibberd/riak-haskell-client/pull/46)
 * 1.0
   - No longer expected to work with riak <= 2
-  - CRDT functionality, including high-level interface
-	and quickCheck tests
+  - CRDT functionality, including high-level interface and quickCheck tests
   - Basic yokozuna search functionality
   - CRDT benchmarking suite
   - Bugfixes

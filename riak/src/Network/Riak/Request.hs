@@ -15,35 +15,35 @@
 module Network.Riak.Request
     (
     -- * Connection management
-      PingRequest
+      Proto.RpbPingReq
     , ping
-    , GetClientIDRequest
+    , Proto.RpbGetClientIdReq
     , getClientID
-    , GetServerInfoRequest
+    , Proto.RpbGetServerInfoReq
     , getServerInfo
     -- * Data management
-    , Get.GetRequest
+    , Proto.RpbGetReq
     , get
     , getByIndex
-    , Index.IndexRequest
-    , Put.PutRequest
+    , Proto.RpbIndexReq
+    , Proto.RpbPutReq
     , put
-    , Del.DeleteRequest
+    , Proto.RpbDelReq
     , delete
     -- * Metadata
-    , Link.Link
+    , Proto.RpbLink
     , link
-    , ListBucketsRequest
+    , Proto.RpbListBucketsReq
     , listBuckets
-    , Keys.ListKeysRequest
+    , Proto.RpbListKeysReq
     , listKeys
-    , GetBucket.GetBucketRequest
+    , Proto.RpbGetBucketReq
     , getBucket
-    , SetBucket.SetBucketRequest
+    , Proto.RpbSetBucketReq
     , setBucket
     , getBucketType
     -- * Map/reduce
-    , MapReduceRequest
+    , Proto.RpbMapRedReq
     , mapReduce
     -- * Search
     , search
@@ -55,37 +55,19 @@ module Network.Riak.Request
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative ((<$>))
 #endif
+import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as B8
 #if __GLASGOW_HASKELL__ < 804
 import Data.Monoid
 #endif
-import Network.Riak.Protocol.BucketProps (BucketProps)
-import Network.Riak.Protocol.Content
-import Network.Riak.Protocol.GetClientIDRequest
-import Network.Riak.Protocol.GetServerInfoRequest
-import Network.Riak.Protocol.ListBucketsRequest
-import Network.Riak.Protocol.MapReduceRequest
-import Network.Riak.Protocol.PingRequest
-import Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Data.Riak.Proto as Proto
 import Network.Riak.Escape (escape)
-import qualified Network.Riak.Protocol.DeleteRequest as Del
-import qualified Network.Riak.Protocol.Link as Link
-import qualified Network.Riak.Protocol.GetBucketRequest as GetBucket
-import qualified Network.Riak.Protocol.GetRequest as Get
-import qualified Network.Riak.Protocol.IndexRequest as Index
-import qualified Network.Riak.Protocol.IndexRequest.IndexQueryType as IndexQueryType
-import qualified Network.Riak.Protocol.ListKeysRequest as Keys
-import qualified Network.Riak.Protocol.PutRequest as Put
-import qualified Network.Riak.Protocol.SetBucketRequest as SetBucket
-import qualified Network.Riak.Protocol.GetBucketTypeRequest as GetBucketType
-import qualified Network.Riak.Protocol.SearchQueryRequest as SearchQueryRequest
-import qualified Network.Riak.Protocol.YzIndexGetRequest as YzIndex
-import qualified Network.Riak.Protocol.YzIndexPutRequest as YzIndex
-import qualified Network.Riak.Protocol.YzIndexDeleteRequest as YzIndex
+import Network.Riak.Lens
+import Network.Riak.Types.Internal hiding (MessageTag(..))
 
 -- | Create a ping request.
-ping :: PingRequest
-ping = PingRequest
+ping :: Proto.RpbPingReq
+ping = Proto.defMessage
 {-# INLINE ping #-}
 {-
 -- | Create a dtUpdate request.
@@ -95,171 +77,140 @@ dtUpdate = DtUpdate.DtUpdateRequest
 -}
 
 -- | Create a client-ID request.
-getClientID :: GetClientIDRequest
-getClientID = GetClientIDRequest
+getClientID :: Proto.RpbGetClientIdReq
+getClientID = Proto.defMessage
 {-# INLINE getClientID #-}
 
 -- | Create a server-info request.
-getServerInfo :: GetServerInfoRequest
-getServerInfo = GetServerInfoRequest
+getServerInfo :: Proto.RpbGetServerInfoReq
+getServerInfo = Proto.defMessage
 {-# INLINE getServerInfo #-}
 
 -- | Create a get request.  The bucket and key names are URL-escaped.
-get :: Maybe BucketType -> Bucket -> Key -> R -> Get.GetRequest
-get btype bucket key r = Get.GetRequest {
-                                    Get.bucket = escape bucket
-                                  , Get.key = escape key
-                                  , Get.r = fromQuorum r
-                                  , Get.pr = Nothing
-                                  , Get.basic_quorum = Nothing
-                                  , Get.notfound_ok = Nothing
-                                  , Get.if_modified = Nothing
-                                  , Get.head        = Nothing
-                                  , Get.deletedvclock = Nothing
-                                  , Get.timeout = Nothing
-                                  , Get.sloppy_quorum = Nothing
-                                  , Get.n_val = Nothing
-                                  , Get.type' = btype -- no escaping intentional
-                                                      -- TODO don't escape anything
-                                  }
+get :: Maybe BucketType -> Bucket -> Key -> R -> Proto.RpbGetReq
+get btype bucket key r = Proto.defMessage
+                           & Proto.bucket .~ escape bucket
+                           & Proto.key .~ escape key
+                           & Proto.maybe'r .~ fromQuorum r
+                           & Proto.maybe'type' .~ btype -- no escaping intentional
+                                                  -- TODO don't escape anything
 {-# INLINE get #-}
 
 -- | Create a secondary index request. Bucket, key and index names and
 -- values are URL-escaped.
 getByIndex :: Bucket -> IndexQuery
-           -> Index.IndexRequest
+           -> Proto.RpbIndexReq
 getByIndex bucket q =
     case q of
       IndexQueryExactInt index key ->
           req (index <> "_int") (showIntKey key)
-              IndexQueryType.Eq Nothing Nothing
+              Proto.RpbIndexReq'eq Nothing Nothing
       IndexQueryExactBin index key ->
           req (index <> "_bin") (showBsKey $ key)
-              IndexQueryType.Eq Nothing Nothing
+              Proto.RpbIndexReq'eq Nothing Nothing
       IndexQueryRangeInt index from to ->
           req (index <> "_int") Nothing
-              IndexQueryType.Range (showIntKey from) (showIntKey to)
+              Proto.RpbIndexReq'range (showIntKey from) (showIntKey to)
       IndexQueryRangeBin index from to ->
           req (index <> "_bin") Nothing
-              IndexQueryType.Range (showBsKey from) (showBsKey to)
+              Proto.RpbIndexReq'range (showBsKey from) (showBsKey to)
   where
     showIntKey = Just . escape . B8.pack . show
     showBsKey = Just . escape
+    req :: ByteString -> Maybe ByteString -> Proto.RpbIndexReq'IndexQueryType
+        -> Maybe ByteString -> Maybe ByteString -> Proto.RpbIndexReq
     req i k qt rmin rmax =
-      Index.IndexRequest { Index.bucket = escape bucket
-                         , Index.index = escape i
-                         , Index.qtype = qt
-                         , Index.key = k
-                         , Index.range_min = rmin
-                         , Index.range_max = rmax
-                         , Index.return_terms = Nothing
-                         , Index.stream = Nothing
-                         , Index.max_results = Nothing
-                         , Index.continuation = Nothing
-                         , Index.timeout = Nothing
-                         , Index.type' = Nothing
-                         , Index.term_regex = Nothing
-                         , Index.pagination_sort = Nothing
-                         }
+      Proto.defMessage
+        & Proto.bucket .~ escape bucket
+        & Proto.index .~ escape i
+        & Proto.qtype .~ qt
+        & Proto.maybe'key .~ k
+        & Proto.maybe'rangeMin .~ rmin
+        & Proto.maybe'rangeMax .~ rmax
 
 -- | Create a put request.  The bucket and key names are URL-escaped.
 -- Any 'Link' values inside the 'Content' are assumed to have been
 -- constructed with the 'link' function, and hence /not/ escaped.
-put :: Maybe BucketType -> Bucket -> Key -> Maybe VClock -> Content -> W -> DW -> Bool
-    -> Put.PutRequest
+put :: Maybe BucketType -> Bucket -> Key -> Maybe VClock -> Proto.RpbContent -> W -> DW -> Bool
+    -> Proto.RpbPutReq
 put btype bucket key mvclock cont mw mdw returnBody =
-    Put.PutRequest { Put.bucket = escape bucket,
-                     Put.key = Just $ escape key,
-                     Put.vclock = fromVClock <$> mvclock,
-                     Put.content = cont,
-                     Put.w = fromQuorum mw,
-                     Put.dw = fromQuorum mdw,
-                     Put.return_body = Just returnBody,
-                     Put.pw = Nothing,
-                     Put.if_not_modified = Nothing,
-                     Put.if_none_match = Nothing,
-                     Put.return_head = Nothing,
-                     Put.timeout = Nothing,
-                     Put.asis = Nothing,
-                     Put.sloppy_quorum = Nothing,
-                     Put.n_val = Nothing,
-                     Put.type' = btype -- same as get
-                   }
+    Proto.defMessage
+      & Proto.bucket .~ escape bucket
+      & Proto.key .~ escape key
+      & Proto.maybe'vclock .~ (fromVClock <$> mvclock)
+      & Proto.content .~ cont
+      & Proto.maybe'w .~ fromQuorum mw
+      & Proto.maybe'dw .~ fromQuorum mdw
+      & Proto.returnBody .~ returnBody
+      & Proto.maybe'type' .~ btype -- same as get
 {-# INLINE put #-}
 
 -- | Create a link.  The bucket and key names are URL-escaped.
-link :: Bucket -> Key -> Tag -> Link.Link
-link bucket key = Link.Link (Just (escape bucket)) (Just (escape key)) . Just
+link :: Bucket -> Key -> Tag -> Proto.RpbLink
+link bucket key tag =
+  Proto.defMessage
+    & Proto.bucket .~ escape bucket
+    & Proto.key .~ escape key
+    & Proto.tag .~ tag
 {-# INLINE link #-}
 
 -- | Create a delete request.  The bucket and key names are URL-escaped.
-delete :: Maybe BucketType -> Bucket -> Key -> RW -> Del.DeleteRequest
-delete btype bucket key rw = Del.DeleteRequest {
-                               Del.bucket = escape bucket,
-                               Del.key = escape key,
-                               Del.rw = fromQuorum rw,
-                               Del.vclock = Nothing,
-                               Del.r = Nothing,
-                               Del.w = Nothing,
-                               Del.pr = Nothing,
-                               Del.pw = Nothing,
-                               Del.dw = Nothing,
-                               Del.timeout = Nothing,
-                               Del.sloppy_quorum = Nothing,
-                               Del.n_val = Nothing,
-                               Del.type' = btype -- same as get
-                             }
+delete :: Maybe BucketType -> Bucket -> Key -> RW -> Proto.RpbDelReq
+delete btype bucket key rw = Proto.defMessage
+                               & Proto.bucket .~ escape bucket
+                               & Proto.key .~ escape key
+                               & Proto.maybe'rw .~ fromQuorum rw
+                               & Proto.maybe'type' .~ btype -- same as get
 {-# INLINE delete #-}
 
 -- | Create a list-buckets request.
-listBuckets :: Maybe BucketType -> ListBucketsRequest
-listBuckets = ListBucketsRequest Nothing Nothing
+listBuckets :: Maybe BucketType -> Proto.RpbListBucketsReq
+listBuckets btype = Proto.defMessage & Proto.maybe'type' .~ btype
 {-# INLINE listBuckets #-}
 
 -- | Create a list-keys request.  The bucket type and name are URL-escaped.
-listKeys :: Maybe BucketType -> Bucket -> Keys.ListKeysRequest
-listKeys t b = Keys.ListKeysRequest (escape b) Nothing (escape <$> t)
+listKeys :: Maybe BucketType -> Bucket -> Proto.RpbListKeysReq
+listKeys t b = Proto.defMessage & Proto.maybe'type' .~ (escape <$> t)
+                                & Proto.bucket .~ escape b
 {-# INLINE listKeys #-}
 
 -- | Create a get-bucket request.  The bucket type and name are URL-escaped.
-getBucket :: Maybe BucketType -> Bucket -> GetBucket.GetBucketRequest
-getBucket t b = GetBucket.GetBucketRequest (escape b) (escape <$> t)
+getBucket :: Maybe BucketType -> Bucket -> Proto.RpbGetBucketReq
+getBucket t b = Proto.defMessage & Proto.maybe'type' .~ (escape <$> t)
+                                 & Proto.bucket .~ escape b
 {-# INLINE getBucket #-}
 
 -- | Create a set-bucket request.  The bucket type and name are URL-escaped.
-setBucket :: Maybe BucketType -> Bucket -> BucketProps -> SetBucket.SetBucketRequest
-setBucket t b ps = SetBucket.SetBucketRequest (escape b) ps (escape <$> t)
+setBucket :: Maybe BucketType -> Bucket -> Proto.RpbBucketProps -> Proto.RpbSetBucketReq
+setBucket t b ps = Proto.defMessage & Proto.bucket .~ escape b
+                                    & Proto.maybe'type' .~ (escape <$> t)
+                                    & Proto.props .~ ps
 {-# INLINE setBucket #-}
 
 -- | Create a get-bucket-type request.  The bucket type is URL-escaped.
-getBucketType :: BucketType -> GetBucketType.GetBucketTypeRequest
-getBucketType t = GetBucketType.GetBucketTypeRequest (escape t)
+getBucketType :: BucketType -> Proto.RpbGetBucketTypeReq
+getBucketType t = Proto.defMessage & Proto.type' .~ escape t
 
 -- | Create a map-reduce request.
-mapReduce :: Job -> MapReduceRequest
-mapReduce (JSON bs)   = MapReduceRequest bs "application/json"
-mapReduce (Erlang bs) = MapReduceRequest bs "application/x-erlang-binary"
+mapReduce :: Job -> Proto.RpbMapRedReq
+mapReduce (JSON bs)   = Proto.defMessage & Proto.request .~ bs
+                                         & Proto.contentType .~ "application/json"
+mapReduce (Erlang bs) = Proto.defMessage & Proto.request .~ bs
+                                         & Proto.contentType .~ "application/x-erlang-binary"
 
 -- | Create a search request
-search :: SearchQuery -> Index -> SearchQueryRequest.SearchQueryRequest
-search q ix = SearchQueryRequest.SearchQueryRequest {
-                SearchQueryRequest.q = q,
-                SearchQueryRequest.index = escape ix,
-                SearchQueryRequest.rows = Nothing,
-                SearchQueryRequest.start = Nothing,
-                SearchQueryRequest.sort = Nothing,
-                SearchQueryRequest.filter = Nothing,
-                SearchQueryRequest.df = Nothing,
-                SearchQueryRequest.op = Nothing,
-                SearchQueryRequest.fl = mempty,
-                SearchQueryRequest.presort = Nothing
-              }
+search :: SearchQuery -> Index -> Proto.RpbSearchQueryReq
+search q ix = Proto.defMessage
+                & Proto.q .~ q
+                & Proto.index .~ escape ix
 
-getIndex :: Maybe Index -> YzIndex.YzIndexGetRequest
-getIndex = YzIndex.YzIndexGetRequest
+getIndex :: Maybe Index -> Proto.RpbYokozunaIndexGetReq
+getIndex ix = Proto.defMessage & Proto.maybe'name .~ ix
 
-putIndex :: IndexInfo -> Maybe Timeout -> YzIndex.YzIndexPutRequest
-putIndex = YzIndex.YzIndexPutRequest
+putIndex :: IndexInfo -> Maybe Timeout -> Proto.RpbYokozunaIndexPutReq
+putIndex info timeout = Proto.defMessage
+                          & Proto.index .~ info
+                          & Proto.maybe'timeout .~ timeout
 
-deleteIndex :: Index -> YzIndex.YzIndexDeleteRequest
-deleteIndex = YzIndex.YzIndexDeleteRequest
+deleteIndex :: Index -> Proto.RpbYokozunaIndexDeleteReq
+deleteIndex ix = Proto.defMessage & Proto.name .~ ix
