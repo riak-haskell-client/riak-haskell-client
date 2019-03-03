@@ -1,5 +1,5 @@
-/dist
-/protobuf/dist
+dist
+
 /tmp
 .DS_Store
 dist

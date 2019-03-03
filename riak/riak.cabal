@@ -47,7 +47,7 @@ extra-source-files:
                      tests/test.yaml
 
 cabal-version:       >=1.8
-
+tested-with: GHC==8.4.4, GHC==8.2.2, GHC==8.0.2
 source-repository head
     type: git
     location: https://github.com:riak-haskell-client/riak-haskell-client.git
@@ -124,9 +124,9 @@ library
                 protocol-buffers              >= 2.1.4    && < 2.5,
                 pureMD5,
                 random,
-                riak-protobuf                 == 0.23.*,
+                riak-protobuf                 == 0.24.*,
                 semigroups                    >= 0.16,
-                stm                           == 2.4.*,
+                stm                           >= 2.4       && < 2.6,
                 text                          == 1.2.*,
                 time                          >= 1.4.2     && < 1.9,
                 vector                        >= 0.10.12.3 && < 0.13,

@@ -1,0 +1,15 @@
+#!/bin/sh -eux
+
+
+git submodule init
+git submodule update
+
+WORKING_DIR=$(pwd)
+
+find . -type f -name '*.cabal' | grep -v '^\./lib' | while read P; do
+  cd "$(dirname "${P}")"
+  ./mafia update
+  ./mafia build
+  ./mafia test
+  cd "${WORKING_DIR}"
+done

@@ -1,4 +1,11 @@
-{-# LANGUAGE CPP                 #-}
+{-# LANGUAGE CPP                    #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
+{-# LANGUAGE OverloadedStrings      #-}
+{-# LANGUAGE PatternGuards          #-}
+{-# LANGUAGE ScopedTypeVariables    #-}
+{-# LANGUAGE TypeFamilies           #-}
+
 {- | module:    Network.Riak.CRDT
      copyright: (c) 2016 Sentenai
      author:    Antonio Nikishaev <me@lelf.lu>
@@ -32,8 +39,6 @@ Just (DTCounter (Counter 41))
 Just (DTCounter (Counter 42))
 
 -}
-{-# LANGUAGE TypeFamilies, OverloadedStrings, ScopedTypeVariables, PatternGuards #-}
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
 
 module Network.Riak.CRDT (
     module X
@@ -41,36 +46,31 @@ module Network.Riak.CRDT (
   , CRDT(..)
   ) where
 
-import Data.Default.Class
-import qualified Data.Map as M
-import Data.Proxy
+import           Data.Default.Class
+import qualified Data.Map                as M
+import           Data.Proxy
 #if __GLASGOW_HASKELL__ < 804
-import Data.Semigroup
+import           Data.Semigroup
 #endif
-import qualified Data.Set as S
-import Network.Riak.CRDT.Ops
-import Network.Riak.CRDT.Riak
-import Network.Riak.CRDT.Types as X
-import Network.Riak.Types
-
+import qualified Data.Set                as S
+import           Network.Riak.CRDT.Ops
+import           Network.Riak.CRDT.Riak
+import           Network.Riak.CRDT.Types as X
+import           Network.Riak.Types
 
 -- | Modify a counter by applying operations ops
 modifyCounter :: CounterOp -> Counter -> Counter
 modifyCounter op c = c <> Counter i
     where CounterInc i = op
 
-
-
 -- | Modify a set by applying operations ops
 modifySet :: SetOp -> Set -> Set
 modifySet op (Set c) = Set (c `S.union` adds S.\\ rems)
     where SetOpsComb adds rems = toOpsComb op
 
-
 modifyMap :: MapOp -> Map -> Map
 modifyMap (MapRemove field) (Map mc) = Map $ M.delete field mc
-modifyMap (MapUpdate path op) m = modifyMap1 path op m
-
+modifyMap (MapUpdate path op) m      = modifyMap1 path op m
 
 modifyMap1 :: MapPath -> MapValueOp -> Map -> Map
 modifyMap1 (MapPath (e :| [])) op m = modMap mf op m
@@ -85,7 +85,6 @@ modifyMap1 (MapPath (e :| (r:rs))) op (Map m')
 modMap :: MapField -> MapValueOp -> Map -> Map
 modMap ix op (Map m) = Map $ M.alter (Just . modifyMapValue op) ix m
 
-
 modifyMapValue :: MapValueOp -> Maybe MapEntry -> MapEntry
 modifyMapValue (MapSetOp op)      = modifyEntry (Proxy :: Proxy Set) op
 modifyMapValue (MapCounterOp op)  = modifyEntry (Proxy :: Proxy Counter) op
@@ -93,13 +92,11 @@ modifyMapValue (MapMapOp op)      = modifyEntry (Proxy :: Proxy Map) op
 modifyMapValue (MapFlagOp op)     = modifyEntry (Proxy :: Proxy Flag) op
 modifyMapValue (MapRegisterOp op) = modifyEntry (Proxy :: Proxy Register) op
 
-
 modifyFlag :: FlagOp -> Flag -> Flag
 modifyFlag (FlagSet x) = const (Flag x)
 
 modifyRegister :: RegisterOp -> Register -> Register
 modifyRegister (RegisterSet x) = const (Register x)
-
 
 -- | Types that can be held inside 'Map'
 class Default a => MapCRDT a where
@@ -119,38 +116,36 @@ instance MapCRDT Flag where
     type MapOperation_ Flag = FlagOp
     mapModify = modifyFlag
     fromEntry (MapFlag f) = Just f
-    fromEntry _ = Nothing
+    fromEntry _           = Nothing
     toEntry = MapFlag
 
 instance MapCRDT Set where
     type MapOperation_ Set = SetOp
     mapModify = modify
     fromEntry (MapSet s) = Just s
-    fromEntry _ = Nothing
+    fromEntry _          = Nothing
     toEntry = MapSet
 
 instance MapCRDT Counter where
     type MapOperation_ Counter = CounterOp
     mapModify = modify
     fromEntry (MapCounter s) = Just s
-    fromEntry _ = Nothing
+    fromEntry _              = Nothing
     toEntry = MapCounter
 
 instance MapCRDT Register where
     type MapOperation_ Register = RegisterOp
     mapModify = modifyRegister
     fromEntry (MapRegister s) = Just s
-    fromEntry _ = Nothing
+    fromEntry _               = Nothing
     toEntry = MapRegister
-
 
 instance MapCRDT Map where
     type MapOperation_ Map = MapOp
     mapModify = modify
     fromEntry (MapMap s) = Just s
-    fromEntry _ = Nothing
+    fromEntry _          = Nothing
     toEntry = MapMap
-
 
 -- | CRDT types
 class MapCRDT a => CRDT a op | a -> op, op -> a where

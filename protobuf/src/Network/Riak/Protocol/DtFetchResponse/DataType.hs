@@ -1,32 +1,34 @@
-{-# LANGUAGE BangPatterns, DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, DeriveDataTypeable, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses, OverloadedStrings #-}
+{-# OPTIONS_GHC  -fno-warn-unused-imports #-}
 module Network.Riak.Protocol.DtFetchResponse.DataType (DataType(..)) where
 import Prelude ((+), (/), (.))
 import qualified Prelude as Prelude'
 import qualified Data.Typeable as Prelude'
+import qualified GHC.Generics as Prelude'
 import qualified Data.Data as Prelude'
 import qualified Text.ProtocolBuffers.Header as P'
- 
+
 data DataType = COUNTER
               | SET
               | MAP
-              deriving (Prelude'.Read, Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data)
- 
+                deriving (Prelude'.Read, Prelude'.Show, Prelude'.Eq, Prelude'.Ord, Prelude'.Typeable, Prelude'.Data,
+                          Prelude'.Generic)
+
 instance P'.Mergeable DataType
- 
+
 instance Prelude'.Bounded DataType where
   minBound = COUNTER
   maxBound = MAP
- 
+
 instance P'.Default DataType where
   defaultValue = COUNTER
- 
+
 toMaybe'Enum :: Prelude'.Int -> P'.Maybe DataType
 toMaybe'Enum 1 = Prelude'.Just COUNTER
 toMaybe'Enum 2 = Prelude'.Just SET
 toMaybe'Enum 3 = Prelude'.Just MAP
 toMaybe'Enum _ = Prelude'.Nothing
- 
+
 instance Prelude'.Enum DataType where
   fromEnum COUNTER = 1
   fromEnum SET = 2
@@ -40,7 +42,7 @@ instance Prelude'.Enum DataType where
   pred SET = COUNTER
   pred MAP = SET
   pred _ = Prelude'.error "hprotoc generated code: pred failure for type Network.Riak.Protocol.DtFetchResponse.DataType"
- 
+
 instance P'.Wire DataType where
   wireSize ft' enum = P'.wireSize ft' (Prelude'.fromEnum enum)
   wirePut ft' enum = P'.wirePut ft' (Prelude'.fromEnum enum)
@@ -48,12 +50,12 @@ instance P'.Wire DataType where
   wireGet ft' = P'.wireGetErr ft'
   wireGetPacked 14 = P'.wireGetPackedEnum toMaybe'Enum
   wireGetPacked ft' = P'.wireGetErr ft'
- 
+
 instance P'.GPB DataType
- 
+
 instance P'.MessageAPI msg' (msg' -> DataType) DataType where
   getVal m' f' = f' m'
- 
+
 instance P'.ReflectEnum DataType where
   reflectEnum = [(1, "COUNTER", COUNTER), (2, "SET", SET), (3, "MAP", MAP)]
   reflectEnumInfo _
@@ -61,7 +63,8 @@ instance P'.ReflectEnum DataType where
       (P'.makePNF (P'.pack ".Protocol.DtFetchResponse.DataType") ["Network", "Riak"] ["Protocol", "DtFetchResponse"] "DataType")
       ["Network", "Riak", "Protocol", "DtFetchResponse", "DataType.hs"]
       [(1, "COUNTER"), (2, "SET"), (3, "MAP")]
- 
+      Prelude'.False
+
 instance P'.TextType DataType where
   tellT = P'.tellShow
   getT = P'.getRead

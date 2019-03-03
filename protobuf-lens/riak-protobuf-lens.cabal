@@ -1,5 +1,5 @@
 name:           riak-protobuf-lens
-version:        0.23.0.0
+version:        0.24.0.0
 synopsis:       Lenses for riak-protobuf
 description:
   A set of Haskell lenses for interacting with the protocol buffer
@@ -12,7 +12,7 @@ license:        OtherLicense
 license-file:   LICENSE
 build-type:     Simple
 cabal-version:  >= 1.10
-
+tested-with: GHC==8.4.4, GHC==8.2.2, GHC==8.0.2
 extra-source-files:
     Changes.md
     generate.sh
@@ -41,7 +41,7 @@ executable generate
     , containers
     , microlens        < 0.5
     , microlens-th     < 0.5
-    , riak-protobuf    == 0.23.*
+    , riak-protobuf    == 0.24.*
     , template-haskell
   other-modules:
       TH
@@ -54,7 +54,7 @@ library
       base             >= 3 && <5
     , bytestring
     , containers
-    , riak-protobuf    == 0.23.*
+    , riak-protobuf    == 0.24.*
   exposed-modules:
       Network.Riak.Protocol.Lens
   default-language: Haskell2010

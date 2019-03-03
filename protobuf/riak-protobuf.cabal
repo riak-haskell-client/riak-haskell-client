@@ -1,5 +1,5 @@
 name:                riak-protobuf
-version:             0.23.0.0
+version:             0.24.0.0
 synopsis:            Haskell types for the Riak protocol buffer API
 description:
   A set of Haskell types for interacting with the protocol buffer
@@ -25,7 +25,7 @@ extra-source-files:
   Changes.md
 
 cabal-version:       >=1.8
-
+tested-with: GHC==8.4.4, GHC==8.2.2, GHC==8.0.2
 library
   hs-source-dirs: src
 
