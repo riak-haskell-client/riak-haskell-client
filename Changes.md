@@ -1,3 +1,7 @@
+* 1.1.2.6
+  - Regenerate protobuf for protocol-buffers 2.4.12. (https://github.com/riak-haskell-client/riak-haskell-client/issues/115)
+  - Bump riak-protobuf version to 0.24.0.0.
+  - Bump riak-protobuf-lens version to 0.24.0.0.
 * 1.1.2.5
   - Bump aeson and exceptions upper bounds.
 * 1.1.2.4
