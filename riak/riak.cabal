@@ -1,5 +1,5 @@
 name:                riak
-version:             1.1.2.6
+version:             1.2.0.0
 synopsis:            A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
@@ -47,7 +47,11 @@ extra-source-files:
                      tests/test.yaml
 
 cabal-version:       >=1.8
-tested-with: GHC==8.4.4, GHC==8.2.2, GHC==8.0.2
+tested-with:         GHC == 8.0.2,
+                     GHC == 8.2.2,
+                     GHC == 8.4.4,
+                     GHC == 8.6.3
+
 source-repository head
     type: git
     location: https://github.com:riak-haskell-client/riak-haskell-client.git
@@ -97,6 +101,7 @@ library
 
   other-modules:
                   Network.Riak.Connection.NoPush
+                  Network.Riak.Lens
                   Network.Riak.Resolvable.Internal
                   Network.Riak.Tag
 
@@ -119,12 +124,12 @@ library
                 transformers-base             == 0.4.*,
                 mersenne-random-pure64        >= 0.2.0.4  && < 0.3,
                 monad-control                 >= 1.0.0.4  && < 1.1,
-                network                       >= 2.3,
+                network                       >= 3.0      && < 3.1,
                 resource-pool                 == 0.2.*,
-                protocol-buffers              >= 2.1.4    && < 2.5,
+                proto-lens                    >= 0.4.0    && < 0.4.1,
                 pureMD5,
                 random,
-                riak-protobuf                 == 0.24.*,
+                riak-protobuf                 == 1.0.*,
                 semigroups                    >= 0.16,
                 stm                           >= 2.4       && < 2.6,
                 text                          == 1.2.*,
@@ -167,6 +172,7 @@ test-suite test
                 bytestring,
                 containers,
                 HUnit,
+                microlens,
                 process,
                 QuickCheck,
                 tasty,

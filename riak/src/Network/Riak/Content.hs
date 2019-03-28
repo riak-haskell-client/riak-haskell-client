@@ -13,8 +13,8 @@
 module Network.Riak.Content
     (
     -- * Types
-      Content(..)
-    , Link.Link(..)
+      Proto.RpbContent
+    , Proto.RpbLink
     -- * Functions
     , empty
     , binary
@@ -24,40 +24,30 @@ module Network.Riak.Content
 
 import Data.Aeson (encode)
 import Data.Aeson.Types (ToJSON)
-import Network.Riak.Protocol.Content (Content(..))
+import Data.ByteString (ByteString)
+import qualified Data.ByteString.Lazy as LazyByteString
+import qualified Data.Riak.Proto as Proto
+import Network.Riak.Lens
 import Network.Riak.Types.Internal (Bucket, Key, Tag)
-import qualified Data.ByteString.Lazy.Char8 as L
-import qualified Data.Sequence as Seq
-import qualified Network.Riak.Protocol.Link as Link
 
 -- | Create a link.
-link :: Bucket -> Key -> Tag -> Link.Link
-link bucket key tag = Link.Link (Just bucket) (Just key) (Just tag)
+link :: Bucket -> Key -> Tag -> Proto.RpbLink
+link bucket key tag = Proto.defMessage
+                        & Proto.bucket .~ bucket
+                        & Proto.key .~ key
+                        & Proto.tag .~ tag
 {-# INLINE link #-}
 
 -- | An empty piece of content.
-empty :: Content
-empty = Content { value = L.empty
-                , content_type = Nothing
-                , charset = Nothing
-                , content_encoding = Nothing
-                , vtag = Nothing
-                , links = Seq.empty
-                , last_mod = Nothing
-                , last_mod_usecs = Nothing
-                , usermeta = Seq.empty
-                , indexes  = Seq.empty
-                , deleted = Nothing
-                }
+empty :: Proto.RpbContent
+empty = Proto.defMessage
 
 -- | Content encoded as @application/octet-stream@.
-binary :: L.ByteString -> Content
-binary bs = empty { value = bs
-                  , content_type = Just "application/octet-stream"
-                  }
+binary :: ByteString -> Proto.RpbContent
+binary bs = empty & Proto.value .~ bs
+                  & Proto.contentType .~ "application/octet-stream"
 
 -- | Content encoded as @application/json@.
-json :: ToJSON a => a -> Content
-json j = empty { value = encode j
-               , content_type = Just "application/json"
-               }
+json :: ToJSON a => a -> Proto.RpbContent
+json j = empty & Proto.value .~ LazyByteString.toStrict (encode j)
+               & Proto.contentType .~ "application/json"

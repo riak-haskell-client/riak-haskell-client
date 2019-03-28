@@ -51,20 +51,15 @@ module Network.Riak.Basic
 import           Control.Applicative                    ((<$>))
 #endif
 import           Control.Monad.IO.Class
-import qualified Data.Foldable                          as F
-import           Data.Maybe                             (fromMaybe)
-import qualified Data.Sequence                          as Seq
 import           Network.Riak.Connection.Internal
-import           Network.Riak.Escape                    (unescape)
-import           Network.Riak.Protocol.BucketProps
-import           Network.Riak.Protocol.Content
-import           Network.Riak.Protocol.ListKeysResponse
-import           Network.Riak.Protocol.MapReduce        as MapReduce
-import           Network.Riak.Protocol.ServerInfo
-import qualified Network.Riak.Request                   as Req
-import qualified Network.Riak.Response                  as Resp
-import           Network.Riak.Types.Internal            hiding (MessageTag (..))
-import qualified Network.Riak.Types.Internal            as T
+import           Network.Riak.Escape (unescape)
+import           Network.Riak.Lens
+import           Network.Riak.Types.Internal hiding (MessageTag(..))
+import qualified Data.Foldable as F
+import qualified Data.Riak.Proto as Proto
+import qualified Network.Riak.Request as Req
+import qualified Network.Riak.Response as Resp
+import qualified Network.Riak.Types.Internal as T
 
 -- | Check to see if the connection to the server is alive.
 ping :: Connection -> IO ()
@@ -75,13 +70,13 @@ getClientID :: Connection -> IO ClientID
 getClientID conn = Resp.getClientID <$> exchange conn Req.getClientID
 
 -- | Retrieve information about the server.
-getServerInfo :: Connection -> IO ServerInfo
+getServerInfo :: Connection -> IO Proto.RpbGetServerInfoResp
 getServerInfo conn = exchange conn Req.getServerInfo
 
 -- | Retrieve a value.  This may return multiple conflicting siblings.
 -- Choosing among them is your responsibility.
 get :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> R
-    -> IO (Maybe (Seq.Seq Content, VClock))
+    -> IO (Maybe ([Proto.RpbContent], VClock))
 get conn btype bucket key r = Resp.get <$> exchangeMaybe conn (Req.get btype bucket key r)
 
 -- | Store a single value.  This may return multiple conflicting
@@ -93,8 +88,8 @@ get conn btype bucket key r = Resp.get <$> exchangeMaybe conn (Req.get btype buc
 -- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
 -- value will not be stored.
 put :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> Maybe T.VClock
-    -> Content -> W -> DW
-    -> IO (Seq.Seq Content, VClock)
+    -> Proto.RpbContent -> W -> DW
+    -> IO ([Proto.RpbContent], VClock)
 put conn btype bucket key mvclock cont w dw =
   Resp.put <$> exchange conn (Req.put btype bucket key mvclock cont w dw True)
 
@@ -106,7 +101,7 @@ put conn btype bucket key mvclock cont w dw =
 -- If you omit a 'T.VClock' but the type+bucket+key /does/ exist, your
 -- value will not be stored, and you will not be notified.
 put_ :: Connection -> Maybe T.BucketType -> T.Bucket -> T.Key -> Maybe T.VClock
-     -> Content -> W -> DW
+     -> Proto.RpbContent -> W -> DW
      -> IO ()
 put_ conn btype bucket key mvclock cont w dw =
   exchange_ conn (Req.put btype bucket key mvclock cont w dw False)
@@ -118,7 +113,7 @@ delete conn btype bucket key rw = exchange_ conn $ Req.delete btype bucket key r
 -- | List the buckets in the cluster.
 --
 -- /Note/: this operation is expensive.  Do not use it in production.
-listBuckets :: Connection -> Maybe BucketType -> IO (Seq.Seq T.Bucket)
+listBuckets :: Connection -> Maybe BucketType -> IO [T.Bucket]
 listBuckets conn btype = Resp.listBuckets <$> exchange conn (Req.listBuckets btype)
 
 -- | Fold over the keys in a bucket.
@@ -130,32 +125,32 @@ foldKeys conn btype bucket f z0 = do
   liftIO $ sendRequest conn $ Req.listKeys btype bucket
   let g z = f z . unescape
       loop z = do
-        ListKeysResponse{..} <- liftIO $ recvResponse conn
-        z1 <- F.foldlM g z keys
-        if fromMaybe False done
+        response <- liftIO $ (recvResponse conn :: IO Proto.RpbListKeysResp)
+        z1 <- F.foldlM g z (response ^. Proto.keys)
+        if response ^. Proto.done
           then return z1
           else loop z1
   loop z0
 
 -- | Retrieve the properties of a bucket.
-getBucket :: Connection -> Maybe BucketType -> Bucket -> IO BucketProps
+getBucket :: Connection -> Maybe BucketType -> Bucket -> IO Proto.RpbBucketProps
 getBucket conn btype bucket = Resp.getBucket <$> exchange conn (Req.getBucket btype bucket)
 
 -- | Store new properties for a bucket.
-setBucket :: Connection -> Maybe BucketType -> Bucket -> BucketProps -> IO ()
+setBucket :: Connection -> Maybe BucketType -> Bucket -> Proto.RpbBucketProps -> IO ()
 setBucket conn btype bucket props = exchange_ conn $ Req.setBucket btype bucket props
 
 -- | Gets the bucket properties associated with a bucket type.
-getBucketType :: Connection -> T.BucketType -> IO BucketProps
+getBucketType :: Connection -> T.BucketType -> IO Proto.RpbBucketProps
 getBucketType conn btype = Resp.getBucket <$> exchange conn (Req.getBucketType btype)
 
 -- | Run a 'MapReduce' job.  Its result is consumed via a strict left
 -- fold.
-mapReduce :: Connection -> Job -> (a -> MapReduce -> a) -> a -> IO a
+mapReduce :: Connection -> Job -> (a -> Proto.RpbMapRedResp -> a) -> a -> IO a
 mapReduce conn job f z0 = loop z0 =<< (exchange conn . Req.mapReduce $ job)
   where
     loop z mr = do
       let !z' = f z mr
-      if fromMaybe False . MapReduce.done $ mr
+      if mr ^. Proto.done
         then return z'
         else loop z' =<< recvResponse conn

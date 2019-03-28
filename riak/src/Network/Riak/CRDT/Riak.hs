@@ -28,13 +28,14 @@ import           Data.Int
 
 import           Control.Exception (catchJust)
 
-import qualified Data.ByteString.Lazy as BS
+import qualified Data.ByteString as BS
 
+import qualified Data.Riak.Proto as Proto
 import qualified Network.Riak.CRDT.Request as Req
 import qualified Network.Riak.CRDT.Response as Resp
 import qualified Network.Riak.CRDT.Types as CRDT
 import qualified Network.Riak.Connection as Conn
-import qualified Network.Riak.Protocol.ErrorResponse as ER
+import           Network.Riak.Lens
 import           Network.Riak.Types
 
 
@@ -66,10 +67,10 @@ get conn t b k = Resp.get <$> Conn.exchange conn (Req.get t b k)
 -- NotPresent exception here
 handleEmpty :: IO () -> IO ()
 handleEmpty act = catchJust
-                  (\(e :: ER.ErrorResponse) ->
+                  (\(e :: Proto.RpbErrorResp) ->
                        if | "{precondition,{not_present,"
-                               `BS.isPrefixOf` ER.errmsg e -> Just ()
-                          | otherwise                      -> Nothing
+                               `BS.isPrefixOf` (e ^. Proto.errmsg) -> Just ()
+                          | otherwise                              -> Nothing
                   )
                   act
                   pure

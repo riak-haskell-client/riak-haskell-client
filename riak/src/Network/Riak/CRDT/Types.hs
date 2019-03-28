@@ -42,18 +42,16 @@ module Network.Riak.CRDT.Types (
     -- *** Modification
   , FlagOp(..)
     -- * Misc
-  , NonEmpty(..), mapEntryTag, setFromSeq, MapEntryTag(..)
+  , NonEmpty(..), mapEntryTag, setFromList, MapEntryTag(..)
   ) where
 
 import           Control.DeepSeq (NFData)
-import           Data.ByteString.Lazy (ByteString)
+import           Data.ByteString (ByteString)
 import           Data.Default.Class
-import qualified Data.Foldable as F
 import           Data.Int (Int64)
 import           Data.List.NonEmpty
 import qualified Data.Map.Strict as M
 import           Data.Semigroup
-import qualified Data.Sequence as Seq
 import qualified Data.Set as S
 import           Data.String (IsString(..))
 import           GHC.Generics (Generic)
@@ -257,8 +255,8 @@ data SetOp = SetAdd ByteString    -- ^ add element to the set
                                   -- >>> SetRemove "bar"
              deriving (Eq,Show)
 
-setFromSeq :: Seq.Seq ByteString -> Set
-setFromSeq = Set . S.fromList . F.toList
+setFromList :: [ByteString] -> Set
+setFromList = Set . S.fromList
 
 -- | CRDT Counter hold a integer 'Count'
 --

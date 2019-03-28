@@ -32,36 +32,30 @@ module Network.Riak.Value
 
 import Control.Applicative
 import Data.Aeson.Types (Parser, Result(..), parse)
-import Data.Foldable (toList)
 import Data.Monoid ((<>))
 import Network.Riak.Connection.Internal
-import Network.Riak.Protocol.Content (Content(..))
-import Network.Riak.Protocol.GetResponse (GetResponse(..))
-import Network.Riak.Protocol.IndexResponse (IndexResponse(..))
-import Network.Riak.Protocol.PutResponse (PutResponse(..))
+import Network.Riak.Lens
 import Network.Riak.Resolvable (ResolvableMonoid(..))
 import Network.Riak.Response (unescapeLinks)
 import Network.Riak.Types.Internal hiding (MessageTag(..))
-import qualified Network.Riak.Protocol.Pair as Pair
-import qualified Data.Aeson.Parser as Aeson
+import qualified Data.Riak.Proto as Proto
+import qualified Data.Aeson as Aeson (eitherDecodeStrict)
 import qualified Data.Aeson.Types as Aeson
-import qualified Data.Attoparsec.Lazy as A
-import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Lazy.Char8 as CL8
-import qualified Data.Sequence as Seq
+import qualified Data.ByteString as L
+import qualified Data.ByteString.Char8 as CL8
 import qualified Network.Riak.Content as C
 import qualified Network.Riak.Request as Req
 
-fromContent :: IsContent c => Content -> Maybe c
+fromContent :: IsContent c => Proto.RpbContent -> Maybe c
 fromContent c = case parse parseContent c of
                   Success a -> Just a
                   Error _   -> Nothing
 
 class IsContent c where
-    parseContent :: Content -> Parser c
-    toContent :: c -> Content
+    parseContent :: Proto.RpbContent -> Parser c
+    toContent :: c -> Proto.RpbContent
 
-instance IsContent Content where
+instance IsContent Proto.RpbContent where
     parseContent = return
     {-# INLINE parseContent #-}
 
@@ -77,10 +71,10 @@ instance IsContent () where
     {-# INLINE toContent #-}
 
 instance IsContent Aeson.Value where
-    parseContent c | content_type c == Just "application/json" =
-                      case A.parse Aeson.json (value c) of
-                        A.Done _ a     -> return a
-                        A.Fail _ _ err -> fail err
+    parseContent c | c ^. Proto.maybe'contentType == Just "application/json" =
+                      case Aeson.eitherDecodeStrict (c ^. Proto.value) of
+                        Left err -> fail err
+                        Right a -> return a
                    | otherwise = fail "non-JSON document"
     toContent = C.json
     {-# INLINE toContent #-}
@@ -88,13 +82,17 @@ instance IsContent Aeson.Value where
 deriving instance (IsContent a) => IsContent (ResolvableMonoid a)
 
 -- | Add indexes to a content value for a further put request.
-addIndexes :: [IndexValue] -> Content -> Content
+addIndexes :: [IndexValue] -> Proto.RpbContent -> Proto.RpbContent
 addIndexes ix c =
-    c { C.indexes = Seq.fromList . map toPair $ ix }
+    c & Proto.indexes .~ (map toPair ix)
   where
-    toPair (IndexInt k v) = Pair.Pair (k <> "_int")
-                                      (Just . CL8.pack . show $ v)
-    toPair (IndexBin k v) = Pair.Pair (k <> "_bin") (Just v)
+    toPair :: IndexValue -> Proto.RpbPair
+    toPair (IndexInt k v) = Proto.defMessage
+                              & Proto.key .~ (k <> "_int")
+                              & Proto.value .~ (CL8.pack . show $ v)
+    toPair (IndexBin k v) = Proto.defMessage
+                              & Proto.key .~ (k <> "_bin")
+                              & Proto.value .~ v
 
 -- | Store a single value.  This may return multiple conflicting
 -- siblings.  Choosing among them, and storing a new value, is your
@@ -135,12 +133,12 @@ putMany :: (IsContent c) => Connection
 putMany conn bt b puts w dw =
   mapM putResp =<< pipeline conn (map (\(k,v,c) -> Req.put bt b k v (toContent c) w dw True) puts)
 
-putResp :: (IsContent c) => PutResponse -> IO ([c], VClock)
-putResp PutResponse{..} = do
-  case vclock of
+putResp :: (IsContent c) => Proto.RpbPutResp -> IO ([c], VClock)
+putResp response = do
+  case response ^. Proto.maybe'vclock of
     Nothing -> return ([], VClock L.empty)
     Just s  -> do
-      c <- convert content
+      c <- convert (response ^. Proto.content)
       return (c, VClock s)
 
 -- | Store a single value, without the possibility of conflict
@@ -187,22 +185,25 @@ getMany :: (IsContent c) => Connection
 getMany conn bt b ks r =
     mapM getResp =<< pipelineMaybe conn (map (\k -> Req.get bt b k r) ks)
 
-getResp :: (IsContent c) => Maybe GetResponse -> IO (Maybe ([c], VClock))
+getResp :: (IsContent c) => Maybe Proto.RpbGetResp -> IO (Maybe ([c], VClock))
 getResp resp =
   case resp of
-    Just (GetResponse content (Just s) _) -> do
-           c <- convert content
+    Just resp' ->
+      case resp' ^. Proto.maybe'vclock of
+        Just s -> do
+           c <- convert (resp' ^. Proto.content)
            return $ Just (c, VClock s)
-    _   -> return Nothing
+        _ -> return Nothing
+    _ -> return Nothing
 
-getByIndexResp :: Maybe IndexResponse -> IO [Key]
+getByIndexResp :: Maybe Proto.RpbIndexResp -> IO [Key]
 getByIndexResp resp =
     case resp of
-      Just (IndexResponse keys _ _ _) -> return (toList keys)
+      Just resp' -> return (resp' ^. Proto.keys)
       Nothing -> return []
 
-convert :: IsContent v => Seq.Seq Content -> IO [v]
-convert = go [] [] . toList
+convert :: IsContent v => [Proto.RpbContent] -> IO [v]
+convert = go [] []
     where go cs vs (x:xs) = case fromContent y of
                               Just v -> go cs (v:vs) xs
                               _      -> go (y:cs) vs xs

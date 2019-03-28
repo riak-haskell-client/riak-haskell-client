@@ -11,20 +11,21 @@ import           Control.Monad
 import           Control.Applicative
 #endif
 import qualified Data.Map as M
+import qualified Data.Riak.Proto as Proto
 import qualified Data.Set as S
-import qualified Data.Sequence as Seq
 import           Data.List.NonEmpty (NonEmpty(..))
-import           Data.Foldable (toList)
 #if __GLASGOW_HASKELL__ < 804
 import           Data.Semigroup
 #endif
 import           Data.Text (Text)
+import           Data.Function ((&))
 import           Control.Concurrent (threadDelay)
 import           Control.Exception
+import           Lens.Micro ((^.), (.~))
 import qualified Network.Riak as Riak
 import           Network.Riak.Admin.DSL
 import qualified Network.Riak.Basic as B
-import qualified Network.Riak.Content as B (binary,Content,value)
+import qualified Network.Riak.Content as B (binary,RpbContent)
 import           Network.Riak.Connection (exchange)
 import qualified Network.Riak.CRDT as C
 import qualified Network.Riak.CRDT.Riak as C
@@ -34,8 +35,6 @@ import qualified Network.Riak.Search as S
 import qualified Network.Riak.JSON as J
 import           Network.Riak.Resolvable (ResolvableMonoid (..))
 import           Network.Riak.Types
-import qualified Network.Riak.Protocol.ErrorResponse as ER
-import qualified Network.Riak.Protocol.SearchQueryRequest as S
 import qualified Properties
 import qualified CRDTProperties as CRDT
 import           Utils
@@ -201,13 +200,13 @@ search1 = testCase "basic searchRaw" $ withGlobalConn $ \conn -> do
            C.sendModify conn btype buck key [C.SetRemove kw]
            delay
            a <- query conn ("set:" <> kw)
-           assertEqual "should not found non-existing" (S.SearchResult Seq.empty (Just 0.0) (Just 0)) a
+           assertEqual "should not found non-existing" (S.SearchResult [] (Just 0.0) (Just 0)) a
            C.sendModify conn btype buck key [C.SetAdd kw]
            delay
            b <- query conn ("set:" <> kw)
-           assertBool "searches specific" $ not (Seq.null (S.docs b))
+           assertBool "searches specific" $ not (null (S.docs b))
            c <- query conn ("set:*")
-           assertBool "searches *" $ not (Seq.null (S.docs c))
+           assertBool "searches *" $ not (null (S.docs c))
     where
       query conn q = S.searchRaw conn q "set-ix"
       (btype,buck,key) = ("sets","xxx","yyy")
@@ -216,10 +215,10 @@ search1 = testCase "basic searchRaw" $ withGlobalConn $ \conn -> do
 
 search2 :: TestTree
 search2 = testCase "search with fl" $ withGlobalConn $ \conn -> do
-            let req = (Req.search "set:haskell" "set-ix") { S.fl = Seq.singleton "_yz_rk" }
+            let req = (Req.search "set:haskell" "set-ix") & Proto.fl .~ ["_yz_rk"]
             resp <- Resp.search <$> exchange conn req
             assertEqual "only returns fl"
-              (Seq.singleton (Seq.singleton ("_yz_rk", Just "yyy")))
+              ([[("_yz_rk", Just "yyy")]])
               (S.docs resp)
 
 
@@ -246,9 +245,8 @@ deleteIndex = testCase "deleteIndex" $ withGlobalConn $ \conn -> do
   pure ()
 
   where
-    f :: ER.ErrorResponse -> Maybe ()
-    f (ER.ErrorResponse "notfound" 0) = Just ()
-    f _ = Nothing
+    f :: Proto.RpbErrorResp -> Maybe ()
+    f resp = guard (resp ^. Proto.errmsg == "notfound")
 
 bucketTypes :: TestTree
 bucketTypes = testCase "bucketTypes" $ withGlobalConn $ \conn -> do
@@ -266,10 +264,10 @@ bucketTypes = testCase "bucketTypes" $ withGlobalConn $ \conn -> do
     where
       (b,k) = ("xxx","0") :: (Bucket,Key)
       types = [Nothing, Just "untyped-1", Just "untyped-2"] :: [Maybe BucketType]
-      [o0,o1,o2] = B.binary <$> ["A","B","C"] :: [B.Content]
+      [o0,o1,o2] = B.binary <$> ["A","B","C"] :: [B.RpbContent]
 
-      valok :: Maybe (Seq.Seq B.Content, VClock) -> B.Content -> Bool
-      valok (Just (rs,_)) o = B.value o `elem` map B.value (toList rs)
+      valok :: Maybe ([B.RpbContent], VClock) -> B.RpbContent -> Bool
+      valok (Just (rs,_)) o = (o ^. Proto.value) `elem` map (^. Proto.value) rs
       valok _ _             = False
 
 
@@ -287,12 +285,12 @@ exceptions = testGroup "exceptions" [
       put_Err = putSome B.put_ noBtype
 
       putSome :: (Connection -> Maybe BucketType -> Bucket -> Key
-                             -> Maybe VClock -> B.Content -> Quorum -> Quorum -> IO a)
+                             -> Maybe VClock -> B.RpbContent -> Quorum -> Quorum -> IO a)
               -> Maybe BucketType -> Connection -> IO a
       putSome f bt c = f c bt buck key Nothing val Default Default
 
       shouldBeOK act  = act >> assertBool "ok" True
-      shouldThrow act = catch (act >> assertBool "exception" False) (\(_e::ER.ErrorResponse) -> pure ())
+      shouldThrow act = catch (act >> assertBool "exception" False) (\(_e::Proto.RpbErrorResp) -> pure ())
 
       btype   = Just "untyped-1"
       noBtype = Just "no such type"

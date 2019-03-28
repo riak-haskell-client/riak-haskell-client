@@ -6,7 +6,7 @@ import Criterion.Main
 import Network.Riak.Connection.Pool as Pool (Pool, create, withConnection)
 import Network.Riak.Connection (defaultClient)
 import Network.Riak.CRDT
-import qualified Data.ByteString.Lazy.Char8 as B
+import qualified Data.ByteString.Char8 as B
 import Control.Applicative
 import Control.Monad
 import Data.Maybe
