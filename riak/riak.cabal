@@ -106,7 +106,7 @@ library
                   Network.Riak.Tag
 
   build-depends:
-                aeson                         >= 0.8      && < 1.4,
+                aeson                         >= 0.8      && < 1.5.7,
                 async                         >= 2.0.0.0  && < 2.3,
                 attoparsec                    >= 0.12.1.6 && < 0.14,
                 base                          >= 3        && < 5,
@@ -126,14 +126,14 @@ library
                 monad-control                 >= 1.0.0.4  && < 1.1,
                 network                       >= 3.0      && < 3.1,
                 resource-pool                 == 0.2.*,
-                proto-lens                    >= 0.4.0    && < 0.4.1,
+                proto-lens                    >= 0.4.0    && < 0.6.1,
                 pureMD5,
                 random,
                 riak-protobuf                 == 1.0.*,
                 semigroups                    >= 0.16,
                 stm                           >= 2.4       && < 2.6,
                 text                          == 1.2.*,
-                time                          >= 1.4.2     && < 1.9,
+                time                          >= 1.4.2     && < 1.10,
                 vector                        >= 0.10.12.3 && < 0.13,
                 unordered-containers          >= 0.2.5
 

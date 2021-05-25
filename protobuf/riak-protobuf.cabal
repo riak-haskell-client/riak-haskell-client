@@ -44,8 +44,8 @@ library
 
   build-depends:
     base == 4.*,
-    proto-lens >= 0.4.0 && < 0.4.1,
-    proto-lens-runtime >= 0.4.0 && < 0.4.1
+    proto-lens >= 0.4.0 && < 0.6.1,
+    proto-lens-runtime >= 0.4.0 && < 0.6.1
 
 source-repository head
   type:     git
