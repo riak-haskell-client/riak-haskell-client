@@ -37,21 +37,21 @@ before_script:
 
 matrix:
   include:
+    - compiler: "ghc-8.10.4"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-3.0,ghc-8.10.4], sources: [hvr-ghc]}}
     - compiler: "ghc-8.8.4"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-3.0,ghc-8.8.4], sources: [hvr-ghc]}}
-    # - compiler: "ghc-8.6.4"
-    # # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    #   addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.6.4], sources: [hvr-ghc]}}
-    # - compiler: "ghc-8.4.4"
-    # # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    #   addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.4.4], sources: [hvr-ghc]}}
-    # - compiler: "ghc-8.2.2"
-    # # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    #   addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.2.2], sources: [hvr-ghc]}}
-    # - compiler: "ghc-8.0.2"
-    # # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    #   addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.0.2], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.6.4"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.6.4], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.4.4"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.4.4], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.2.2"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.2.2], sources: [hvr-ghc]}}
 
 before_install:
   - HC=/opt/ghc/bin/${CC}
