@@ -47,6 +47,9 @@ library
     proto-lens == 0.7.*,
     proto-lens-runtime == 0.7.*
 
+  default-extensions:
+    DoAndIfThenElse  
+
 source-repository head
   type:     git
   location: http://github.com/riak-haskell-client/riak-haskell-client

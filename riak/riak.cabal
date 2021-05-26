@@ -137,7 +137,9 @@ library
                 vector                        >= 0.10.12.3 && < 0.13,
                 unordered-containers          >= 0.2.5
 
-
+  default-extensions:
+    DoAndIfThenElse
+    
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
 
