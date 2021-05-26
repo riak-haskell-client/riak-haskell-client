@@ -46,7 +46,7 @@ extra-source-files:
                      Changes.md
                      tests/test.yaml
 
-cabal-version:       >=1.8
+cabal-version:       >=1.10
 tested-with:         GHC == 8.0.2,
                      GHC == 8.2.2,
                      GHC == 8.4.4,
@@ -70,6 +70,7 @@ flag test2i
   default: False
 
 library
+  default-language: Haskell2010
   hs-source-dirs: src
   exposed-modules:
                   Network.Riak
@@ -151,6 +152,7 @@ library
   ghc-options: -Wall
 
 test-suite test
+  default-language: Haskell2010
   type: exitcode-stdio-1.0
   main-is: Test.hs
   hs-source-dirs: tests, tests/dsl
@@ -188,6 +190,7 @@ test-suite test
                 yaml                   >= 0.8.19
 
 benchmark bench
+  default-language: Haskell2010
   type: exitcode-stdio-1.0
   hs-source-dirs: benchmarks
   main-is: Main.hs
