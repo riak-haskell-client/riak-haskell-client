@@ -1,6 +1,6 @@
-name:                riak
-version:             1.2.0.0
-synopsis:            A Haskell client for the Riak decentralized data store
+name:               riak
+version:            1.2.0.0
+synopsis:           A Haskell client for the Riak decentralized data store
 description:
   A Haskell client library for the Riak decentralized data
   store, designed for efficiency, ease of use, and flexibility.  Uses
@@ -30,170 +30,177 @@ description:
   .
   [Network.Riak.CRDT] CRDT operations.
 
+homepage:           http://github.com/riak-haskell-client/riak-haskell-client
+bug-reports:
+  http://github.com/riak-haskell-client/riak-haskell-client/issues
 
-homepage:            http://github.com/riak-haskell-client/riak-haskell-client
-Bug-reports:         http://github.com/riak-haskell-client/riak-haskell-client/issues
-license:             OtherLicense
-license-file:        LICENSE
-author:              Bryan O'Sullivan <bos@serpentine.com>
-maintainer:          Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>, Tim McGilchrist <timmcgil@gmail.com>
-copyright:           Copyright 2011 MailRank, Inc.
-                     Portions copyright 2007-2010 Basho Technologies, Inc.
-category:            Network
-build-type:          Simple
+license:            OtherLicense
+license-file:       LICENSE
+author:             Bryan O'Sullivan <bos@serpentine.com>
+maintainer:
+  Mark Hibberd <mark@hibberd.id.au>, Nathan Hunter <nhunter@janrain.com>, Tim McGilchrist <timmcgil@gmail.com>
+
+copyright:
+  Copyright 2011 MailRank, Inc.
+  Portions copyright 2007-2010 Basho Technologies, Inc.
+
+category:           Network
+build-type:         Simple
 extra-source-files:
-                     README.markdown
-                     Changes.md
-                     tests/test.yaml
+  Changes.md
+  README.md
+  tests/test.yaml
 
-cabal-version:       >=1.10
-tested-with: GHC==8.4.4, GHC==8.2.2, GHC == 8.6.3, GHC == 8.8.4, GHC==8.10.4
+cabal-version:      >=1.8
+tested-with:        GHC ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.5 || ==8.10.5
 
 source-repository head
-    type: git
-    location: https://github.com:riak-haskell-client/riak-haskell-client.git
+  type:     git
+  location:
+    https://github.com:riak-haskell-client/riak-haskell-client.git
 
 flag debug
   description: allow debug logging
-  default: True
+  default:     True
 
 flag developer
   description: operate in developer mode
-  default: False
-  manual: True
+  default:     False
+  manual:      True
 
 flag test2i
-  description: test secondary indexes (requires default riak engine to have that support)
-  default: False
+  description:
+    test secondary indexes (requires default riak engine to have that support)
+
+  default:     False
 
 library
-  default-language: Haskell2010
-  hs-source-dirs: src
+  default-language:   Haskell2010
+  hs-source-dirs:     src
   exposed-modules:
-                  Network.Riak
-                  Network.Riak.Basic
-                  Network.Riak.Cluster
-                  Network.Riak.Connection
-                  Network.Riak.Connection.Internal
-                  Network.Riak.Connection.Pool
-                  Network.Riak.Content
-                  Network.Riak.CRDT
-                  Network.Riak.CRDT.Ops
-                  Network.Riak.CRDT.Request
-                  Network.Riak.CRDT.Response
-                  Network.Riak.CRDT.Riak
-                  Network.Riak.CRDT.Types
-                  Network.Riak.Debug
-                  Network.Riak.Escape
-                  Network.Riak.Functions
-                  Network.Riak.JSON
-                  Network.Riak.JSON.Resolvable
-                  Network.Riak.Request
-                  Network.Riak.Resolvable
-                  Network.Riak.Response
-                  Network.Riak.Search
-                  Network.Riak.Types
-                  Network.Riak.Value
-                  Network.Riak.Value.Resolvable
-                  Network.Riak.Types.Internal
+    Network.Riak
+    Network.Riak.Basic
+    Network.Riak.Cluster
+    Network.Riak.Connection
+    Network.Riak.Connection.Internal
+    Network.Riak.Connection.Pool
+    Network.Riak.Content
+    Network.Riak.CRDT
+    Network.Riak.CRDT.Ops
+    Network.Riak.CRDT.Request
+    Network.Riak.CRDT.Response
+    Network.Riak.CRDT.Riak
+    Network.Riak.CRDT.Types
+    Network.Riak.Debug
+    Network.Riak.Escape
+    Network.Riak.Functions
+    Network.Riak.JSON
+    Network.Riak.JSON.Resolvable
+    Network.Riak.Request
+    Network.Riak.Resolvable
+    Network.Riak.Response
+    Network.Riak.Search
+    Network.Riak.Types
+    Network.Riak.Types.Internal
+    Network.Riak.Value
+    Network.Riak.Value.Resolvable
 
   other-modules:
-                  Network.Riak.Connection.NoPush
-                  Network.Riak.Lens
-                  Network.Riak.Resolvable.Internal
-                  Network.Riak.Tag
+    Network.Riak.Connection.NoPush
+    Network.Riak.Lens
+    Network.Riak.Resolvable.Internal
+    Network.Riak.Tag
 
   build-depends:
-                aeson                         >= 0.8      && < 1.5.7,
-                async                         >= 2.0.0.0  && < 2.3,
-                attoparsec                    >= 0.12.1.6 && < 0.14,
-                base                          >= 3        && < 5,
-                bifunctors                    >= 4.2      && < 6,
-                binary,
-                blaze-builder                 >= 0.3      && <= 0.5,
-                bytestring,
-                containers,
-                data-default-class            >= 0.0.1,
-                deepseq                       >= 1.3,
-                enclosed-exceptions           >= 1.0.1.1  && <= 1.1,
-                exceptions                    >= 0.8.0.2  && < 0.11,
-                hashable                      >= 1.2.3,
-                transformers                  >= 0.3      && < 0.6,
-                transformers-base             == 0.4.*,
-                mersenne-random-pure64        >= 0.2.0.4  && < 0.3,
-                monad-control                 >= 1.0.0.4  && < 1.1,
-                network                       >= 3.0      && < 3.1,
-                resource-pool                 == 0.2.*,
-                proto-lens                    == 0.7.*,
-                pureMD5,
-                random,
-                riak-protobuf                 == 0.25.*,
-                semigroups                    >= 0.16,
-                stm                           >= 2.4       && < 2.6,
-                text                          == 1.2.*,
-                time                          >= 1.4.2     && < 1.10,
-                vector                        >= 0.10.12.3 && < 0.13,
-                unordered-containers          >= 0.2.5
+      aeson                   >=0.8       && <1.5.7
+    , async                   >=2.0.0.0   && <2.3
+    , attoparsec              >=0.12.1.6  && <0.14
+    , base                    >=3         && <5
+    , bifunctors              >=4.2       && <6
+    , binary
+    , blaze-builder           >=0.3       && <=0.5
+    , bytestring
+    , containers
+    , data-default-class      >=0.0.1
+    , deepseq                 >=1.3
+    , enclosed-exceptions     >=1.0.1.1   && <=1.1
+    , exceptions              >=0.8.0.2   && <0.11
+    , hashable                >=1.2.3
+    , mersenne-random-pure64  >=0.2.0.4   && <0.3
+    , monad-control           >=1.0.0.4   && <1.1
+    , network                 >=3.0       && <3.1
+    , proto-lens              >=0.7       && <0.8
+    , pureMD5
+    , random
+    , resource-pool           >=0.2       && <0.3
+    , riak-protobuf           == 0.25.*
+    , semigroups              >=0.16
+    , stm                     >=2.4       && <2.6
+    , text                    >=1.2       && <1.3
+    , time                    >=1.4.2     && <1.10
+    , transformers            >=0.3       && <0.6
+    , transformers-base       >=0.4       && <0.5
+    , unordered-containers    >=0.2.5
+    , vector                  >=0.10.12.3 && <0.13
 
-  default-extensions:
-    DoAndIfThenElse
-    
+  default-extensions: DoAndIfThenElse
+
   if flag(debug)
     cpp-options: -DASSERTS -DDEBUG
 
   if flag(developer)
-    ghc-options: -Wall
+    ghc-options:      -Wall
     ghc-prof-options: -auto-all
-    cpp-options: -DASSERTS -DDEBUG
+    cpp-options:      -DASSERTS -DDEBUG
 
-  ghc-options: -Wall
+  ghc-options:        -Wall
 
 test-suite test
   default-language: Haskell2010
-  type: exitcode-stdio-1.0
-  main-is: Test.hs
-  hs-source-dirs: tests, tests/dsl
-  ghc-options: -Wall -threaded
+  type:             exitcode-stdio-1.0
+  main-is:          Test.hs
+  hs-source-dirs:   tests tests/dsl
+  ghc-options:      -Wall -threaded
 
   if flag(test2i)
     cpp-options: -DTEST2I
 
   other-modules:
-                CRDTProperties
-                Internal
-                Utils
-                Network.Riak.Admin.DSL
-                Properties
+    CRDTProperties
+    Internal
+    Network.Riak.Admin.DSL
+    Properties
+    Utils
 
   build-depends:
-                base,
-                riak,
-                riak-protobuf,
-                aeson,
-                bytestring,
-                containers,
-                HUnit,
-                microlens,
-                process,
-                QuickCheck,
-                tasty,
-                tasty-hunit,
-                tasty-quickcheck,
-                template-haskell,
-                text,
-                mtl                    >= 2.1,
-                semigroups             >= 0.16,
-                data-default-class     >= 0.0.1,
-                yaml                   >= 0.8.19
+      aeson
+    , base
+    , bytestring
+    , containers
+    , data-default-class  >=0.0.1
+    , HUnit
+    , microlens
+    , mtl                 >=2.1
+    , process
+    , QuickCheck
+    , riak
+    , riak-protobuf
+    , semigroups          >=0.16
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , template-haskell
+    , text
+    , yaml                >=0.8.19
 
 benchmark bench
   default-language: Haskell2010
-  type: exitcode-stdio-1.0
-  hs-source-dirs: benchmarks
-  main-is: Main.hs
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   benchmarks
+  main-is:          Main.hs
   build-depends:
-                base,
-                riak,
-                criterion   >= 1.1,
-                bytestring  >= 0.10,
-                semigroups  >= 0.16
+      base
+    , bytestring  >=0.10
+    , criterion   >=1.1
+    , riak
+    , semigroups  >=0.16
