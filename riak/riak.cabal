@@ -47,10 +47,7 @@ extra-source-files:
                      tests/test.yaml
 
 cabal-version:       >=1.10
-tested-with:         GHC == 8.0.2,
-                     GHC == 8.2.2,
-                     GHC == 8.4.4,
-                     GHC == 8.6.3
+tested-with: GHC==8.4.4, GHC==8.2.2, GHC == 8.6.3, GHC == 8.8.4, GHC==8.10.4
 
 source-repository head
     type: git
@@ -130,7 +127,7 @@ library
                 proto-lens                    == 0.7.*,
                 pureMD5,
                 random,
-                riak-protobuf                 == 1.0.*,
+                riak-protobuf                 == 0.25.*,
                 semigroups                    >= 0.16,
                 stm                           >= 2.4       && < 2.6,
                 text                          == 1.2.*,
