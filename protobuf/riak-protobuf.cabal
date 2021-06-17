@@ -1,22 +1,25 @@
-name:                riak-protobuf
-version:             0.25.0.0
-synopsis:            Haskell types for the Riak protocol buffer API
+name:               riak-protobuf
+version:            0.25.0.0
+synopsis:           Haskell types for the Riak protocol buffer API
 description:
   A set of Haskell types for interacting with the protocol buffer
   API of the Riak decentralized data store.
 
-homepage:            http://github.com/riak-haskell-client/riak-haskell-client
-license:             OtherLicense
-license-file:        LICENSE
-author:              Bryan O'Sullivan <bos@mailrank.com>
-maintainer:          Mark Hibberd <mark@hibberd.id.au>, Tim McGilchrist <timmcgil@gmail.com>
-copyright:           Copyright 2011 MailRank, Inc.
-                     Portions copyright 2007-2010 Basho Technologies, Inc.
-category:            Network
-build-type:          Simple
+homepage:           http://github.com/riak-haskell-client/riak-haskell-client
+license:            OtherLicense
+license-file:       LICENSE
+author:             Bryan O'Sullivan <bos@mailrank.com>
+maintainer:
+  Mark Hibberd <mark@hibberd.id.au>, Tim McGilchrist <timmcgil@gmail.com>
+
+copyright:
+  Copyright 2011 MailRank, Inc.
+  Portions copyright 2007-2010 Basho Technologies, Inc.
+
+category:           Network
+build-type:         Simple
 extra-source-files:
   Changes.md
-  README.markdown
   generate-proto.sh
   proto/riak.proto
   proto/riak_dt.proto
@@ -25,28 +28,25 @@ extra-source-files:
   proto/riak_search.proto
   proto/riak_ts.proto
   proto/riak_yokozuna.proto
-cabal-version:       >=1.10
-tested-with: GHC==8.4.4, GHC==8.2.2, GHC == 8.6.3, GHC == 8.8.4, GHC==8.10.4
+  README.md
+
+cabal-version:      >=1.10
+tested-with:        GHC ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.5 || ==8.10.5
+
 library
-  default-language: Haskell2010
-  hs-source-dirs:
-    src,
-    src-proto
-
-  exposed-modules:
-    Data.Riak.Proto
-
+  default-language:   Haskell2010
+  hs-source-dirs:     src src-proto
+  exposed-modules:    Data.Riak.Proto
   other-modules:
     Proto.Riak
     Proto.Riak_Fields
 
   build-depends:
-    base == 4.*,
-    proto-lens == 0.7.*,
-    proto-lens-runtime == 0.7.*
+      base                >=4   && <5
+    , proto-lens          >=0.7 && <0.8
+    , proto-lens-runtime  >=0.7 && <0.8
 
-  default-extensions:
-    DoAndIfThenElse  
+  default-extensions: DoAndIfThenElse
 
 source-repository head
   type:     git
