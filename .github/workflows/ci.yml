@@ -15,7 +15,7 @@ jobs:
         cabal: ["3.4"]
         ghc:  ["8.2.2", "8.4.4", "8.6.5", "8.8.4", "8.10.4"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: haskell/actions/setup@v1
         id: setup-haskell-cabal
         with:
